@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.HoloLight" parent="@android:style/Theme.Light.NoTitleBar" />
+
+    <style name="Theme.MyLight" parent="@android:style/Theme.Light.NoTitleBar" />
+
+    <style name="Theme.Dialog" parent="@android:style/Theme.Dialog">
+        <item name="android:buttonStyle">@android:style/Theme.Black.NoTitleBar</item>
+    </style>
+
+    <style name="Theme.MyPIN" parent="@android:style/Theme.Black.NoTitleBar" />
+
+</resources>

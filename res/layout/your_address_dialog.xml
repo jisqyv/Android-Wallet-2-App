@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="15dp" >
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.50"
+        android:gravity="center"
+        android:text="@string/this_is_you_bitcoin_address"
+        android:textSize="@dimen/font_size_small"
+        android:textStyle="bold" />
+
+     <TextView
+         android:id="@+id/qr_code_bitcoin_address"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_marginBottom="8dp"
+         android:layout_marginTop="5dp"
+         android:layout_weight="0.50"
+         android:gravity="center"
+         android:textSize="@dimen/font_size_small" />
+     
+    <ImageView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/qr_dialog_image"
+        android:contentDescription="@string/this_is_you_bitcoin_address"
+        android:layout_width="256dp"
+        android:layout_height="256dp"
+        android:background="@android:color/white"
+        android:keepScreenOn="true"
+        android:padding="4dp"
+        android:scaleType="centerInside" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_weight="0.50"
+        android:gravity="center"
+        android:text="@string/shared_with_anyone"
+        android:textSize="@dimen/font_size_small"
+        android:textStyle="bold" />
+    
+</LinearLayout>
