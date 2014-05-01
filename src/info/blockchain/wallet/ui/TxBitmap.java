@@ -39,7 +39,15 @@ public class TxBitmap {
 	}
 
     public Bitmap createArrowsBitmap(int width, int type, int branches) {
-    	
+
+    	/*
+		Resources resources = context.getResources();
+		float scale = resources.getDisplayMetrics().density;
+		if(scale > REG_RES) {
+			width += 30;
+		}
+		*/
+
     	if(type == SENDING) {
     		return tx_arrows(width, type, branches);
     	}
@@ -50,7 +58,13 @@ public class TxBitmap {
     }
 
     public Bitmap createListBitmap(int width, int branches) {
-    	
+
+		Resources resources = context.getResources();
+		float scale = resources.getDisplayMetrics().density;
+		if(scale > REG_RES) {
+			width += 120;
+		}
+
 		return tx_list(width, branches);
 
     }
@@ -79,14 +93,15 @@ public class TxBitmap {
 		float scale = resources.getDisplayMetrics().density;
 
     	float fX = 10.0f;
-    	float fY = 25.0f;
+//    	float fY = (scale <= REG_RES) ? 25.0f : 30.0f;
+    	float fY = 35.0f;
 		float vOffset = 80.0f;	// down step
-		float vOffsetAmount = (scale <= REG_RES) ? 26.0f : 32.0f;
-		float vXtraOffset = (scale <= REG_RES) ? 1.0f : 4.0f;
+		float vOffsetAmount = (scale <= REG_RES) ? 26.0f : 36.0f;
+		float vXtraOffset = (scale <= REG_RES) ? 1.0f : 6.0f;
 		float szAddress = 15;
 		float szAmount = 12;
 
-    	Bitmap bm = Bitmap.createBitmap(resources.getDisplayMetrics(), width, (int)(vOffset * branches), Config.ARGB_8888);
+    	Bitmap bm = Bitmap.createBitmap(resources.getDisplayMetrics(), width, (int)(vOffset * branches) + 10, Config.ARGB_8888);
     	Canvas canvas = new Canvas(bm);
 
     	Paint paintAddressLabel = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -133,12 +148,13 @@ public class TxBitmap {
 
     	float fStroke = 6.0f;
     	float fRadius = 8.0f;	// filled circle at start of line
-    	float fX = 10.0f;
-    	float fY = 20.0f;
+    	float fX = 15.0f;
+//    	float fY =  (scale <= REG_RES) ? 20.0f : 25.0f;
+    	float fY = 30.0f;
 		float hOffset = 20.0f;	// indent
 		float vOffset = 80.0f;	// down step
 
-    	Bitmap bm = Bitmap.createBitmap(resources.getDisplayMetrics(), width, (int)(vOffset * branches), Config.ARGB_8888);
+    	Bitmap bm = Bitmap.createBitmap(resources.getDisplayMetrics(), width, (int)(vOffset * branches) + 10, Config.ARGB_8888);
     	Canvas canvas = new Canvas(bm);
     	
     	Paint paint = new Paint();
@@ -146,14 +162,14 @@ public class TxBitmap {
     	paint.setStrokeWidth(fStroke);
     	canvas.drawCircle(fX, fY, fRadius, paint);
     	canvas.drawLine(fX, fY, canvas.getWidth() - fX, fY, paint);
-		doArrowhead(canvas, fX + 3.0f, fY, (canvas.getWidth() - fX) + 3.0f, fY, type);
+		doArrowhead(canvas, fX, fY, canvas.getWidth() - ((fX - 10.0f) - 2.0f), fY, type);
 		
     	if(branches > 1) {
     		int remaining_branches = branches - 1;
     		for(int i = 0; i < remaining_branches; i++) {
             	canvas.drawLine(fX + hOffset, fY, fX + hOffset, fY + (vOffset * (i + 1)), paint);
-            	canvas.drawLine(fX + hOffset, fY + (vOffset * (i + 1)), canvas.getWidth() - fX, fY + (vOffset * (i + 1)), paint);
-            	doArrowhead(canvas, fX + hOffset + 3.0f, fY + (vOffset * (i + 1)), (canvas.getWidth() - fX) + 3.0f, fY + (vOffset * (i + 1)), type);
+            	canvas.drawLine(fX + hOffset, fY + (vOffset * (i + 1)), canvas.getWidth() - (fX - 10.0f), fY + (vOffset * (i + 1)), paint);
+            	doArrowhead(canvas, fX + hOffset, fY + (vOffset * (i + 1)), canvas.getWidth() - ((fX - 10.0f) - 2.0f), fY + (vOffset * (i + 1)), type);
     		}
     	}
 

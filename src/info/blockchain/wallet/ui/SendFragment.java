@@ -6,10 +6,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.InputType;
@@ -53,7 +55,9 @@ public class SendFragment extends Fragment   {
 	private static int SIMPLE_SEND = 1;
 	private static int CUSTOM_SEND = 2;
 	private static int SHARED_SEND = 3;
-	
+
+	private static int PICK_CONTACT = 10;
+
 	private static int CURRENT_SEND = SIMPLE_SEND;
 	
 	private LinearLayout lastSendingAddress = null;
@@ -322,9 +326,11 @@ public class SendFragment extends Fragment   {
         final ImageButton imgSimpleSend = ((ImageButton)rootView.findViewById(R.id.simple));
         final ImageButton imgCustomSend = ((ImageButton)rootView.findViewById(R.id.custom));
         final ImageButton imgSharedSend = ((ImageButton)rootView.findViewById(R.id.shared));
+        /*
         final TextView tvSimpleSend = ((TextView)rootView.findViewById(R.id.label_simple));
         final TextView tvCustomSend = ((TextView)rootView.findViewById(R.id.label_custom));
         final TextView tvSharedSend = ((TextView)rootView.findViewById(R.id.label_shared));
+        */
         
         final int color_spend_selected = 0xff808080;
         final int color_spend_unselected = 0xffa0a0a0;
@@ -332,9 +338,11 @@ public class SendFragment extends Fragment   {
     	imgSimpleSend.setBackgroundColor(color_spend_selected);
     	imgCustomSend.setBackgroundColor(color_spend_unselected);
     	imgSharedSend.setBackgroundColor(color_spend_unselected);
+    	/*
     	tvSimpleSend.setBackgroundColor(color_spend_selected);
     	tvCustomSend.setBackgroundColor(color_spend_unselected);
     	tvSharedSend.setBackgroundColor(color_spend_unselected);
+    	*/
 
         imgSimpleSend.setOnTouchListener(new OnTouchListener() {
             @Override
@@ -343,9 +351,11 @@ public class SendFragment extends Fragment   {
             	imgSimpleSend.setBackgroundColor(color_spend_selected);
             	imgCustomSend.setBackgroundColor(color_spend_unselected);
             	imgSharedSend.setBackgroundColor(color_spend_unselected);
+            	/*
             	tvSimpleSend.setBackgroundColor(color_spend_selected);
             	tvCustomSend.setBackgroundColor(color_spend_unselected);
             	tvSharedSend.setBackgroundColor(color_spend_unselected);
+            	*/
             	doSimpleSend();
 
             	/*
@@ -374,9 +384,11 @@ public class SendFragment extends Fragment   {
             	imgSimpleSend.setBackgroundColor(color_spend_unselected);
             	imgCustomSend.setBackgroundColor(color_spend_selected);
             	imgSharedSend.setBackgroundColor(color_spend_unselected);
+            	/*
             	tvSimpleSend.setBackgroundColor(color_spend_unselected);
             	tvCustomSend.setBackgroundColor(color_spend_selected);
             	tvSharedSend.setBackgroundColor(color_spend_unselected);
+            	*/
     			doCustomSend();
 
             	/*
@@ -405,9 +417,11 @@ public class SendFragment extends Fragment   {
             	imgSimpleSend.setBackgroundColor(color_spend_unselected);
             	imgCustomSend.setBackgroundColor(color_spend_unselected);
             	imgSharedSend.setBackgroundColor(color_spend_selected);
+            	/*
             	tvSimpleSend.setBackgroundColor(color_spend_unselected);
             	tvCustomSend.setBackgroundColor(color_spend_unselected);
             	tvSharedSend.setBackgroundColor(color_spend_selected);
+            	*/
     			doSharedSend();
 
             	/*
@@ -653,7 +667,8 @@ public class SendFragment extends Fragment   {
             		if(isMagic) {
             			removeMagicList();
             		}
-            		adapter.notifyDataSetChanged();                            		
+            		doSend2Friends();
+//            		adapter.notifyDataSetChanged();                            		
                 }
         });
 
@@ -952,6 +967,13 @@ public class SendFragment extends Fragment   {
 
     private void doSharedSend() {
     	CURRENT_SEND = SHARED_SEND;
+    }
+
+    private void doSend2Friends()	{
+    	Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+    	intent.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE);
+//    	intent.setType(ContactsContract.CommonDataKinds.Email.CONTENT_TYPE);
+    	startActivityForResult(intent, PICK_CONTACT);
     }
 
 }
