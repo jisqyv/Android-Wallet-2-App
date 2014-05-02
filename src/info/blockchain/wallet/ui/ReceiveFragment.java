@@ -114,13 +114,14 @@ public class ReceiveFragment extends Fragment   {
             public void onClick(View v) {
             	if(isBTC) {
             		tvCurrency.setText("$");
-            		String tmp = edAmount1.getText().toString(); 
+            		String tmp = edAmount1.getText().toString();
             		if(tmp.length() < 1) {
             			tmp = "0.00";
             		}
-            		edAmount1.setText(tvAmount2.getText().toString().substring(1));
-            		tvAmount2.setTypeface(TypefaceUtil.getInstance(getActivity()).getBTCTypeface());
-                    tvAmount2.setText(Character.toString((char)TypefaceUtil.getInstance(getActivity()).getBTCSymbol()) + tmp);
+//            		edAmount1.setText(tvAmount2.getText().toString().substring(1));
+            		edAmount1.setText(tvAmount2.getText().toString().substring(0, tvAmount2.getText().toString().length() - 4));
+//            		tvAmount2.setTypeface(TypefaceUtil.getInstance(getActivity()).getBTCTypeface());
+                    tvAmount2.setText(tmp + " BTC");
             	}
             	else {
             	    tvCurrency.setTypeface(TypefaceUtil.getInstance(getActivity()).getBTCTypeface());
@@ -129,8 +130,8 @@ public class ReceiveFragment extends Fragment   {
             		if(tmp.length() < 1) {
             			tmp = "0.00";
             		}
-                    edAmount1.setText(tvAmount2.getText().toString().substring(1));
-                    tvAmount2.setText("$" + tmp);
+                    edAmount1.setText(tvAmount2.getText().toString().substring(0, tvAmount2.getText().toString().length() - 4));
+                    tvAmount2.setText(tmp + " USD");
             	}
             	isBTC = isBTC ? false : true;
             }
@@ -163,7 +164,7 @@ public class ReceiveFragment extends Fragment   {
         */
 
         tvAmount2 = ((TextView)rootView.findViewById(R.id.amount2));
-        tvAmount2.setText("$0.00");
+        tvAmount2.setText("0.00 USD");
         edAmount1 = ((EditText)rootView.findViewById(R.id.amount1));
         edAmount1.setOnEditorActionListener(new OnEditorActionListener() {
 		    @Override
@@ -260,11 +261,11 @@ public class ReceiveFragment extends Fragment   {
         		if((edAddress.getText().toString() != null && edAddress.getText().toString().length() > 0) || (edAmount1.getText().toString() != null && edAmount1.getText().toString().length() > 0)) {
         			
         			if(isBTC)	{
-            			tvAmount2.setText("$" + BlockchainUtil.BTC2Fiat(edAmount1.getText().toString()));
+            			tvAmount2.setText(BlockchainUtil.BTC2Fiat(edAmount1.getText().toString()) + " USD");
         			}
         			else	{
-                		tvAmount2.setTypeface(TypefaceUtil.getInstance(getActivity()).getBTCTypeface());
-        				tvAmount2.setText(Character.toString((char)TypefaceUtil.getInstance(getActivity()).getBTCSymbol()) + BlockchainUtil.Fiat2BTC(edAmount1.getText().toString()));
+//                		tvAmount2.setTypeface(TypefaceUtil.getInstance(getActivity()).getBTCTypeface());
+        				tvAmount2.setText(BlockchainUtil.Fiat2BTC(edAmount1.getText().toString()) + " BTC");
         			}
 
         			clear_input.setVisibility(View.VISIBLE);
@@ -414,7 +415,7 @@ public class ReceiveFragment extends Fragment   {
 		        ((TextView)view.findViewById(R.id.p1)).setTextColor(Color.BLACK);
 	        }
 	        else {
-		        ((TextView)view.findViewById(R.id.p1)).setTextColor(0xFF818689);
+		        ((TextView)view.findViewById(R.id.p1)).setTextColor(0xFF616161);
 	        }
 	        ((TextView)view.findViewById(R.id.p1)).setText(keys.get(position));
 	        ((TextView)view.findViewById(R.id.p2)).setText(magicData.get(keys.get(position)));

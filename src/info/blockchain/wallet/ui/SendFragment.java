@@ -5,11 +5,14 @@ import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
@@ -42,6 +45,12 @@ import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView.OnEditorActionListener;
+import android.provider.ContactsContract;
+import android.provider.ContactsContract.CommonDataKinds;
+import android.provider.ContactsContract.Contacts;
+import android.provider.ContactsContract.CommonDataKinds.Email;
+import android.provider.ContactsContract.CommonDataKinds.Phone;
+import android.database.Cursor;
 import android.util.Log;
 
 import com.google.bitcoin.uri.BitcoinURI;
@@ -136,9 +145,10 @@ public class SendFragment extends Fragment   {
             		if(tmp.length() < 1) {
             			tmp = "0.00";
             		}
-            		edAmount1.setText(tvAmount2.getText().toString().substring(1));
-            		tvAmount2.setTypeface(TypefaceUtil.getInstance(getActivity()).getBTCTypeface());
-                    tvAmount2.setText(Character.toString((char)TypefaceUtil.getInstance(getActivity()).getBTCSymbol()) + tmp);
+//            		edAmount1.setText(tvAmount2.getText().toString().substring(1));
+            		edAmount1.setText(tvAmount2.getText().toString().substring(0, tvAmount2.getText().toString().length() - 4));
+//            		tvAmount2.setTypeface(TypefaceUtil.getInstance(getActivity()).getBTCTypeface());
+                    tvAmount2.setText(tmp + " BTC");
             	}
             	else {
             	    tvCurrency.setTypeface(TypefaceUtil.getInstance(getActivity()).getBTCTypeface());
@@ -147,8 +157,8 @@ public class SendFragment extends Fragment   {
             		if(tmp.length() < 1) {
             			tmp = "0.00";
             		}
-                    edAmount1.setText(tvAmount2.getText().toString().substring(1));
-                    tvAmount2.setText("$" + tmp);
+                    edAmount1.setText(tvAmount2.getText().toString().substring(0, tvAmount2.getText().toString().length() - 4));
+                    tvAmount2.setText(tmp + " USD");
             	}
             	isBTC = isBTC ? false : true;
             }
@@ -181,7 +191,7 @@ public class SendFragment extends Fragment   {
         });
 
         tvAmount2 = ((TextView)rootView.findViewById(R.id.amount2));
-        tvAmount2.setText("$0.00");
+        tvAmount2.setText("0.00 USD");
         edAmount1 = ((EditText)rootView.findViewById(R.id.amount1));
         edAmount1.setOnEditorActionListener(new OnEditorActionListener() {
 		    @Override
@@ -275,11 +285,11 @@ public class SendFragment extends Fragment   {
         		if((edAddress.getText().toString() != null && edAddress.getText().toString().length() > 0) || (edAmount1.getText().toString() != null && edAmount1.getText().toString().length() > 0)) {
         			
         			if(isBTC)	{
-            			tvAmount2.setText("$" + BlockchainUtil.BTC2Fiat(edAmount1.getText().toString()));
+            			tvAmount2.setText(BlockchainUtil.BTC2Fiat(edAmount1.getText().toString()) + " USD");
         			}
         			else	{
-                		tvAmount2.setTypeface(TypefaceUtil.getInstance(getActivity()).getBTCTypeface());
-        				tvAmount2.setText(Character.toString((char)TypefaceUtil.getInstance(getActivity()).getBTCSymbol()) + BlockchainUtil.Fiat2BTC(edAmount1.getText().toString()));
+//                		tvAmount2.setTypeface(TypefaceUtil.getInstance(getActivity()).getBTCTypeface());
+        				tvAmount2.setText(BlockchainUtil.Fiat2BTC(edAmount1.getText().toString()) + " BTC");
         			}
 
         			clear_input.setVisibility(View.VISIBLE);
@@ -478,6 +488,83 @@ public class SendFragment extends Fragment   {
 
     }
 
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+
+		if(requestCode == PICK_CONTACT && resultCode == Activity.RESULT_OK) {
+
+			if (data != null) {
+
+				Uri uri = data.getData();
+
+		        if (uri != null) {
+
+		    	    Cursor cur = getActivity().getContentResolver().query(uri, null, null, null, null);
+
+                	String strEmail = null;
+                	String strNumber = null;
+
+		    	    try 
+		    	    {
+		                while(cur.moveToNext())
+		                {
+		                	strEmail = strNumber = null;
+		                	
+		                    String id = cur.getString(cur.getColumnIndex(Contacts._ID));
+		                    String strName = cur.getString(cur.getColumnIndex(Contacts.DISPLAY_NAME));
+		                    
+//		                    strImageURI = cur.getString(cur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.PHOTO_URI));
+
+		                    Cursor ce = getActivity().getContentResolver().query(CommonDataKinds.Email.CONTENT_URI, null, CommonDataKinds.Email.CONTACT_ID +" = ?", new String[]{id}, null);
+		                    while(ce.moveToNext())
+		                    {
+		                        strEmail = ce.getString(ce.getColumnIndex(CommonDataKinds.Email.ADDRESS));
+		                        strEmail = (strEmail.equals("null")) ? null : strEmail;
+		                    }
+		                    ce.close();
+
+		                    Cursor cn = getActivity().getContentResolver().query(CommonDataKinds.Phone.CONTENT_URI, null, CommonDataKinds.Phone.CONTACT_ID +" = ?", new String[]{id}, null);
+		                    while(cn.moveToNext())
+		                    {
+		                        int type = cn.getInt(cn.getColumnIndex(CommonDataKinds.Phone.TYPE));
+		                        if (type == Phone.TYPE_MOBILE)
+		                        {
+		                            strNumber = cn.getString(cn.getColumnIndex(CommonDataKinds.Phone.NUMBER));
+		                            strNumber = (strNumber.equals("null")) ? null : strNumber;
+		                        }
+		                    }
+		                    cn.close();
+		                    
+		                    if(strEmail != null || strNumber != null)
+		                    {
+		                    	//
+		                    	// add hooks here
+		                    	//
+		    	        		Toast.makeText(getActivity(), "Name:" + strName + ",Email:" + strEmail + ",Number:" + strNumber, Toast.LENGTH_SHORT).show();
+		                    }
+		                    else
+		                    {
+		                    	// inform user that an email or a cell no. is needed
+		                    }
+
+		                }
+		    	    }
+		    	    finally
+		    	    {
+		    	        cur.close();
+		    	    }
+		        
+		        }
+		    }
+
+		}
+		else {
+			;
+		}
+		
+	}
+
     private Bitmap generateQRCode(String uri) {
 
         Bitmap bitmap = null;
@@ -556,7 +643,7 @@ public class SendFragment extends Fragment   {
 		        ((TextView)view.findViewById(R.id.p1)).setTextColor(Color.BLACK);
 	        }
 	        else {
-		        ((TextView)view.findViewById(R.id.p1)).setTextColor(0xFF818689);
+		        ((TextView)view.findViewById(R.id.p1)).setTextColor(0xFF616161);
 	        }
 	        ((TextView)view.findViewById(R.id.p1)).setText(keys.get(position));
 	        ((TextView)view.findViewById(R.id.p2)).setText(magicData.get(keys.get(position)));
@@ -971,8 +1058,9 @@ public class SendFragment extends Fragment   {
 
     private void doSend2Friends()	{
     	Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
-    	intent.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE);
+//    	intent.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE);
 //    	intent.setType(ContactsContract.CommonDataKinds.Email.CONTENT_TYPE);
+    	intent.setData(ContactsContract.Contacts.CONTENT_URI);
     	startActivityForResult(intent, PICK_CONTACT);
     }
 

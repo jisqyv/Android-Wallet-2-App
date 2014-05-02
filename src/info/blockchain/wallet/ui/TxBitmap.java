@@ -62,7 +62,7 @@ public class TxBitmap {
 		Resources resources = context.getResources();
 		float scale = resources.getDisplayMetrics().density;
 		if(scale > REG_RES) {
-			width += 120;
+			width += 160;
 		}
 
 		return tx_list(width, branches);
@@ -96,8 +96,8 @@ public class TxBitmap {
 //    	float fY = (scale <= REG_RES) ? 25.0f : 30.0f;
     	float fY = 35.0f;
 		float vOffset = 80.0f;	// down step
-		float vOffsetAmount = (scale <= REG_RES) ? 26.0f : 36.0f;
-		float vXtraOffset = (scale <= REG_RES) ? 1.0f : 6.0f;
+		float vOffsetAmount = (scale <= REG_RES) ? 26.0f : 38.0f;
+		float vXtraOffset = (scale <= REG_RES) ? 1.0f : 8.0f;
 		float szAddress = 15;
 		float szAmount = 12;
 
