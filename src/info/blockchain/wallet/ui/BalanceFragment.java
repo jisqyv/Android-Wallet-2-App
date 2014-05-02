@@ -298,6 +298,13 @@ public class BalanceFragment extends Fragment   {
 	        	amount = BlockchainUtil.BTC2Fiat(amounts1[position]);
 	        }
 
+	        if(position % 2 == 0) {
+		        ((ImageView)view.findViewById(R.id.address_type)).setImageResource(R.drawable.address_active);
+	        }
+	        else {
+		        ((ImageView)view.findViewById(R.id.address_type)).setImageResource(R.drawable.address_inactive);
+	        }
+
 	        ((TextView)view.findViewById(R.id.address)).setTypeface(TypefaceUtil.getInstance(getActivity()).getGravityBoldTypeface());
 	        ((TextView)view.findViewById(R.id.address)).setText(values[position].length() > 15 ? values[position].substring(0, 15) + "..." : values[position]);
 	        ((TextView)view.findViewById(R.id.amount)).setTypeface(TypefaceUtil.getInstance(getActivity()).getRobotoBoldTypeface());
