@@ -9,7 +9,7 @@ public class BlockchainUtil {
     
     public static String ZEROBLOCK_PACKAGE = "com.phlint.android.zeroblock";
     
-    private static double BTC_RATE = 493.00;
+    private static double BTC_RATE = 448.00;
 
 	private BlockchainUtil() { ; }
 

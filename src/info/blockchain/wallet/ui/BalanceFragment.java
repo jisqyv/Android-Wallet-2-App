@@ -1,5 +1,9 @@
 package info.blockchain.wallet.ui;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -19,6 +23,8 @@ import android.os.Bundle;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
+import android.graphics.drawable.BitmapDrawable;
 import android.support.v4.app.Fragment;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -312,12 +318,11 @@ public class BalanceFragment extends Fragment   {
     	final LinearLayout balance_extLayout = (LinearLayout)view.findViewById(R.id.balance_ext);
     	final LinearLayout balance_extHiddenLayout = (LinearLayout)view.findViewById(R.id.balance_ext_hidden);
 
-        ImageView qr_icon = ((ImageView)balance_extLayout.findViewById(R.id.balance_qr_icon));
-        qr_icon.setOnTouchListener(new OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
+        balance_extLayout.setOnLongClickListener(new View.OnLongClickListener() {
+      	  public boolean onLongClick(View view) {
+//    			Toast.makeText(PaymentFragment.this.getActivity(), "Address copied:" + input_address, Toast.LENGTH_LONG).show();
 
-      			android.content.ClipboardManager clipboard = (android.content.ClipboardManager)getActivity().getSystemService(android.content.Context.CLIPBOARD_SERVICE);
+    			android.content.ClipboardManager clipboard = (android.content.ClipboardManager)getActivity().getSystemService(android.content.Context.CLIPBOARD_SERVICE);
       		    android.content.ClipData clip = android.content.ClipData.newPlainText("Address", "1NMNj5tcwKkqRyHQepxfh1YvLVvBc3Jruq");
       		    clipboard.setPrimaryClip(clip);
      			Toast.makeText(getActivity(), "Address copied to clipboard:" + "1NMNj5tcwKkqRyHQepxfh1YvLVvBc3Jruq", Toast.LENGTH_LONG).show();
@@ -335,11 +340,10 @@ public class BalanceFragment extends Fragment   {
         		toast.setDuration(Toast.LENGTH_LONG);
         		toast.setView(toastView);
         		toast.show();
-            	
 
-                return true;
-            }
-        });
+        		return true;
+      	  }
+      	});
 
         LinearLayout progression_sent = ((LinearLayout)balance_extLayout.findViewById(R.id.progression_sent));
         ((TextView)progression_sent.findViewById(R.id.total_type)).setTypeface(TypefaceUtil.getInstance(getActivity()).getRobotoTypeface());
