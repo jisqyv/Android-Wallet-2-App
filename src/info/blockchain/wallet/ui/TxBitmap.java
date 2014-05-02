@@ -1,5 +1,10 @@
 package info.blockchain.wallet.ui;
 
+import java.math.BigInteger;
+import java.util.List;
+import java.util.Map;
+
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
@@ -25,7 +30,16 @@ public class TxBitmap {
 	
 	private static float REG_RES = 2.0f;
 	
-	private TxBitmap() { ; }
+	private List<Map.Entry<String, String>> addressValueEntryList;	
+	private BigInteger result;
+
+	public TxBitmap() { ; }
+	public TxBitmap(Context ctx, BigInteger result, List<Map.Entry<String, String>> addressValueEntryList) {
+		this.setAddressValueEntryList(addressValueEntryList);
+		this.setResult(result);
+
+		context = ctx;
+		}
 
 	public static TxBitmap getInstance(Context ctx) {
 		
@@ -57,7 +71,7 @@ public class TxBitmap {
 
     }
 
-    public Bitmap createListBitmap(int width, int branches) {
+    public Bitmap createListBitmap(int width) {
 
 		Resources resources = context.getResources();
 		float scale = resources.getDisplayMetrics().density;
@@ -65,7 +79,7 @@ public class TxBitmap {
 			width += 160;
 		}
 
-		return tx_list(width, branches);
+		return tx_list(width);
 
     }
 
@@ -87,7 +101,8 @@ public class TxBitmap {
     	return Bitmap.createBitmap(src, 0, 0, src.getWidth(), src.getHeight(), matrix, true);
     }
 
-    private Bitmap tx_list(int width, int branches) {
+    @SuppressLint("NewApi")
+	private Bitmap tx_list(int width) {
 
 		Resources resources = context.getResources();
 		float scale = resources.getDisplayMetrics().density;
@@ -101,6 +116,7 @@ public class TxBitmap {
 		float szAddress = 15;
 		float szAmount = 12;
 
+		final int branches = addressValueEntryList.size();
     	Bitmap bm = Bitmap.createBitmap(resources.getDisplayMetrics(), width, (int)(vOffset * branches) + 10, Config.ARGB_8888);
     	Canvas canvas = new Canvas(bm);
 
@@ -119,6 +135,14 @@ public class TxBitmap {
 		paintAmount.setTextSize((int)(szAmount * scale + 0.5f));
 		paintAddressLabel.setTypeface(TypefaceUtil.getInstance(context).getRobotoBoldTypeface());
 
+		for(int i = 0; i < branches; i++) {
+			Map.Entry<String, String> addressValueEntry = addressValueEntryList.get(i);
+			
+    		canvas.drawText(addressValueEntry.getKey(), fX, fY + (vOffset * i) + vXtraOffset, paintAddressLabel);
+			canvas.drawText(addressValueEntry.getValue(), fX, fY + (vOffset * i) + vOffsetAmount + vXtraOffset, paintAmount);
+
+		}
+		/*
 		if(scale <= REG_RES) {
 			canvas.drawText("1HVVe8oF1...", fX, fY + vXtraOffset, paintAddressBTC);
 		}
@@ -137,11 +161,12 @@ public class TxBitmap {
     			canvas.drawText("0.32 BTC", fX, fY + (vOffset * (i + 1)) + vOffsetAmount + vXtraOffset, paintAmount);
     		}
     	}
-    	
+    	//*/
     	return bm;
     }
 
-    private Bitmap tx_arrows(int width, int type, int branches) {
+    @SuppressLint("NewApi")
+	private Bitmap tx_arrows(int width, int type, int branches) {
 
 		Resources resources = context.getResources();
 		float scale = resources.getDisplayMetrics().density;
@@ -207,5 +232,17 @@ public class TxBitmap {
 
         canvas.drawPath(path, paint);
     }
+	public BigInteger getResult() {
+		return result;
+	}
+	public void setResult(BigInteger result) {
+		this.result = result;
+	}
+	public List<Map.Entry<String, String>> getAddressValueEntryList() {
+		return addressValueEntryList;
+	}
+	public void setAddressValueEntryList(List<Map.Entry<String, String>> addressValueEntryList) {
+		this.addressValueEntryList = addressValueEntryList;
+	}
 
 }

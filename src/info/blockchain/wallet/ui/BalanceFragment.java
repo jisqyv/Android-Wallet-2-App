@@ -6,30 +6,41 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
+import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
+import org.json.simple.JSONObject;
+
+import piuk.EventListeners;
+import piuk.MyRemoteWallet;
+import piuk.MyTransaction;
+import piuk.MyTransactionInput;
+import piuk.blockchain.android.WalletApplication;
+import piuk.blockchain.android.util.WalletUtils;
+
+import com.google.bitcoin.core.Address;
+import com.google.bitcoin.core.ScriptException;
+import com.google.bitcoin.core.Transaction;
+import com.google.bitcoin.core.TransactionInput;
+import com.google.bitcoin.core.TransactionOutput;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.android.Contents;
 import com.google.zxing.client.android.encode.QRCodeEncoder;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.v4.app.Fragment;
-import android.text.Spannable;
-import android.text.SpannableStringBuilder;
-import android.text.style.RelativeSizeSpan;
-import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -40,16 +51,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.ArrayAdapter;
 import android.widget.AdapterView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 import android.view.View.OnTouchListener;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Animation;
-import android.view.inputmethod.InputMethodManager;
 import android.util.Log;
 
+@SuppressLint("NewApi")
 public class BalanceFragment extends Fragment   {
 
 	private View rootView = null;
@@ -64,15 +74,92 @@ public class BalanceFragment extends Fragment   {
 	private Animation slideDown = null;
 	private boolean isSwipedDown = false;
 //    private Typeface btc_font = null;
-    private String[] values = null;
-    private boolean[] valuesDisplayed = null;
-    private String[] amounts1 = null;
-    private String[] amounts2 = null;
+    private String[] addressLabels = null;
+    private boolean[] addressLabelTxsDisplayed = null;
+    private String[] addressAmounts = null;
 	private TransactionAdapter adapter = null;
 	private boolean isBTC = true;
+	//private Map<String, List<TxBitmap>> address2TxBitmapList;	
 
+	private WalletApplication application;
+
+	private EventListeners.EventListener eventListener = new EventListeners.EventListener() {
+		@Override
+		public String getDescription() {
+			setAdapterContent();
+			return "Wallet Balance Listener";
+		}
+
+		@Override
+		public void onCoinsSent(final Transaction tx, final long result) {
+			setAdapterContent();
+		};
+
+		@Override
+		public void onCoinsReceived(final Transaction tx, final long result) {
+			setAdapterContent();
+		};
+
+		@Override
+		public void onTransactionsChanged() {
+			setAdapterContent();
+		};
+		
+		@Override
+		public void onWalletDidChange() {
+			setAdapterContent();
+		}
+		
+		@Override
+		public void onCurrencyChanged() {
+			setAdapterContent();
+		};
+	};
+	
+	
+	public void setAdapterContent() {
+		MyRemoteWallet remoteWallet = application.getRemoteWallet();
+		if (remoteWallet == null) {
+			return;
+		}
+				
+		Map<String, JSONObject> multiAddrBalancesRoot = remoteWallet.getMultiAddrBalancesRoot();
+		String[] activeAddresses = remoteWallet.getActiveAddresses();
+		
+		addressLabels = remoteWallet.getActiveAddresses();
+		addressAmounts = new String[addressLabels.length];
+		
+		boolean[] tmp = new boolean[addressLabels.length];
+		for (int i = 0; i < addressLabelTxsDisplayed.length; ++i) {
+			tmp[i] = addressLabelTxsDisplayed[i];			
+		}
+		for (int i = addressLabelTxsDisplayed.length; i < tmp.length; ++i) {
+			tmp[i] = false;
+		}		
+		addressLabelTxsDisplayed = tmp;
+		
+		Map<String, String> labelMap = remoteWallet.getLabelMap();
+		for (int i = 0; i < activeAddresses.length; ++i) {
+			String address = activeAddresses[i];
+		    Log.d("activeAddress: ", address);
+		    JSONObject addressRoot = multiAddrBalancesRoot.get(address);	    
+		    BigInteger finalBalance = BigInteger.valueOf(((Number)addressRoot.get("final_balance")).longValue());
+		    String label = labelMap.get(address);
+		    addressAmounts[i] = WalletUtils.formatValue(finalBalance);
+		    if (label != null) {
+		    	addressLabels[i] = label;	
+		    }
+	    }
+
+        tViewAmount1.setText(WalletUtils.formatValue(remoteWallet.getBalance()));
+        tViewAmount2.setText(BlockchainUtil.BTC2Fiat(WalletUtils.formatValue(remoteWallet.getBalance())));
+        //txList.setAdapter(adapter);
+	}
+	
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		final Activity activity = getActivity();
+		application = (WalletApplication) activity.getApplication();
 
         rootView = inflater.inflate(info.blockchain.wallet.ui.R.layout.fragment_balance, container, false);
         
@@ -115,29 +202,23 @@ public class BalanceFragment extends Fragment   {
         tViewAmount2.setText("$" + BlockchainUtil.BTC2Fiat("24.1223"));
 
         txList = (ListView)rootView.findViewById(R.id.txList);
-        values = new String[] {
+        addressLabels = new String[] {
         		"1AMdUn91Z1tAhy7XwF38BfQ5C63pmcdQH3",
         		"Cold storage",
         		"Merchant account",
         		"1Cr8FHbwZkcmUWTdZuzukYeSbaSGivUEU6",
                 };
-        valuesDisplayed = new boolean[] {
+        addressLabelTxsDisplayed = new boolean[] {
         		false,
         		false,
         		false,
         		false,
                 };
-        amounts1 = new String[] {
+        addressAmounts = new String[] {
         		"0.67",
         		"20.0001",
         		"3.45",
         		"0.00227",
-                };
-        amounts2 = new String[] {
-        		"8802.48",
-        		"145",
-        		"4608.63",
-        		"1",
                 };
 
         adapter = new TransactionAdapter();
@@ -150,7 +231,7 @@ public class BalanceFragment extends Fragment   {
 
     	    	if(balance_extHiddenLayout.getVisibility() == View.VISIBLE) {
     	    		
-    	    		valuesDisplayed[position] = false;
+    	    		addressLabelTxsDisplayed[position] = false;
     	    		
     	    		if(balance_extHiddenLayout.getChildCount() > 1) {
         		        balance_extHiddenLayout.removeViews(1, balance_extHiddenLayout.getChildCount() - 1);
@@ -161,7 +242,7 @@ public class BalanceFragment extends Fragment   {
     		        balance_extHiddenLayout.setVisibility(View.GONE);
     	    	}
     	    	else {
-    	    		valuesDisplayed[position] = true;
+    	    		addressLabelTxsDisplayed[position] = true;
     	    		doDisplaySubList(view, position);
     	    	}
             }
@@ -225,6 +306,10 @@ public class BalanceFragment extends Fragment   {
 		});
         balance_extLayout.setVisibility(View.GONE);
 
+        //tViewAmount2.setText("$" + BlockchainUtil.BTC2Fiat("534.2"));
+
+		EventListeners.addEventListener(eventListener);
+
         return rootView;
     }
 
@@ -246,6 +331,13 @@ public class BalanceFragment extends Fragment   {
 
     }
 
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+
+		EventListeners.removeEventListener(eventListener);
+	}
+
     private class TransactionAdapter extends BaseAdapter {
     	
 		private LayoutInflater inflater = null;
@@ -256,12 +348,12 @@ public class BalanceFragment extends Fragment   {
 
 		@Override
 		public int getCount() {
-			return values.length;
+			return addressLabels.length;
 		}
 
 		@Override
 		public String getItem(int position) {
-	        return values[position];
+	        return addressLabels[position];
 		}
 
 		@Override
@@ -291,27 +383,20 @@ public class BalanceFragment extends Fragment   {
 	        DecimalFormat df = null;
 	        if(isBTC) {
 	        	df = new DecimalFormat("######0.0000");
-	        	amount = df.format(Double.parseDouble(amounts1[position]));
+	        	amount = df.format(Double.parseDouble(addressAmounts[position]));
 	        }
 	        else {
 //	        	df = new DecimalFormat("######0.00");
-	        	amount = BlockchainUtil.BTC2Fiat(amounts1[position]);
-	        }
-
-	        if(position % 2 == 0) {
-		        ((ImageView)view.findViewById(R.id.address_type)).setImageResource(R.drawable.address_active);
-	        }
-	        else {
-		        ((ImageView)view.findViewById(R.id.address_type)).setImageResource(R.drawable.address_inactive);
+	        	amount = BlockchainUtil.BTC2Fiat(addressAmounts[position]);
 	        }
 
 	        ((TextView)view.findViewById(R.id.address)).setTypeface(TypefaceUtil.getInstance(getActivity()).getGravityBoldTypeface());
-	        ((TextView)view.findViewById(R.id.address)).setText(values[position].length() > 15 ? values[position].substring(0, 15) + "..." : values[position]);
+	        ((TextView)view.findViewById(R.id.address)).setText(addressLabels[position].length() > 15 ? addressLabels[position].substring(0, 15) + "..." : addressLabels[position]);
 	        ((TextView)view.findViewById(R.id.amount)).setTypeface(TypefaceUtil.getInstance(getActivity()).getRobotoBoldTypeface());
 	        ((TextView)view.findViewById(R.id.amount)).setText(amount);
 	        ((TextView)view.findViewById(R.id.currency_code)).setText(isBTC ? "BTC" : "USD");
 	        
-	        if(valuesDisplayed[position]) {
+	        if(addressLabelTxsDisplayed[position]) {
 				Log.d("List refresh sub", "" + position);
 		        doDisplaySubList(view, position);
 	        }
@@ -325,16 +410,21 @@ public class BalanceFragment extends Fragment   {
     	final LinearLayout balance_extLayout = (LinearLayout)view.findViewById(R.id.balance_ext);
     	final LinearLayout balance_extHiddenLayout = (LinearLayout)view.findViewById(R.id.balance_ext_hidden);
 
+    	MyRemoteWallet remoteWallet = application.getRemoteWallet();
+    	final String[] activeAddresses = remoteWallet.getActiveAddresses();
+    	final String address = activeAddresses[position];
+
         balance_extLayout.setOnLongClickListener(new View.OnLongClickListener() {
       	  public boolean onLongClick(View view) {
 //    			Toast.makeText(PaymentFragment.this.getActivity(), "Address copied:" + input_address, Toast.LENGTH_LONG).show();
 
     			android.content.ClipboardManager clipboard = (android.content.ClipboardManager)getActivity().getSystemService(android.content.Context.CLIPBOARD_SERVICE);
-      		    android.content.ClipData clip = android.content.ClipData.newPlainText("Address", "1NMNj5tcwKkqRyHQepxfh1YvLVvBc3Jruq");
+      		    android.content.ClipData clip = android.content.ClipData.newPlainText("Address", address);
+      		    
       		    clipboard.setPrimaryClip(clip);
-     			Toast.makeText(getActivity(), "Address copied to clipboard:" + "1NMNj5tcwKkqRyHQepxfh1YvLVvBc3Jruq", Toast.LENGTH_LONG).show();
+     			Toast.makeText(getActivity(), "Address copied to clipboard:" + address, Toast.LENGTH_LONG).show();
 
-            	Bitmap bm = generateQRCode("1NMNj5tcwKkqRyHQepxfh1YvLVvBc3Jruq");
+            	Bitmap bm = generateQRCode(address);
 
             	View toastView = getActivity().getLayoutInflater().inflate(R.layout.toast, (ViewGroup)getActivity().findViewById(R.id.toastLayout));
         		ImageView imageView = (ImageView)toastView.findViewById(R.id.image);
@@ -352,6 +442,12 @@ public class BalanceFragment extends Fragment   {
       	  }
       	});
 
+		final Map<String, JSONObject> multiAddrBalancesRoot = remoteWallet.getMultiAddrBalancesRoot();
+
+		final JSONObject addressRoot = multiAddrBalancesRoot.get(address);
+	    final BigInteger totalReceived = BigInteger.valueOf(((Number)addressRoot.get("total_received")).longValue());
+	    final BigInteger totalSent = BigInteger.valueOf(((Number)addressRoot.get("total_sent")).longValue());
+
         LinearLayout progression_sent = ((LinearLayout)balance_extLayout.findViewById(R.id.progression_sent));
         ((TextView)progression_sent.findViewById(R.id.total_type)).setTypeface(TypefaceUtil.getInstance(getActivity()).getRobotoTypeface());
         ((TextView)progression_sent.findViewById(R.id.total_type)).setTextColor(Color.BLACK);
@@ -360,8 +456,6 @@ public class BalanceFragment extends Fragment   {
         ((TextView)progression_sent.findViewById(R.id.amount)).setTextColor(Color.BLACK);
         ((TextView)progression_sent.findViewById(R.id.amount)).setText("0.8251 BTC");
         ((ProgressBar)progression_sent.findViewById(R.id.bar)).setMax(100);
-        ((ProgressBar)progression_sent.findViewById(R.id.bar)).setProgress((int)((0.8251 / (2.55 + 0.8251)) * 100));
-        ((ProgressBar)progression_sent.findViewById(R.id.bar)).setProgressDrawable(getResources().getDrawable(R.drawable.progress_red2));
 
         LinearLayout progression_received = ((LinearLayout)balance_extLayout.findViewById(R.id.progression_received));
         ((TextView)progression_received.findViewById(R.id.total_type)).setTypeface(TypefaceUtil.getInstance(getActivity()).getRobotoTypeface());
@@ -371,54 +465,147 @@ public class BalanceFragment extends Fragment   {
         ((TextView)progression_received.findViewById(R.id.amount)).setTextColor(Color.BLACK);
         ((TextView)progression_received.findViewById(R.id.amount)).setText("2.5500 BTC");
         ((ProgressBar)progression_received.findViewById(R.id.bar)).setMax(100);
-        ((ProgressBar)progression_received.findViewById(R.id.bar)).setProgress((int)((2.55 / (2.55 + 0.8251)) * 100));
-        ((ProgressBar)progression_received.findViewById(R.id.bar)).setProgressDrawable(getResources().getDrawable(R.drawable.progress_green2));
+
+        if (totalSent.longValue() > 0 || totalReceived.longValue() > 0) {        	
+            ((ProgressBar)progression_sent.findViewById(R.id.bar)).setProgress((int)((totalSent.doubleValue() / (totalSent.doubleValue() + totalReceived.doubleValue())) * 100));
+            ((ProgressBar)progression_sent.findViewById(R.id.bar)).setProgressDrawable(getResources().getDrawable(R.drawable.progress_red2));
+            ((ProgressBar)progression_received.findViewById(R.id.bar)).setProgress((int)((totalReceived.doubleValue() / (totalSent.doubleValue() + totalReceived.doubleValue())) * 100));
+            ((ProgressBar)progression_received.findViewById(R.id.bar)).setProgressDrawable(getResources().getDrawable(R.drawable.progress_green2));
+        }        	
 
 		View child = null;
         LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        for (int i = 0; i < 4; i++) {
+        final List<MyTransaction> transactionsList = remoteWallet.getTransactions();
+	    
+
+	    for (final MyTransaction transaction : transactionsList) {
+		    boolean isSending = true;
+		    Log.d("transactionHash: ", transaction.getHashAsString());
+		    BigInteger result = transaction.getResult();
+	    	List<TransactionOutput> transactionOutputs = transaction.getOutputs();
+	    	List<TransactionInput> transactionInputs = transaction.getInputs();	 
+		    List<Map.Entry<String, String>> addressValueEntryList = new ArrayList<Map.Entry<String, String>>();
+
+	    	if (result.signum() == 1) {
+		    	boolean isAddressPartofTransaction = false;
+		    	for (TransactionOutput transactionOutput : transactionOutputs) {
+		        	try {
+		        		com.google.bitcoin.core.Script script = transactionOutput.getScriptPubKey();
+		        		String addr = null;
+		        		if (script != null)
+		        			addr = script.getToAddress().toString();
+		        		
+		        		if (addr != null && addr.equals(address)) {
+		        			isAddressPartofTransaction = true;
+		        			break;
+		        		}
+		            } catch (ScriptException e) {
+		                e.printStackTrace();
+		            } catch (Exception e) {
+		                e.printStackTrace();
+		            }			    		
+		    	}
+		    	
+		    	if (transactionInputs != null && isAddressPartofTransaction) {
+			    	for (TransactionInput transactionInput : transactionInputs) {
+			        	try {
+			        		Address addr = transactionInput.getFromAddress();
+			        		if (addr != null) {
+			        		    Log.d("transactionInput: ", addr.toString());
+				        		MyTransactionInput ti = (MyTransactionInput)transactionInput;
+			        			isAddressPartofTransaction = true;
+			        			String value = WalletUtils.formatValue(ti.getValue()) + " BTC";
+			        			Map.Entry<String, String> entry = new AbstractMap.SimpleEntry<String, String>(addr.toString(), value);
+			        			addressValueEntryList.add(entry);
+			        		}
+			            } catch (ScriptException e) {
+			                e.printStackTrace();
+			            } catch (Exception e) {
+			                e.printStackTrace();
+			            }
+			    	}				
+				}	    		
+	    	} else {
+	    		isSending = false;
+		    	boolean isAddressPartofTransaction = false;
+		    	for (TransactionInput transactionInput : transactionInputs) {
+		        	try {
+		        		Address addr = transactionInput.getFromAddress();
+
+		        		if (addr != null && addr.toString().equals(address)) {
+		        			isAddressPartofTransaction = true;
+		        			break;
+		        		}
+		            } catch (ScriptException e) {
+		                e.printStackTrace();
+		            } catch (Exception e) {
+		                e.printStackTrace();
+		            }			    		
+		    	}
+		    	
+				if (transactionOutputs != null && isAddressPartofTransaction) {
+			    	for (TransactionOutput transactionOutput : transactionOutputs) {
+			        	try {
+			        		com.google.bitcoin.core.Script script = transactionOutput.getScriptPubKey();
+			        		Address addr = null;
+			        		if (script != null)
+			        			addr = script.getToAddress();
+			        		
+			        		if (addr != null) {
+			        		    Log.d("transactionOutput: ", addr.toString());
+			        			String value = WalletUtils.formatValue(transactionOutput.getValue()) + " BTC";
+			        			Map.Entry<String, String> entry = new AbstractMap.SimpleEntry<String, String>(addr.toString(), value);
+			        			addressValueEntryList.add(entry);			        			
+			        		}
+			            } catch (ScriptException e) {
+			                e.printStackTrace();
+			            } catch (Exception e) {
+			                e.printStackTrace();
+			            }
+			    	}
+				}
+	    	}
+	    
+        	if (addressValueEntryList.size() == 0)
+        		continue;        	
+        				
 			child = inflater.inflate(R.layout.tx_layout, null);
 
 	        ((TextView)child.findViewById(R.id.ts)).setTypeface(TypefaceUtil.getInstance(getActivity()).getGravityBoldTypeface());
 	        
-	        long ts = 0L;
-	        if(i == 0) {
-	        	ts = System.currentTimeMillis() / 1000;
-	        }
-	        else if(i == 1) {
-	        	ts = 1396857561;
-	        }
-	        else if(i == 2) {
-	        	ts = 1396457468;
-	        }
-	        else {
-	        	ts = 1394595077;
-	        }
+	        long ts = transaction.getTime().getTime()/1000;
 	        ((TextView)child.findViewById(R.id.ts)).setText(DateUtil.getInstance().formatted(ts));
 
-	        /*
-	        ((TextView)child.findViewById(R.id.type)).setTypeface(TypefaceUtil.getInstance(getActivity()).getGravityBoldTypeface());
-	        ((TextView)child.findViewById(R.id.type)).setTextColor(i % 2 == 0 ? BlockchainUtil.BLOCKCHAIN_GREEN : BlockchainUtil.BLOCKCHAIN_RED);
-	        ((TextView)child.findViewById(R.id.type)).setText(i % 2 == 0 ? "RECEIVED" : "SENT");
-	        */
-	        ((ImageView)child.findViewById(R.id.txbitmap)).setImageBitmap(TxBitmap.getInstance(getActivity()).createArrowsBitmap(200, i % 2 == 0 ? TxBitmap.RECEIVING : TxBitmap.SENDING, i % 2 == 0 ? 1 : 3));
-	        ((ImageView)child.findViewById(R.id.address)).setImageBitmap(TxBitmap.getInstance(getActivity()).createListBitmap(200, i % 2 == 0 ? 1 : 3));
-	        ((TextView)child.findViewById(R.id.amount)).setTypeface(TypefaceUtil.getInstance(getActivity()).getGravityBoldTypeface());
-	        ((TextView)child.findViewById(R.id.amount)).setTextColor(i % 2 == 0 ? BlockchainUtil.BLOCKCHAIN_GREEN : BlockchainUtil.BLOCKCHAIN_RED);
+	        if (isSending) {
+		        TxBitmap txBitmap = new TxBitmap(getActivity(), result, addressValueEntryList);
+		        ((ImageView)child.findViewById(R.id.txbitmap)).setImageBitmap(txBitmap.createArrowsBitmap(200, TxBitmap.SENDING, addressValueEntryList.size()));
+		        ((ImageView)child.findViewById(R.id.address)).setImageBitmap(txBitmap.createListBitmap(200));
+		        ((TextView)child.findViewById(R.id.amount)).setTypeface(TypefaceUtil.getInstance(getActivity()).getGravityBoldTypeface());
+		        ((TextView)child.findViewById(R.id.amount)).setTextColor(BlockchainUtil.BLOCKCHAIN_RED);
+	        	
+	        } else {
+		        TxBitmap txBitmap = new TxBitmap(getActivity(), result, addressValueEntryList);
+		        ((ImageView)child.findViewById(R.id.txbitmap)).setImageBitmap(txBitmap.createArrowsBitmap(200, TxBitmap.RECEIVING, addressValueEntryList.size()));
+		        ((ImageView)child.findViewById(R.id.address)).setImageBitmap(txBitmap.createListBitmap(200));
+		        ((TextView)child.findViewById(R.id.amount)).setTypeface(TypefaceUtil.getInstance(getActivity()).getGravityBoldTypeface());
+		        ((TextView)child.findViewById(R.id.amount)).setTextColor(BlockchainUtil.BLOCKCHAIN_GREEN);
+
+	        }
+	        
 	        if(isBTC) {
-				Log.d("List refresh sub", "isBTC");
-		        ((TextView)child.findViewById(R.id.amount)).setText(i % 2 == 0 ? "1.000 BTC" : "0.670 BTC");
+	        	Log.d("List refresh sub", "isBTC");
+		        ((TextView)child.findViewById(R.id.amount)).setText(WalletUtils.formatValue(result) + "BTC");
 	        }
 	        else {
 				Log.d("List refresh sub", "!isBTC");
-		        ((TextView)child.findViewById(R.id.amount)).setText(i % 2 == 0 ? (BlockchainUtil.BTC2Fiat("1.0") + " USD") : (BlockchainUtil.BTC2Fiat("0.67") + " USD"));
+		        ((TextView)child.findViewById(R.id.amount)).setText((BlockchainUtil.BTC2Fiat(WalletUtils.formatValue(result)) + " USD"));
 	        }
 	        
 			child.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(Intent.ACTION_VIEW , Uri.parse("https://blockchain.info/"));
+                    Intent intent = new Intent(Intent.ACTION_VIEW , Uri.parse("https://blockchain.info/tx/"+transaction.getHashAsString()));
                     startActivity(intent);
                 }
             });
