@@ -186,10 +186,10 @@ public class BalanceFragment extends Fragment   {
 
 	    	        LinearLayout progression_sent = ((LinearLayout)balance_extLayout.findViewById(R.id.progression_sent));
 	    	        ((TextView)progression_sent.findViewById(R.id.total_type)).setTypeface(TypefaceUtil.getInstance(getActivity()).getRobotoTypeface());
-	    	        ((TextView)progression_sent.findViewById(R.id.total_type)).setTextColor(Color.WHITE);
+	    	        ((TextView)progression_sent.findViewById(R.id.total_type)).setTextColor(Color.BLACK);
 	    	        ((TextView)progression_sent.findViewById(R.id.total_type)).setText("Total Sent");
 	    	        ((TextView)progression_sent.findViewById(R.id.amount)).setTypeface(TypefaceUtil.getInstance(getActivity()).getRobotoTypeface());
-	    	        ((TextView)progression_sent.findViewById(R.id.amount)).setTextColor(Color.WHITE);
+	    	        ((TextView)progression_sent.findViewById(R.id.amount)).setTextColor(Color.BLACK);
 	    	        ((TextView)progression_sent.findViewById(R.id.amount)).setText("2.5000 BTC");
 	    	        ((ProgressBar)progression_sent.findViewById(R.id.bar)).setMax(100);
 	    	        ((ProgressBar)progression_sent.findViewById(R.id.bar)).setProgress((int)((2.5 / (2.5 + 26.6223)) * 100));
@@ -197,10 +197,10 @@ public class BalanceFragment extends Fragment   {
 
 	    	        LinearLayout progression_received = ((LinearLayout)balance_extLayout.findViewById(R.id.progression_received));
 	    	        ((TextView)progression_received.findViewById(R.id.total_type)).setTypeface(TypefaceUtil.getInstance(getActivity()).getRobotoTypeface());
-	    	        ((TextView)progression_received.findViewById(R.id.total_type)).setTextColor(Color.WHITE);
+	    	        ((TextView)progression_received.findViewById(R.id.total_type)).setTextColor(Color.BLACK);
 	    	        ((TextView)progression_received.findViewById(R.id.total_type)).setText("Total Received");
 	    	        ((TextView)progression_received.findViewById(R.id.amount)).setTypeface(TypefaceUtil.getInstance(getActivity()).getRobotoTypeface());
-	    	        ((TextView)progression_received.findViewById(R.id.amount)).setTextColor(Color.WHITE);
+	    	        ((TextView)progression_received.findViewById(R.id.amount)).setTextColor(Color.BLACK);
 	    	        ((TextView)progression_received.findViewById(R.id.amount)).setText("26.6223 BTC");
 	    	        ((ProgressBar)progression_received.findViewById(R.id.bar)).setMax(100);
 	    	        ((ProgressBar)progression_received.findViewById(R.id.bar)).setProgress((int)((26.6223 / (2.5 + 26.6223)) * 100));
@@ -268,7 +268,7 @@ public class BalanceFragment extends Fragment   {
 		public long getItemId(int position) {
 			return position;
 		}
-		
+
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			
@@ -348,7 +348,7 @@ public class BalanceFragment extends Fragment   {
         LinearLayout progression_sent = ((LinearLayout)balance_extLayout.findViewById(R.id.progression_sent));
         ((TextView)progression_sent.findViewById(R.id.total_type)).setTypeface(TypefaceUtil.getInstance(getActivity()).getRobotoTypeface());
         ((TextView)progression_sent.findViewById(R.id.total_type)).setTextColor(Color.BLACK);
-        ((TextView)progression_sent.findViewById(R.id.total_type)).setText("Total Sent");
+        ((TextView)progression_sent.findViewById(R.id.total_type)).setText("TOTAL SENT");
         ((TextView)progression_sent.findViewById(R.id.amount)).setTypeface(TypefaceUtil.getInstance(getActivity()).getRobotoTypeface());
         ((TextView)progression_sent.findViewById(R.id.amount)).setTextColor(Color.BLACK);
         ((TextView)progression_sent.findViewById(R.id.amount)).setText("0.8251 BTC");
@@ -359,7 +359,7 @@ public class BalanceFragment extends Fragment   {
         LinearLayout progression_received = ((LinearLayout)balance_extLayout.findViewById(R.id.progression_received));
         ((TextView)progression_received.findViewById(R.id.total_type)).setTypeface(TypefaceUtil.getInstance(getActivity()).getRobotoTypeface());
         ((TextView)progression_received.findViewById(R.id.total_type)).setTextColor(Color.BLACK);
-        ((TextView)progression_received.findViewById(R.id.total_type)).setText("Total Received");
+        ((TextView)progression_received.findViewById(R.id.total_type)).setText("TOTAL RECEIVED");
         ((TextView)progression_received.findViewById(R.id.amount)).setTypeface(TypefaceUtil.getInstance(getActivity()).getRobotoTypeface());
         ((TextView)progression_received.findViewById(R.id.amount)).setTextColor(Color.BLACK);
         ((TextView)progression_received.findViewById(R.id.amount)).setText("2.5500 BTC");
