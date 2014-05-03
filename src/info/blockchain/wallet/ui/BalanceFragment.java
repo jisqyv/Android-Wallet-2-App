@@ -118,34 +118,37 @@ public class BalanceFragment extends Fragment   {
 	
 	
 	public void setAdapterContent() {
+		if (application == null)
+			return;
 		MyRemoteWallet remoteWallet = application.getRemoteWallet();
 		if (remoteWallet == null) {
 			return;
 		}
-				
-		Map<String, JSONObject> multiAddrBalancesRoot = remoteWallet.getMultiAddrBalancesRoot();
-		String[] activeAddresses = remoteWallet.getActiveAddresses();
+
 		
 		addressLabels = remoteWallet.getActiveAddresses();
+		if (addressLabels == null)
+			return;
+
 		addressAmounts = new String[addressLabels.length];
-		
-		boolean[] tmp = new boolean[addressLabels.length];
-		for (int i = 0; i < addressLabelTxsDisplayed.length; ++i) {
-			tmp[i] = addressLabelTxsDisplayed[i];			
-		}
-		for (int i = addressLabelTxsDisplayed.length; i < tmp.length; ++i) {
-			tmp[i] = false;
+		addressLabelTxsDisplayed = new boolean[addressLabels.length];
+		for (int i = 0; i < addressLabelTxsDisplayed.length; i++) {
+			addressLabelTxsDisplayed[i] = false;
 		}		
-		addressLabelTxsDisplayed = tmp;
-		
+
 		Map<String, String> labelMap = remoteWallet.getLabelMap();
-		for (int i = 0; i < activeAddresses.length; ++i) {
-			String address = activeAddresses[i];
-		    Log.d("activeAddress: ", address);
-		    JSONObject addressRoot = multiAddrBalancesRoot.get(address);	    
-		    BigInteger finalBalance = BigInteger.valueOf(((Number)addressRoot.get("final_balance")).longValue());
+
+		Map<String, JSONObject> multiAddrBalancesRoot = remoteWallet.getMultiAddrBalancesRoot();
+		for (int i = 0; i < addressLabels.length; i++) {
+			String address = addressLabels[i];
+
+		    if (multiAddrBalancesRoot != null) {
+			    JSONObject addressRoot = multiAddrBalancesRoot.get(address);	    
+			    BigInteger finalBalance = BigInteger.valueOf(((Number)addressRoot.get("final_balance")).longValue());
+			    addressAmounts[i] = WalletUtils.formatValue(finalBalance);
+		    }
+
 		    String label = labelMap.get(address);
-		    addressAmounts[i] = WalletUtils.formatValue(finalBalance);
 		    if (label != null) {
 		    	addressLabels[i] = label;	
 		    }
@@ -153,8 +156,6 @@ public class BalanceFragment extends Fragment   {
 
         tViewAmount1.setText(WalletUtils.formatValue(remoteWallet.getBalance()));
         tViewAmount2.setText(BlockchainUtil.BTC2Fiat(WalletUtils.formatValue(remoteWallet.getBalance())));
-        //adapter = new TransactionAdapter();
-        //txList.setAdapter(adapter);
     }
 	
     @Override
@@ -196,11 +197,11 @@ public class BalanceFragment extends Fragment   {
 
         tViewAmount1 = (TextView)rootView.findViewById(R.id.amount1);
         tViewAmount1.setTypeface(TypefaceUtil.getInstance(getActivity()).getGravityBoldTypeface());
-        tViewAmount1.setText("24.1223");
+        tViewAmount1.setText("0");
 
         tViewAmount2 = (TextView)rootView.findViewById(R.id.amount2);
         tViewAmount1.setTypeface(TypefaceUtil.getInstance(getActivity()).getRobotoLightTypeface());
-        tViewAmount2.setText("$" + BlockchainUtil.BTC2Fiat("24.1223"));
+        tViewAmount2.setText("$" + BlockchainUtil.BTC2Fiat("0"));
 
         txList = (ListView)rootView.findViewById(R.id.txList);
         addressLabels = new String[] {
@@ -220,8 +221,8 @@ public class BalanceFragment extends Fragment   {
         		"20.0001",
         		"3.45",
         		"0.00227",
-                };
-
+                }; 
+        
         adapter = new TransactionAdapter();
         txList.setAdapter(adapter);
         txList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -388,7 +389,11 @@ public class BalanceFragment extends Fragment   {
     	final LinearLayout balance_extHiddenLayout = (LinearLayout)view.findViewById(R.id.balance_ext_hidden);
 
     	MyRemoteWallet remoteWallet = application.getRemoteWallet();
-    	final String[] activeAddresses = remoteWallet.getActiveAddresses();
+		if (remoteWallet == null) {
+			return;
+		}
+
+	    final String[] activeAddresses = remoteWallet.getActiveAddresses();
     	final String address = activeAddresses[position];
 
         balance_extLayout.setOnLongClickListener(new View.OnLongClickListener() {
@@ -424,7 +429,9 @@ public class BalanceFragment extends Fragment   {
 		final JSONObject addressRoot = multiAddrBalancesRoot.get(address);
 	    final BigInteger totalReceived = BigInteger.valueOf(((Number)addressRoot.get("total_received")).longValue());
 	    final BigInteger totalSent = BigInteger.valueOf(((Number)addressRoot.get("total_sent")).longValue());
+	    Log.d("totalReceived: ", "totalReceived: " + totalReceived);
 
+	    Log.d("totalSent: ", "totalSent: " + totalSent);
         LinearLayout progression_sent = ((LinearLayout)balance_extLayout.findViewById(R.id.progression_sent));
         ((TextView)progression_sent.findViewById(R.id.total_type)).setTypeface(TypefaceUtil.getInstance(getActivity()).getRobotoTypeface());
         ((TextView)progression_sent.findViewById(R.id.total_type)).setTextColor(Color.BLACK);
@@ -443,7 +450,7 @@ public class BalanceFragment extends Fragment   {
         ((TextView)progression_received.findViewById(R.id.amount)).setText(WalletUtils.formatValue(totalReceived) + " BTC");
         ((ProgressBar)progression_received.findViewById(R.id.bar)).setMax(100);
 
-        if (totalSent.longValue() > 0 || totalReceived.longValue() > 0) {        	
+        if (totalSent.doubleValue() > 0 || totalReceived.doubleValue() > 0) {        	
             ((ProgressBar)progression_sent.findViewById(R.id.bar)).setProgress((int)((totalSent.doubleValue() / (totalSent.doubleValue() + totalReceived.doubleValue())) * 100));
             ((ProgressBar)progression_sent.findViewById(R.id.bar)).setProgressDrawable(getResources().getDrawable(R.drawable.progress_red2));
             ((ProgressBar)progression_received.findViewById(R.id.bar)).setProgress((int)((totalReceived.doubleValue() / (totalSent.doubleValue() + totalReceived.doubleValue())) * 100));

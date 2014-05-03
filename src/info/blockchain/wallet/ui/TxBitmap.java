@@ -135,12 +135,18 @@ public class TxBitmap {
 		paintAmount.setTextSize((int)(szAmount * scale + 0.5f));
 		paintAddressLabel.setTypeface(TypefaceUtil.getInstance(context).getRobotoBoldTypeface());
 
-		for(int i = 0; i < branches; i++) {
-			Map.Entry<String, String> addressValueEntry = addressValueEntryList.get(i);
-			
-    		canvas.drawText(addressValueEntry.getKey(), fX, fY + (vOffset * i) + vXtraOffset, paintAddressLabel);
-			canvas.drawText(addressValueEntry.getValue(), fX, fY + (vOffset * i) + vOffsetAmount + vXtraOffset, paintAmount);
-
+		if(scale <= REG_RES) {
+			for(int i = 0; i < branches; i++) {
+				Map.Entry<String, String> addressValueEntry = addressValueEntryList.get(i);				
+	    		canvas.drawText(addressValueEntry.getKey().substring(0, 7)+"...", fX, fY + (vOffset * i) + vXtraOffset, paintAddressLabel);
+				canvas.drawText(addressValueEntry.getValue(), fX, fY + (vOffset * i) + vOffsetAmount + vXtraOffset, paintAmount);
+			}
+		} else {
+			for(int i = 0; i < branches; i++) {
+				Map.Entry<String, String> addressValueEntry = addressValueEntryList.get(i);				
+	    		canvas.drawText(addressValueEntry.getKey().substring(0, 15)+"...", fX, fY + (vOffset * i) + vXtraOffset, paintAddressLabel);
+				canvas.drawText(addressValueEntry.getValue(), fX, fY + (vOffset * i) + vOffsetAmount + vXtraOffset, paintAmount);
+			}			
 		}
 		/*
 		if(scale <= REG_RES) {
