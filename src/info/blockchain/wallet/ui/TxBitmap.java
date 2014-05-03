@@ -140,26 +140,7 @@ public class TxBitmap {
 				canvas.drawText(addressValueEntry.getValue(), fX, fY + (vOffset * i) + vOffsetAmount + vXtraOffset, paintAmount);
 			}			
 		}
-		/*
-		if(scale <= REG_RES) {
-			canvas.drawText("1HVVe8oF1...", fX, fY + vXtraOffset, paintAddressBTC);
-		}
-		else {
-			canvas.drawText("1HVVe8oF1Bc51234...", fX, fY + vXtraOffset, paintAddressBTC);
-		}
-		
-		if(branches > 1) {
-			canvas.drawText("0.1020 BTC", fX, fY + vOffsetAmount + vXtraOffset, paintAmount);
-		}
 
-    	if(branches > 1) {
-    		int remaining_branches = branches - 1;
-    		for(int i = 0; i < remaining_branches; i++) {
-        		canvas.drawText("A test", fX, fY + (vOffset * (i + 1)) + vXtraOffset, paintAddressLabel);
-    			canvas.drawText("0.32 BTC", fX, fY + (vOffset * (i + 1)) + vOffsetAmount + vXtraOffset, paintAmount);
-    		}
-    	}
-    	//*/
     	return bm;
     }
 

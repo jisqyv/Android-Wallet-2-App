@@ -136,8 +136,8 @@ public class BalanceFragment extends Fragment   {
 
 		    if (multiAddrBalancesRoot != null) {
 			    JSONObject addressRoot = multiAddrBalancesRoot.get(address);	    
-			    BigInteger finalBalance = BigInteger.valueOf(((Number)addressRoot.get("final_balance")).longValue());
-			    addressAmounts[i] = WalletUtils.formatValue(finalBalance);
+			    BigInteger finalBalance = BigInteger.valueOf(((Number)addressRoot.get("final_balance")).longValue());			    
+			    addressAmounts[i] = BlockchainUtil.formatBitcoin(finalBalance);
 		    }
 
 		    String label = labelMap.get(address);
@@ -146,8 +146,9 @@ public class BalanceFragment extends Fragment   {
 		    }
 	    }
 
-        tViewAmount1.setText(WalletUtils.formatValue(remoteWallet.getBalance()));
-        tViewAmount2.setText("$" + BlockchainUtil.BTC2Fiat(WalletUtils.formatValue(remoteWallet.getBalance())));
+		BigInteger balance = remoteWallet.getBalance();
+        tViewAmount1.setText(BlockchainUtil.formatBitcoin(balance));
+        tViewAmount2.setText("$" + BlockchainUtil.BTC2Fiat(WalletUtils.formatValue(balance)));
     }
 	
     @Override
@@ -450,7 +451,7 @@ public class BalanceFragment extends Fragment   {
         ((TextView)progression_sent.findViewById(R.id.total_type)).setText("TOTAL SENT");
         ((TextView)progression_sent.findViewById(R.id.amount)).setTypeface(TypefaceUtil.getInstance(getActivity()).getRobotoTypeface());
         ((TextView)progression_sent.findViewById(R.id.amount)).setTextColor(0xFF9b9b9b);
-        ((TextView)progression_sent.findViewById(R.id.amount)).setText(WalletUtils.formatValue(totalSent) + " BTC");
+        ((TextView)progression_sent.findViewById(R.id.amount)).setText(BlockchainUtil.formatBitcoin(totalSent) + " BTC");
         ((ProgressBar)progression_sent.findViewById(R.id.bar)).setMax(100);
 
         LinearLayout progression_received = ((LinearLayout)balance_extLayout.findViewById(R.id.progression_received));
@@ -459,7 +460,7 @@ public class BalanceFragment extends Fragment   {
         ((TextView)progression_received.findViewById(R.id.total_type)).setText("TOTAL RECEIVED");
         ((TextView)progression_received.findViewById(R.id.amount)).setTypeface(TypefaceUtil.getInstance(getActivity()).getRobotoTypeface());
         ((TextView)progression_received.findViewById(R.id.amount)).setTextColor(0xFF9b9b9b);
-        ((TextView)progression_received.findViewById(R.id.amount)).setText(WalletUtils.formatValue(totalReceived) + " BTC");
+        ((TextView)progression_received.findViewById(R.id.amount)).setText(BlockchainUtil.formatBitcoin(totalReceived) + " BTC");
         ((ProgressBar)progression_received.findViewById(R.id.bar)).setMax(100);
 
         if (totalSent.doubleValue() > 0 || totalReceived.doubleValue() > 0) {        	
@@ -511,7 +512,7 @@ public class BalanceFragment extends Fragment   {
 			        		    Log.d("transactionInput: ", addr.toString());
 				        		MyTransactionInput ti = (MyTransactionInput)transactionInput;
 			        			isAddressPartofTransaction = true;
-			        			String value = WalletUtils.formatValue(ti.getValue()) + " BTC";
+			        			String value = BlockchainUtil.formatBitcoin(ti.getValue()) + " BTC";
 			        			Map.Entry<String, String> entry = new AbstractMap.SimpleEntry<String, String>(addr.toString(), value);
 			        			addressValueEntryList.add(entry);
 			        		}
@@ -550,7 +551,7 @@ public class BalanceFragment extends Fragment   {
 			        		
 			        		if (addr != null) {
 			        		    Log.d("transactionOutput: ", addr.toString());
-			        			String value = WalletUtils.formatValue(transactionOutput.getValue()) + " BTC";
+			        			String value = BlockchainUtil.formatBitcoin(transactionOutput.getValue()) + " BTC";
 			        			Map.Entry<String, String> entry = new AbstractMap.SimpleEntry<String, String>(addr.toString(), value);
 			        			addressValueEntryList.add(entry);			        			
 			        		}
@@ -589,7 +590,7 @@ public class BalanceFragment extends Fragment   {
 	        
 	        if(isBTC) {
 	        	Log.d("List refresh sub", "isBTC");
-		        ((TextView)child.findViewById(R.id.amount)).setText(WalletUtils.formatValue(result) + "BTC");
+		        ((TextView)child.findViewById(R.id.amount)).setText(BlockchainUtil.formatBitcoin(result) + " BTC");
 	        }
 	        else {
 				Log.d("List refresh sub", "!isBTC");

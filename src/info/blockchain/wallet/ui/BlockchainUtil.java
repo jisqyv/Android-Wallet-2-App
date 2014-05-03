@@ -1,6 +1,9 @@
 package info.blockchain.wallet.ui;
 
+import java.math.BigInteger;
 import java.text.DecimalFormat;
+
+import piuk.blockchain.android.util.WalletUtils;
 
 public class BlockchainUtil {
 	
@@ -47,6 +50,11 @@ public class BlockchainUtil {
 
 	public static double Fiat2BTC(double fiat)	{
 		return fiat / BTC_RATE;
+	}
+	
+	public static String formatBitcoin(BigInteger value) {
+        DecimalFormat df = new DecimalFormat("####0.0000");
+		return df.format(Double.parseDouble(WalletUtils.formatValue(value)));
 	}
 
 }
