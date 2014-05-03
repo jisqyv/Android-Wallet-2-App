@@ -104,6 +104,8 @@ public class SendFragment extends Fragment   {
     private ImageView ivPhoneContacts = null;
 
     private Button btSend = null;
+    private ImageView ivCheck = null;
+    private TextView tvSentPrompt = null;
     
     private HashMap<String,String> magicData = null;
     private ArrayList<String> keys = null;
@@ -132,6 +134,10 @@ public class SendFragment extends Fragment   {
         tvAddress.setVisibility(View.INVISIBLE);
         
         btSend = (Button)rootView.findViewById(R.id.send);
+        ivCheck = ((ImageButton)rootView.findViewById(R.id.sent_check));
+        ivCheck.setVisibility(View.GONE);
+        tvSentPrompt = (TextView)rootView.findViewById(R.id.sent_prompt);
+        tvSentPrompt.setVisibility(View.GONE);
 
         tvCurrency = (TextView)rootView.findViewById(R.id.currency);
         tvCurrency.setTypeface(TypefaceUtil.getInstance(getActivity()).getBTCTypeface());
@@ -183,10 +189,20 @@ public class SendFragment extends Fragment   {
         btSend.setVisibility(View.INVISIBLE);
         btSend.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
+            	
+            	edAddress.setText("");
+            	edAmount1.setText("");
+            	tvAmount2.setText("");
+
         		Toast.makeText(getActivity(), "Send", Toast.LENGTH_SHORT).show();
+        		/*
         		btSend.setTextColor(BlockchainUtil.BLOCKCHAIN_GREEN);
         		btSend.setText(Character.toString((char)0x2713));
 	        	btSend.setClickable(false);
+	        	*/
+        		btSend.setVisibility(View.GONE);
+                ivCheck.setVisibility(View.VISIBLE);
+                tvSentPrompt.setVisibility(View.VISIBLE);
             }
         });
 
@@ -204,10 +220,10 @@ public class SendFragment extends Fragment   {
 		        	tvAmountBis.setVisibility(View.VISIBLE);
 		        	
 		        	tvAddress.setText(edAddress.getText().toString());
-		        	tvArrow.setText(Character.toString((char)0x2193));
+		        	tvArrow.setText(Character.toString((char)0x2192));
 
 		        	String amount1 = edAmount1.getText().toString();
-		        	String amount2 = tvAmount2.getText().toString().substring(1);
+		        	String amount2 = tvAmount2.getText().toString().substring(0, tvAmount2.getText().toString().length() - 4);
 		        	if(isBTC) {
 		        		amount1 += " BTC";
 		        		amount2 += " USD";
@@ -216,23 +232,32 @@ public class SendFragment extends Fragment   {
 		        		amount1 += " USD";
 		        		amount2 += " BTC";
 		        	}
-		        	amount2 = "(" + amount2 + ")";
 		        	SpannableStringBuilder a1 = new SpannableStringBuilder(amount1);
 		        	SpannableStringBuilder a2 = new SpannableStringBuilder(amount2);
 		        	a1.setSpan(new SuperscriptSpan(), amount1.length() - 4, amount1.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 		        	a1.setSpan(new RelativeSizeSpan((float)0.75), amount1.length() - 4, amount1.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-		        	a2.setSpan(new SuperscriptSpan(), amount2.length() - 5, amount2.length() - 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-		        	a2.setSpan(new RelativeSizeSpan((float)0.75), amount2.length() - 5, amount2.length() - 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+		        	a2.setSpan(new SuperscriptSpan(), amount2.length() - 4, amount2.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+		        	a2.setSpan(new RelativeSizeSpan((float)0.75), amount2.length() - 4, amount2.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 		        	tvAmount.setText(a1);
 		        	tvAmountBis.setText(a2);
-		        	
-		        	btSend.setVisibility(View.VISIBLE);
-		        	btSend.setClickable(true);
+
+	            	btSend.setVisibility(View.VISIBLE);
 
 		        }
 		        return false;
 		    }
 		});
+
+        edAmount1 = ((EditText)rootView.findViewById(R.id.amount1));
+        edAmount1.setOnClickListener(new Button.OnClickListener() {
+            public void onClick(View v) {
+
+            	if(ivCheck.getVisibility() == View.VISIBLE) {
+            		clearSent();
+            	}
+            		
+            }
+        });
 
         edAddress = ((EditText)rootView.findViewById(R.id.address));
         edAddress.setOnClickListener(new Button.OnClickListener() {
@@ -242,6 +267,10 @@ public class SendFragment extends Fragment   {
             		
             		displayMagicList();
 
+            	}
+
+            	if(ivCheck.getVisibility() == View.VISIBLE) {
+            		clearSent();
             	}
             		
             }
@@ -321,8 +350,10 @@ public class SendFragment extends Fragment   {
                 tvAddress.setVisibility(View.INVISIBLE);
 
                 btSend.setText("Send money");
-                btSend.setTextColor(0xFF000000);
                 btSend.setVisibility(View.INVISIBLE);
+
+                ivCheck.setVisibility(View.GONE);
+                tvSentPrompt.setVisibility(View.GONE);
 
             	if(!isMagic) {
                 	displayMagicList();
@@ -399,7 +430,7 @@ public class SendFragment extends Fragment   {
             	tvCustomSend.setBackgroundColor(color_spend_selected);
             	tvSharedSend.setBackgroundColor(color_spend_unselected);
             	*/
-    			doCustomSend();
+//    			doCustomSend();
 
             	/*
                 switch (event.getAction())	{
@@ -1062,6 +1093,23 @@ public class SendFragment extends Fragment   {
 //    	intent.setType(ContactsContract.CommonDataKinds.Email.CONTENT_TYPE);
     	intent.setData(ContactsContract.Contacts.CONTENT_URI);
     	startActivityForResult(intent, PICK_CONTACT);
+    }
+
+    private void clearSent()	{
+        tvAmount.setText("");
+        tvAmount.setVisibility(View.INVISIBLE);
+        tvAmountBis.setText("");
+        tvAmountBis.setVisibility(View.INVISIBLE);
+        tvArrow.setText("");
+        tvArrow.setVisibility(View.INVISIBLE);
+        tvAddress.setText("");
+        tvAddress.setVisibility(View.INVISIBLE);
+
+        btSend.setText("Send money");
+        btSend.setVisibility(View.INVISIBLE);
+
+        ivCheck.setVisibility(View.GONE);
+        tvSentPrompt.setVisibility(View.GONE);
     }
 
 }

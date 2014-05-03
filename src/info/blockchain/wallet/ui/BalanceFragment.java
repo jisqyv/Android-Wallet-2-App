@@ -227,6 +227,7 @@ public class BalanceFragment extends Fragment   {
                     tViewAmount2.setText("$" + tmp);
             	}
             	isBTC = isBTC ? false : true;
+
             	adapter.notifyDataSetChanged();
             }
         });
@@ -477,7 +478,6 @@ public class BalanceFragment extends Fragment   {
         		toast.setDuration(Toast.LENGTH_LONG);
         		toast.setView(toastView);
         		toast.show();
-            	
 
                 return true;
             }
