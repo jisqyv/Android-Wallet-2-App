@@ -1,6 +1,6 @@
 package info.blockchain.wallet.ui;
 
-import java.util.Random;
+import java.security.SecureRandom;
 
 public class RandomPasswordGenerator	{
 
@@ -336,19 +336,31 @@ public class RandomPasswordGenerator	{
 
 		public String getPassword()	{
 
-			Random r = new Random();
+			byte[] bytes;
+			SecureRandom sr = new SecureRandom();
 
-			int rint1 = r.nextInt(words.length);
-			int rint2 = r.nextInt(words.length);
+			bytes = new byte[4];
+			sr.nextBytes(bytes);
+			int rint1 = array2Int(bytes) % words.length;
 
-			while(rint1 == rint2)	{
-				rint2 = r.nextInt(words.length);
-			}
-
-			int rint3 = r.nextInt(digits.length);
-			int rint4 = r.nextInt(digits.length);
+			bytes = new byte[4];
+			sr.nextBytes(bytes);
+			int rint2 = array2Int(bytes) % words.length;
+			
+			bytes = new byte[4];
+			sr.nextBytes(bytes);
+			int rint3 = array2Int(bytes) % digits.length;
+			
+			bytes = new byte[4];
+			sr.nextBytes(bytes);
+			int rint4 = array2Int(bytes) % digits.length;
 
 			return words[rint1] + digits[rint3] + digits[rint4] + words[rint2];
-	}
+		}
+
+		private int array2Int(byte[] bytes)	{
+			int ret = ((bytes[0] & 0xff) << 24) | ((bytes[1] & 0xff) << 16) | ((bytes[2] & 0xff) << 8)  | (bytes[3] & 0xff);
+			return (ret < 0) ? (ret * -1) : ret;
+		}
 
 }
