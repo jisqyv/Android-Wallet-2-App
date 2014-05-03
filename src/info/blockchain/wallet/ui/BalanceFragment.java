@@ -204,25 +204,7 @@ public class BalanceFragment extends Fragment   {
         tViewAmount2.setText("$" + BlockchainUtil.BTC2Fiat("0"));
 
         txList = (ListView)rootView.findViewById(R.id.txList);
-        addressLabels = new String[] {
-        		"1AMdUn91Z1tAhy7XwF38BfQ5C63pmcdQH3",
-        		"Cold storage",
-        		"Merchant account",
-        		"1Cr8FHbwZkcmUWTdZuzukYeSbaSGivUEU6",
-                };
-        addressLabelTxsDisplayed = new boolean[] {
-        		false,
-        		false,
-        		false,
-        		false,
-                };
-        addressAmounts = new String[] {
-        		"0.67",
-        		"20.0001",
-        		"3.45",
-        		"0.00227",
-                }; 
-        
+
         adapter = new TransactionAdapter();
         txList.setAdapter(adapter);
         txList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -234,10 +216,12 @@ public class BalanceFragment extends Fragment   {
     	    	if(balance_extHiddenLayout.getVisibility() == View.VISIBLE) {
     	    		
     	    		addressLabelTxsDisplayed[position] = false;
-    	    		
+
     	    		if(balance_extHiddenLayout.getChildCount() > 1) {
         		        balance_extHiddenLayout.removeViews(1, balance_extHiddenLayout.getChildCount() - 1);
     	    		}
+
+    	            ((ImageView)view.findViewById(R.id.address_type)).setImageResource(R.drawable.address_inactive);
 
     		        balance_extLayout.startAnimation(slideUp);
     		        balance_extLayout.setVisibility(View.GONE);
@@ -245,6 +229,9 @@ public class BalanceFragment extends Fragment   {
     	    	}
     	    	else {
     	    		addressLabelTxsDisplayed[position] = true;
+    	    		
+    	            ((ImageView)view.findViewById(R.id.address_type)).setImageResource(R.drawable.address_active);
+
     	    		doDisplaySubList(view, position);
     	    	}
             }
@@ -266,6 +253,28 @@ public class BalanceFragment extends Fragment   {
 			        balance_extLayout.startAnimation(slideDown);
 			        
 	    	        ((LinearLayout)rootView.findViewById(R.id.divider)).setVisibility(View.GONE);
+	    	        
+	    	        LinearLayout progression_sent = ((LinearLayout)balance_extLayout.findViewById(R.id.progression_sent));
+	    	        ((TextView)progression_sent.findViewById(R.id.total_type)).setTypeface(TypefaceUtil.getInstance(getActivity()).getRobotoTypeface());
+	    	        ((TextView)progression_sent.findViewById(R.id.total_type)).setTextColor(Color.BLACK);
+	    	        ((TextView)progression_sent.findViewById(R.id.total_type)).setText("Total Sent");
+	    	        ((TextView)progression_sent.findViewById(R.id.amount)).setTypeface(TypefaceUtil.getInstance(getActivity()).getRobotoTypeface());
+	    	        ((TextView)progression_sent.findViewById(R.id.amount)).setTextColor(Color.BLACK);
+	    	        ((TextView)progression_sent.findViewById(R.id.amount)).setText("2.5000 BTC");
+	    	        ((ProgressBar)progression_sent.findViewById(R.id.bar)).setMax(100);
+	    	        ((ProgressBar)progression_sent.findViewById(R.id.bar)).setProgress((int)((2.5 / (2.5 + 26.6223)) * 100));
+	    	        ((ProgressBar)progression_sent.findViewById(R.id.bar)).setProgressDrawable(getResources().getDrawable(R.drawable.progress_red));
+
+	    	        LinearLayout progression_received = ((LinearLayout)balance_extLayout.findViewById(R.id.progression_received));
+	    	        ((TextView)progression_received.findViewById(R.id.total_type)).setTypeface(TypefaceUtil.getInstance(getActivity()).getRobotoTypeface());
+	    	        ((TextView)progression_received.findViewById(R.id.total_type)).setTextColor(Color.BLACK);
+	    	        ((TextView)progression_received.findViewById(R.id.total_type)).setText("Total Received");
+	    	        ((TextView)progression_received.findViewById(R.id.amount)).setTypeface(TypefaceUtil.getInstance(getActivity()).getRobotoTypeface());
+	    	        ((TextView)progression_received.findViewById(R.id.amount)).setTextColor(Color.BLACK);
+	    	        ((TextView)progression_received.findViewById(R.id.amount)).setText("26.6223 BTC");
+	    	        ((ProgressBar)progression_received.findViewById(R.id.bar)).setMax(100);
+	    	        ((ProgressBar)progression_received.findViewById(R.id.bar)).setProgress((int)((26.6223 / (2.5 + 26.6223)) * 100));
+	    	        ((ProgressBar)progression_received.findViewById(R.id.bar)).setProgressDrawable(getResources().getDrawable(R.drawable.progress_green));
 		    	}
 		    }
 
@@ -326,7 +335,12 @@ public class BalanceFragment extends Fragment   {
 
 		@Override
 		public int getCount() {
-			return addressLabels.length;
+			if(addressLabels != null) {
+				return addressLabels.length;
+			}
+			else {
+				return 0;
+			}
 		}
 
 		@Override
@@ -396,17 +410,17 @@ public class BalanceFragment extends Fragment   {
 	    final String[] activeAddresses = remoteWallet.getActiveAddresses();
     	final String address = activeAddresses[position];
 
-        balance_extLayout.setOnLongClickListener(new View.OnLongClickListener() {
-      	  public boolean onLongClick(View view) {
-//    			Toast.makeText(PaymentFragment.this.getActivity(), "Address copied:" + input_address, Toast.LENGTH_LONG).show();
+    	ImageView qr_icon = ((ImageView)balance_extLayout.findViewById(R.id.balance_qr_icon));
+        qr_icon.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
 
-    			android.content.ClipboardManager clipboard = (android.content.ClipboardManager)getActivity().getSystemService(android.content.Context.CLIPBOARD_SERVICE);
-      		    android.content.ClipData clip = android.content.ClipData.newPlainText("Address", address);
-      		    
+      			android.content.ClipboardManager clipboard = (android.content.ClipboardManager)getActivity().getSystemService(android.content.Context.CLIPBOARD_SERVICE);
+      		    android.content.ClipData clip = android.content.ClipData.newPlainText("Address", "1NMNj5tcwKkqRyHQepxfh1YvLVvBc3Jruq");
       		    clipboard.setPrimaryClip(clip);
-     			Toast.makeText(getActivity(), "Address copied to clipboard:" + address, Toast.LENGTH_LONG).show();
+     			Toast.makeText(getActivity(), "Address copied to clipboard:" + "1NMNj5tcwKkqRyHQepxfh1YvLVvBc3Jruq", Toast.LENGTH_LONG).show();
 
-            	Bitmap bm = generateQRCode(address);
+            	Bitmap bm = generateQRCode("1NMNj5tcwKkqRyHQepxfh1YvLVvBc3Jruq");
 
             	View toastView = getActivity().getLayoutInflater().inflate(R.layout.toast, (ViewGroup)getActivity().findViewById(R.id.toastLayout));
         		ImageView imageView = (ImageView)toastView.findViewById(R.id.image);
@@ -419,10 +433,11 @@ public class BalanceFragment extends Fragment   {
         		toast.setDuration(Toast.LENGTH_LONG);
         		toast.setView(toastView);
         		toast.show();
+            	
 
-        		return true;
-      	  }
-      	});
+                return true;
+            }
+        });
 
 		final Map<String, JSONObject> multiAddrBalancesRoot = remoteWallet.getMultiAddrBalancesRoot();
 
@@ -434,19 +449,19 @@ public class BalanceFragment extends Fragment   {
 	    Log.d("totalSent: ", "totalSent: " + totalSent);
         LinearLayout progression_sent = ((LinearLayout)balance_extLayout.findViewById(R.id.progression_sent));
         ((TextView)progression_sent.findViewById(R.id.total_type)).setTypeface(TypefaceUtil.getInstance(getActivity()).getRobotoTypeface());
-        ((TextView)progression_sent.findViewById(R.id.total_type)).setTextColor(Color.BLACK);
+        ((TextView)progression_sent.findViewById(R.id.total_type)).setTextColor(0xFF9b9b9b);
         ((TextView)progression_sent.findViewById(R.id.total_type)).setText("TOTAL SENT");
         ((TextView)progression_sent.findViewById(R.id.amount)).setTypeface(TypefaceUtil.getInstance(getActivity()).getRobotoTypeface());
-        ((TextView)progression_sent.findViewById(R.id.amount)).setTextColor(Color.BLACK);
+        ((TextView)progression_sent.findViewById(R.id.amount)).setTextColor(0xFF9b9b9b);
         ((TextView)progression_sent.findViewById(R.id.amount)).setText(WalletUtils.formatValue(totalSent) + " BTC");
         ((ProgressBar)progression_sent.findViewById(R.id.bar)).setMax(100);
 
         LinearLayout progression_received = ((LinearLayout)balance_extLayout.findViewById(R.id.progression_received));
         ((TextView)progression_received.findViewById(R.id.total_type)).setTypeface(TypefaceUtil.getInstance(getActivity()).getRobotoTypeface());
-        ((TextView)progression_received.findViewById(R.id.total_type)).setTextColor(Color.BLACK);
+        ((TextView)progression_received.findViewById(R.id.total_type)).setTextColor(0xFF9b9b9b);
         ((TextView)progression_received.findViewById(R.id.total_type)).setText("TOTAL RECEIVED");
         ((TextView)progression_received.findViewById(R.id.amount)).setTypeface(TypefaceUtil.getInstance(getActivity()).getRobotoTypeface());
-        ((TextView)progression_received.findViewById(R.id.amount)).setTextColor(Color.BLACK);
+        ((TextView)progression_received.findViewById(R.id.amount)).setTextColor(0xFF9b9b9b);
         ((TextView)progression_received.findViewById(R.id.amount)).setText(WalletUtils.formatValue(totalReceived) + " BTC");
         ((ProgressBar)progression_received.findViewById(R.id.bar)).setMax(100);
 

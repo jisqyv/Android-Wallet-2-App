@@ -79,7 +79,7 @@ public class SetupActivity extends Activity		{
 		
 		if(resultCode == Activity.RESULT_OK && requestCode == ZBAR_SCANNER_REQUEST)	{
 			String strResult = data.getStringExtra(ZBarConstants.SCAN_RESULT);
-            Toast.makeText(this, strResult, Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, strResult, Toast.LENGTH_SHORT).show();
             
         	handleQRCode(strResult);
 
@@ -145,7 +145,7 @@ public class SetupActivity extends Activity		{
 							}
 
 							final String password = new String(Hex.decode(sharedKeyAndPassword[1]), "UTF-8");
-							Toast.makeText(application, password, Toast.LENGTH_LONG).show();
+//							Toast.makeText(application, password, Toast.LENGTH_LONG).show();
 
 							application.clearWallet();
 
