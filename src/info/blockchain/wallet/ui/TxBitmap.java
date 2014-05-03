@@ -54,14 +54,6 @@ public class TxBitmap {
 
     public Bitmap createArrowsBitmap(int width, int type, int branches) {
 
-    	/*
-		Resources resources = context.getResources();
-		float scale = resources.getDisplayMetrics().density;
-		if(scale > REG_RES) {
-			width += 30;
-		}
-		*/
-
     	if(type == SENDING) {
     		return tx_arrows(width, type, branches);
     	}
@@ -238,16 +230,20 @@ public class TxBitmap {
 
         canvas.drawPath(path, paint);
     }
-	public BigInteger getResult() {
+
+    public BigInteger getResult() {
 		return result;
 	}
-	public void setResult(BigInteger result) {
+
+    public void setResult(BigInteger result) {
 		this.result = result;
 	}
-	public List<Map.Entry<String, String>> getAddressValueEntryList() {
+
+    public List<Map.Entry<String, String>> getAddressValueEntryList() {
 		return addressValueEntryList;
 	}
-	public void setAddressValueEntryList(List<Map.Entry<String, String>> addressValueEntryList) {
+
+    public void setAddressValueEntryList(List<Map.Entry<String, String>> addressValueEntryList) {
 		this.addressValueEntryList = addressValueEntryList;
 	}
 
