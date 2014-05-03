@@ -1,9 +1,5 @@
 package info.blockchain.wallet.ui;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.util.AbstractMap;
@@ -38,8 +34,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.graphics.Color;
 import android.graphics.Bitmap;
-import android.graphics.Bitmap.CompressFormat;
-import android.graphics.drawable.BitmapDrawable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -115,8 +109,7 @@ public class BalanceFragment extends Fragment   {
 			setAdapterContent();
 		};
 	};
-	
-	
+
 	public void setAdapterContent() {
 		if (application == null)
 			return;
@@ -125,7 +118,6 @@ public class BalanceFragment extends Fragment   {
 			return;
 		}
 
-		
 		addressLabels = remoteWallet.getActiveAddresses();
 		if (addressLabels == null)
 			return;
@@ -155,7 +147,7 @@ public class BalanceFragment extends Fragment   {
 	    }
 
         tViewAmount1.setText(WalletUtils.formatValue(remoteWallet.getBalance()));
-        tViewAmount2.setText(BlockchainUtil.BTC2Fiat(WalletUtils.formatValue(remoteWallet.getBalance())));
+        tViewAmount2.setText("$" + BlockchainUtil.BTC2Fiat(WalletUtils.formatValue(remoteWallet.getBalance())));
     }
 	
     @Override
