@@ -473,10 +473,9 @@ public class BalanceFragment extends Fragment   {
         LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         final List<MyTransaction> transactionsList = remoteWallet.getTransactions();
-	    
 
+	    boolean isSending = true;
 	    for (final MyTransaction transaction : transactionsList) {
-		    boolean isSending = true;
 		    Log.d("transactionHash: ", transaction.getHashAsString());
 		    BigInteger result = transaction.getResult();
 	    	List<TransactionOutput> transactionOutputs = transaction.getOutputs();
@@ -484,6 +483,7 @@ public class BalanceFragment extends Fragment   {
 		    List<Map.Entry<String, String>> addressValueEntryList = new ArrayList<Map.Entry<String, String>>();
 
 	    	if (result.signum() == 1) {
+			    isSending = false;
 		    	boolean isAddressPartofTransaction = false;
 		    	for (TransactionOutput transactionOutput : transactionOutputs) {
 		        	try {
@@ -523,7 +523,7 @@ public class BalanceFragment extends Fragment   {
 			    	}				
 				}	    		
 	    	} else {
-	    		isSending = false;
+	    		isSending = true;
 		    	boolean isAddressPartofTransaction = false;
 		    	for (TransactionInput transactionInput : transactionInputs) {
 		        	try {
@@ -579,14 +579,12 @@ public class BalanceFragment extends Fragment   {
 		        ((ImageView)child.findViewById(R.id.address)).setImageBitmap(txBitmap.createListBitmap(200));
 		        ((TextView)child.findViewById(R.id.amount)).setTypeface(TypefaceUtil.getInstance(getActivity()).getGravityBoldTypeface());
 		        ((TextView)child.findViewById(R.id.amount)).setTextColor(BlockchainUtil.BLOCKCHAIN_RED);
-	        	
 	        } else {
 		        TxBitmap txBitmap = new TxBitmap(getActivity(), result, addressValueEntryList);
 		        ((ImageView)child.findViewById(R.id.txbitmap)).setImageBitmap(txBitmap.createArrowsBitmap(200, TxBitmap.RECEIVING, addressValueEntryList.size()));
 		        ((ImageView)child.findViewById(R.id.address)).setImageBitmap(txBitmap.createListBitmap(200));
 		        ((TextView)child.findViewById(R.id.amount)).setTypeface(TypefaceUtil.getInstance(getActivity()).getGravityBoldTypeface());
 		        ((TextView)child.findViewById(R.id.amount)).setTextColor(BlockchainUtil.BLOCKCHAIN_GREEN);
-
 	        }
 	        
 	        if(isBTC) {
