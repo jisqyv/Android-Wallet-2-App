@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -74,6 +75,8 @@ public class BalanceFragment extends Fragment   {
 	private TransactionAdapter adapter = null;
 	private boolean isBTC = true;
 	//private Map<String, List<TxBitmap>> address2TxBitmapList;	
+	private BigInteger totalInputsValue = BigInteger.ZERO;
+	private BigInteger totalOutputsValue = BigInteger.ZERO;
 
 	private WalletApplication application;
 
@@ -143,9 +146,49 @@ public class BalanceFragment extends Fragment   {
 		    String label = labelMap.get(address);
 		    if (label != null) {
 		    	addressLabels[i] = label;	
-		    }
+		    }  		   		    
 	    }
 
+		String[] activeAddresses = remoteWallet.getActiveAddresses();
+	    final List<MyTransaction> transactionsList = remoteWallet.getTransactions();
+	    for (final MyTransaction transaction : transactionsList) {
+		    Log.d("transactionHash: ", transaction.getHashAsString());
+		    BigInteger result = transaction.getResult();
+	    	List<TransactionOutput> transactionOutputs = transaction.getOutputs();
+	    	List<TransactionInput> transactionInputs = transaction.getInputs();	 
+
+	    	for (TransactionOutput transactionOutput : transactionOutputs) {
+	        	try {
+	        		com.google.bitcoin.core.Script script = transactionOutput.getScriptPubKey();
+	        		String addr = null;
+	        		if (script != null)
+	        			addr = script.getToAddress().toString();
+	        		
+	        		if (addr != null && Arrays.asList(activeAddresses).contains(addr)) {
+	        		    totalInputsValue = totalInputsValue.add(transactionOutput.getValue());
+	        		}
+	            } catch (ScriptException e) {
+	                e.printStackTrace();
+	            } catch (Exception e) {
+	                e.printStackTrace();
+	            }			    		
+	    	}
+	    	    		
+	    	for (TransactionInput transactionInput : transactionInputs) {
+	        	try {
+	        		Address addr = transactionInput.getFromAddress();
+	        		if (addr != null && Arrays.asList(activeAddresses).contains(addr.toString())) {
+		        		MyTransactionInput ti = (MyTransactionInput)transactionInput;				        			
+	        		    totalOutputsValue = totalOutputsValue.add(ti.getValue());
+	        		}
+	            } catch (ScriptException e) {
+	                e.printStackTrace();
+	            } catch (Exception e) {
+	                e.printStackTrace();
+	            }			    		
+	    	}
+	    } 
+	    
 		BigInteger balance = remoteWallet.getBalance();
         tViewAmount1.setText(BlockchainUtil.formatBitcoin(balance));
         tViewAmount2.setText("$" + BlockchainUtil.BTC2Fiat(WalletUtils.formatValue(balance)));
@@ -254,11 +297,9 @@ public class BalanceFragment extends Fragment   {
 	    	        ((TextView)progression_sent.findViewById(R.id.total_type)).setTextColor(Color.BLACK);
 	    	        ((TextView)progression_sent.findViewById(R.id.total_type)).setText("Total Sent");
 	    	        ((TextView)progression_sent.findViewById(R.id.amount)).setTypeface(TypefaceUtil.getInstance(getActivity()).getRobotoTypeface());
-	    	        ((TextView)progression_sent.findViewById(R.id.amount)).setTextColor(Color.BLACK);
-	    	        ((TextView)progression_sent.findViewById(R.id.amount)).setText("2.5000 BTC");
+	    	        ((TextView)progression_sent.findViewById(R.id.amount)).setTextColor(Color.BLACK);	    	        
+	    	        ((TextView)progression_sent.findViewById(R.id.amount)).setText(BlockchainUtil.formatBitcoin(totalOutputsValue) + " BTC");	    	        
 	    	        ((ProgressBar)progression_sent.findViewById(R.id.bar)).setMax(100);
-	    	        ((ProgressBar)progression_sent.findViewById(R.id.bar)).setProgress((int)((2.5 / (2.5 + 26.6223)) * 100));
-	    	        ((ProgressBar)progression_sent.findViewById(R.id.bar)).setProgressDrawable(getResources().getDrawable(R.drawable.progress_red));
 
 	    	        LinearLayout progression_received = ((LinearLayout)balance_extLayout.findViewById(R.id.progression_received));
 	    	        ((TextView)progression_received.findViewById(R.id.total_type)).setTypeface(TypefaceUtil.getInstance(getActivity()).getRobotoTypeface());
@@ -266,10 +307,15 @@ public class BalanceFragment extends Fragment   {
 	    	        ((TextView)progression_received.findViewById(R.id.total_type)).setText("Total Received");
 	    	        ((TextView)progression_received.findViewById(R.id.amount)).setTypeface(TypefaceUtil.getInstance(getActivity()).getRobotoTypeface());
 	    	        ((TextView)progression_received.findViewById(R.id.amount)).setTextColor(Color.BLACK);
-	    	        ((TextView)progression_received.findViewById(R.id.amount)).setText("26.6223 BTC");
+	    	        ((TextView)progression_received.findViewById(R.id.amount)).setText(BlockchainUtil.formatBitcoin(totalInputsValue) + " BTC");
 	    	        ((ProgressBar)progression_received.findViewById(R.id.bar)).setMax(100);
-	    	        ((ProgressBar)progression_received.findViewById(R.id.bar)).setProgress((int)((26.6223 / (2.5 + 26.6223)) * 100));
-	    	        ((ProgressBar)progression_received.findViewById(R.id.bar)).setProgressDrawable(getResources().getDrawable(R.drawable.progress_green));
+
+	    	        if (totalOutputsValue.doubleValue() > 0 || totalInputsValue.doubleValue() > 0) {        	
+	    	            ((ProgressBar)progression_sent.findViewById(R.id.bar)).setProgress((int)((totalOutputsValue.doubleValue() / (totalOutputsValue.doubleValue() + totalInputsValue.doubleValue())) * 100));
+		    	        ((ProgressBar)progression_sent.findViewById(R.id.bar)).setProgressDrawable(getResources().getDrawable(R.drawable.progress_red));
+	    	            ((ProgressBar)progression_received.findViewById(R.id.bar)).setProgress((int)((totalInputsValue.doubleValue() / (totalOutputsValue.doubleValue() + totalInputsValue.doubleValue())) * 100));
+		    	        ((ProgressBar)progression_received.findViewById(R.id.bar)).setProgressDrawable(getResources().getDrawable(R.drawable.progress_green));
+	    	        }
 		    	}
 		    }
 
@@ -511,7 +557,6 @@ public class BalanceFragment extends Fragment   {
 			        		if (addr != null) {
 			        		    Log.d("transactionInput: ", addr.toString());
 				        		MyTransactionInput ti = (MyTransactionInput)transactionInput;
-			        			isAddressPartofTransaction = true;
 			        			String value = BlockchainUtil.formatBitcoin(ti.getValue()) + " BTC";
 			        			Map.Entry<String, String> entry = new AbstractMap.SimpleEntry<String, String>(addr.toString(), value);
 			        			addressValueEntryList.add(entry);
