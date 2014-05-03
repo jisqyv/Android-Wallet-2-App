@@ -218,12 +218,14 @@ public class BalanceFragment extends Fragment   {
     		        balance_extLayout.startAnimation(slideUp);
     		        balance_extLayout.setVisibility(View.GONE);
     		        balance_extHiddenLayout.setVisibility(View.GONE);
+    		    	System.gc();
     	    	}
     	    	else {
     	    		addressLabelTxsDisplayed[position] = true;
     	    		
     	            ((ImageView)view.findViewById(R.id.address_type)).setImageResource(R.drawable.address_active);
 
+    	        	System.gc();
     	    		doDisplaySubList(view, position);
     	    	}
             }
@@ -297,7 +299,7 @@ public class BalanceFragment extends Fragment   {
         super.setUserVisibleHint(isVisibleToUser);
 
         if(isVisibleToUser) {
-        	;
+        	System.gc();
         }
         else {
         	;
@@ -307,6 +309,8 @@ public class BalanceFragment extends Fragment   {
     @Override
     public void onResume() {
     	super.onResume();
+
+    	System.gc();
 
     }
 
@@ -382,6 +386,7 @@ public class BalanceFragment extends Fragment   {
 	        
 	        if(addressLabelTxsDisplayed[position]) {
 				Log.d("List refresh sub", "" + position);
+		    	System.gc();
 		        doDisplaySubList(view, position);
 	        }
 
