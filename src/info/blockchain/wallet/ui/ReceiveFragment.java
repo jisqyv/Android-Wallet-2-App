@@ -80,7 +80,7 @@ public class ReceiveFragment extends Fragment   {
     private ImageView ivContacts = null;
     private ImageView ivPhoneContacts = null;
 
-//    private Button btReceive = null;
+    private ImageView ivCheck = null;
 
     private HashMap<String,String> magicData = null;
     private ArrayList<String> keys = null;
@@ -102,7 +102,6 @@ public class ReceiveFragment extends Fragment   {
         tvAddress = (TextView)rootView.findViewById(R.id.receiving_address);
         tvAddress.setVisibility(View.INVISIBLE);
         
-//        btReceive = (Button)rootView.findViewById(R.id.receive);
         ivReceivingQR = (ImageView)rootView.findViewById(R.id.qr);
         ivReceivingQR.setVisibility(View.INVISIBLE);
         
@@ -178,39 +177,59 @@ public class ReceiveFragment extends Fragment   {
 		        	ivReceivingQR.setVisibility(View.VISIBLE);
 		        	
 		        	tvAddress.setText(edAddress.getText().toString());
-		        	tvArrow.setText(Character.toString((char)0x2193));
+		        	tvArrow.setText(Character.toString((char)0x2192));
 
 		        	String amount1 = edAmount1.getText().toString();
-		        	String amount2 = tvAmount2.getText().toString().substring(1);
+		        	String amount2 = tvAmount2.getText().toString().substring(0, tvAmount2.getText().toString().length() - 4);
+		        	long btcValue;
+		        	double value;
 		        	if(isBTC) {
+		            	value = Math.round(Double.parseDouble(amount1) * 100000000.0);
+		            	btcValue = (Double.valueOf(value)).longValue();
 		        		amount1 += " BTC";
 		        		amount2 += " USD";
 		        	}
 		        	else {
+		            	value = Math.round(Double.parseDouble(amount2) * 100000000.0);
+		            	btcValue = (Double.valueOf(value)).longValue();
 		        		amount1 += " USD";
 		        		amount2 += " BTC";
 		        	}
-		        	amount2 = "(" + amount2 + ")";
 		        	SpannableStringBuilder a1 = new SpannableStringBuilder(amount1);
 		        	SpannableStringBuilder a2 = new SpannableStringBuilder(amount2);
 		        	a1.setSpan(new SuperscriptSpan(), amount1.length() - 4, amount1.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 		        	a1.setSpan(new RelativeSizeSpan((float)0.75), amount1.length() - 4, amount1.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-		        	a2.setSpan(new SuperscriptSpan(), amount2.length() - 5, amount2.length() - 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-		        	a2.setSpan(new RelativeSizeSpan((float)0.75), amount2.length() - 5, amount2.length() - 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+		        	a2.setSpan(new SuperscriptSpan(), amount2.length() - 4, amount2.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+		        	a2.setSpan(new RelativeSizeSpan((float)0.75), amount2.length() - 4, amount2.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 		        	tvAmount.setText(a1);
 		        	tvAmountBis.setText(a2);
 
-//		        	btReceive.setVisibility(View.VISIBLE);
+		            ivReceivingQR.setImageBitmap(generateQRCode(BitcoinURI.convertToBitcoinURI(edAddress.getText().toString(), BigInteger.valueOf(btcValue), "", "")));
 
 		        }
 		        return false;
 		    }
 		});
 
+        edAmount1 = ((EditText)rootView.findViewById(R.id.amount1));
+        edAmount1.setOnClickListener(new Button.OnClickListener() {
+            public void onClick(View v) {
+            	
+            	if(ivReceivingQR.getVisibility() == View.VISIBLE) {
+            		clearReceive();
+            	}
+            		
+            }
+        });
+
         edAddress = ((EditText)rootView.findViewById(R.id.address));
         edAddress.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
             	
+            	if(ivReceivingQR.getVisibility() == View.VISIBLE) {
+            		clearReceive();
+            	}
+
             	if(!isMagic) {
             		
             		displayMagicList();
@@ -340,7 +359,7 @@ public class ReceiveFragment extends Fragment   {
     private Bitmap generateQRCode(String uri) {
 
         Bitmap bitmap = null;
-        int qrCodeDimension = 180;
+        int qrCodeDimension = 200;
 
         QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(uri, null, Contents.Type.TEXT, BarcodeFormat.QR_CODE.toString(), qrCodeDimension);
 
@@ -590,6 +609,19 @@ public class ReceiveFragment extends Fragment   {
         }
         
         initMagicList();
+    }
+
+
+    private void clearReceive()	{
+        tvAmount.setText("");
+        tvAmount.setVisibility(View.INVISIBLE);
+        tvAmountBis.setText("");
+        tvAmountBis.setVisibility(View.INVISIBLE);
+        tvArrow.setText("");
+        tvArrow.setVisibility(View.INVISIBLE);
+        tvAddress.setText("");
+        tvAddress.setVisibility(View.INVISIBLE);
+        ivReceivingQR.setVisibility(View.INVISIBLE);
     }
 
 }
