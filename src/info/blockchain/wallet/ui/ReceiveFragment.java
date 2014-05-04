@@ -180,6 +180,7 @@ public class ReceiveFragment extends Fragment   {
 		        	else {
 			        	tvAddress.setText(edAddress.getText().toString());
 		        	}
+
 		        	tvArrow.setText(Character.toString((char)0x2192));
 
 		        	String amount1 = edAmount1.getText().toString();

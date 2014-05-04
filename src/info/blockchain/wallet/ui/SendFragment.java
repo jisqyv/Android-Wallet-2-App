@@ -89,6 +89,7 @@ public class SendFragment extends Fragment   {
     private TextView tvAmount2 = null;
     private EditText edAddress = null;
     private TextView tvCurrency = null;
+    private LinearLayout summary = null;
     
     private TextView tvAmount = null;
     private TextView tvAmountBis = null;
@@ -146,7 +147,10 @@ public class SendFragment extends Fragment   {
         tvArrow.setVisibility(View.INVISIBLE);
         tvAddress = (TextView)rootView.findViewById(R.id.sending_address);
         tvAddress.setVisibility(View.INVISIBLE);
-        
+
+        summary = (LinearLayout)rootView.findViewById(R.id.summary);
+        summary.setVisibility(View.INVISIBLE);
+
         btSend = (Button)rootView.findViewById(R.id.send);
         ivCheck = ((ImageButton)rootView.findViewById(R.id.sent_check));
         ivCheck.setVisibility(View.GONE);
@@ -223,6 +227,7 @@ public class SendFragment extends Fragment   {
                 	tvAmount2.setText("");
 
             		Toast.makeText(getActivity(), "Send", Toast.LENGTH_SHORT).show();
+		        	summary.setVisibility(View.INVISIBLE);
             		/*
             		btSend.setTextColor(BlockchainUtil.BLOCKCHAIN_GREEN);
             		btSend.setText(Character.toString((char)0x2713));
@@ -244,12 +249,19 @@ public class SendFragment extends Fragment   {
 		    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 		        if(actionId == EditorInfo.IME_ACTION_DONE) {
 		        	
+		        	summary.setVisibility(View.VISIBLE);
 		        	tvAddress.setVisibility(View.VISIBLE);
 		        	tvArrow.setVisibility(View.VISIBLE);
 		        	tvAmount.setVisibility(View.VISIBLE);
 		        	tvAmountBis.setVisibility(View.VISIBLE);
 		        	
-		        	tvAddress.setText(edAddress.getText().toString());
+		        	if(edAddress.getText().toString().length() > 15) {
+			        	tvAddress.setText(edAddress.getText().toString().subSequence(0, 15) + "...");
+		        	}
+		        	else {
+			        	tvAddress.setText(edAddress.getText().toString());
+		        	}
+
 		        	tvArrow.setText(Character.toString((char)0x2192));
 
 		        	String amount1 = edAmount1.getText().toString();
@@ -390,6 +402,7 @@ public class SendFragment extends Fragment   {
             	edAmount1.setText("");
             	tvAmount2.setText("");
             	
+                summary.setVisibility(View.INVISIBLE);
                 tvAmount.setText("");
                 tvAmount.setVisibility(View.INVISIBLE);
                 tvAmountBis.setText("");
@@ -1213,6 +1226,7 @@ public class SendFragment extends Fragment   {
     }
 
     private void clearSent()	{
+        summary.setVisibility(View.INVISIBLE);
         tvAmount.setText("");
         tvAmount.setVisibility(View.INVISIBLE);
         tvAmountBis.setText("");
