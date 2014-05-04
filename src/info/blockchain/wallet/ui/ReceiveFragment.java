@@ -578,6 +578,8 @@ public class ReceiveFragment extends Fragment   {
         */
 
         final ImageView qr_scan = (ImageView)childIcons.findViewById(R.id.qr_icon);
+        qr_scan.setVisibility(View.INVISIBLE);
+        /*
         qr_scan.setBackgroundColor(colorOff);
         qr_scan.setOnTouchListener(new OnTouchListener() {
             @Override
@@ -600,6 +602,7 @@ public class ReceiveFragment extends Fragment   {
                 return true;
             }
         });
+        */
 //	    parent.addView(child, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 	    parent.addView(childIcons);
 	    children++;
