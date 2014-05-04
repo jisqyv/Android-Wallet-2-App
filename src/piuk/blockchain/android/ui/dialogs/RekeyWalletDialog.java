@@ -18,7 +18,6 @@ import piuk.blockchain.android.WalletApplication;
 import piuk.blockchain.android.WalletApplication.AddAddressCallback;
 import piuk.blockchain.android.ui.EditAddressBookEntryFragment;
 import piuk.blockchain.android.ui.SuccessCallback;
-import piuk.blockchain.android.ui.SendCoinsFragment.FeePolicy;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.app.Dialog;
@@ -247,12 +246,12 @@ public class RekeyWalletDialog extends DialogFragment {
 						} else {
 							//Else save and sweep the wallet
 							String[] type = new String[0];
-							wallet.sendCoinsAsync(insecure_addresses.toArray(type), new_address, balanceOfInsecureFinal.subtract(baseFee), FeePolicy.FeeForce, baseFee, new SendProgress() {
+							wallet.sendCoinsAsync(insecure_addresses.toArray(type), new_address, balanceOfInsecureFinal.subtract(baseFee), MyRemoteWallet.FeePolicy.FeeForce, baseFee, new SendProgress() {
 								@Override
 								public boolean onReady(
 										Transaction tx,
 										BigInteger fee,
-										FeePolicy feePolicy,
+										MyRemoteWallet.FeePolicy feePolicy,
 										long priority) {
 									return true;
 								}

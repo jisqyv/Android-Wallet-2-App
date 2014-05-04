@@ -108,19 +108,6 @@ public final class SendCoinsFragment extends Fragment
 	private Button viewCancel;
 	private String sendType;
 
-	public static enum FeePolicy {
-		FeeOnlyIfNeeded,
-		FeeForce,
-		FeeNever
-	}
-
-	private State state = State.INPUT;
-
-	private enum State
-	{
-		INPUT, SENDING, SENT
-	}
-
 	private final ServiceConnection serviceConnection = new ServiceConnection()
 	{
 		public void onServiceConnected(final ComponentName name, final IBinder binder)
@@ -229,6 +216,7 @@ public final class SendCoinsFragment extends Fragment
 
 		if (wallet == null)
 			return view;
+		wallet.setState(MyRemoteWallet.State.INPUT);
 
 		BigInteger available = null;
 
@@ -336,8 +324,7 @@ public final class SendCoinsFragment extends Fragment
 				public void onSend(final Transaction tx, final String message) {
 					handler.post(new Runnable() {
 						public void run() {
-							state = State.SENT;
-
+							application.getRemoteWallet().setState(MyRemoteWallet.State.SENT);
 							activity.longToast(message);
 
 							Intent intent = activity.getIntent();
@@ -368,7 +355,7 @@ public final class SendCoinsFragment extends Fragment
 							if (message != null)
 								activity.longToast(message);
 
-							state = State.INPUT;
+							application.getRemoteWallet().setState(MyRemoteWallet.State.INPUT);
 
 							updateView();
 						}
@@ -378,14 +365,14 @@ public final class SendCoinsFragment extends Fragment
 				public void onProgress(final String message) {
 					handler.post(new Runnable() {
 						public void run() {
-							state = State.SENDING;
+							application.getRemoteWallet().setState(MyRemoteWallet.State.SENDING);
 
 							updateView();
 						}
 					});
 				}
 
-				public boolean onReady(Transaction tx, BigInteger fee, FeePolicy feePolicy, long priority) {
+				public boolean onReady(Transaction tx, BigInteger fee, MyRemoteWallet.FeePolicy feePolicy, long priority) {
 
 					boolean containsOutputLessThanThreshold = false;
 					for (TransactionOutput output : tx.getOutputs()) {
@@ -395,9 +382,9 @@ public final class SendCoinsFragment extends Fragment
 						}
 					}
 
-					if (feePolicy != FeePolicy.FeeNever && fee.compareTo(BigInteger.ZERO) == 0) {
+					if (feePolicy != MyRemoteWallet.FeePolicy.FeeNever && fee.compareTo(BigInteger.ZERO) == 0) {
 						if (tx.bitcoinSerialize().length > 1000 || containsOutputLessThanThreshold) {
-							makeTransaction(FeePolicy.FeeForce);
+							makeTransaction(MyRemoteWallet.FeePolicy.FeeForce);
 							return false;
 						} else if (priority < 97600000L) {
 							handler.post(new Runnable() {
@@ -410,13 +397,13 @@ public final class SendCoinsFragment extends Fragment
 
 									alert.setButton(AlertDialog.BUTTON_NEUTRAL, getString(R.string.continue_without_fee), new DialogInterface.OnClickListener() {
 										public void onClick(DialogInterface dialog, int id) {
-											makeTransaction(FeePolicy.FeeNever);
+											makeTransaction(MyRemoteWallet.FeePolicy.FeeNever);
 											dialog.dismiss();
 										} }); 
 
 									alert.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.add_fee), new DialogInterface.OnClickListener() {
 										public void onClick(DialogInterface dialog, int id) {
-											makeTransaction(FeePolicy.FeeForce);
+											makeTransaction(MyRemoteWallet.FeePolicy.FeeForce);
 
 											dialog.dismiss();
 										}}); 
@@ -432,7 +419,7 @@ public final class SendCoinsFragment extends Fragment
 
 							handler.post(new Runnable() {
 								public void run() {
-									state = State.INPUT;
+									application.getRemoteWallet().setState(MyRemoteWallet.State.INPUT);
 									updateView();
 								}
 							});
@@ -497,7 +484,7 @@ public final class SendCoinsFragment extends Fragment
 				}
 			};
 
-			public void send(Address receivingAddress, BigInteger fee, FeePolicy feePolicy) {
+			public void send(Address receivingAddress, BigInteger fee, MyRemoteWallet.FeePolicy feePolicy) {
 
 				if (application.getRemoteWallet() == null)
 					return;
@@ -562,13 +549,13 @@ public final class SendCoinsFragment extends Fragment
 								{
 									if (transaction != null)
 									{
-										state = State.SENDING;
+										application.getRemoteWallet().setState(MyRemoteWallet.State.SENDING);
 
 										updateView();
 
 										service.broadcastTransaction(transaction);
 
-										state = State.SENT;
+										application.getRemoteWallet().setState(MyRemoteWallet.State.SENT);
 
 										activity.longToast(R.string.wallet_transactions_fragment_tab_sent);
 
@@ -584,7 +571,7 @@ public final class SendCoinsFragment extends Fragment
 									}
 									else
 									{
-										state = State.INPUT;
+										application.getRemoteWallet().setState(MyRemoteWallet.State.INPUT);
 
 										updateView();
 
@@ -599,7 +586,7 @@ public final class SendCoinsFragment extends Fragment
 				}
 			}
 
-			public void makeTransaction(FeePolicy feePolicy) {
+			public void makeTransaction(MyRemoteWallet.FeePolicy feePolicy) {
 
 				if (application.getRemoteWallet() == null)
 					return;
@@ -611,19 +598,19 @@ public final class SendCoinsFragment extends Fragment
 
 					BigInteger fee = null;
 
-					if (feePolicy == FeePolicy.FeeNever) {
+					if (feePolicy == MyRemoteWallet.FeePolicy.FeeNever) {
 						fee = BigInteger.ZERO;
-					} else if (feePolicy == FeePolicy.FeeForce) {
+					} else if (feePolicy == MyRemoteWallet.FeePolicy.FeeForce) {
 						fee = baseFee;
 					} else if (sendType != null && sendType.equals(SendCoinsActivity.SendTypeCustomSend)) {
-						feePolicy = FeePolicy.FeeOnlyIfNeeded;
+						feePolicy = MyRemoteWallet.FeePolicy.FeeOnlyIfNeeded;
 						fee = feeAmountView.getAmount();
 					} else {
 						fee = (wallet.getFeePolicy() == 1) ? baseFee : BigInteger.ZERO;
 					}
 
 					final BigInteger finalFee = fee;
-					final FeePolicy finalFeePolicy = feePolicy;
+					final MyRemoteWallet.FeePolicy finalFeePolicy = feePolicy;
 
 					if (sendType != null && sendType.equals(SendCoinsActivity.SendTypeSharedSend)) {
 
@@ -683,7 +670,7 @@ public final class SendCoinsFragment extends Fragment
 					RequestPasswordDialog.show(getFragmentManager(), new SuccessCallback() {
 
 						public void onSuccess() {
-							makeTransaction(FeePolicy.FeeOnlyIfNeeded);
+							makeTransaction(MyRemoteWallet.FeePolicy.FeeOnlyIfNeeded);
 						}
 
 						public void onFail() {
@@ -691,7 +678,7 @@ public final class SendCoinsFragment extends Fragment
 						}
 					}, RequestPasswordDialog.PasswordTypeSecond);
 				} else {
-					makeTransaction(FeePolicy.FeeOnlyIfNeeded);
+					makeTransaction(MyRemoteWallet.FeePolicy.FeeOnlyIfNeeded);
 				}
 			}
 		});
@@ -909,20 +896,21 @@ public final class SendCoinsFragment extends Fragment
 		final BigInteger amount = amountView.getAmount();
 		final boolean validAmount = amount != null && amount.signum() > 0;
 
-		receivingAddressView.setEnabled(state == State.INPUT);
+		MyRemoteWallet.State state = application.getRemoteWallet().getState();
+		receivingAddressView.setEnabled(state == MyRemoteWallet.State.INPUT);
 
-		amountView.setEnabled(state == State.INPUT);
+		amountView.setEnabled(state == MyRemoteWallet.State.INPUT);
 
-		viewGo.setEnabled(state == State.INPUT && address != null && validAmount);
-		if (state == State.INPUT)
+		viewGo.setEnabled(state == MyRemoteWallet.State.INPUT && address != null && validAmount);
+		if (state == MyRemoteWallet.State.INPUT)
 			viewGo.setText(R.string.send_coins_fragment_button_send);
-		else if (state == State.SENDING)
+		else if (state == MyRemoteWallet.State.SENDING)
 			viewGo.setText(R.string.send_coins_sending_msg);
-		else if (state == State.SENT)
+		else if (state == MyRemoteWallet.State.SENT)
 			viewGo.setText(R.string.send_coins_sent_msg);
 
-		viewCancel.setEnabled(state != State.SENDING);
-		viewCancel.setText(state != State.SENT ? R.string.button_cancel : R.string.send_coins_fragment_button_back);
+		viewCancel.setEnabled(state != MyRemoteWallet.State.SENDING);
+		viewCancel.setText(state != MyRemoteWallet.State.SENT ? R.string.button_cancel : R.string.send_coins_fragment_button_back);
 	}
 
 	public void update(final String receivingAddress, final BigInteger amount)
