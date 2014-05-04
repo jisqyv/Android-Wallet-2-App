@@ -494,7 +494,7 @@ public class BalanceFragment extends Fragment   {
         LinearLayout progression_sent = ((LinearLayout)balance_extLayout.findViewById(R.id.progression_sent));
         ((TextView)progression_sent.findViewById(R.id.total_type)).setTypeface(TypefaceUtil.getInstance(getActivity()).getRobotoTypeface());
         ((TextView)progression_sent.findViewById(R.id.total_type)).setTextColor(0xFF9b9b9b);
-        ((TextView)progression_sent.findViewById(R.id.total_type)).setText("TOTAL SENT");
+        ((TextView)progression_sent.findViewById(R.id.total_type)).setText("SENT");
         ((TextView)progression_sent.findViewById(R.id.amount)).setTypeface(TypefaceUtil.getInstance(getActivity()).getRobotoTypeface());
         ((TextView)progression_sent.findViewById(R.id.amount)).setTextColor(0xFF9b9b9b);
         ((TextView)progression_sent.findViewById(R.id.amount)).setText(BlockchainUtil.formatBitcoin(totalSent) + " BTC");
@@ -503,7 +503,7 @@ public class BalanceFragment extends Fragment   {
         LinearLayout progression_received = ((LinearLayout)balance_extLayout.findViewById(R.id.progression_received));
         ((TextView)progression_received.findViewById(R.id.total_type)).setTypeface(TypefaceUtil.getInstance(getActivity()).getRobotoTypeface());
         ((TextView)progression_received.findViewById(R.id.total_type)).setTextColor(0xFF9b9b9b);
-        ((TextView)progression_received.findViewById(R.id.total_type)).setText("TOTAL RECEIVED");
+        ((TextView)progression_received.findViewById(R.id.total_type)).setText("RECEIVED");
         ((TextView)progression_received.findViewById(R.id.amount)).setTypeface(TypefaceUtil.getInstance(getActivity()).getRobotoTypeface());
         ((TextView)progression_received.findViewById(R.id.amount)).setTextColor(0xFF9b9b9b);
         ((TextView)progression_received.findViewById(R.id.amount)).setText(BlockchainUtil.formatBitcoin(totalReceived) + " BTC");
