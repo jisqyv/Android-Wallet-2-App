@@ -60,6 +60,7 @@ public class ReceiveFragment extends Fragment   {
     private TextView tvAmount2 = null;
     private EditText edAddress = null;
     private TextView tvCurrency = null;
+    private LinearLayout summary = null;
     
     private TextView tvAmount = null;
     private TextView tvAmountBis = null;
@@ -101,7 +102,10 @@ public class ReceiveFragment extends Fragment   {
         tvArrow.setVisibility(View.INVISIBLE);
         tvAddress = (TextView)rootView.findViewById(R.id.receiving_address);
         tvAddress.setVisibility(View.INVISIBLE);
-        
+
+        summary = (LinearLayout)rootView.findViewById(R.id.summary);
+        summary.setVisibility(View.INVISIBLE);
+
         ivReceivingQR = (ImageView)rootView.findViewById(R.id.qr);
         ivReceivingQR.setVisibility(View.INVISIBLE);
         
@@ -169,7 +173,8 @@ public class ReceiveFragment extends Fragment   {
 		    @Override
 		    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 		        if(actionId == EditorInfo.IME_ACTION_DONE) {
-		        	
+
+		        	summary.setVisibility(View.VISIBLE);
 		        	tvAddress.setVisibility(View.VISIBLE);
 		        	tvArrow.setVisibility(View.VISIBLE);
 		        	tvAmount.setVisibility(View.VISIBLE);
@@ -274,6 +279,26 @@ public class ReceiveFragment extends Fragment   {
             }
         });
 
+        edAddress.setOnEditorActionListener(new OnEditorActionListener() {
+		    @Override
+		    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+		        if(actionId == EditorInfo.IME_ACTION_NEXT) {
+		        	
+		        	if(isMagic) {
+		        		removeMagicList();
+		        	}
+
+	                InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+	                imm.hideSoftInputFromWindow(edAddress.getWindowToken(), 0);
+	                edAmount1.requestFocus();
+	                edAmount1.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+	                imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
+
+		        }
+		        return false;
+		    }
+		});
+
         edAmount1.addTextChangedListener(new TextWatcher()	{
 
         	public void afterTextChanged(Editable s) {
@@ -306,6 +331,7 @@ public class ReceiveFragment extends Fragment   {
             	edAmount1.setText("");
             	tvAmount2.setText("");
             	
+                summary.setVisibility(View.INVISIBLE);
                 tvAmount.setText("");
                 tvAmount.setVisibility(View.INVISIBLE);
                 tvAmountBis.setText("");
@@ -613,6 +639,7 @@ public class ReceiveFragment extends Fragment   {
 
 
     private void clearReceive()	{
+        summary.setVisibility(View.INVISIBLE);
         tvAmount.setText("");
         tvAmount.setVisibility(View.INVISIBLE);
         tvAmountBis.setText("");

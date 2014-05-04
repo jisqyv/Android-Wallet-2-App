@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import net.sourceforge.zbar.Symbol;
+
 import piuk.MyRemoteWallet;
 import piuk.blockchain.android.WalletApplication;
 import piuk.blockchain.android.ui.SendCoinsFragment.FeePolicy;
@@ -56,6 +58,8 @@ import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.database.Cursor;
 import android.util.Log;
 
+import com.dm.zbar.android.scanner.ZBarConstants;
+import com.dm.zbar.android.scanner.ZBarScannerActivity;
 import com.google.bitcoin.core.Utils;
 import com.google.bitcoin.uri.BitcoinURI;
 import com.google.zxing.BarcodeFormat;
@@ -118,6 +122,8 @@ public class SendFragment extends Fragment   {
 	private boolean isBTC = false;
 
 	private WalletApplication application;
+
+	private static int ZBAR_SCANNER_REQUEST = 2026;
 
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -331,6 +337,26 @@ public class SendFragment extends Fragment   {
                 }
             }
         });
+
+        edAddress.setOnEditorActionListener(new OnEditorActionListener() {
+		    @Override
+		    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+		        if(actionId == EditorInfo.IME_ACTION_NEXT) {
+		        	
+		        	if(isMagic) {
+		        		removeMagicList();
+		        	}
+
+	                InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+	                imm.hideSoftInputFromWindow(edAddress.getWindowToken(), 0);
+	                edAmount1.requestFocus();
+	                edAmount1.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+	                imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
+
+		        }
+		        return false;
+		    }
+		});
 
         edAmount1.addTextChangedListener(new TextWatcher()	{
 
@@ -547,7 +573,33 @@ public class SendFragment extends Fragment   {
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 
-		if(requestCode == PICK_CONTACT && resultCode == Activity.RESULT_OK) {
+		if(resultCode == Activity.RESULT_OK && requestCode == ZBAR_SCANNER_REQUEST)	{
+
+			String strResult = BitcoinAddressCheck.clean(data.getStringExtra(ZBarConstants.SCAN_RESULT));
+//        	Log.d("Scan result", strResult);
+			if(BitcoinAddressCheck.isValid(BitcoinAddressCheck.clean(strResult))) {
+	            edAddress.setText(strResult);
+	            
+	            if(isMagic) {
+	            	removeMagicList();
+	            }
+
+                InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(edAddress.getWindowToken(), 0);
+                edAmount1.requestFocus();
+                edAmount1.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
+
+			}
+			else {
+				Toast.makeText(getActivity(), "Invalid address", Toast.LENGTH_LONG).show();
+			}
+
+        }
+		else if(resultCode == Activity.RESULT_CANCELED && requestCode == ZBAR_SCANNER_REQUEST) {
+//            Toast.makeText(this, R.string.camera_unavailable, Toast.LENGTH_SHORT).show();
+        }
+		else if(requestCode == PICK_CONTACT && resultCode == Activity.RESULT_OK) {
 
 			if (data != null) {
 
@@ -729,7 +781,7 @@ public class SendFragment extends Fragment   {
     }
 
     private void initMagicList() {
-    	
+
         magicData = new HashMap<String,String>();
         
         if(addressesOn) {
@@ -745,6 +797,7 @@ public class SendFragment extends Fragment   {
         
         String[] sKeys = magicData.keySet().toArray(new String[0]);
         keys = new ArrayList<String>(Arrays.asList(sKeys));
+
     }
 
     private void displayMagicList() {
@@ -846,6 +899,11 @@ public class SendFragment extends Fragment   {
                 		Toast.makeText(getActivity(), "Show QR reader", Toast.LENGTH_SHORT).show();
                 		Log.d("QR icon", "DOWN");
                 		qr_scan.setBackgroundColor(colorOn);
+                		
+                		Intent intent = new Intent(getActivity(), ZBarScannerActivity.class);
+                		intent.putExtra(ZBarConstants.SCAN_MODES, new int[]{ Symbol.QRCODE } );
+                		startActivityForResult(intent, ZBAR_SCANNER_REQUEST);
+
                 		break;
                 	case android.view.MotionEvent.ACTION_UP:
                 	case android.view.MotionEvent.ACTION_CANCEL:
