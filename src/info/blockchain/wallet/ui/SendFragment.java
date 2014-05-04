@@ -297,7 +297,7 @@ public class SendFragment extends Fragment   {
             	if(ivCheck.getVisibility() == View.VISIBLE) {
             		clearSent();
             	}
-            		
+            	
             }
         });
 
@@ -314,7 +314,6 @@ public class SendFragment extends Fragment   {
             	if(ivCheck.getVisibility() == View.VISIBLE) {
             		clearSent();
             	}
-            		
             }
         });
 
@@ -592,16 +591,6 @@ public class SendFragment extends Fragment   {
 //        	Log.d("Scan result", strResult);
 			if(BitcoinAddressCheck.isValid(BitcoinAddressCheck.clean(strResult))) {
 	            edAddress.setText(strResult);
-	            
-	            if(isMagic) {
-	            	removeMagicList();
-	            }
-
-                InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(edAddress.getWindowToken(), 0);
-                edAmount1.requestFocus();
-                edAmount1.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-                imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
 
 			}
 			else {

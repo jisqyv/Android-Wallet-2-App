@@ -100,16 +100,16 @@ public class TxBitmap {
 		float scale = resources.getDisplayMetrics().density;
 
     	float fX = 10.0f;
-//    	float fY = (scale <= REG_RES) ? 25.0f : 30.0f;
-    	float fY = 35.0f;
-		float vOffset = 80.0f;	// down step
-		float vOffsetAmount = (scale <= REG_RES) ? 26.0f : 38.0f;
+    	float fY = (scale <= REG_RES) ? 35.0f : 42.0f;
+		float vOffset = (scale <= REG_RES) ? 80.0f : 88.0f;	// down step
+		float vOffsetAmount = (scale <= REG_RES) ? 26.0f : 40.0f;
 		float vXtraOffset = (scale <= REG_RES) ? 1.0f : 8.0f;
 		float szAddress = 15;
 		float szAmount = 12;
+		int bottomPadding = (scale <= REG_RES) ? 10 : 20;
 
 		final int branches = addressValueEntryList.size();
-    	Bitmap bm = Bitmap.createBitmap(resources.getDisplayMetrics(), width, (int)(vOffset * branches) + 10, Config.ARGB_8888);
+    	Bitmap bm = Bitmap.createBitmap(resources.getDisplayMetrics(), width, ((int)(vOffset * branches)) + bottomPadding, Config.ARGB_8888);
     	Canvas canvas = new Canvas(bm);
 
     	Paint paintAddressLabel = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -127,18 +127,12 @@ public class TxBitmap {
 		paintAmount.setTextSize((int)(szAmount * scale + 0.5f));
 		paintAddressLabel.setTypeface(TypefaceUtil.getInstance(context).getRobotoBoldTypeface());
 
-		if(scale <= REG_RES) {
-			for(int i = 0; i < branches; i++) {
-				Map.Entry<String, String> addressValueEntry = addressValueEntryList.get(i);				
-	    		canvas.drawText(addressValueEntry.getKey().substring(0, 7)+"...", fX, fY + (vOffset * i) + vXtraOffset, paintAddressLabel);
+		for(int i = 0; i < branches; i++) {
+			Map.Entry<String, String> addressValueEntry = addressValueEntryList.get(i);				
+    		canvas.drawText(addressValueEntry.getKey().substring(0, scale <= REG_RES ? 7 : 15) + "...", fX, fY + (vOffset * i) + vXtraOffset, paintAddressLabel);
+    		if(branches > 1) {
 				canvas.drawText(addressValueEntry.getValue(), fX, fY + (vOffset * i) + vOffsetAmount + vXtraOffset, paintAmount);
-			}
-		} else {
-			for(int i = 0; i < branches; i++) {
-				Map.Entry<String, String> addressValueEntry = addressValueEntryList.get(i);				
-	    		canvas.drawText(addressValueEntry.getKey().substring(0, 15)+"...", fX, fY + (vOffset * i) + vXtraOffset, paintAddressLabel);
-				canvas.drawText(addressValueEntry.getValue(), fX, fY + (vOffset * i) + vOffsetAmount + vXtraOffset, paintAmount);
-			}			
+    		}
 		}
 
     	return bm;
@@ -153,12 +147,12 @@ public class TxBitmap {
     	float fStroke = 6.0f;
     	float fRadius = 8.0f;	// filled circle at start of line
     	float fX = 15.0f;
-//    	float fY =  (scale <= REG_RES) ? 20.0f : 25.0f;
-    	float fY = 30.0f;
+    	float fY = (scale <= REG_RES) ? 30.0f : 36.0f;
 		float hOffset = 20.0f;	// indent
-		float vOffset = 80.0f;	// down step
+		float vOffset = (scale <= REG_RES) ? 80.0f : 88.0f;	// down step
+		int bottomPadding = (scale <= REG_RES) ? 10 : 20;
 
-    	Bitmap bm = Bitmap.createBitmap(resources.getDisplayMetrics(), width, (int)(vOffset * branches) + 10, Config.ARGB_8888);
+    	Bitmap bm = Bitmap.createBitmap(resources.getDisplayMetrics(), width, ((int)(vOffset * branches)) + bottomPadding, Config.ARGB_8888);
     	Canvas canvas = new Canvas(bm);
     	
     	Paint paint = new Paint();
