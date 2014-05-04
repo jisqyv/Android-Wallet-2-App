@@ -782,6 +782,7 @@ public class SendFragment extends Fragment   {
 
     private void initMagicList() {
 
+    	/*
         magicData = new HashMap<String,String>();
         
         if(addressesOn) {
@@ -795,6 +796,20 @@ public class SendFragment extends Fragment   {
             magicData.put("Kebab shop guy", "1Wx55328k4B...");
     	}
         
+        String[] sKeys = magicData.keySet().toArray(new String[0]);
+        keys = new ArrayList<String>(Arrays.asList(sKeys));
+        */
+    	
+		final WalletApplication application = (WalletApplication)getActivity().getApplication();
+		MyRemoteWallet wallet = application.getRemoteWallet();
+		String[] from = wallet.getAllAddresses();
+
+        magicData = new HashMap<String,String>();
+        
+        for(int i = 0; i < from.length; i++) {
+        	magicData.put(from[i], "0.000 BTC");
+        }
+
         String[] sKeys = magicData.keySet().toArray(new String[0]);
         keys = new ArrayList<String>(Arrays.asList(sKeys));
 

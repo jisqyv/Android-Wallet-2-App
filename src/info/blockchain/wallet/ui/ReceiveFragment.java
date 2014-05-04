@@ -5,6 +5,9 @@ import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import piuk.MyRemoteWallet;
+import piuk.blockchain.android.WalletApplication;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -471,7 +474,8 @@ public class ReceiveFragment extends Fragment   {
     }
 
     private void initMagicList() {
-    	
+
+    	/*
         magicData = new HashMap<String,String>();
         
         if(addressesOn) {
@@ -487,6 +491,22 @@ public class ReceiveFragment extends Fragment   {
         
         String[] sKeys = magicData.keySet().toArray(new String[0]);
         keys = new ArrayList<String>(Arrays.asList(sKeys));
+        */
+
+		final WalletApplication application = (WalletApplication)getActivity().getApplication();
+		MyRemoteWallet wallet = application.getRemoteWallet();
+		String[] from = wallet.getActiveAddresses();
+		Toast.makeText(getActivity(), "from addresses:" + from.length, Toast.LENGTH_SHORT).show();
+
+        magicData = new HashMap<String,String>();
+        
+        for(int i = 0; i < from.length; i++) {
+        	magicData.put(from[i], "0.000 BTC");
+        }
+
+        String[] sKeys = magicData.keySet().toArray(new String[0]);
+        keys = new ArrayList<String>(Arrays.asList(sKeys));
+
     }
 
     private void displayMagicList() {
