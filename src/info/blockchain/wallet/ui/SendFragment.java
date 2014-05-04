@@ -9,7 +9,6 @@ import net.sourceforge.zbar.Symbol;
 
 import piuk.MyRemoteWallet;
 import piuk.blockchain.android.WalletApplication;
-import piuk.blockchain.android.ui.SendCoinsFragment.FeePolicy;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -220,7 +219,7 @@ public class SendFragment extends Fragment   {
                     Log.d("amount", "amount" + "amountamount: " + amount);
     				MyRemoteWallet wallet = application.getRemoteWallet();
     				String[] from = wallet.getActiveAddresses();
-    				wallet.sendCoinsAsync(from, address, amount, FeePolicy.FeeOnlyIfNeeded, BigInteger.ZERO, null);
+    				wallet.sendCoinsAsync(from, address, amount, MyRemoteWallet.FeePolicy.FeeOnlyIfNeeded, BigInteger.ZERO, null);
 
                 	edAddress.setText("");
                 	edAmount1.setText("");

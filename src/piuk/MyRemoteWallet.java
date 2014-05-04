@@ -37,8 +37,6 @@ import org.json.simple.parser.JSONParser;
 import org.spongycastle.util.encoders.Hex;
 
 import piuk.blockchain.android.Constants;
-import piuk.blockchain.android.ui.SendCoinsFragment;
-import piuk.blockchain.android.ui.SendCoinsFragment.FeePolicy;
 import piuk.blockchain.android.ui.SuccessCallback;
 import piuk.blockchain.android.util.WalletUtils;
 import android.util.Pair;
@@ -81,6 +79,28 @@ public class MyRemoteWallet extends MyWallet {
 	private List<MyTransaction> transactions = Collections.synchronizedList(new ArrayList<MyTransaction>());
 	public byte[] extra_seed;
 
+	public static enum FeePolicy {
+		FeeOnlyIfNeeded,
+		FeeForce,
+		FeeNever
+	}
+
+	private State state = State.INPUT;
+
+	public static enum State
+	{
+		INPUT, SENDING, SENT
+	}
+
+	public void setState(State state) {
+		this.state =  state;
+	}
+	
+	public State getState() {
+		return this.state;
+	}
+
+	
 	public MyBlock getLatestBlock() {
 		return latestBlock;
 	}
@@ -491,7 +511,7 @@ public class MyRemoteWallet extends MyWallet {
 
 	public interface SendProgress {
 		//Return false to cancel
-		public boolean onReady(Transaction tx, BigInteger fee, SendCoinsFragment.FeePolicy feePolicy, long priority);
+		public boolean onReady(Transaction tx, BigInteger fee, FeePolicy feePolicy, long priority);
 		public void onSend(Transaction tx, String message);
 
 		//Return true to cancel the transaction or false to continue without it

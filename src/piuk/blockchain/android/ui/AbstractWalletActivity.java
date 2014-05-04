@@ -46,7 +46,6 @@ import piuk.blockchain.android.R;
 import piuk.blockchain.android.Constants;
 import piuk.blockchain.android.WalletApplication;
 import piuk.blockchain.android.WalletApplication.AddAddressCallback;
-import piuk.blockchain.android.ui.SendCoinsFragment.FeePolicy;
 import piuk.blockchain.android.ui.dialogs.RequestPasswordDialog;
 import piuk.blockchain.android.util.ActionBarFragment;
 import piuk.blockchain.android.util.WalletUtils;
@@ -525,13 +524,13 @@ public abstract class AbstractWalletActivity extends FragmentActivity {
 
 										BigInteger baseFee = wallet.getBaseFee();
 
-										wallet.sendCoinsAsync(to.toString(), finalBalance.subtract(baseFee), FeePolicy.FeeForce, baseFee, new SendProgress() {
+										wallet.sendCoinsAsync(to.toString(), finalBalance.subtract(baseFee), MyRemoteWallet.FeePolicy.FeeForce, baseFee, new SendProgress() {
 
 											@Override
 											public boolean onReady(
 													Transaction tx,
 													BigInteger fee,
-													FeePolicy feePolicy,
+													MyRemoteWallet.FeePolicy feePolicy,
 													long priority) {
 												return true;
 											}
