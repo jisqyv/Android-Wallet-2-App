@@ -815,7 +815,7 @@ public class SendFragment extends Fragment   {
     	
 		final WalletApplication application = (WalletApplication)getActivity().getApplication();
 		MyRemoteWallet wallet = application.getRemoteWallet();
-		String[] from = wallet.getAllAddresses();
+		String[] from = wallet.getActiveAddresses();
 
         magicData = new HashMap<String,String>();
         
