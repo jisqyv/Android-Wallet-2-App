@@ -216,8 +216,9 @@ public class SendFragment extends Fragment   {
                 Log.d("edAmount1", "edAmount1" + edAmount1.getText().toString());
                 String address = edAddress.getText().toString();                
                 if (amount != null) {
-                    Log.d("amount", "amount" + "amountamount: " + amount);
-    				MyRemoteWallet wallet = application.getRemoteWallet();
+
+                	Log.d("amount", "amount" + "amountamount: " + amount);
+                	MyRemoteWallet wallet = application.getRemoteWallet();
     				String[] from = wallet.getActiveAddresses();
     				wallet.sendCoinsAsync(from, address, amount, MyRemoteWallet.FeePolicy.FeeOnlyIfNeeded, BigInteger.ZERO, null);
 
@@ -225,8 +226,6 @@ public class SendFragment extends Fragment   {
                 	edAmount1.setText("");
                 	tvAmount2.setText("");
 
-            		Toast.makeText(getActivity(), "Send", Toast.LENGTH_SHORT).show();
-		        	summary.setVisibility(View.INVISIBLE);
             		/*
             		btSend.setTextColor(BlockchainUtil.BLOCKCHAIN_GREEN);
             		btSend.setText(Character.toString((char)0x2713));
