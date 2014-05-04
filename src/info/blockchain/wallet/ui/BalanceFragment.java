@@ -461,23 +461,23 @@ public class BalanceFragment extends Fragment   {
             public boolean onTouch(View v, MotionEvent event) {
 
       			android.content.ClipboardManager clipboard = (android.content.ClipboardManager)getActivity().getSystemService(android.content.Context.CLIPBOARD_SERVICE);
-      		    android.content.ClipData clip = android.content.ClipData.newPlainText("Address", "1NMNj5tcwKkqRyHQepxfh1YvLVvBc3Jruq");
+      		    android.content.ClipData clip = android.content.ClipData.newPlainText("Address", address);
       		    clipboard.setPrimaryClip(clip);
-     			Toast.makeText(getActivity(), "Address copied to clipboard:" + "1NMNj5tcwKkqRyHQepxfh1YvLVvBc3Jruq", Toast.LENGTH_LONG).show();
+     			Toast.makeText(getActivity(), "Address copied to clipboard:" + address, Toast.LENGTH_LONG).show();
 
-            	Bitmap bm = generateQRCode("1NMNj5tcwKkqRyHQepxfh1YvLVvBc3Jruq");
-
+            	Bitmap bm = generateQRCode(address);
+            	
+            	//
+            	// replace this with a proper popup
+            	//
             	View toastView = getActivity().getLayoutInflater().inflate(R.layout.toast, (ViewGroup)getActivity().findViewById(R.id.toastLayout));
         		ImageView imageView = (ImageView)toastView.findViewById(R.id.image);
         		imageView.setImageBitmap(bm);
-        		//            imageView.setBackgroundDrawable(bitmapDrawable);
-        		TextView textView = (TextView)toastView.findViewById(R.id.text);
-        		textView.setText("Yes, a Toast with an image!");
         		Toast toast = new Toast(getActivity());
         		toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
         		toast.setDuration(Toast.LENGTH_LONG);
         		toast.setView(toastView);
-        		toast.show();
+        		toast.show();            	
 
                 return true;
             }
@@ -634,11 +634,9 @@ public class BalanceFragment extends Fragment   {
 	        }
 	        
 	        if(isBTC) {
-	        	Log.d("List refresh sub", "isBTC");
 		        ((TextView)child.findViewById(R.id.amount)).setText(BlockchainUtil.formatBitcoin(result) + " BTC");
 	        }
 	        else {
-				Log.d("List refresh sub", "!isBTC");
 		        ((TextView)child.findViewById(R.id.amount)).setText((BlockchainUtil.BTC2Fiat(WalletUtils.formatValue(result)) + " USD"));
 	        }
 	        

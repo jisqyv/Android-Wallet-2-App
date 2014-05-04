@@ -159,16 +159,6 @@ public class ReceiveFragment extends Fragment   {
 
         initMagicList();
 
-        /*
-        btReceive = ((Button)rootView.findViewById(R.id.receive));
-        btReceive.setVisibility(View.INVISIBLE);
-        btReceive.setOnClickListener(new Button.OnClickListener() {
-            public void onClick(View v) {
-        		Toast.makeText(getActivity(), "Receive", Toast.LENGTH_SHORT).show();
-            }
-        });
-        */
-
         tvAmount2 = ((TextView)rootView.findViewById(R.id.amount2));
         tvAmount2.setText("0.00 USD");
         edAmount1 = ((EditText)rootView.findViewById(R.id.amount1));
@@ -184,7 +174,12 @@ public class ReceiveFragment extends Fragment   {
 		        	tvAmountBis.setVisibility(View.VISIBLE);
 		        	ivReceivingQR.setVisibility(View.VISIBLE);
 		        	
-		        	tvAddress.setText(edAddress.getText().toString());
+		        	if(edAddress.getText().toString().length() > 15) {
+			        	tvAddress.setText(edAddress.getText().toString().subSequence(0, 15) + "...");
+		        	}
+		        	else {
+			        	tvAddress.setText(edAddress.getText().toString());
+		        	}
 		        	tvArrow.setText(Character.toString((char)0x2192));
 
 		        	String amount1 = edAmount1.getText().toString();
@@ -451,6 +446,7 @@ public class ReceiveFragment extends Fragment   {
 	        }
 
 	        ((TextView)view.findViewById(R.id.p1)).setTypeface(TypefaceUtil.getInstance(getActivity()).getGravityBoldTypeface());
+	        // address or label ?
 	        if(!keys.get(position).startsWith("1Z")) {
 		        ((TextView)view.findViewById(R.id.p1)).setTypeface(TypefaceUtil.getInstance(getActivity()).getGravityBoldTypeface());
 	        }
