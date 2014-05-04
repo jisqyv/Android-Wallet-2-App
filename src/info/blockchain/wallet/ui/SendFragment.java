@@ -5,6 +5,9 @@ import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import piuk.MyRemoteWallet;
+import piuk.blockchain.android.WalletApplication;
+import piuk.blockchain.android.ui.SendCoinsFragment.FeePolicy;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -53,6 +56,7 @@ import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.database.Cursor;
 import android.util.Log;
 
+import com.google.bitcoin.core.Utils;
 import com.google.bitcoin.uri.BitcoinURI;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
@@ -113,8 +117,12 @@ public class SendFragment extends Fragment   {
 
 	private boolean isBTC = false;
 
+	private WalletApplication application;
+
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		final Activity activity = getActivity();
+		application = (WalletApplication) activity.getApplication();
 
         rootView = inflater.inflate(R.layout.fragment_send, container, false);
         
@@ -189,20 +197,36 @@ public class SendFragment extends Fragment   {
         btSend.setVisibility(View.INVISIBLE);
         btSend.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
-            	
-            	edAddress.setText("");
-            	edAmount1.setText("");
-            	tvAmount2.setText("");
+                BigInteger amount = BigInteger.ZERO;
+                if (isBTC) {
+                	amount = bitcoinAmountStringToBigInteger(edAmount1.getText().toString().trim());
+                } else {
+                	String btcAmount = BlockchainUtil.Fiat2BTC(edAmount1.getText().toString());
+                	amount = bitcoinAmountStringToBigInteger(btcAmount);
+                }
+                Log.d("edAmount1", "edAmount1" + edAmount1.getText().toString());
+                String address = edAddress.getText().toString();                
+                if (amount != null) {
+                    Log.d("amount", "amount" + "amountamount: " + amount);
+    				MyRemoteWallet wallet = application.getRemoteWallet();
+    				String[] from = wallet.getActiveAddresses();
+    				wallet.sendCoinsAsync(from, address, amount, FeePolicy.FeeOnlyIfNeeded, BigInteger.ZERO, null);
 
-        		Toast.makeText(getActivity(), "Send", Toast.LENGTH_SHORT).show();
-        		/*
-        		btSend.setTextColor(BlockchainUtil.BLOCKCHAIN_GREEN);
-        		btSend.setText(Character.toString((char)0x2713));
-	        	btSend.setClickable(false);
-	        	*/
-        		btSend.setVisibility(View.GONE);
-                ivCheck.setVisibility(View.VISIBLE);
-                tvSentPrompt.setVisibility(View.VISIBLE);
+                	edAddress.setText("");
+                	edAmount1.setText("");
+                	tvAmount2.setText("");
+
+            		Toast.makeText(getActivity(), "Send", Toast.LENGTH_SHORT).show();
+            		/*
+            		btSend.setTextColor(BlockchainUtil.BLOCKCHAIN_GREEN);
+            		btSend.setText(Character.toString((char)0x2713));
+    	        	btSend.setClickable(false);
+    	        	*/
+            		btSend.setVisibility(View.GONE);
+                    ivCheck.setVisibility(View.VISIBLE);
+                    tvSentPrompt.setVisibility(View.VISIBLE);
+                                    	
+                }
             }
         });
 
@@ -596,6 +620,26 @@ public class SendFragment extends Fragment   {
 		
 	}
 
+	public BigInteger bitcoinAmountStringToBigInteger(String amount) {
+		if (isValidAmount(amount))
+			return Utils.toNanoCoins(amount);
+		else
+			return null;
+	}
+	
+	private boolean isValidAmount(String amount) {
+		try {
+			if (amount.length() > 0) {
+				final BigInteger nanoCoins = Utils.toNanoCoins(amount);
+				if (nanoCoins.signum() >= 0)
+					return true;
+			}
+		} catch (final Exception x) {
+		}
+
+		return false;
+	}
+	
     private Bitmap generateQRCode(String uri) {
 
         Bitmap bitmap = null;

@@ -547,13 +547,15 @@ public class MyRemoteWallet extends MyWallet {
 				try {
 
 					//Construct a new transaction
-					progress.onProgress("Getting Unspent Outputs");
+					if (progress != null)
+						progress.onProgress("Getting Unspent Outputs");
 
 					List<MyTransactionOutPoint> allUnspent = getUnspentOutputPoints(from);
 
 					Pair<Transaction, Long> pair = null;
 
-					progress.onProgress("Constructing Transaction");
+					if (progress != null)
+						progress.onProgress("Constructing Transaction");
 
 					try {
 						//Try without asking for watch only addresses
@@ -581,10 +583,12 @@ public class MyRemoteWallet extends MyWallet {
 
 					//If returns false user cancelled
 					//Probably because they want to recreate the transaction with different fees
-					if (!progress.onReady(tx, fee, feePolicy, priority))
-						return;
+					if (progress != null)
+						if (!progress.onReady(tx, fee, feePolicy, priority))
+							return;
 
-					progress.onProgress("Signing Inputs");
+					if (progress != null)
+						progress.onProgress("Signing Inputs");
 
 					Wallet wallet = new Wallet(NetworkParameters.prodNet());
 					for (TransactionInput input : tx.getInputs()) {
@@ -606,16 +610,19 @@ public class MyRemoteWallet extends MyWallet {
 					//Now sign the inputs
 					tx.signInputs(SigHash.ALL, wallet);
 
-					progress.onProgress("Broadcasting Transaction");
+					if (progress != null)
+						progress.onProgress("Broadcasting Transaction");
 
 					String response = pushTx(tx);
 
-					progress.onSend(tx, response);
+					if (progress != null)
+						progress.onSend(tx, response);
 
 				} catch (Exception e) {
 					e.printStackTrace();
 
-					progress.onError(e.getLocalizedMessage());
+					if (progress != null)
+						progress.onError(e.getLocalizedMessage());
 
 				} 
 			}
