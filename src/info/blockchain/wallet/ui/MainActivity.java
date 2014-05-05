@@ -5,11 +5,13 @@ import org.json.simple.JSONObject;
 import piuk.MyWallet;
 import piuk.blockchain.android.Constants;
 import piuk.blockchain.android.WalletApplication;
+import piuk.blockchain.android.ui.AbstractWalletActivity;
 import piuk.blockchain.android.ui.SuccessCallback;
 import piuk.blockchain.android.ui.WalletActivity;
 import piuk.blockchain.android.ui.PinEntryActivity;
 import piuk.blockchain.android.ui.dialogs.RekeyWalletDialog;
 import piuk.blockchain.android.ui.dialogs.RequestPasswordDialog;
+import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -50,7 +52,8 @@ import android.util.Log;
 
 import piuk.blockchain.android.R;
 
-public class MainActivity extends FragmentActivity implements ActionBar.TabListener {
+@SuppressLint("NewApi")
+public class MainActivity extends AbstractWalletActivity implements ActionBar.TabListener {
 
     private static int PIN_ENTRY_ACTIVITY 	= 1;
     private static int SETUP_ACTIVITY	 	= 2;

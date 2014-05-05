@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -41,6 +42,8 @@ import piuk.blockchain.android.ui.SuccessCallback;
 import piuk.blockchain.android.util.WalletUtils;
 import android.util.Pair;
 
+import com.google.bitcoin.core.Address;
+import com.google.bitcoin.core.AddressFormatException;
 import com.google.bitcoin.core.ECKey;
 import com.google.bitcoin.core.NetworkParameters;
 import com.google.bitcoin.core.Sha256Hash;
@@ -1086,6 +1089,49 @@ public class MyRemoteWallet extends MyWallet {
 		}
 
 		return obj;
+	}
+
+	public List<Pair<String, String>> getLabelList() {
+		List<Pair<String, String>> array = new ArrayList<Pair<String, String>>();
+
+		Map<String, String> labelMap = this.getLabelMap();
+
+		synchronized(labelMap) {
+			for (Map.Entry<String, String> entry : labelMap.entrySet()) {
+				array.add(new Pair<String, String>(entry.getValue(), entry.getKey()) {
+					public String toString() {
+						return first.toString();
+					}
+				});
+			}
+		}
+		
+		return array;
+	}
+
+	public String getToAddress(String inputAddress) {
+		final String userEntered = inputAddress;
+		if (userEntered.length() > 0) {
+			try {
+				new Address(Constants.NETWORK_PARAMETERS, userEntered);
+
+				return userEntered;
+			} catch (AddressFormatException e) {
+				List<Pair<String, String>> labels = this.getLabelList();
+
+				for (Pair<String, String> label : labels) {
+					if (label.first.toLowerCase(Locale.ENGLISH).equals(userEntered.toLowerCase(Locale.ENGLISH))) {
+						try {
+							new Address(Constants.NETWORK_PARAMETERS, label.second);
+
+							return label.second;
+						} catch (AddressFormatException e1) {}
+					}
+				}
+			}
+		}
+
+		return null;
 	}
 
 }
