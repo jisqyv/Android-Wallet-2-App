@@ -237,7 +237,7 @@ public class BalanceFragment extends Fragment   {
         tViewAmount1.setText("0");
 
         tViewAmount2 = (TextView)rootView.findViewById(R.id.amount2);
-        tViewAmount2.setTypeface(TypefaceUtil.getInstance(getActivity()).getGravityBoldTypeface());
+        tViewAmount1.setTypeface(TypefaceUtil.getInstance(getActivity()).getRobotoLightTypeface());
         tViewAmount2.setText("$" + BlockchainUtil.BTC2Fiat("0"));
 
         txList = (ListView)rootView.findViewById(R.id.txList);
@@ -427,7 +427,7 @@ public class BalanceFragment extends Fragment   {
 	        }
 
 	        ((TextView)view.findViewById(R.id.address)).setTypeface(TypefaceUtil.getInstance(getActivity()).getGravityBoldTypeface());
-	        ((TextView)view.findViewById(R.id.address)).setText(addressLabels[position].length() > 22 ? addressLabels[position].substring(0, 22) + "..." : addressLabels[position]);
+	        ((TextView)view.findViewById(R.id.address)).setText(addressLabels[position].length() > 15 ? addressLabels[position].substring(0, 15) + "..." : addressLabels[position]);
 	        ((TextView)view.findViewById(R.id.amount)).setTypeface(TypefaceUtil.getInstance(getActivity()).getRobotoBoldTypeface());
 	        ((TextView)view.findViewById(R.id.amount)).setText(amount);
 	        ((TextView)view.findViewById(R.id.currency_code)).setText(isBTC ? "BTC" : "USD");
@@ -465,9 +465,19 @@ public class BalanceFragment extends Fragment   {
       		    clipboard.setPrimaryClip(clip);
      			Toast.makeText(getActivity(), "Address copied to clipboard:" + address, Toast.LENGTH_LONG).show();
 
-     			Intent intent = new Intent(getActivity(), QRActivity.class);
-      	        intent.putExtra("BTC_ADDRESS", address);
-      	        startActivity(intent);
+            	Bitmap bm = generateQRCode(address);
+            	
+            	//
+            	// replace this with a proper popup
+            	//
+            	View toastView = getActivity().getLayoutInflater().inflate(R.layout.toast, (ViewGroup)getActivity().findViewById(R.id.toastLayout));
+        		ImageView imageView = (ImageView)toastView.findViewById(R.id.image);
+        		imageView.setImageBitmap(bm);
+        		Toast toast = new Toast(getActivity());
+        		toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+        		toast.setDuration(Toast.LENGTH_LONG);
+        		toast.setView(toastView);
+        		toast.show();            	
 
                 return true;
             }

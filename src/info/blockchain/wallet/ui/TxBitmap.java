@@ -129,7 +129,7 @@ public class TxBitmap {
 
 		for(int i = 0; i < branches; i++) {
 			Map.Entry<String, String> addressValueEntry = addressValueEntryList.get(i);				
-    		canvas.drawText(addressValueEntry.getKey().substring(0, scale <= REG_RES ? 8 : 20) + "...", fX, fY + (vOffset * i) + vXtraOffset, paintAddressLabel);
+    		canvas.drawText(addressValueEntry.getKey().substring(0, scale <= REG_RES ? 7 : 15) + "...", fX, fY + (vOffset * i) + vXtraOffset, paintAddressLabel);
     		if(branches > 1) {
 				canvas.drawText(addressValueEntry.getValue(), fX, fY + (vOffset * i) + vOffsetAmount + vXtraOffset, paintAmount);
     		}
