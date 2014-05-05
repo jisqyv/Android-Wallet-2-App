@@ -89,9 +89,9 @@ import com.google.zxing.client.android.Contents;
 import com.google.zxing.client.android.encode.QRCodeEncoder;
 
 public class SendFragment extends Fragment   {
-	public static final String SendTypeQuickSend = "Quick Send";
-	public static final String SendTypeCustomSend = "Custom Send";
-	public static final String SendTypeSharedSend = "Shared Send";
+	private static final String SendTypeQuickSend = "Quick Send";
+	private static final String SendTypeCustomSend = "Custom Send";
+	private static final String SendTypeSharedCoin = "Shared Coin";
 	
 	private static int SIMPLE_SEND = 1;
 	private static int CUSTOM_SEND = 2;
@@ -172,6 +172,7 @@ public class SendFragment extends Fragment   {
 		final MainActivity activity = (MainActivity) getActivity();
 		application = (WalletApplication) activity.getApplication();
 		activity.bindService(new Intent(activity, BlockchainServiceImpl.class), serviceConnection, Context.BIND_AUTO_CREATE);
+    	sendType = SendTypeQuickSend;
 
         rootView = inflater.inflate(R.layout.fragment_send, container, false);
         
@@ -442,7 +443,7 @@ public class SendFragment extends Fragment   {
 					final BigInteger finalFee = fee;
 					final MyRemoteWallet.FeePolicy finalFeePolicy = feePolicy;
 
-					if (sendType != null && sendType.equals(SendTypeSharedSend)) {
+					if (sendType != null && sendType.equals(SendTypeSharedCoin)) {
 
 						new Thread(new Runnable() {
 							@Override
@@ -519,7 +520,7 @@ public class SendFragment extends Fragment   {
 
 				final BigInteger amount;
 
-				if (sendType != null && sendType.equals(SendTypeSharedSend)) {
+				if (sendType != null && sendType.equals(SendTypeSharedCoin)) {
 					BigDecimal amountDecimal = BigDecimal.valueOf(bitcoinAmountStringToBigInteger(edAmount1.getText().toString().trim()).doubleValue());
 
 					//Add the fee
@@ -828,6 +829,7 @@ public class SendFragment extends Fragment   {
         imgSimpleSend.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+            	sendType = SendTypeQuickSend;
 
             	imgSimpleSend.setBackgroundColor(color_spend_selected);
             	imgCustomSend.setBackgroundColor(color_spend_unselected);
@@ -861,6 +863,7 @@ public class SendFragment extends Fragment   {
         imgCustomSend.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+            	sendType = SendTypeCustomSend;
 
             	imgSimpleSend.setBackgroundColor(color_spend_unselected);
             	imgCustomSend.setBackgroundColor(color_spend_selected);
@@ -894,6 +897,7 @@ public class SendFragment extends Fragment   {
         imgSharedSend.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+            	sendType = SendTypeSharedCoin;            	
 
             	imgSimpleSend.setBackgroundColor(color_spend_unselected);
             	imgCustomSend.setBackgroundColor(color_spend_unselected);
