@@ -115,12 +115,14 @@ public class SendFragment extends Fragment   {
     private EditText edAddress = null;
     private TextView tvCurrency = null;
     private LinearLayout summary = null;
+    private LinearLayout summary2 = null;
     
     private TextView tvAmount = null;
     private TextView tvAmountBis = null;
     private TextView tvArrow = null;
     private TextView tvAddress = null;
     private TextView tvAddressBis = null;
+    private TextView tvSummaryLabel = null;
 
     private LinearLayout simple_spend = null;
     private LinearLayout custom_spend = null;
@@ -195,9 +197,13 @@ public class SendFragment extends Fragment   {
         tvAddress.setVisibility(View.INVISIBLE);
         tvAddressBis = (TextView)rootView.findViewById(R.id.sending_address_bis);
         tvAddressBis.setVisibility(View.INVISIBLE);
+        tvSummaryLabel = (TextView)rootView.findViewById(R.id.summary_label);
+        tvSummaryLabel.setTypeface(TypefaceUtil.getInstance(getActivity()).getGravityLightTypeface());
 
         summary = (LinearLayout)rootView.findViewById(R.id.summary);
         summary.setVisibility(View.INVISIBLE);
+        summary2 = (LinearLayout)rootView.findViewById(R.id.summary2);
+        summary2.setVisibility(View.INVISIBLE);
 
         btSend = (Button)rootView.findViewById(R.id.send);
         ivCheck = ((ImageButton)rootView.findViewById(R.id.sent_check));
@@ -635,6 +641,7 @@ public class SendFragment extends Fragment   {
 		        if(actionId == EditorInfo.IME_ACTION_DONE) {
 		        	
 		        	summary.setVisibility(View.VISIBLE);
+		        	summary2.setVisibility(View.VISIBLE);
 		        	tvAddress.setVisibility(View.VISIBLE);
 		        	tvAddressBis.setVisibility(View.VISIBLE);
 		        	tvArrow.setVisibility(View.VISIBLE);
@@ -677,9 +684,9 @@ public class SendFragment extends Fragment   {
 		        	SpannableStringBuilder a1 = new SpannableStringBuilder(amount1);
 		        	SpannableStringBuilder a2 = new SpannableStringBuilder(amount2);
 		        	a1.setSpan(new SuperscriptSpan(), amount1.length() - 4, amount1.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-		        	a1.setSpan(new RelativeSizeSpan((float)0.75), amount1.length() - 4, amount1.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+		        	a1.setSpan(new RelativeSizeSpan((float)0.50), amount1.length() - 4, amount1.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 		        	a2.setSpan(new SuperscriptSpan(), amount2.length() - 4, amount2.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-		        	a2.setSpan(new RelativeSizeSpan((float)0.75), amount2.length() - 4, amount2.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+		        	a2.setSpan(new RelativeSizeSpan((float)0.50), amount2.length() - 4, amount2.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 		        	tvAmount.setText(a1);
 		        	tvAmountBis.setText(a2);
 
@@ -802,6 +809,7 @@ public class SendFragment extends Fragment   {
             	tvAmount2.setText("");
             	
                 summary.setVisibility(View.INVISIBLE);
+                summary2.setVisibility(View.INVISIBLE);
                 tvAmount.setText("");
                 tvAmount.setVisibility(View.INVISIBLE);
                 tvAmountBis.setText("");
@@ -981,7 +989,9 @@ public class SendFragment extends Fragment   {
 
         Log.d("BlockchainWallet", "onResume");
 
-		removeMagicList();
+    	if(isMagic) {
+    		removeMagicList();
+    	}
     	displayMagicList();
 
     }
@@ -1669,6 +1679,7 @@ public class SendFragment extends Fragment   {
 
     private void clearSent()	{
         summary.setVisibility(View.INVISIBLE);
+        summary2.setVisibility(View.INVISIBLE);
         tvAmount.setText("");
         tvAmount.setVisibility(View.INVISIBLE);
         tvAmountBis.setText("");

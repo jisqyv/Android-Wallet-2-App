@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import piuk.MyRemoteWallet;
+import piuk.blockchain.android.R;
 import piuk.blockchain.android.WalletApplication;
 
 import android.content.Context;
@@ -65,12 +66,14 @@ public class ReceiveFragment extends Fragment   {
     private EditText edAddress = null;
     private TextView tvCurrency = null;
     private LinearLayout summary = null;
+    private LinearLayout summary2 = null;
     
     private TextView tvAmount = null;
     private TextView tvAmountBis = null;
     private TextView tvArrow = null;
     private TextView tvAddress = null;
     private TextView tvAddressBis = null;
+    private TextView tvSummaryLabel = null;
     private ImageView ivReceivingQR = null;
 
 	private boolean isMagic = false;
@@ -110,9 +113,13 @@ public class ReceiveFragment extends Fragment   {
         tvAddress.setVisibility(View.INVISIBLE);
         tvAddressBis = (TextView)rootView.findViewById(R.id.receiving_address_bis);
         tvAddressBis.setVisibility(View.INVISIBLE);
+        tvSummaryLabel = (TextView)rootView.findViewById(R.id.summary_label);
+        tvSummaryLabel.setTypeface(TypefaceUtil.getInstance(getActivity()).getGravityLightTypeface());
 
         summary = (LinearLayout)rootView.findViewById(R.id.summary);
         summary.setVisibility(View.INVISIBLE);
+        summary2 = (LinearLayout)rootView.findViewById(R.id.summary2);
+        summary2.setVisibility(View.INVISIBLE);
 
         ivReceivingQR = (ImageView)rootView.findViewById(R.id.qr);
         ivReceivingQR.setVisibility(View.INVISIBLE);
@@ -174,6 +181,7 @@ public class ReceiveFragment extends Fragment   {
 		        if(actionId == EditorInfo.IME_ACTION_DONE) {
 
 		        	summary.setVisibility(View.VISIBLE);
+		        	summary2.setVisibility(View.VISIBLE);
 		        	tvAddress.setVisibility(View.VISIBLE);
 		        	tvAddressBis.setVisibility(View.VISIBLE);
 		        	tvArrow.setVisibility(View.VISIBLE);
@@ -223,9 +231,9 @@ public class ReceiveFragment extends Fragment   {
 		        	SpannableStringBuilder a1 = new SpannableStringBuilder(amount1);
 		        	SpannableStringBuilder a2 = new SpannableStringBuilder(amount2);
 		        	a1.setSpan(new SuperscriptSpan(), amount1.length() - 4, amount1.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-		        	a1.setSpan(new RelativeSizeSpan((float)0.75), amount1.length() - 4, amount1.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+		        	a1.setSpan(new RelativeSizeSpan((float)0.50), amount1.length() - 4, amount1.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 		        	a2.setSpan(new SuperscriptSpan(), amount2.length() - 4, amount2.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-		        	a2.setSpan(new RelativeSizeSpan((float)0.75), amount2.length() - 4, amount2.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+		        	a2.setSpan(new RelativeSizeSpan((float)0.50), amount2.length() - 4, amount2.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 		        	tvAmount.setText(a1);
 		        	tvAmountBis.setText(a2);
 
@@ -352,6 +360,7 @@ public class ReceiveFragment extends Fragment   {
             	tvAmount2.setText("");
             	
                 summary.setVisibility(View.INVISIBLE);
+                summary2.setVisibility(View.INVISIBLE);
                 tvAmount.setText("");
                 tvAmount.setVisibility(View.INVISIBLE);
                 tvAmountBis.setText("");
@@ -382,6 +391,7 @@ public class ReceiveFragment extends Fragment   {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
 
+        /*
         if(isVisibleToUser) {
         	if(isMagic) {
         		removeMagicList();
@@ -391,6 +401,7 @@ public class ReceiveFragment extends Fragment   {
         else {
         	;
         }
+        */
 
     }
 
@@ -402,6 +413,7 @@ public class ReceiveFragment extends Fragment   {
     		removeMagicList();
     	}
     	displayMagicList();
+    	
     }
 
     private Bitmap generateQRCode(String uri) {
@@ -666,6 +678,7 @@ public class ReceiveFragment extends Fragment   {
 
     private void clearReceive()	{
         summary.setVisibility(View.INVISIBLE);
+        summary2.setVisibility(View.INVISIBLE);
         tvAmount.setText("");
         tvAmount.setVisibility(View.INVISIBLE);
         tvAmountBis.setText("");
