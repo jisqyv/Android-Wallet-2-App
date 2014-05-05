@@ -50,10 +50,10 @@ import android.widget.Toast;
 
 import android.util.Log;
 
-import piuk.blockchain.android.R;
+	import piuk.blockchain.android.R;
 
 @SuppressLint("NewApi")
-public class MainActivity extends AbstractWalletActivity implements ActionBar.TabListener {
+public class MainActivity extends FragmentActivity implements ActionBar.TabListener {
 
     private static int PIN_ENTRY_ACTIVITY 	= 1;
     private static int SETUP_ACTIVITY	 	= 2;
@@ -294,6 +294,22 @@ Parameters:
 //    	intent.setType(ContactsContract.CommonDataKinds.Email.CONTENT_TYPE);
     	startActivityForResult(intent, PICK_CONTACT);
     }
+    
+	public final void toast(final String text, final Object... formatArgs) {
+		toast(text, 0, Toast.LENGTH_SHORT, formatArgs);
+	}
+
+	public final void longToast(final String text, final Object... formatArgs) {
+		toast(text, 0, Toast.LENGTH_LONG, formatArgs);
+	}
+	
+	public final void toast(final int textResId, final Object... formatArgs) {
+		toast(textResId, 0, Toast.LENGTH_SHORT, formatArgs);
+	}
+
+	public final void longToast(final int textResId, final Object... formatArgs) {
+		toast(textResId, 0, Toast.LENGTH_LONG, formatArgs);
+	}
 /*
 	public void validatePIN(final WalletApplication application, final String PIN) {
 
