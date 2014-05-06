@@ -135,7 +135,6 @@ public class BalanceFragment extends Fragment   {
 		}		
 
 		labelMap = remoteWallet.getLabelMap();
-		Log.d("asdfasd", "labelMap: " + labelMap.toString());
 		
 		Map<String, JSONObject> multiAddrBalancesRoot = remoteWallet.getMultiAddrBalancesRoot();
 		for (int i = 0; i < addressLabels.length; i++) {
