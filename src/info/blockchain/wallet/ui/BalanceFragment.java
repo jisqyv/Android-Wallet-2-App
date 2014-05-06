@@ -547,7 +547,7 @@ public class BalanceFragment extends Fragment   {
 
 	    	if (result.signum() == 1) {
 			    isSending = false;
-		    	boolean isAddressPartofTransaction = false;
+		    	boolean isAddressPartofTransaction = false;			    
 		    	//for (TransactionOutput transactionOutput : transactionOutputs) {
 				for (Iterator<TransactionOutput> ito = transactionOutputs.iterator(); ito.hasNext();) {
 					TransactionOutput transactionOutput = ito.next();
@@ -574,7 +574,8 @@ public class BalanceFragment extends Fragment   {
 			    		TransactionInput transactionInput = iti.next();
 			        	try {
 			        		Address addr = transactionInput.getFromAddress();
-			        		if (addr != null) {
+			        		//second condition is required so that inputs are not displayed if it is also an output 
+			        		if (addr != null && ! addr.toString().equals(address)) {
 			        		    Log.d("transactionInput: ", addr.toString());
 				        		MyTransactionInput ti = (MyTransactionInput)transactionInput;
 			        			String value = BlockchainUtil.formatBitcoin(ti.getValue()) + " BTC";
@@ -624,7 +625,8 @@ public class BalanceFragment extends Fragment   {
 			        		if (script != null)
 			        			addr = script.getToAddress();
 			        		
-			        		if (addr != null) {
+			        		//second condition is required so that outputs are not displayed if it is also an input 
+			        		if (addr != null && ! addr.toString().equals(address)) {			        		
 			        		    Log.d("transactionOutput: ", addr.toString());
 			        			String value = BlockchainUtil.formatBitcoin(transactionOutput.getValue()) + " BTC";
 			        			String label = labelMap.get(addr.toString());
