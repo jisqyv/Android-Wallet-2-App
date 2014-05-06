@@ -7,8 +7,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.sourceforge.zbar.Symbol;
+import org.json.simple.JSONObject;
 
+import net.sourceforge.zbar.Symbol;
 import piuk.EventListeners;
 import piuk.MyRemoteWallet;
 import piuk.MyRemoteWallet.SendProgress;
@@ -1227,12 +1228,17 @@ public class SendFragment extends Fragment   {
 		MyRemoteWallet wallet = application.getRemoteWallet();
 		String[] from = wallet.getActiveAddresses();
 		Map<String,String> labels = wallet.getLabelMap();
-
+		
         magicData = new HashMap<String,String>();
 
         xlatLabel.clear();
         for(int i = 0; i < from.length; i++) {
-        	magicData.put(labels.get(from[i]) == null ? from[i] : labels.get(from[i]), "0.000 BTC");
+        	String amount = "0.000";
+    		    BigInteger finalBalance = wallet.getBalance(from[i]);	
+    		    if (finalBalance != null)
+    		    	amount = BlockchainUtil.formatBitcoin(finalBalance);
+    		    
+        	magicData.put(labels.get(from[i]) == null ? from[i] : labels.get(from[i]), amount + " BTC");
         	xlatLabel.put(labels.get(from[i]) == null ? from[i] : labels.get(from[i]), from[i]);
         }
 

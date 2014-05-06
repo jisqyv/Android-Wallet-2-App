@@ -136,16 +136,15 @@ public class BalanceFragment extends Fragment   {
 
 		labelMap = remoteWallet.getLabelMap();
 		
-		Map<String, JSONObject> multiAddrBalancesRoot = remoteWallet.getMultiAddrBalancesRoot();
 		for (int i = 0; i < addressLabels.length; i++) {
 			String address = addressLabels[i];
 
-		    if (multiAddrBalancesRoot != null) {
-			    JSONObject addressRoot = multiAddrBalancesRoot.get(address);	    
-			    BigInteger finalBalance = BigInteger.valueOf(((Number)addressRoot.get("final_balance")).longValue());			    
-			    addressAmounts[i] = BlockchainUtil.formatBitcoin(finalBalance);
-		    }
-
+		    BigInteger finalBalance = remoteWallet.getBalance(address);	
+		    if (finalBalance != null)
+		    	addressAmounts[i] = BlockchainUtil.formatBitcoin(finalBalance);
+		    else
+		    	addressAmounts[i] = "0.0000";
+		    
 		    String label = labelMap.get(address);
 		    if (label != null) {
 		    	addressLabels[i] = label;	

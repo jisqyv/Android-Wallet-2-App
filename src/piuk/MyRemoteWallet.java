@@ -160,6 +160,12 @@ public class MyRemoteWallet extends MyWallet {
 		return multiAddrBalancesRoot;
 	}
 	
+	public BigInteger getBalanceOfAddress(String address) {
+		if (multiAddrBalancesRoot == null) return null;
+		JSONObject addressRoot = multiAddrBalancesRoot.get(address);	    
+		return BigInteger.valueOf(((Number)addressRoot.get("final_balance")).longValue());
+	}
+	
 	public JSONObject getMultiAddrRoot() {
 		return multiAddrRoot;
 	}

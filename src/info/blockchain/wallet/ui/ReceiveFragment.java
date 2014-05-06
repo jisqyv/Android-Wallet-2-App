@@ -6,10 +6,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.json.simple.JSONObject;
+
 import piuk.MyRemoteWallet;
 import piuk.blockchain.android.R;
 import piuk.blockchain.android.WalletApplication;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -48,7 +49,6 @@ import android.text.Spannable;
 import android.util.Log;
 
 import com.google.bitcoin.uri.BitcoinURI;
-
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.android.Contents;
@@ -523,7 +523,12 @@ public class ReceiveFragment extends Fragment   {
         
         xlatLabel.clear();
         for(int i = 0; i < from.length; i++) {
-        	magicData.put(labels.get(from[i]) == null ? from[i] : labels.get(from[i]), "0.000 BTC");
+        	String amount = "0.000";
+		    BigInteger finalBalance = wallet.getBalance(from[i]);	
+		    if (finalBalance != null)
+		    	amount = BlockchainUtil.formatBitcoin(finalBalance);
+        	
+        	magicData.put(labels.get(from[i]) == null ? from[i] : labels.get(from[i]), amount + " BTC");
         	xlatLabel.put(labels.get(from[i]) == null ? from[i] : labels.get(from[i]), from[i]);
         }
 
