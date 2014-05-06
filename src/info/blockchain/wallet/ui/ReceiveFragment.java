@@ -4,8 +4,10 @@ import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import piuk.MyRemoteWallet;
+import piuk.blockchain.android.R;
 import piuk.blockchain.android.WalletApplication;
 
 import android.content.Context;
@@ -69,6 +71,7 @@ public class ReceiveFragment extends Fragment   {
     private TextView tvAmountBis = null;
     private TextView tvArrow = null;
     private TextView tvAddress = null;
+    private TextView tvAddressBis = null;
     private ImageView ivReceivingQR = null;
 
 	private boolean isMagic = false;
@@ -89,6 +92,7 @@ public class ReceiveFragment extends Fragment   {
     private HashMap<String,String> magicData = null;
     private ArrayList<String> keys = null;
 	private MagicAdapter adapter = null;
+	private HashMap<String,String> xlatLabel = null;
 
 	private boolean isBTC = false;
 
@@ -105,6 +109,8 @@ public class ReceiveFragment extends Fragment   {
         tvArrow.setVisibility(View.INVISIBLE);
         tvAddress = (TextView)rootView.findViewById(R.id.receiving_address);
         tvAddress.setVisibility(View.INVISIBLE);
+        tvAddressBis = (TextView)rootView.findViewById(R.id.receiving_address_bis);
+        tvAddressBis.setVisibility(View.INVISIBLE);
 
         summary = (LinearLayout)rootView.findViewById(R.id.summary);
         summary.setVisibility(View.INVISIBLE);
@@ -157,6 +163,7 @@ public class ReceiveFragment extends Fragment   {
         ((TextView)rootView.findViewById(R.id.currency)).setTypeface(TypefaceUtil.getInstance(getActivity()).getGravityBoldTypeface());
         ((ImageView)rootView.findViewById(R.id.qr)).setImageBitmap(generateQRCode(BitcoinURI.convertToBitcoinURI("18nkx4epNwy4nEfFWZEtdBucwtj5TdSAm", BigInteger.valueOf(300000L), "", "")));
 
+        xlatLabel = new HashMap<String,String>();
         initMagicList();
 
         tvAmount2 = ((TextView)rootView.findViewById(R.id.amount2));
@@ -169,11 +176,26 @@ public class ReceiveFragment extends Fragment   {
 
 		        	summary.setVisibility(View.VISIBLE);
 		        	tvAddress.setVisibility(View.VISIBLE);
+		        	tvAddressBis.setVisibility(View.VISIBLE);
 		        	tvArrow.setVisibility(View.VISIBLE);
 		        	tvAmount.setVisibility(View.VISIBLE);
 		        	tvAmountBis.setVisibility(View.VISIBLE);
 		        	ivReceivingQR.setVisibility(View.VISIBLE);
-		        	
+
+//		        	final WalletApplication application = (WalletApplication)getActivity().getApplication();
+// 		    		MyRemoteWallet wallet = application.getRemoteWallet();
+// 		    		Map<String,String> labels = wallet.getLabelMap();
+ 		    		String destination = null;
+ 		            if(xlatLabel.get(edAddress.getText().toString()) != null) {
+ 		            	destination = xlatLabel.get(edAddress.getText().toString());
+ 		            	tvAddressBis.setText(destination.substring(0,  15) + "...");
+ 		            }
+ 		            else {
+ 		            	destination = edAddress.getText().toString();
+ 		            	tvAddressBis.setVisibility(View.GONE);
+ 		            }
+ //					Toast.makeText(application, "BTC going to:" + destination, Toast.LENGTH_LONG).show();
+
 		        	if(edAddress.getText().toString().length() > 15) {
 			        	tvAddress.setText(edAddress.getText().toString().subSequence(0, 15) + "...");
 		        	}
@@ -339,6 +361,8 @@ public class ReceiveFragment extends Fragment   {
                 tvArrow.setVisibility(View.INVISIBLE);
                 tvAddress.setText("");
                 tvAddress.setVisibility(View.INVISIBLE);
+                tvAddressBis.setText("");
+                tvAddressBis.setVisibility(View.INVISIBLE);
                 
 //                btReceive.setVisibility(View.INVISIBLE);
                 ivReceivingQR.setVisibility(View.INVISIBLE);
@@ -493,12 +517,14 @@ public class ReceiveFragment extends Fragment   {
 		final WalletApplication application = (WalletApplication)getActivity().getApplication();
 		MyRemoteWallet wallet = application.getRemoteWallet();
 		String[] from = wallet.getActiveAddresses();
-		Toast.makeText(getActivity(), "from addresses:" + from.length, Toast.LENGTH_SHORT).show();
+		Map<String,String> labels = wallet.getLabelMap();
 
         magicData = new HashMap<String,String>();
         
+        xlatLabel.clear();
         for(int i = 0; i < from.length; i++) {
-        	magicData.put(from[i], "0.000 BTC");
+        	magicData.put(labels.get(from[i]) == null ? from[i] : labels.get(from[i]), "0.000 BTC");
+        	xlatLabel.put(labels.get(from[i]) == null ? from[i] : labels.get(from[i]), from[i]);
         }
 
         String[] sKeys = magicData.keySet().toArray(new String[0]);
@@ -668,6 +694,8 @@ public class ReceiveFragment extends Fragment   {
         tvArrow.setVisibility(View.INVISIBLE);
         tvAddress.setText("");
         tvAddress.setVisibility(View.INVISIBLE);
+        tvAddressBis.setText("");
+        tvAddressBis.setVisibility(View.INVISIBLE);
         ivReceivingQR.setVisibility(View.INVISIBLE);
     }
 

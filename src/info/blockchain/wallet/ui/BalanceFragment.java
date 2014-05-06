@@ -6,6 +6,7 @@ import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.json.simple.JSONObject;
@@ -33,6 +34,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.graphics.Color;
 import android.graphics.Bitmap;
 import android.support.v4.app.Fragment;
@@ -150,14 +152,18 @@ public class BalanceFragment extends Fragment   {
 	    }
 
 		String[] activeAddresses = remoteWallet.getActiveAddresses();
-	    final List<MyTransaction> transactionsList = remoteWallet.getTransactions();
-	    for (final MyTransaction transaction : transactionsList) {
+	    List<MyTransaction> transactionsList = remoteWallet.getTransactions();
+	    //for (MyTransaction transaction : transactionsList) {
+		for (Iterator<MyTransaction> it = transactionsList.iterator(); it.hasNext();) {
+    		MyTransaction transaction = it.next();
 		    Log.d("transactionHash: ", transaction.getHashAsString());
 		    BigInteger result = transaction.getResult();
 	    	List<TransactionOutput> transactionOutputs = transaction.getOutputs();
 	    	List<TransactionInput> transactionInputs = transaction.getInputs();	 
 
-	    	for (TransactionOutput transactionOutput : transactionOutputs) {
+//	    	for (TransactionOutput transactionOutput : transactionOutputs) {
+	    	for(Iterator<TransactionOutput> ito = transactionOutputs.iterator(); ito.hasNext(); )	{
+	    		TransactionOutput transactionOutput = ito.next();
 	        	try {
 	        		com.google.bitcoin.core.Script script = transactionOutput.getScriptPubKey();
 	        		String addr = null;
@@ -174,7 +180,9 @@ public class BalanceFragment extends Fragment   {
 	            }			    		
 	    	}
 	    	    		
-	    	for (TransactionInput transactionInput : transactionInputs) {
+//	    	for (TransactionInput transactionInput : transactionInputs) {
+		    for (Iterator<TransactionInput> iti = transactionInputs.iterator(); iti.hasNext();) {
+	    		TransactionInput transactionInput = iti.next();
 	        	try {
 	        		Address addr = transactionInput.getFromAddress();
 	        		if (addr != null && Arrays.asList(activeAddresses).contains(addr.toString())) {
@@ -419,15 +427,29 @@ public class BalanceFragment extends Fragment   {
 	        DecimalFormat df = null;
 	        if(isBTC) {
 	        	df = new DecimalFormat("######0.0000");
-	        	amount = df.format(Double.parseDouble(addressAmounts[position]));
+	        	if(addressAmounts != null && addressAmounts[position] != null) {
+		        	amount = df.format(Double.parseDouble(addressAmounts[position]));
+	        	}
+	        	else {
+		        	amount = "0.0000";
+	        	}
 	        }
 	        else {
-//	        	df = new DecimalFormat("######0.00");
-	        	amount = BlockchainUtil.BTC2Fiat(addressAmounts[position]);
+	        	if(addressAmounts != null && addressAmounts[position] != null) {
+		        	amount = BlockchainUtil.BTC2Fiat(addressAmounts[position]);
+	        	}
+	        	else {
+		        	amount = "0.00";
+	        	}
 	        }
 
 	        ((TextView)view.findViewById(R.id.address)).setTypeface(TypefaceUtil.getInstance(getActivity()).getGravityBoldTypeface());
-	        ((TextView)view.findViewById(R.id.address)).setText(addressLabels[position].length() > 15 ? addressLabels[position].substring(0, 15) + "..." : addressLabels[position]);
+        	if(addressLabels != null && addressLabels[position] != null) {
+    	        ((TextView)view.findViewById(R.id.address)).setText(addressLabels[position].length() > 15 ? addressLabels[position].substring(0, 15) + "..." : addressLabels[position]);
+        	}
+        	else {
+    	        ((TextView)view.findViewById(R.id.address)).setText("");
+        	}
 	        ((TextView)view.findViewById(R.id.amount)).setTypeface(TypefaceUtil.getInstance(getActivity()).getRobotoBoldTypeface());
 	        ((TextView)view.findViewById(R.id.amount)).setText(amount);
 	        ((TextView)view.findViewById(R.id.currency_code)).setText(isBTC ? "BTC" : "USD");
@@ -465,19 +487,10 @@ public class BalanceFragment extends Fragment   {
       		    clipboard.setPrimaryClip(clip);
      			Toast.makeText(getActivity(), "Address copied to clipboard:" + address, Toast.LENGTH_LONG).show();
 
-            	Bitmap bm = generateQRCode(address);
-            	
-            	//
-            	// replace this with a proper popup
-            	//
-            	View toastView = getActivity().getLayoutInflater().inflate(R.layout.toast, (ViewGroup)getActivity().findViewById(R.id.toastLayout));
-        		ImageView imageView = (ImageView)toastView.findViewById(R.id.image);
-        		imageView.setImageBitmap(bm);
-        		Toast toast = new Toast(getActivity());
-        		toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
-        		toast.setDuration(Toast.LENGTH_LONG);
-        		toast.setView(toastView);
-        		toast.show();            	
+                Intent intent;
+        		intent = new Intent(getActivity(), QRActivity.class);
+        		intent.putExtra("BTC_ADDRESS", address);
+        		startActivity(intent);
 
                 return true;
             }
@@ -522,7 +535,9 @@ public class BalanceFragment extends Fragment   {
         final List<MyTransaction> transactionsList = remoteWallet.getTransactions();
 
 	    boolean isSending = true;
-	    for (final MyTransaction transaction : transactionsList) {
+//	    for (final MyTransaction transaction : transactionsList) {
+		for (Iterator<MyTransaction> it = transactionsList.iterator(); it.hasNext();) {
+			MyTransaction transaction = it.next();
 		    Log.d("transactionHash: ", transaction.getHashAsString());
 		    BigInteger result = transaction.getResult();
 	    	List<TransactionOutput> transactionOutputs = transaction.getOutputs();
@@ -532,7 +547,9 @@ public class BalanceFragment extends Fragment   {
 	    	if (result.signum() == 1) {
 			    isSending = false;
 		    	boolean isAddressPartofTransaction = false;
-		    	for (TransactionOutput transactionOutput : transactionOutputs) {
+		    	//for (TransactionOutput transactionOutput : transactionOutputs) {
+				for (Iterator<TransactionOutput> ito = transactionOutputs.iterator(); ito.hasNext();) {
+					TransactionOutput transactionOutput = ito.next();
 		        	try {
 		        		com.google.bitcoin.core.Script script = transactionOutput.getScriptPubKey();
 		        		String addr = null;
@@ -551,7 +568,9 @@ public class BalanceFragment extends Fragment   {
 		    	}
 		    	
 		    	if (transactionInputs != null && isAddressPartofTransaction) {
-			    	for (TransactionInput transactionInput : transactionInputs) {
+			    	//for (TransactionInput transactionInput : transactionInputs) {
+			    	for (Iterator<TransactionInput> iti = transactionInputs.iterator(); iti.hasNext();) {
+			    		TransactionInput transactionInput = iti.next();
 			        	try {
 			        		Address addr = transactionInput.getFromAddress();
 			        		if (addr != null) {
@@ -571,7 +590,9 @@ public class BalanceFragment extends Fragment   {
 	    	} else {
 	    		isSending = true;
 		    	boolean isAddressPartofTransaction = false;
-		    	for (TransactionInput transactionInput : transactionInputs) {
+		    	//for (TransactionInput transactionInput : transactionInputs) {
+			    for (Iterator<TransactionInput> iti = transactionInputs.iterator(); iti.hasNext();) {
+		    		TransactionInput transactionInput = iti.next();
 		        	try {
 		        		Address addr = transactionInput.getFromAddress();
 
@@ -587,7 +608,9 @@ public class BalanceFragment extends Fragment   {
 		    	}
 		    	
 				if (transactionOutputs != null && isAddressPartofTransaction) {
-			    	for (TransactionOutput transactionOutput : transactionOutputs) {
+			    	//for (TransactionOutput transactionOutput : transactionOutputs) {
+					for (Iterator<TransactionOutput> ito = transactionOutputs.iterator(); ito.hasNext();) {
+			    		TransactionOutput transactionOutput = ito.next();
 			        	try {
 			        		com.google.bitcoin.core.Script script = transactionOutput.getScriptPubKey();
 			        		Address addr = null;
@@ -640,10 +663,12 @@ public class BalanceFragment extends Fragment   {
 		        ((TextView)child.findViewById(R.id.amount)).setText((BlockchainUtil.BTC2Fiat(WalletUtils.formatValue(result)) + " USD"));
 	        }
 	        
+	        final MyTransaction tx = transaction;
+	        
 			child.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(Intent.ACTION_VIEW , Uri.parse("https://blockchain.info/tx/"+transaction.getHashAsString()));
+                    Intent intent = new Intent(Intent.ACTION_VIEW , Uri.parse("https://blockchain.info/tx/" + tx.getHashAsString()));
                     startActivity(intent);
                 }
             });

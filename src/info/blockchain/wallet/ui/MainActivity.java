@@ -75,9 +75,9 @@ public class MainActivity extends AbstractWalletActivity implements ActionBar.Ta
 	    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
 	    tabs = new String[3];
-	    tabs[0] = "Send money";
+	    tabs[0] = "Send";
 	    tabs[1] = "Balance";
-	    tabs[2] = "Receive money";
+	    tabs[2] = "Receive";
 
         viewPager = (ViewPager) findViewById(info.blockchain.wallet.ui.R.id.pager);
         mAdapter = new TabsPagerAdapter(getSupportFragmentManager());
@@ -159,11 +159,6 @@ public class MainActivity extends AbstractWalletActivity implements ActionBar.Ta
 		}
 		*/
 
-	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
 	}
 
 	@Override

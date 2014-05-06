@@ -9,12 +9,14 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.ImageView;
 //import android.util.Log;
 
 public class QRActivity extends Activity	{
 
 	private ImageView ivQR = null;
+	private TextView tvBTCAddress = null;
 
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -27,11 +29,11 @@ public class QRActivity extends Activity	{
         	btcAddress = extras.getString("BTC_ADDRESS");
         }
         
-        setTitle(btcAddress);
-
     	Bitmap bm = generateQRCode(btcAddress);
 	    ivQR = (ImageView)findViewById(R.id.qr);
 		ivQR.setImageBitmap(bm);
+	    tvBTCAddress = (TextView)findViewById(R.id.btc_address);
+	    tvBTCAddress.setText(btcAddress);
 
 	    /*
         bOK = (Button)findViewById(R.id.confirm);
@@ -107,7 +109,7 @@ public class QRActivity extends Activity	{
     private Bitmap generateQRCode(String uri) {
 
         Bitmap bitmap = null;
-        int qrCodeDimension = 380;
+        int qrCodeDimension = 440;
 
         QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(uri, null, Contents.Type.TEXT, BarcodeFormat.QR_CODE.toString(), qrCodeDimension);
 
