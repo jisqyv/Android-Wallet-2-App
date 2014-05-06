@@ -13,6 +13,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Matrix;
+import android.util.Log;
 import android.content.res.Resources;
 //import android.util.Log;
 
@@ -128,8 +129,23 @@ public class TxBitmap {
 		paintAddressLabel.setTypeface(TypefaceUtil.getInstance(context).getRobotoBoldTypeface());
 
 		for(int i = 0; i < branches; i++) {
-			Map.Entry<String, String> addressValueEntry = addressValueEntryList.get(i);				
-    		canvas.drawText(addressValueEntry.getKey().substring(0, scale <= REG_RES ? 7 : 15) + "...", fX, fY + (vOffset * i) + vXtraOffset, paintAddressLabel);
+			Map.Entry<String, String> addressValueEntry = addressValueEntryList.get(i);			
+			String addressLabel = addressValueEntry.getKey();
+			String addressLabelConcat;
+			if (scale <= REG_RES) {
+				if (addressLabel.length() > 8)
+					addressLabelConcat = addressLabel.substring(0,7) + "...";
+				else
+					addressLabelConcat = addressLabel;
+			} else {
+				if (addressLabel.length() > 16)
+					addressLabelConcat = addressLabel.substring(0,15) + "...";
+				else
+					addressLabelConcat = addressLabel;
+			}
+
+			canvas.drawText(addressLabelConcat, fX, fY + (vOffset * i) + vXtraOffset, paintAddressLabel);
+				
     		if(branches > 1) {
 				canvas.drawText(addressValueEntry.getValue(), fX, fY + (vOffset * i) + vOffsetAmount + vXtraOffset, paintAmount);
     		}

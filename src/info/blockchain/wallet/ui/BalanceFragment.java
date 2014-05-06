@@ -81,7 +81,8 @@ public class BalanceFragment extends Fragment   {
 	private BigInteger totalOutputsValue = BigInteger.ZERO;
 
 	private WalletApplication application;
-
+	private Map<String, String> labelMap;
+	
 	private EventListeners.EventListener eventListener = new EventListeners.EventListener() {
 		@Override
 		public String getDescription() {
@@ -133,8 +134,9 @@ public class BalanceFragment extends Fragment   {
 			addressLabelTxsDisplayed[i] = false;
 		}		
 
-		Map<String, String> labelMap = remoteWallet.getLabelMap();
-
+		labelMap = remoteWallet.getLabelMap();
+		Log.d("asdfasd", "labelMap: " + labelMap.toString());
+		
 		Map<String, JSONObject> multiAddrBalancesRoot = remoteWallet.getMultiAddrBalancesRoot();
 		for (int i = 0; i < addressLabels.length; i++) {
 			String address = addressLabels[i];
@@ -577,8 +579,14 @@ public class BalanceFragment extends Fragment   {
 			        		    Log.d("transactionInput: ", addr.toString());
 				        		MyTransactionInput ti = (MyTransactionInput)transactionInput;
 			        			String value = BlockchainUtil.formatBitcoin(ti.getValue()) + " BTC";
-			        			Map.Entry<String, String> entry = new AbstractMap.SimpleEntry<String, String>(addr.toString(), value);
-			        			addressValueEntryList.add(entry);
+			        			String label = labelMap.get(addr.toString());
+			        			if (label != null) {
+				        			Map.Entry<String, String> entry = new AbstractMap.SimpleEntry<String, String>(label, value);
+				        			addressValueEntryList.add(entry);			        				
+			        			} else {
+				        			Map.Entry<String, String> entry = new AbstractMap.SimpleEntry<String, String>(addr.toString(), value);
+				        			addressValueEntryList.add(entry);			        				
+			        			}
 			        		}
 			            } catch (ScriptException e) {
 			                e.printStackTrace();
@@ -620,8 +628,14 @@ public class BalanceFragment extends Fragment   {
 			        		if (addr != null) {
 			        		    Log.d("transactionOutput: ", addr.toString());
 			        			String value = BlockchainUtil.formatBitcoin(transactionOutput.getValue()) + " BTC";
-			        			Map.Entry<String, String> entry = new AbstractMap.SimpleEntry<String, String>(addr.toString(), value);
-			        			addressValueEntryList.add(entry);			        			
+			        			String label = labelMap.get(addr.toString());
+			        			if (label != null) {
+				        			Map.Entry<String, String> entry = new AbstractMap.SimpleEntry<String, String>(label, value);
+				        			addressValueEntryList.add(entry);			        				
+			        			} else {
+				        			Map.Entry<String, String> entry = new AbstractMap.SimpleEntry<String, String>(addr.toString(), value);
+				        			addressValueEntryList.add(entry);			        				
+			        			}
 			        		}
 			            } catch (ScriptException e) {
 			                e.printStackTrace();
