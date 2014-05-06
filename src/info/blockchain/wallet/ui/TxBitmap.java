@@ -32,12 +32,10 @@ public class TxBitmap {
 	private static float REG_RES = 2.0f;
 	
 	private List<Map.Entry<String, String>> addressValueEntryList;	
-	private BigInteger result;
 
 	public TxBitmap() { ; }
-	public TxBitmap(Context ctx, BigInteger result, List<Map.Entry<String, String>> addressValueEntryList) {
+	public TxBitmap(Context ctx, List<Map.Entry<String, String>> addressValueEntryList) {
 		this.setAddressValueEntryList(addressValueEntryList);
-		this.setResult(result);
 
 		context = ctx;
 		}
@@ -221,14 +219,6 @@ public class TxBitmap {
 
         canvas.drawPath(path, paint);
     }
-
-    public BigInteger getResult() {
-		return result;
-	}
-
-    public void setResult(BigInteger result) {
-		this.result = result;
-	}
 
     public List<Map.Entry<String, String>> getAddressValueEntryList() {
 		return addressValueEntryList;

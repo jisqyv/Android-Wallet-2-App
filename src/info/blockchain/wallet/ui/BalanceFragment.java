@@ -657,13 +657,13 @@ public class BalanceFragment extends Fragment   {
 	        ((TextView)child.findViewById(R.id.ts)).setText(DateUtil.getInstance().formatted(ts));
 
 	        if (isSending) {
-		        TxBitmap txBitmap = new TxBitmap(getActivity(), result, addressValueEntryList);
+		        TxBitmap txBitmap = new TxBitmap(getActivity(), addressValueEntryList);
 		        ((ImageView)child.findViewById(R.id.txbitmap)).setImageBitmap(txBitmap.createArrowsBitmap(200, TxBitmap.SENDING, addressValueEntryList.size()));
 		        ((ImageView)child.findViewById(R.id.address)).setImageBitmap(txBitmap.createListBitmap(200));
 		        ((TextView)child.findViewById(R.id.amount)).setTypeface(TypefaceUtil.getInstance(getActivity()).getGravityBoldTypeface());
 		        ((TextView)child.findViewById(R.id.amount)).setTextColor(BlockchainUtil.BLOCKCHAIN_RED);
 	        } else {
-		        TxBitmap txBitmap = new TxBitmap(getActivity(), result, addressValueEntryList);
+		        TxBitmap txBitmap = new TxBitmap(getActivity(), addressValueEntryList);
 		        ((ImageView)child.findViewById(R.id.txbitmap)).setImageBitmap(txBitmap.createArrowsBitmap(200, TxBitmap.RECEIVING, addressValueEntryList.size()));
 		        ((ImageView)child.findViewById(R.id.address)).setImageBitmap(txBitmap.createListBitmap(200));
 		        ((TextView)child.findViewById(R.id.amount)).setTypeface(TypefaceUtil.getInstance(getActivity()).getGravityBoldTypeface());
