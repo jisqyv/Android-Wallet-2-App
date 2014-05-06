@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.HashMap;
 
 import net.sourceforge.zbar.Symbol;
@@ -115,14 +114,11 @@ public class SendFragment extends Fragment   {
     private EditText edAddress = null;
     private TextView tvCurrency = null;
     private LinearLayout summary = null;
-    private LinearLayout summary2 = null;
     
     private TextView tvAmount = null;
     private TextView tvAmountBis = null;
     private TextView tvArrow = null;
     private TextView tvAddress = null;
-    private TextView tvAddressBis = null;
-    private TextView tvSummaryLabel = null;
 
     private LinearLayout simple_spend = null;
     private LinearLayout custom_spend = null;
@@ -147,8 +143,7 @@ public class SendFragment extends Fragment   {
     private HashMap<String,String> magicData = null;
     private ArrayList<String> keys = null;
 	private MagicAdapter adapter = null;
-	private HashMap<String,String> xlatLabel = null;
-	
+
 	private boolean isBTC = false;
 
 	private static int ZBAR_SCANNER_REQUEST = 2026;
@@ -195,15 +190,9 @@ public class SendFragment extends Fragment   {
         tvArrow.setVisibility(View.INVISIBLE);
         tvAddress = (TextView)rootView.findViewById(R.id.sending_address);
         tvAddress.setVisibility(View.INVISIBLE);
-        tvAddressBis = (TextView)rootView.findViewById(R.id.sending_address_bis);
-        tvAddressBis.setVisibility(View.INVISIBLE);
-        tvSummaryLabel = (TextView)rootView.findViewById(R.id.summary_label);
-        tvSummaryLabel.setTypeface(TypefaceUtil.getInstance(getActivity()).getGravityLightTypeface());
 
         summary = (LinearLayout)rootView.findViewById(R.id.summary);
         summary.setVisibility(View.INVISIBLE);
-        summary2 = (LinearLayout)rootView.findViewById(R.id.summary2);
-        summary2.setVisibility(View.INVISIBLE);
 
         btSend = (Button)rootView.findViewById(R.id.send);
         ivCheck = ((ImageButton)rootView.findViewById(R.id.sent_check));
@@ -255,7 +244,6 @@ public class SendFragment extends Fragment   {
         ((TextView)rootView.findViewById(R.id.currency)).setText("$");
         ((TextView)rootView.findViewById(R.id.currency)).setTypeface(TypefaceUtil.getInstance(getActivity()).getGravityBoldTypeface());
 
-    	xlatLabel = new HashMap<String,String>();
         initMagicList();
 
         btSend = ((Button)rootView.findViewById(R.id.send));
@@ -641,29 +629,13 @@ public class SendFragment extends Fragment   {
 		        if(actionId == EditorInfo.IME_ACTION_DONE) {
 		        	
 		        	summary.setVisibility(View.VISIBLE);
-		        	summary2.setVisibility(View.VISIBLE);
 		        	tvAddress.setVisibility(View.VISIBLE);
-		        	tvAddressBis.setVisibility(View.VISIBLE);
 		        	tvArrow.setVisibility(View.VISIBLE);
 		        	tvAmount.setVisibility(View.VISIBLE);
 		        	tvAmountBis.setVisibility(View.VISIBLE);
-
-		    		final WalletApplication application = (WalletApplication)getActivity().getApplication();
-		    		MyRemoteWallet wallet = application.getRemoteWallet();
-		    		Map<String,String> labels = wallet.getLabelMap();
-		    		String destination = null;
-		            if(xlatLabel.get(edAddress.getText().toString()) != null) {
-		            	destination = xlatLabel.get(edAddress.getText().toString());
-		            	tvAddressBis.setText(destination.substring(0,  15) + "...");
-		            }
-		            else {
-		            	destination = edAddress.getText().toString();
-		            	tvAddressBis.setVisibility(View.GONE);
-		            }
-//					Toast.makeText(application, "BTC going to:" + destination, Toast.LENGTH_LONG).show();
-					
+		        	
 		        	if(edAddress.getText().toString().length() > 15) {
-			        	tvAddress.setText(edAddress.getText().toString().substring(0, 15) + "...");
+			        	tvAddress.setText(edAddress.getText().toString().subSequence(0, 15) + "...");
 		        	}
 		        	else {
 			        	tvAddress.setText(edAddress.getText().toString());
@@ -684,9 +656,9 @@ public class SendFragment extends Fragment   {
 		        	SpannableStringBuilder a1 = new SpannableStringBuilder(amount1);
 		        	SpannableStringBuilder a2 = new SpannableStringBuilder(amount2);
 		        	a1.setSpan(new SuperscriptSpan(), amount1.length() - 4, amount1.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-		        	a1.setSpan(new RelativeSizeSpan((float)0.50), amount1.length() - 4, amount1.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+		        	a1.setSpan(new RelativeSizeSpan((float)0.75), amount1.length() - 4, amount1.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 		        	a2.setSpan(new SuperscriptSpan(), amount2.length() - 4, amount2.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-		        	a2.setSpan(new RelativeSizeSpan((float)0.50), amount2.length() - 4, amount2.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+		        	a2.setSpan(new RelativeSizeSpan((float)0.75), amount2.length() - 4, amount2.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 		        	tvAmount.setText(a1);
 		        	tvAmountBis.setText(a2);
 
@@ -809,7 +781,6 @@ public class SendFragment extends Fragment   {
             	tvAmount2.setText("");
             	
                 summary.setVisibility(View.INVISIBLE);
-                summary2.setVisibility(View.INVISIBLE);
                 tvAmount.setText("");
                 tvAmount.setVisibility(View.INVISIBLE);
                 tvAmountBis.setText("");
@@ -818,8 +789,6 @@ public class SendFragment extends Fragment   {
                 tvArrow.setVisibility(View.INVISIBLE);
                 tvAddress.setText("");
                 tvAddress.setVisibility(View.INVISIBLE);
-                tvAddressBis.setText("");
-                tvAddressBis.setVisibility(View.INVISIBLE);
 
                 btSend.setText("Send money");
                 btSend.setVisibility(View.INVISIBLE);
@@ -989,9 +958,7 @@ public class SendFragment extends Fragment   {
 
         Log.d("BlockchainWallet", "onResume");
 
-    	if(isMagic) {
-    		removeMagicList();
-    	}
+		removeMagicList();
     	displayMagicList();
 
     }
@@ -1250,29 +1217,15 @@ public class SendFragment extends Fragment   {
         String[] sKeys = magicData.keySet().toArray(new String[0]);
         keys = new ArrayList<String>(Arrays.asList(sKeys));
         */
-
+    	
 		final WalletApplication application = (WalletApplication)getActivity().getApplication();
 		MyRemoteWallet wallet = application.getRemoteWallet();
 		String[] from = wallet.getActiveAddresses();
-		Map<String,String> labels = wallet.getLabelMap();
-//        String[] lKeys = labels.keySet().toArray(new String[0]);
-        /*
-        for(int i = 0; i < lKeys.length; i++) {
-    		Toast.makeText(getActivity(), lKeys[i] + "=" + labels.get(lKeys[i]) , Toast.LENGTH_SHORT).show();
-        }
-        */
 
         magicData = new HashMap<String,String>();
-
-        /*
+        
         for(int i = 0; i < from.length; i++) {
         	magicData.put(from[i], "0.000 BTC");
-        }
-        */
-    	xlatLabel.clear();
-        for(int i = 0; i < from.length; i++) {
-        	magicData.put(labels.get(from[i]), "0.000 BTC");
-        	xlatLabel.put(labels.get(from[i]), from[i]);
         }
 
         String[] sKeys = magicData.keySet().toArray(new String[0]);
@@ -1679,7 +1632,6 @@ public class SendFragment extends Fragment   {
 
     private void clearSent()	{
         summary.setVisibility(View.INVISIBLE);
-        summary2.setVisibility(View.INVISIBLE);
         tvAmount.setText("");
         tvAmount.setVisibility(View.INVISIBLE);
         tvAmountBis.setText("");
@@ -1688,8 +1640,6 @@ public class SendFragment extends Fragment   {
         tvArrow.setVisibility(View.INVISIBLE);
         tvAddress.setText("");
         tvAddress.setVisibility(View.INVISIBLE);
-        tvAddressBis.setText("");
-        tvAddressBis.setVisibility(View.INVISIBLE);
 
         btSend.setText("Send money");
         btSend.setVisibility(View.INVISIBLE);
