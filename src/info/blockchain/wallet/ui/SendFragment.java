@@ -369,7 +369,6 @@ public class SendFragment extends Fragment   {
 					return true;
 				}
 
-
 				public ECKey onPrivateKeyMissing(final String address) {
 
 					if (SendCoinsActivity.temporaryPrivateKeys.containsKey(address)) {
@@ -563,7 +562,6 @@ public class SendFragment extends Fragment   {
 						{
 							final Transaction transaction = application.bitcoinjWallet.sendCoinsOffline(sendRequest);
 
-
 							handler.post(new Runnable()
 							{
 								public void run()
@@ -652,7 +650,7 @@ public class SendFragment extends Fragment   {
  		    		String destination = null;
  		            if(xlatLabel.get(edAddress.getText().toString()) != null) {
  		            	destination = xlatLabel.get(edAddress.getText().toString());
- 		            	tvAddressBis.setText(destination.substring(0,  15) + "...");
+ 		            	tvAddressBis.setText(destination.substring(0, 20) + "...");
  		            }
  		            else {
  		            	destination = edAddress.getText().toString();
@@ -837,11 +835,6 @@ public class SendFragment extends Fragment   {
         final ImageButton imgSimpleSend = ((ImageButton)rootView.findViewById(R.id.simple));
         final ImageButton imgCustomSend = ((ImageButton)rootView.findViewById(R.id.custom));
         final ImageButton imgSharedCoin = ((ImageButton)rootView.findViewById(R.id.shared));
-        /*
-        final TextView tvSimpleSend = ((TextView)rootView.findViewById(R.id.label_simple));
-        final TextView tvCustomSend = ((TextView)rootView.findViewById(R.id.label_custom));
-        final TextView tvSharedCoin = ((TextView)rootView.findViewById(R.id.label_shared));
-        */
         
         final int color_spend_selected = 0xff808080;
         final int color_spend_unselected = 0xffa0a0a0;
@@ -849,11 +842,6 @@ public class SendFragment extends Fragment   {
     	imgSimpleSend.setBackgroundColor(color_spend_selected);
     	imgCustomSend.setBackgroundColor(color_spend_unselected);
     	imgSharedCoin.setBackgroundColor(color_spend_unselected);
-    	/*
-    	tvSimpleSend.setBackgroundColor(color_spend_selected);
-    	tvCustomSend.setBackgroundColor(color_spend_unselected);
-    	tvSharedCoin.setBackgroundColor(color_spend_unselected);
-    	*/
 
         imgSimpleSend.setOnTouchListener(new OnTouchListener() {
             @Override
@@ -863,27 +851,8 @@ public class SendFragment extends Fragment   {
             	imgSimpleSend.setBackgroundColor(color_spend_selected);
             	imgCustomSend.setBackgroundColor(color_spend_unselected);
             	imgSharedCoin.setBackgroundColor(color_spend_unselected);
-            	/*
-            	tvSimpleSend.setBackgroundColor(color_spend_selected);
-            	tvCustomSend.setBackgroundColor(color_spend_unselected);
-            	tvSharedCoin.setBackgroundColor(color_spend_unselected);
-            	*/
-            	doSimpleSend();
 
-            	/*
-                switch (event.getAction())	{
-                	case android.view.MotionEvent.ACTION_DOWN:
-                	case android.view.MotionEvent.ACTION_MOVE:
-                    	imgSimpleSend.setBackgroundColor(0xff3a3a3a);
-                    	doSimpleSend();
-                    	break;
-                	case android.view.MotionEvent.ACTION_UP:
-                	case android.view.MotionEvent.ACTION_CANCEL:
-                		Log.d("QR icon", "UP or CANCEL");
-                    	imgSimpleSend.setBackgroundColor(0xffF3F3F3);
-                		break;
-            	}
-            	*/
+            	doSimpleSend();
 
                 return true;
             }
@@ -897,27 +866,8 @@ public class SendFragment extends Fragment   {
             	imgSimpleSend.setBackgroundColor(color_spend_unselected);
             	imgCustomSend.setBackgroundColor(color_spend_selected);
             	imgSharedCoin.setBackgroundColor(color_spend_unselected);
-            	/*
-            	tvSimpleSend.setBackgroundColor(color_spend_unselected);
-            	tvCustomSend.setBackgroundColor(color_spend_selected);
-            	tvSharedCoin.setBackgroundColor(color_spend_unselected);
-            	*/
-//    			doCustomSend();
 
-            	/*
-                switch (event.getAction())	{
-            		case android.view.MotionEvent.ACTION_DOWN:
-            		case android.view.MotionEvent.ACTION_MOVE:
-            			imgCustomSend.setBackgroundColor(0xff3a3a3a);
-            			doCustomSend();
-            			break;
-            		case android.view.MotionEvent.ACTION_UP:
-            		case android.view.MotionEvent.ACTION_CANCEL:
-            			Log.d("QR icon", "UP or CANCEL");
-            			imgCustomSend.setBackgroundColor(0xffF3F3F3);
-            			break;
-                	}
-                */
+//    			doCustomSend();
 
                 return true;
             }
@@ -931,27 +881,8 @@ public class SendFragment extends Fragment   {
             	imgSimpleSend.setBackgroundColor(color_spend_unselected);
             	imgCustomSend.setBackgroundColor(color_spend_unselected);
             	imgSharedCoin.setBackgroundColor(color_spend_selected);
-            	/*
-            	tvSimpleSend.setBackgroundColor(color_spend_unselected);
-            	tvCustomSend.setBackgroundColor(color_spend_unselected);
-            	tvSharedCoin.setBackgroundColor(color_spend_selected);
-            	*/
-    			doSharedCoin();
 
-            	/*
-                switch (event.getAction())	{
-            		case android.view.MotionEvent.ACTION_DOWN:
-            		case android.view.MotionEvent.ACTION_MOVE:
-            			imgSharedCoin.setBackgroundColor(0xff3a3a3a);
-            			doSharedCoin();
-            			break;
-            		case android.view.MotionEvent.ACTION_UP:
-            		case android.view.MotionEvent.ACTION_CANCEL:
-            			Log.d("QR icon", "UP or CANCEL");
-            			imgSharedCoin.setBackgroundColor(0xffF3F3F3);
-            			break;
-                	}
-                */
+    			doSharedCoin();
 
                 return true;
             }
@@ -1030,7 +961,7 @@ public class SendFragment extends Fragment   {
 	            if(isMagic) {
 	            	removeMagicList();
 	            }
-
+	            
                 InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(edAddress.getWindowToken(), 0);
                 edAmount1.requestFocus();

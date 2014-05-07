@@ -1,28 +1,12 @@
 package info.blockchain.wallet.ui;
 
-import org.json.simple.JSONObject;
-
-import piuk.MyWallet;
-import piuk.blockchain.android.Constants;
-import piuk.blockchain.android.WalletApplication;
-import piuk.blockchain.android.ui.SuccessCallback;
-import piuk.blockchain.android.ui.WalletActivity;
-import piuk.blockchain.android.ui.PinEntryActivity;
-import piuk.blockchain.android.ui.dialogs.RekeyWalletDialog;
-import piuk.blockchain.android.ui.dialogs.RequestPasswordDialog;
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.SharedPreferences.Editor;
 import android.content.pm.ActivityInfo;
 import android.app.ActionBar.Tab;
 import android.app.FragmentTransaction;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.provider.ContactsContract;
@@ -31,8 +15,6 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
@@ -41,13 +23,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.Gravity;
 import android.view.View.OnTouchListener;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import android.util.Log;
+//import android.util.Log;
 
 import piuk.blockchain.android.R;
 

@@ -612,31 +612,8 @@ public class ReceiveFragment extends Fragment   {
 
         final ImageView qr_scan = (ImageView)childIcons.findViewById(R.id.qr_icon);
         qr_scan.setVisibility(View.INVISIBLE);
-        /*
-        qr_scan.setBackgroundColor(colorOff);
-        qr_scan.setOnTouchListener(new OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-            	
-                switch (event.getAction())	{
-                	case android.view.MotionEvent.ACTION_DOWN:
-                	case android.view.MotionEvent.ACTION_MOVE:
-                		Toast.makeText(getActivity(), "Show QR reader", Toast.LENGTH_SHORT).show();
-                		Log.d("QR icon", "DOWN");
-                		qr_scan.setBackgroundColor(colorOn);
-                		break;
-                	case android.view.MotionEvent.ACTION_UP:
-                	case android.view.MotionEvent.ACTION_CANCEL:
-                		Log.d("QR icon", "UP or CANCEL");
-                		qr_scan.setBackgroundColor(colorOff);
-                		break;
-                	}
 
-                return true;
-            }
-        });
-        */
-//	    parent.addView(child, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        //	    parent.addView(child, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 	    parent.addView(childIcons);
 	    children++;
 	    
