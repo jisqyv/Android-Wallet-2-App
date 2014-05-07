@@ -397,16 +397,21 @@ public class ReceiveFragment extends Fragment   {
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
+        
+        Log.d("BlockchainWallet", "setUserVisible");
 
+        /*
         if(isVisibleToUser) {
         	if(isMagic) {
         		removeMagicList();
         	}
         	displayMagicList();
+        	doSimpleSend();
         }
         else {
         	;
         }
+        */
 
     }
 
@@ -414,10 +419,11 @@ public class ReceiveFragment extends Fragment   {
     public void onResume() {
     	super.onResume();
 
-    	if(isMagic) {
-    		removeMagicList();
-    	}
+        Log.d("BlockchainWallet", "onResume");
+
+		removeMagicList();
     	displayMagicList();
+
     }
 
     private Bitmap generateQRCode(String uri) {
