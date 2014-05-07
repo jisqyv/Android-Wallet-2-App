@@ -995,9 +995,11 @@ public class SendFragment extends Fragment   {
 
 		if(resultCode == Activity.RESULT_OK && requestCode == ZBAR_SCANNER_REQUEST)	{
 
-			String strResult = BitcoinAddressCheck.clean(data.getStringExtra(ZBarConstants.SCAN_RESULT));
-//        	Log.d("Scan result", strResult);
-			if(BitcoinAddressCheck.isValid(BitcoinAddressCheck.clean(strResult))) {
+			String strResult = data.getStringExtra(ZBarConstants.SCAN_RESULT);
+        	Log.d("Scan result", strResult);
+        	
+        	strResult = BitcoinAddressCheck.validate(strResult);
+        	if(strResult != null) {
 	            edAddress.setText(strResult);
 	            
 	            if(isMagic) {
