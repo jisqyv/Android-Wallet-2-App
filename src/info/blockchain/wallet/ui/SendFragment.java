@@ -116,6 +116,7 @@ public class SendFragment extends Fragment   {
     private EditText edAddress = null;
     private TextView tvCurrency = null;
     private LinearLayout summary = null;
+    private LinearLayout summary2 = null;
     
     private TextView tvAmount = null;
     private TextView tvAmountBis = null;
@@ -199,6 +200,8 @@ public class SendFragment extends Fragment   {
 
         summary = (LinearLayout)rootView.findViewById(R.id.summary);
         summary.setVisibility(View.INVISIBLE);
+        summary2 = (LinearLayout)rootView.findViewById(R.id.summary2);
+        summary2.setVisibility(View.INVISIBLE);
 
         btSend = (Button)rootView.findViewById(R.id.send);
         ivCheck = ((ImageButton)rootView.findViewById(R.id.sent_check));
@@ -636,6 +639,7 @@ public class SendFragment extends Fragment   {
 		        if(actionId == EditorInfo.IME_ACTION_DONE) {
 		        	
 		        	summary.setVisibility(View.VISIBLE);
+		        	summary2.setVisibility(View.VISIBLE);
 		        	tvAddress.setVisibility(View.VISIBLE);
 		        	tvAddressBis.setVisibility(View.VISIBLE);
 		        	tvArrow.setVisibility(View.VISIBLE);
@@ -803,6 +807,7 @@ public class SendFragment extends Fragment   {
             	tvAmount2.setText("");
             	
                 summary.setVisibility(View.INVISIBLE);
+                summary2.setVisibility(View.INVISIBLE);
                 tvAmount.setText("");
                 tvAmount.setVisibility(View.INVISIBLE);
                 tvAmountBis.setText("");
@@ -1646,6 +1651,7 @@ public class SendFragment extends Fragment   {
 
     private void clearSent()	{
         summary.setVisibility(View.INVISIBLE);
+        summary2.setVisibility(View.INVISIBLE);
         tvAmount.setText("");
         tvAmount.setVisibility(View.INVISIBLE);
         tvAmountBis.setText("");

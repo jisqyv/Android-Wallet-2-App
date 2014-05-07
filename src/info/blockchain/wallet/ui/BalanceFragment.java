@@ -34,7 +34,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.graphics.Color;
 import android.graphics.Bitmap;
 import android.support.v4.app.Fragment;
@@ -42,7 +41,6 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Gravity;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -82,7 +80,7 @@ public class BalanceFragment extends Fragment   {
 
 	private WalletApplication application;
 	private Map<String, String> labelMap;
-	
+
 	private EventListeners.EventListener eventListener = new EventListeners.EventListener() {
 		@Override
 		public String getDescription() {
@@ -268,7 +266,7 @@ public class BalanceFragment extends Fragment   {
 
     	            ((ImageView)view.findViewById(R.id.address_type)).setImageResource(R.drawable.address_inactive);
 
-    		        balance_extLayout.startAnimation(slideUp);
+//    		        balance_extLayout.startAnimation(slideUp);
     		        balance_extLayout.setVisibility(View.GONE);
     		        balance_extHiddenLayout.setVisibility(View.GONE);
     		    	System.gc();
@@ -480,18 +478,18 @@ public class BalanceFragment extends Fragment   {
         qr_icon.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-
+            	
       			android.content.ClipboardManager clipboard = (android.content.ClipboardManager)getActivity().getSystemService(android.content.Context.CLIPBOARD_SERVICE);
       		    android.content.ClipData clip = android.content.ClipData.newPlainText("Address", address);
       		    clipboard.setPrimaryClip(clip);
-     			Toast.makeText(getActivity(), "Address copied to clipboard:" + address, Toast.LENGTH_LONG).show();
+     			Toast.makeText(getActivity(), "Address copied to clipboard", Toast.LENGTH_LONG).show();
 
                 Intent intent;
         		intent = new Intent(getActivity(), QRActivity.class);
         		intent.putExtra("BTC_ADDRESS", address);
         		startActivity(intent);
 
-                return true;
+                return false;
             }
         });
 
