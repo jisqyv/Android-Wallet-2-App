@@ -590,7 +590,13 @@ public class BalanceFragment extends Fragment   {
 			}	    		
 	    	
         	if (addressValueEntryList.size() > 0) {
-	        	bindTxDisplay(view, addressValueEntryList, result, transaction.getHashAsString(), transaction.getTime().getTime()/1000, false);	        		
+        		View child = getTxChildView(view, addressValueEntryList, result, transaction.getHashAsString(), transaction.getTime().getTime()/1000, false);	        		
+	        	final LinearLayout balance_extHiddenLayout = (LinearLayout)view.findViewById(R.id.balance_ext_hidden);
+	    		balance_extHiddenLayout.addView(child);
+	    	
+	    		balance_extHiddenLayout.setVisibility(View.VISIBLE);
+	    	    balance_extLayout.setVisibility(View.VISIBLE);
+//	    	    balance_extLayout.startAnimation(slideDown);
         	}
 
         	addressValueEntryList.clear();
@@ -644,12 +650,18 @@ public class BalanceFragment extends Fragment   {
 			}
 
         	if (addressValueEntryList.size() > 0) {
-	        	bindTxDisplay(view, addressValueEntryList, result, transaction.getHashAsString(), transaction.getTime().getTime()/1000, true);	        		
+        		View child = getTxChildView(view, addressValueEntryList, result, transaction.getHashAsString(), transaction.getTime().getTime()/1000, true);	        	
+	        	final LinearLayout balance_extHiddenLayout = (LinearLayout)view.findViewById(R.id.balance_ext_hidden);
+	    		balance_extHiddenLayout.addView(child);
+	    	
+	    		balance_extHiddenLayout.setVisibility(View.VISIBLE);
+	    	    balance_extLayout.setVisibility(View.VISIBLE);
+//	    	    balance_extLayout.startAnimation(slideDown);
         	}	   
 	    }
     }
     
-    private void bindTxDisplay(final View view, List<Map.Entry<String, String>> addressValueEntryList, BigInteger result, String txHash, long txTime, boolean isSending) {
+    private View getTxChildView(final View view, List<Map.Entry<String, String>> addressValueEntryList, BigInteger result, String txHash, long txTime, boolean isSending) {
   		View child = null;
         LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		child = inflater.inflate(R.layout.tx_layout, null);
@@ -689,13 +701,7 @@ public class BalanceFragment extends Fragment   {
             }
         });
 		
-    	final LinearLayout balance_extHiddenLayout = (LinearLayout)view.findViewById(R.id.balance_ext_hidden);
-		balance_extHiddenLayout.addView(child);
-	
-
-		balance_extHiddenLayout.setVisibility(View.VISIBLE);
-	    balance_extLayout.setVisibility(View.VISIBLE);
-//	    balance_extLayout.startAnimation(slideDown);
+		return child;
     }
     
     private Bitmap generateQRCode(String uri) {
