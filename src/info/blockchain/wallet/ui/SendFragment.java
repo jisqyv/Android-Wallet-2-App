@@ -2,9 +2,12 @@ package info.blockchain.wallet.ui;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.json.simple.JSONObject;
@@ -145,8 +148,8 @@ public class SendFragment extends Fragment   {
     private ImageView ivCheck = null;
     private TextView tvSentPrompt = null;
     
-    private HashMap<String,String> magicData = null;
-    private ArrayList<String> keys = null;
+    private List<HashMap<String,String>> magicData = null;
+    private List<HashMap<String,String>> filteredDisplayList = null;
 	private MagicAdapter adapter = null;
 	private HashMap<String,String> xlatLabel = null;
 	
@@ -159,6 +162,10 @@ public class SendFragment extends Fragment   {
 	private Runnable sentRunnable;
 	private String sendType;
 	private BlockchainServiceImpl service;
+	
+	private List<String> activeAddresses;
+	private Map<String,String> labels;
+	private List<Map<String, Object>> addressBookMapList;
 	
 	public static final String ACTION_INTENT = "info.blockchain.wallet.ui.SendFragment.BTC_ADDRESS_SCAN";
 
@@ -757,19 +764,20 @@ public class SendFragment extends Fragment   {
 
         	public void beforeTextChanged(CharSequence s, int start, int count, int after)	{ ; }
         
-        	public void onTextChanged(CharSequence s, int start, int before, int count)	{
-        		
-        		String[] sKeys = magicData.keySet().toArray(new String[0]);
+        	public void onTextChanged(CharSequence s, int start, int before, int count)	{        		
         		int len = edAddress.getText().length();
-        		ArrayList<String> filtered = new ArrayList<String>();
-        		for (int i = 0; i < sKeys.length; i++)	{
-	                if (len <= sKeys[i].length())	{
-	                	if(edAddress.getText().toString().equalsIgnoreCase((String)sKeys[i].subSequence(0, len))) {
-	                		filtered.add(sKeys[i]);
-	                	}
-	                }
+        		List<HashMap<String,String>> filtered = new ArrayList<HashMap<String,String>>();
+        		
+        		for (HashMap<String,String> row : magicData) {
+        			String labelOrAddress = row.get("labelOrAddress");
+        		    if (len <= labelOrAddress.length()) {
+            			if(edAddress.getText().toString().equalsIgnoreCase((String) labelOrAddress.subSequence(0, len))) {
+            				filtered.add(row);
+            			}
+        		    }
         		}
-                keys = filtered;
+
+                filteredDisplayList = filtered;
                 if(adapter != null)	{
             		adapter.notifyDataSetChanged();
                 }
@@ -1148,8 +1156,8 @@ public class SendFragment extends Fragment   {
 
 		@Override
 		public int getCount() {
-			if(keys != null) {
-				return keys.size();
+			if(filteredDisplayList != null) {
+				return filteredDisplayList.size();
 			}
 			else {
 				return 0;
@@ -1158,7 +1166,8 @@ public class SendFragment extends Fragment   {
 
 		@Override
 		public String getItem(int position) {
-			return keys.get(position);
+			HashMap<String,String> row = filteredDisplayList.get(position);
+			return row.get("labelOrAddress");
 		}
 
 		@Override
@@ -1178,7 +1187,8 @@ public class SendFragment extends Fragment   {
 	        }
 
 	        ((TextView)view.findViewById(R.id.p1)).setTypeface(TypefaceUtil.getInstance(getActivity()).getGravityBoldTypeface());
-	        if(!keys.get(position).startsWith("1Z")) {
+	        HashMap<String,String> row = filteredDisplayList.get(position);
+	        if(row.get("label") != null) {
 		        ((TextView)view.findViewById(R.id.p1)).setTypeface(TypefaceUtil.getInstance(getActivity()).getGravityBoldTypeface());
 	        }
 	        else {
@@ -1186,14 +1196,19 @@ public class SendFragment extends Fragment   {
 	        }
 
 	        // Names, Labels in black, addresses in GREY
-	        if(!keys.get(position).startsWith("1Z")) {
+	        if(row.get("label") != null) {
 		        ((TextView)view.findViewById(R.id.p1)).setTextColor(Color.BLACK);
 	        }
 	        else {
 		        ((TextView)view.findViewById(R.id.p1)).setTextColor(0xFF616161);
 	        }
-	        ((TextView)view.findViewById(R.id.p1)).setText(keys.get(position));
-	        ((TextView)view.findViewById(R.id.p2)).setText(magicData.get(keys.get(position)));
+	        ((TextView)view.findViewById(R.id.p1)).setText(row.get("labelOrAddress"));
+	        
+	        if (contactsOn) {
+		        ((TextView)view.findViewById(R.id.p2)).setText(row.get("address"));	        	
+	        } else {
+		        ((TextView)view.findViewById(R.id.p2)).setText(row.get("amount"));	        	
+	        }
 
 	        return view;
 		}
@@ -1204,26 +1219,73 @@ public class SendFragment extends Fragment   {
 
 		final WalletApplication application = (WalletApplication)getActivity().getApplication();
 		MyRemoteWallet wallet = application.getRemoteWallet();
-		String[] from = wallet.getActiveAddresses();
-		Map<String,String> labels = wallet.getLabelMap();
-		
-        magicData = new HashMap<String,String>();
-
+		activeAddresses = Arrays.asList(wallet.getActiveAddresses());
+		labels = wallet.getLabelMap();
+        
+        magicData =  new ArrayList<HashMap<String,String>>();
+        
         xlatLabel.clear();
-        for(int i = 0; i < from.length; i++) {
+        filteredDisplayList = new ArrayList<HashMap<String,String>>();
+
+        for(int i = 0; i < activeAddresses.size(); i++) {
+		    String address = activeAddresses.get(i);
         	String amount = "0.000";
-    		    BigInteger finalBalance = wallet.getBalance(from[i]);	
-    		    if (finalBalance != null)
-    		    	amount = BlockchainUtil.formatBitcoin(finalBalance);
-    		    
-        	magicData.put(labels.get(from[i]) == null ? from[i] : labels.get(from[i]), amount + " BTC");
-        	xlatLabel.put(labels.get(from[i]) == null ? from[i] : labels.get(from[i]), from[i]);
+		    BigInteger finalBalance = wallet.getBalance(address);	
+		    if (finalBalance != null)
+		    	amount = BlockchainUtil.formatBitcoin(finalBalance);
+
+		        HashMap<String,String> row = new HashMap<String,String>();
+		        
+		        String label = labels.get(address);
+		        String labelOrAddress;
+		        if (label != null) {
+		            row.put("label", label.toString());	
+		            labelOrAddress = label;
+		        } else {
+		        	labelOrAddress = address;
+		        }
+		        row.put("address", address.toString());
+		        row.put("amount", amount);
+		        row.put("labelOrAddress", labelOrAddress);
+
+				magicData.add(row);    
+						
+	        	xlatLabel.put(labelOrAddress, address);
+	        	filteredDisplayList.add(row);
         }
 
-        String[] sKeys = magicData.keySet().toArray(new String[0]);
-        keys = new ArrayList<String>(Arrays.asList(sKeys));
-
     }
+    
+    private void initAddressBookList() {
+ 		final WalletApplication application = (WalletApplication)getActivity().getApplication();
+ 		MyRemoteWallet wallet = application.getRemoteWallet();
+ 		
+        magicData =  new ArrayList<HashMap<String,String>>();
+
+        addressBookMapList = wallet.getAddressBookMap();
+        filteredDisplayList = new ArrayList<HashMap<String,String>>();
+
+        if (addressBookMapList != null) {
+            xlatLabel.clear();
+  		    for (Iterator<Map<String, Object>> iti = addressBookMapList.iterator(); iti.hasNext();) {
+ 		    	Map<String, Object> addressBookMap = iti.next();
+ 		    	Object address = addressBookMap.get("addr");
+ 		    	Object label = addressBookMap.get("label");
+
+ 		        HashMap<String,String> row = new HashMap<String,String>();
+ 		        row.put("label", label.toString());
+ 		        row.put("address", address.toString());
+		        row.put("labelOrAddress", label.toString());
+
+    			magicData.add(row);
+	        	xlatLabel.put(label.toString(), address.toString());
+	         	filteredDisplayList.add(row);
+ 		    }
+
+        }
+        
+     }
+ 
 
     private void displayMagicList() {
     	LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -1288,7 +1350,7 @@ public class SendFragment extends Fragment   {
                         ivContacts.setBackgroundColor(colorOn);
                         ivPhoneContacts.setBackgroundColor(colorOff);
             		}
-            		initMagicList();
+            		initAddressBookList();
             		adapter.notifyDataSetChanged();                            		
                 }
         });
@@ -1363,7 +1425,14 @@ public class SendFragment extends Fragment   {
 //                Toast.makeText(getActivity(), keys.get(position), Toast.LENGTH_SHORT).show();
                 InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(edAddress.getWindowToken(), 0);
-                edAddress.setText(keys.get(position));
+
+                Log.d("filteredDisplayList", "filteredDisplayList: " + filteredDisplayList);
+                Log.d("filteredDisplayList", "filteredDisplayListposition: " + position);
+                HashMap<String, String> map = filteredDisplayList.get(position);
+                String address = map.get("address");
+                Log.d("filteredDisplayList", "filteredDisplayListaddress: " + address);
+            	edAddress.setText(address);            	                	               
+                
                 removeMagicList();
                 edAmount1.requestFocus();
                 edAmount1.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
