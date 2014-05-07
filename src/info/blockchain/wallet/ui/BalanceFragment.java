@@ -587,14 +587,10 @@ public class BalanceFragment extends Fragment   {
 		    	}				
 			}	    		
 	    	
+        	final LinearLayout balance_extHiddenLayout = (LinearLayout)view.findViewById(R.id.balance_ext_hidden);
         	if (addressValueEntryList.size() > 0) {
         		View child = getTxChildView(view, addressValueEntryList, result, transaction.getHashAsString(), transaction.getTime().getTime()/1000, false);	        		
-	        	final LinearLayout balance_extHiddenLayout = (LinearLayout)view.findViewById(R.id.balance_ext_hidden);
-	    		balance_extHiddenLayout.addView(child);
-	    	
-	    		balance_extHiddenLayout.setVisibility(View.VISIBLE);
-	    	    balance_extLayout.setVisibility(View.VISIBLE);
-//	    	    balance_extLayout.startAnimation(slideDown);
+	    		balance_extHiddenLayout.addView(child);	    	
         	}
 
         	addressValueEntryList.clear();
@@ -649,13 +645,12 @@ public class BalanceFragment extends Fragment   {
 
         	if (addressValueEntryList.size() > 0) {
         		View child = getTxChildView(view, addressValueEntryList, result, transaction.getHashAsString(), transaction.getTime().getTime()/1000, true);	        	
-	        	final LinearLayout balance_extHiddenLayout = (LinearLayout)view.findViewById(R.id.balance_ext_hidden);
-	    		balance_extHiddenLayout.addView(child);
-	    	
-	    		balance_extHiddenLayout.setVisibility(View.VISIBLE);
-	    	    balance_extLayout.setVisibility(View.VISIBLE);
-//	    	    balance_extLayout.startAnimation(slideDown);
+	    		balance_extHiddenLayout.addView(child);	    	
         	}	   
+
+        	balance_extHiddenLayout.setVisibility(View.VISIBLE);
+    	    balance_extLayout.setVisibility(View.VISIBLE);
+//    	    balance_extLayout.startAnimation(slideDown);
 	    }
     }
     
