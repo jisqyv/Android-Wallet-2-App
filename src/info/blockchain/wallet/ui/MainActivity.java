@@ -1,11 +1,17 @@
 package info.blockchain.wallet.ui;
 
+import net.sourceforge.zbar.Symbol;
+
+import com.dm.zbar.android.scanner.ZBarConstants;
+import com.dm.zbar.android.scanner.ZBarScannerActivity;
+
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.app.ActionBar.Tab;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -17,12 +23,14 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
+import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Gravity;
 import android.view.View.OnTouchListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -44,6 +52,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     private ActionBar actionBar;
 
     private String[] tabs = null;
+
+	private static int ZBAR_SCANNER_REQUEST = 2026;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -89,8 +99,12 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         qr_icon.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-        		Toast.makeText(MainActivity.this, "Show QR reader", Toast.LENGTH_SHORT).show();
-                return false;
+            	
+        		Intent intent = new Intent(MainActivity.this, ZBarScannerActivity.class);
+        		intent.putExtra(ZBarConstants.SCAN_MODES, new int[]{ Symbol.QRCODE } );
+        		startActivityForResult(intent, ZBAR_SCANNER_REQUEST);
+
+        		return false;
             }
         });
         actionBar.setCustomView(qr_icon);
@@ -116,26 +130,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         }
         
         viewPager.setCurrentItem(1);
-
-        /*
-		final WalletApplication application = (WalletApplication)MainActivity.this.getApplication();
-		//if (application.getRemoteWallet() == null) {
-		if (application.getGUID() == null) {
-			Toast.makeText(this, "Wallet not found", Toast.LENGTH_LONG).show();
-			
-        	Intent intent = new Intent(MainActivity.this, SetupActivity.class);
-			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-    		startActivity(intent);
-		}
-		else {
-			Toast.makeText(this, "Wallet found:" + application.getGUID(), Toast.LENGTH_LONG).show();
-
-        	Intent intent = new Intent(MainActivity.this, info.blockchain.wallet.ui.PinEntryActivity.class);
-    		startActivity(intent);
-
-//			validatePIN(application, "1234");
-		}
-		*/
 
 	}
 
@@ -183,46 +177,27 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 
-		if(requestCode == PIN_ENTRY_ACTIVITY && resultCode == Activity.RESULT_OK) {
+		if(resultCode == Activity.RESULT_OK && requestCode == ZBAR_SCANNER_REQUEST)	{
 
-			/*
-			WalletApplication application = (WalletApplication)MainActivity.this.getApplication();
-			Log.d("PIN validation", "Validating...");
-			validatePIN(application, data.getAction());
-			*/
-			
-		}
-		else if(requestCode == PICK_CONTACT && resultCode == Activity.RESULT_OK) {
+			String strResult = BitcoinAddressCheck.clean(data.getStringExtra(ZBarConstants.SCAN_RESULT));
+//        	Log.d("Scan result", strResult);
+			if(BitcoinAddressCheck.isValid(BitcoinAddressCheck.clean(strResult))) {
+				Toast.makeText(this, strResult, Toast.LENGTH_LONG).show();
 
-			Uri contactData = data.getData();
-		    Cursor c =  managedQuery(contactData, null, null, null, null);
-		    if (c.moveToFirst()) {
-		    	String name = c.getString(c.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-				Toast.makeText(this, name, Toast.LENGTH_LONG).show();	
-		    }
-		    
-/*
+				/*
+		        viewPager.setCurrentItem(0);
+				SendFragment sf = (SendFragment)getSupportFragmentManager().findFragmentById(R.id.SendFragment);
+			    sf.doQRScan(strResult);
+			    */
 
-http://pastebin.com/raw.php?i=m1Pi4n7z
+			}
+			else {
+				Toast.makeText(this, "Invalid address", Toast.LENGTH_LONG).show();
+			}
 
-1.	Client generates a new address
-2.	Client sends the desired amount to the new address
-3.	Client sends a request to send-via asking blockchain to send a notification to the recipient containing the private key of the new address
-4.	If successful client archives the new address
-5.	Recipient follows the claim link in the email and sweeps the funds
-
-Endpoint: https://blockchain.info/send-via
-Method: POST
-Parameters: 
-	type = string (“email”/”sms”)
-	guid = string (The user’s wallet identifier)
-	priv = string (Base 58 private key the claim amount has been sent to)
-	sharedKey = string (The wallet shared key)
-	hash = string (Hex encoded transaction hash)
-	to = string (Email or SMS number)
-
-*/
-
+        }
+		else if(resultCode == Activity.RESULT_CANCELED && requestCode == ZBAR_SCANNER_REQUEST) {
+//            Toast.makeText(this, R.string.camera_unavailable, Toast.LENGTH_SHORT).show();
 		}
 		else {
 			;

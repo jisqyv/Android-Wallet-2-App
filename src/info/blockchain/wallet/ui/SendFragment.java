@@ -67,14 +67,10 @@ import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView.OnEditorActionListener;
-import android.provider.ContactsContract;
 import android.provider.ContactsContract.CommonDataKinds;
 import android.provider.ContactsContract.Contacts;
-import android.provider.ContactsContract.CommonDataKinds.Email;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
-import android.database.Cursor;
 import android.util.Log;
-import android.util.Pair;
 
 import com.dm.zbar.android.scanner.ZBarConstants;
 import com.dm.zbar.android.scanner.ZBarScannerActivity;
@@ -84,7 +80,7 @@ import com.google.bitcoin.core.Transaction;
 import com.google.bitcoin.core.TransactionOutput;
 import com.google.bitcoin.core.Utils;
 import com.google.bitcoin.core.Wallet.SendRequest;
-import com.google.bitcoin.uri.BitcoinURI;
+//import com.google.bitcoin.uri.BitcoinURI;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.android.Contents;
@@ -174,6 +170,7 @@ public class SendFragment extends Fragment   {
 
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
 		final MainActivity activity = (MainActivity) getActivity();
 		application = (WalletApplication) activity.getApplication();
 		activity.bindService(new Intent(activity, BlockchainServiceImpl.class), serviceConnection, Context.BIND_AUTO_CREATE);
@@ -832,16 +829,22 @@ public class SendFragment extends Fragment   {
         });
         clear_input.setVisibility(View.INVISIBLE);
 
-        final ImageButton imgSimpleSend = ((ImageButton)rootView.findViewById(R.id.simple));
-        final ImageButton imgCustomSend = ((ImageButton)rootView.findViewById(R.id.custom));
-        final ImageButton imgSharedCoin = ((ImageButton)rootView.findViewById(R.id.shared));
+        final ImageView imgSimpleSend = ((ImageView)rootView.findViewById(R.id.simple));
+        final ImageView imgCustomSend = ((ImageView)rootView.findViewById(R.id.custom));
+        final ImageView imgSharedSend = ((ImageView)rootView.findViewById(R.id.shared));
+        final LinearLayout layoutSimpleSend = ((LinearLayout)rootView.findViewById(R.id.simple_bg));
+        final LinearLayout layoutCustomSend = ((LinearLayout)rootView.findViewById(R.id.custom_bg));
+        final LinearLayout layoutSharedSend = ((LinearLayout)rootView.findViewById(R.id.shared_bg));
         
         final int color_spend_selected = 0xff808080;
         final int color_spend_unselected = 0xffa0a0a0;
         
     	imgSimpleSend.setBackgroundColor(color_spend_selected);
     	imgCustomSend.setBackgroundColor(color_spend_unselected);
-    	imgSharedCoin.setBackgroundColor(color_spend_unselected);
+    	imgSharedSend.setBackgroundColor(color_spend_unselected);
+    	layoutSimpleSend.setBackgroundColor(color_spend_selected);
+    	layoutCustomSend.setBackgroundColor(color_spend_unselected);
+    	layoutSharedSend.setBackgroundColor(color_spend_unselected);
 
         imgSimpleSend.setOnTouchListener(new OnTouchListener() {
             @Override
@@ -850,7 +853,10 @@ public class SendFragment extends Fragment   {
 
             	imgSimpleSend.setBackgroundColor(color_spend_selected);
             	imgCustomSend.setBackgroundColor(color_spend_unselected);
-            	imgSharedCoin.setBackgroundColor(color_spend_unselected);
+            	imgSharedSend.setBackgroundColor(color_spend_unselected);
+            	layoutSimpleSend.setBackgroundColor(color_spend_selected);
+            	layoutCustomSend.setBackgroundColor(color_spend_unselected);
+            	layoutSharedSend.setBackgroundColor(color_spend_unselected);
 
             	doSimpleSend();
 
@@ -865,7 +871,10 @@ public class SendFragment extends Fragment   {
 
             	imgSimpleSend.setBackgroundColor(color_spend_unselected);
             	imgCustomSend.setBackgroundColor(color_spend_selected);
-            	imgSharedCoin.setBackgroundColor(color_spend_unselected);
+            	imgSharedSend.setBackgroundColor(color_spend_unselected);
+            	layoutSimpleSend.setBackgroundColor(color_spend_unselected);
+            	layoutCustomSend.setBackgroundColor(color_spend_selected);
+            	layoutSharedSend.setBackgroundColor(color_spend_unselected);
 
 //    			doCustomSend();
 
@@ -873,14 +882,17 @@ public class SendFragment extends Fragment   {
             }
         });
 
-        imgSharedCoin.setOnTouchListener(new OnTouchListener() {
+        imgSharedSend.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
             	sendType = SendTypeSharedCoin;            	
 
             	imgSimpleSend.setBackgroundColor(color_spend_unselected);
             	imgCustomSend.setBackgroundColor(color_spend_unselected);
-            	imgSharedCoin.setBackgroundColor(color_spend_selected);
+            	imgSharedSend.setBackgroundColor(color_spend_selected);
+            	layoutSimpleSend.setBackgroundColor(color_spend_unselected);
+            	layoutCustomSend.setBackgroundColor(color_spend_unselected);
+            	layoutSharedSend.setBackgroundColor(color_spend_selected);
 
     			doSharedCoin();
 
@@ -1318,7 +1330,7 @@ public class SendFragment extends Fragment   {
 
         magicList.setOnItemClickListener(new OnItemClickListener() {
 	        public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3)	{
-                Toast.makeText(getActivity(), keys.get(position), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getActivity(), keys.get(position), Toast.LENGTH_SHORT).show();
                 InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(edAddress.getWindowToken(), 0);
                 edAddress.setText(keys.get(position));
@@ -1632,5 +1644,12 @@ public class SendFragment extends Fragment   {
 		viewCancel.setText(state != MyRemoteWallet.State.SENT ? R.string.button_cancel : R.string.send_coins_fragment_button_back);
 		*/
 	}
+	
+/*
+	public void doQRScan(String address) {
+		
+		edAddress.setText(address);
 
+	}
+*/
 }
