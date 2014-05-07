@@ -214,6 +214,11 @@
 			<intent-filter /> 
         </activity>
 
-    </application>
+        <activity android:name="info.blockchain.wallet.ui.QRActivity"
+			android:label="@string/app_name" >
+			<intent-filter /> 
+        </activity>
+
+        </application>
 
 </manifest>
