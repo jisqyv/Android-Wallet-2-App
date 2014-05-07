@@ -24,6 +24,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.text.InputType;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -180,9 +181,11 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
 		if(resultCode == Activity.RESULT_OK && requestCode == ZBAR_SCANNER_REQUEST)	{
 
-			String strResult = BitcoinAddressCheck.clean(data.getStringExtra(ZBarConstants.SCAN_RESULT));
-//        	Log.d("Scan result", strResult);
-			if(BitcoinAddressCheck.isValid(BitcoinAddressCheck.clean(strResult))) {
+			String strResult = data.getStringExtra(ZBarConstants.SCAN_RESULT);
+        	Log.d("Scan result", strResult);
+
+        	strResult = BitcoinAddressCheck.validate(strResult);
+        	if(strResult != null) {
 				Toast.makeText(this, strResult, Toast.LENGTH_LONG).show();
 
 		        viewPager.setCurrentItem(0);
@@ -190,7 +193,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 				Intent intent = new Intent("info.blockchain.wallet.ui.SendFragment.BTC_ADDRESS_SCAN");
 			    intent.putExtra("BTC_ADDRESS", strResult);
 			    LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-			}
+        	}
 			else {
 				Toast.makeText(this, "Invalid address", Toast.LENGTH_LONG).show();
 			}

@@ -2,9 +2,6 @@ package info.blockchain.wallet.ui;
 
 import java.security.SecureRandom;
 
-import org.json.simple.JSONObject;
-import org.spongycastle.util.encoders.Hex;
-
 import piuk.MyWallet;
 import piuk.blockchain.android.WalletApplication;
 import piuk.blockchain.android.ui.SuccessCallback;
@@ -31,14 +28,26 @@ import android.text.method.NumberKeyListener;
 import android.text.style.RelativeSizeSpan;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.View.OnTouchListener;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.util.Log;
 
 import info.blockchain.wallet.ui.R;
+
+import net.sourceforge.zbar.Symbol;
+
+import org.json.simple.JSONObject;
+import org.spongycastle.util.encoders.Hex;
+
+import com.dm.zbar.android.scanner.ZBarConstants;
+import com.dm.zbar.android.scanner.ZBarScannerActivity;
 
 public class PinEntryActivity extends FragmentActivity {
 
@@ -70,7 +79,7 @@ public class PinEntryActivity extends FragmentActivity {
 	Button button8 = null;
 	Button button9 = null;
 	Button buttonForgot = null;
-	Button buttonDelete = null;
+	Button buttonDeleteBack = null;
 	
 	private boolean validating = true;
 	private String userInput = null;
@@ -137,8 +146,8 @@ public class PinEntryActivity extends FragmentActivity {
 		});
 		buttonForgot.setTypeface(typeface);
 
-		buttonDelete = (Button) findViewById(R.id.buttonDeleteBack);
-		buttonDelete.setOnClickListener(new View.OnClickListener() {
+		buttonDeleteBack = (Button) findViewById(R.id.buttonDeleteBack);
+		buttonDeleteBack.setOnClickListener(new View.OnClickListener() {
 		    public void onClick(View v) {
 		    	if(keyPadLockedFlag == true)	{
 		    		return;
@@ -374,8 +383,227 @@ public class PinEntryActivity extends FragmentActivity {
         cs.setSpan(new RelativeSizeSpan(sz), 2, cs.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 		button9.setText(cs);
 
-		buttonDelete = (Button)findViewById(R.id.buttonDeleteBack);
-		buttonDelete.setTypeface(typeface);
+		buttonDeleteBack = (Button)findViewById(R.id.buttonDeleteBack);
+		buttonDeleteBack.setTypeface(typeface);
+
+		final int colorOff = 0xff333333;
+		final int colorOn = 0xff1a87c6;
+
+		button0.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction())	{
+                	case android.view.MotionEvent.ACTION_DOWN:
+                	case android.view.MotionEvent.ACTION_MOVE:
+                		button0.setBackgroundColor(colorOn);
+                		break;
+                	case android.view.MotionEvent.ACTION_UP:
+                	case android.view.MotionEvent.ACTION_CANCEL:
+                		button0.setBackgroundColor(colorOff);
+                		break;
+                	}
+
+                return false;
+            }
+        });
+
+		button1.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction())	{
+                	case android.view.MotionEvent.ACTION_DOWN:
+                	case android.view.MotionEvent.ACTION_MOVE:
+                		button1.setBackgroundColor(colorOn);
+                		break;
+                	case android.view.MotionEvent.ACTION_UP:
+                	case android.view.MotionEvent.ACTION_CANCEL:
+                		button1.setBackgroundColor(colorOff);
+                		break;
+                	}
+
+                return false;
+            }
+        });
+
+		button2.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction())	{
+                	case android.view.MotionEvent.ACTION_DOWN:
+                	case android.view.MotionEvent.ACTION_MOVE:
+                		button2.setBackgroundColor(colorOn);
+                		break;
+                	case android.view.MotionEvent.ACTION_UP:
+                	case android.view.MotionEvent.ACTION_CANCEL:
+                		button2.setBackgroundColor(colorOff);
+                		break;
+                	}
+
+                return false;
+            }
+        });
+
+		button3.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction())	{
+                	case android.view.MotionEvent.ACTION_DOWN:
+                	case android.view.MotionEvent.ACTION_MOVE:
+                		button3.setBackgroundColor(colorOn);
+                		break;
+                	case android.view.MotionEvent.ACTION_UP:
+                	case android.view.MotionEvent.ACTION_CANCEL:
+                		button3.setBackgroundColor(colorOff);
+                		break;
+                	}
+
+                return false;
+            }
+        });
+
+		button4.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction())	{
+                	case android.view.MotionEvent.ACTION_DOWN:
+                	case android.view.MotionEvent.ACTION_MOVE:
+                		button4.setBackgroundColor(colorOn);
+                		break;
+                	case android.view.MotionEvent.ACTION_UP:
+                	case android.view.MotionEvent.ACTION_CANCEL:
+                		button4.setBackgroundColor(colorOff);
+                		break;
+                	}
+
+                return false;
+            }
+        });
+
+		button5.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction())	{
+                	case android.view.MotionEvent.ACTION_DOWN:
+                	case android.view.MotionEvent.ACTION_MOVE:
+                		button5.setBackgroundColor(colorOn);
+                		break;
+                	case android.view.MotionEvent.ACTION_UP:
+                	case android.view.MotionEvent.ACTION_CANCEL:
+                		button5.setBackgroundColor(colorOff);
+                		break;
+                	}
+
+                return false;
+            }
+        });
+
+		button6.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction())	{
+                	case android.view.MotionEvent.ACTION_DOWN:
+                	case android.view.MotionEvent.ACTION_MOVE:
+                		button6.setBackgroundColor(colorOn);
+                		break;
+                	case android.view.MotionEvent.ACTION_UP:
+                	case android.view.MotionEvent.ACTION_CANCEL:
+                		button6.setBackgroundColor(colorOff);
+                		break;
+                	}
+
+                return false;
+            }
+        });
+
+		button7.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction())	{
+                	case android.view.MotionEvent.ACTION_DOWN:
+                	case android.view.MotionEvent.ACTION_MOVE:
+                		button7.setBackgroundColor(colorOn);
+                		break;
+                	case android.view.MotionEvent.ACTION_UP:
+                	case android.view.MotionEvent.ACTION_CANCEL:
+                		button7.setBackgroundColor(colorOff);
+                		break;
+                	}
+
+                return false;
+            }
+        });
+
+		button8.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction())	{
+                	case android.view.MotionEvent.ACTION_DOWN:
+                	case android.view.MotionEvent.ACTION_MOVE:
+                		button8.setBackgroundColor(colorOn);
+                		break;
+                	case android.view.MotionEvent.ACTION_UP:
+                	case android.view.MotionEvent.ACTION_CANCEL:
+                		button8.setBackgroundColor(colorOff);
+                		break;
+                	}
+
+                return false;
+            }
+        });
+
+		button9.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction())	{
+                	case android.view.MotionEvent.ACTION_DOWN:
+                	case android.view.MotionEvent.ACTION_MOVE:
+                		button9.setBackgroundColor(colorOn);
+                		break;
+                	case android.view.MotionEvent.ACTION_UP:
+                	case android.view.MotionEvent.ACTION_CANCEL:
+                		button9.setBackgroundColor(colorOff);
+                		break;
+                	}
+
+                return false;
+            }
+        });
+
+		buttonDeleteBack.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction())	{
+                	case android.view.MotionEvent.ACTION_DOWN:
+                	case android.view.MotionEvent.ACTION_MOVE:
+                		buttonDeleteBack.setBackgroundColor(colorOn);
+                		break;
+                	case android.view.MotionEvent.ACTION_UP:
+                	case android.view.MotionEvent.ACTION_CANCEL:
+                		buttonDeleteBack.setBackgroundColor(colorOff);
+                		break;
+                	}
+
+                return false;
+            }
+        });
+
+		buttonForgot.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction())	{
+                	case android.view.MotionEvent.ACTION_DOWN:
+                	case android.view.MotionEvent.ACTION_MOVE:
+                		buttonForgot.setBackgroundColor(colorOn);
+                		break;
+                	case android.view.MotionEvent.ACTION_UP:
+                	case android.view.MotionEvent.ACTION_CANCEL:
+                		buttonForgot.setBackgroundColor(colorOff);
+                		break;
+                	}
+
+                return false;
+            }
+        });
 		
 		final WalletApplication application = (WalletApplication)PinEntryActivity.this.getApplication();
 		//if (application.getRemoteWallet() == null) {

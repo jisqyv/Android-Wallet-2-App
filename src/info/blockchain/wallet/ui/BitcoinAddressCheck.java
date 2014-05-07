@@ -1,64 +1,64 @@
 package info.blockchain.wallet.ui;
 
+import com.google.bitcoin.uri.BitcoinURI;
+import com.google.bitcoin.uri.BitcoinURIParseException;
+import com.google.bitcoin.core.Address;
+import com.google.bitcoin.core.AddressFormatException;
+import com.google.bitcoin.core.NetworkParameters;
+import com.google.bitcoin.core.WrongNetworkException;
+
 public class BitcoinAddressCheck {
 	
 	private BitcoinAddressCheck() { ; }
 
-	public static String clean(final String btcaddress) {
-
-		String ret = null;
-
-		if(btcaddress.startsWith("bitcoin://")) {
-			ret = btcaddress.substring(10);
-			int idx = ret.indexOf("?");
-			if(idx != -1) {
-				ret = ret.substring(0, idx);
-			}
-		}
-		else if(btcaddress.startsWith("bitcoin:")) {
-			ret = btcaddress.substring(8);
-			int idx = ret.indexOf("?");
-			if(idx != -1) {
-				ret = ret.substring(0, idx);
-			}
+	public static String validate(final String btcaddress) {
+		
+		if(isValid(btcaddress)) {
+			return btcaddress;
 		}
 		else {
-			ret = btcaddress;
+			String address = clean(btcaddress);
+			if(address != null) {
+				return address;
+			}
+			else {
+				return null;
+			}
+		}
+	}
+
+	private static String clean(final String btcaddress) {
+		
+		String ret = null;
+		BitcoinURI uri = null;
+		
+		try {
+			uri = new BitcoinURI(btcaddress);
+			ret = uri.getAddress().toString();
+		}
+		catch(BitcoinURIParseException bupe) {
+			ret = null;
 		}
 		
 		return ret;
 	}
 
-	public static boolean isValid(final String btcaddress) {
+	private static boolean isValid(final String btcaddress) {
 
 		boolean ret = false;
+		Address address = null;
 		
-		if(btcaddress == null) {
+		try {
+			address = new Address(NetworkParameters.prodNet(), btcaddress);
+			if(address != null) {
+				ret = true;
+			}
+		}
+		catch(WrongNetworkException wne) {
 			ret = false;
 		}
-		else if(btcaddress.length() < 27) {
+		catch(AddressFormatException afe) {
 			ret = false;
-		}
-		else if(btcaddress.length() > 34) {
-			ret = false;
-		}
-		else if(btcaddress.charAt(0) != '1' && btcaddress.charAt(0) != '3') {
-			ret = false;
-		}
-		else if(btcaddress.contains("0")) {
-			ret = false;
-		}
-		else if(btcaddress.contains("O")) {
-			ret = false;
-		}
-		else if(btcaddress.contains("I")) {
-			ret = false;
-		}
-		else if(btcaddress.contains("l")) {
-			ret = false;
-		}
-		else {
-			ret = true;
 		}
 
 		return ret;
