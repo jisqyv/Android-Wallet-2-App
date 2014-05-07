@@ -467,7 +467,6 @@ public class BalanceFragment extends Fragment   {
 
     public void doDisplaySubList(final View view, int position) {
     	final LinearLayout balance_extLayout = (LinearLayout)view.findViewById(R.id.balance_ext);
-    	final LinearLayout balance_extHiddenLayout = (LinearLayout)view.findViewById(R.id.balance_ext_hidden);
 
     	MyRemoteWallet remoteWallet = application.getRemoteWallet();
 		if (remoteWallet == null) {
@@ -529,12 +528,9 @@ public class BalanceFragment extends Fragment   {
             ((ProgressBar)progression_received.findViewById(R.id.bar)).setProgressDrawable(getResources().getDrawable(R.drawable.progress_green2));
         } 
 
-		View child = null;
-        LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         final List<MyTransaction> transactionsList = remoteWallet.getTransactions();
 
-	    boolean isSending = true;
 //	    for (final MyTransaction transaction : transactionsList) {
 		for (Iterator<MyTransaction> it = transactionsList.iterator(); it.hasNext();) {
 			MyTransaction transaction = it.next();
@@ -544,157 +540,164 @@ public class BalanceFragment extends Fragment   {
 	    	List<TransactionInput> transactionInputs = transaction.getInputs();	 
 		    List<Map.Entry<String, String>> addressValueEntryList = new ArrayList<Map.Entry<String, String>>();
 
-	    	if (result.signum() == 1) {
-			    isSending = false;
-		    	boolean isAddressPartofTransaction = false;			    
-		    	//for (TransactionOutput transactionOutput : transactionOutputs) {
-				for (Iterator<TransactionOutput> ito = transactionOutputs.iterator(); ito.hasNext();) {
-					TransactionOutput transactionOutput = ito.next();
-		        	try {
-		        		com.google.bitcoin.core.Script script = transactionOutput.getScriptPubKey();
-		        		String addr = null;
-		        		if (script != null)
-		        			addr = script.getToAddress().toString();
-		        		
-		        		if (addr != null && addr.equals(address)) {
-		        			isAddressPartofTransaction = true;
-		        			break;
-		        		}
-		            } catch (ScriptException e) {
-		                e.printStackTrace();
-		            } catch (Exception e) {
-		                e.printStackTrace();
-		            }			    		
-		    	}
-		    	
-		    	if (transactionInputs != null && isAddressPartofTransaction) {
-			    	//for (TransactionInput transactionInput : transactionInputs) {
-			    	for (Iterator<TransactionInput> iti = transactionInputs.iterator(); iti.hasNext();) {
-			    		TransactionInput transactionInput = iti.next();
-			        	try {
-			        		Address addr = transactionInput.getFromAddress();
-			        		//second condition is required so that inputs are not displayed if it is also an output 
-			        		if (addr != null && ! addr.toString().equals(address)) {
-			        		    Log.d("transactionInput: ", addr.toString());
-				        		MyTransactionInput ti = (MyTransactionInput)transactionInput;
-			        			String value = BlockchainUtil.formatBitcoin(ti.getValue()) + " BTC";
-			        			String label = labelMap.get(addr.toString());
-			        			if (label != null) {
-				        			Map.Entry<String, String> entry = new AbstractMap.SimpleEntry<String, String>(label, value);
-				        			addressValueEntryList.add(entry);			        				
-			        			} else {
-				        			Map.Entry<String, String> entry = new AbstractMap.SimpleEntry<String, String>(addr.toString(), value);
-				        			addressValueEntryList.add(entry);			        				
-			        			}
-			        		}
-			            } catch (ScriptException e) {
-			                e.printStackTrace();
-			            } catch (Exception e) {
-			                e.printStackTrace();
-			            }
-			    	}				
-				}	    		
-	    	} else {
-	    		isSending = true;
-		    	boolean isAddressPartofTransaction = false;
+	    	boolean isAddressPartofTransaction = false;			    
+	    	//for (TransactionOutput transactionOutput : transactionOutputs) {
+			for (Iterator<TransactionOutput> ito = transactionOutputs.iterator(); ito.hasNext();) {
+				TransactionOutput transactionOutput = ito.next();
+	        	try {
+	        		com.google.bitcoin.core.Script script = transactionOutput.getScriptPubKey();
+	        		String addr = null;
+	        		if (script != null)
+	        			addr = script.getToAddress().toString();
+
+	        		if (addr != null && addr.equals(address)) {
+	        			isAddressPartofTransaction = true;
+	        			break;
+	        		}
+	            } catch (ScriptException e) {
+	                e.printStackTrace();
+	            } catch (Exception e) {
+	                e.printStackTrace();
+	            }			    		
+	    	}
+	    	
+	    	if (transactionInputs != null && isAddressPartofTransaction) {
 		    	//for (TransactionInput transactionInput : transactionInputs) {
-			    for (Iterator<TransactionInput> iti = transactionInputs.iterator(); iti.hasNext();) {
+		    	for (Iterator<TransactionInput> iti = transactionInputs.iterator(); iti.hasNext();) {
 		    		TransactionInput transactionInput = iti.next();
 		        	try {
 		        		Address addr = transactionInput.getFromAddress();
-
-		        		if (addr != null && addr.toString().equals(address)) {
-		        			isAddressPartofTransaction = true;
-		        			break;
+		        		//second condition is required so that inputs are not displayed if it is also an output 
+		        		if (addr != null && ! addr.toString().equals(address)) {
+		        		    Log.d("transactionInput: ", addr.toString());
+			        		MyTransactionInput ti = (MyTransactionInput)transactionInput;
+		        			String value = BlockchainUtil.formatBitcoin(ti.getValue()) + " BTC";
+		        			String label = labelMap.get(addr.toString());
+		        			if (label != null) {
+			        			Map.Entry<String, String> entry = new AbstractMap.SimpleEntry<String, String>(label, value);
+			        			addressValueEntryList.add(entry);			        				
+		        			} else {
+			        			Map.Entry<String, String> entry = new AbstractMap.SimpleEntry<String, String>(addr.toString(), value);
+			        			addressValueEntryList.add(entry);			        				
+		        			}
 		        		}
 		            } catch (ScriptException e) {
 		                e.printStackTrace();
 		            } catch (Exception e) {
 		                e.printStackTrace();
-		            }			    		
-		    	}
-		    	
-				if (transactionOutputs != null && isAddressPartofTransaction) {
-			    	//for (TransactionOutput transactionOutput : transactionOutputs) {
-					for (Iterator<TransactionOutput> ito = transactionOutputs.iterator(); ito.hasNext();) {
-			    		TransactionOutput transactionOutput = ito.next();
-			        	try {
-			        		com.google.bitcoin.core.Script script = transactionOutput.getScriptPubKey();
-			        		Address addr = null;
-			        		if (script != null)
-			        			addr = script.getToAddress();
-			        		
-			        		//second condition is required so that outputs are not displayed if it is also an input 
-			        		if (addr != null && ! addr.toString().equals(address)) {			        		
-			        		    Log.d("transactionOutput: ", addr.toString());
-			        			String value = BlockchainUtil.formatBitcoin(transactionOutput.getValue()) + " BTC";
-			        			String label = labelMap.get(addr.toString());
-			        			if (label != null) {
-				        			Map.Entry<String, String> entry = new AbstractMap.SimpleEntry<String, String>(label, value);
-				        			addressValueEntryList.add(entry);			        				
-			        			} else {
-				        			Map.Entry<String, String> entry = new AbstractMap.SimpleEntry<String, String>(addr.toString(), value);
-				        			addressValueEntryList.add(entry);			        				
-			        			}
-			        		}
-			            } catch (ScriptException e) {
-			                e.printStackTrace();
-			            } catch (Exception e) {
-			                e.printStackTrace();
-			            }
-			    	}
-				}
+		            }
+		    	}				
+			}	    		
+	    	
+        	if (addressValueEntryList.size() > 0) {
+	        	bindTxDisplay(view, addressValueEntryList, result, transaction.getHashAsString(), transaction.getTime().getTime()/1000, false);	        		
+        	}
+
+        	addressValueEntryList.clear();
+	    	isAddressPartofTransaction = false;
+	    	//for (TransactionInput transactionInput : transactionInputs) {
+		    for (Iterator<TransactionInput> iti = transactionInputs.iterator(); iti.hasNext();) {
+	    		TransactionInput transactionInput = iti.next();
+	        	try {
+	        		Address addr = transactionInput.getFromAddress();
+
+	        		if (addr != null && addr.toString().equals(address)) {
+	        			isAddressPartofTransaction = true;
+	        			break;
+	        		}
+	            } catch (ScriptException e) {
+	                e.printStackTrace();
+	            } catch (Exception e) {
+	                e.printStackTrace();
+	            }			    		
 	    	}
-	    
-        	if (addressValueEntryList.size() == 0)
-        		continue;        	
-        				
-			child = inflater.inflate(R.layout.tx_layout, null);
+	    	
+			if (transactionOutputs != null && isAddressPartofTransaction) {
+		    	//for (TransactionOutput transactionOutput : transactionOutputs) {
+				for (Iterator<TransactionOutput> ito = transactionOutputs.iterator(); ito.hasNext();) {
+		    		TransactionOutput transactionOutput = ito.next();
+		        	try {
+		        		com.google.bitcoin.core.Script script = transactionOutput.getScriptPubKey();
+		        		Address addr = null;
+		        		if (script != null)
+		        			addr = script.getToAddress();
+		        		
+		        		//second condition is required so that outputs are not displayed if it is also an input 
+		        		if (addr != null && ! addr.toString().equals(address)) {			        		
+		        		    Log.d("transactionOutput: ", addr.toString());
+		        			String value = BlockchainUtil.formatBitcoin(transactionOutput.getValue()) + " BTC";
+		        			String label = labelMap.get(addr.toString());
+		        			if (label != null) {
+			        			Map.Entry<String, String> entry = new AbstractMap.SimpleEntry<String, String>(label, value);
+			        			addressValueEntryList.add(entry);			        				
+		        			} else {
+			        			Map.Entry<String, String> entry = new AbstractMap.SimpleEntry<String, String>(addr.toString(), value);
+			        			addressValueEntryList.add(entry);			        				
+		        			}
+		        		}
+		            } catch (ScriptException e) {
+		                e.printStackTrace();
+		            } catch (Exception e) {
+		                e.printStackTrace();
+		            }
+		    	}
+			}
 
-	        ((TextView)child.findViewById(R.id.ts)).setTypeface(TypefaceUtil.getInstance(getActivity()).getGravityBoldTypeface());
-	        
-	        long ts = transaction.getTime().getTime()/1000;
-	        ((TextView)child.findViewById(R.id.ts)).setText(DateUtil.getInstance().formatted(ts));
+        	if (addressValueEntryList.size() > 0) {
+	        	bindTxDisplay(view, addressValueEntryList, result, transaction.getHashAsString(), transaction.getTime().getTime()/1000, true);	        		
+        	}	   
+	    }
+    }
+    
+    private void bindTxDisplay(final View view, List<Map.Entry<String, String>> addressValueEntryList, BigInteger result, String txHash, long txTime, boolean isSending) {
+  		View child = null;
+        LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		child = inflater.inflate(R.layout.tx_layout, null);
 
-	        if (isSending) {
-		        TxBitmap txBitmap = new TxBitmap(getActivity(), addressValueEntryList);
-		        ((ImageView)child.findViewById(R.id.txbitmap)).setImageBitmap(txBitmap.createArrowsBitmap(200, TxBitmap.SENDING, addressValueEntryList.size()));
-		        ((ImageView)child.findViewById(R.id.address)).setImageBitmap(txBitmap.createListBitmap(200));
-		        ((TextView)child.findViewById(R.id.amount)).setTypeface(TypefaceUtil.getInstance(getActivity()).getGravityBoldTypeface());
-		        ((TextView)child.findViewById(R.id.amount)).setTextColor(BlockchainUtil.BLOCKCHAIN_RED);
-	        } else {
-		        TxBitmap txBitmap = new TxBitmap(getActivity(), addressValueEntryList);
-		        ((ImageView)child.findViewById(R.id.txbitmap)).setImageBitmap(txBitmap.createArrowsBitmap(200, TxBitmap.RECEIVING, addressValueEntryList.size()));
-		        ((ImageView)child.findViewById(R.id.address)).setImageBitmap(txBitmap.createListBitmap(200));
-		        ((TextView)child.findViewById(R.id.amount)).setTypeface(TypefaceUtil.getInstance(getActivity()).getGravityBoldTypeface());
-		        ((TextView)child.findViewById(R.id.amount)).setTextColor(BlockchainUtil.BLOCKCHAIN_GREEN);
-	        }
-	        
-	        if(isBTC) {
-		        ((TextView)child.findViewById(R.id.amount)).setText(BlockchainUtil.formatBitcoin(result) + " BTC");
-	        }
-	        else {
-		        ((TextView)child.findViewById(R.id.amount)).setText((BlockchainUtil.BTC2Fiat(WalletUtils.formatValue(result)) + " USD"));
-	        }
-	        
-	        final MyTransaction tx = transaction;
-	        
-			child.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(Intent.ACTION_VIEW , Uri.parse("https://blockchain.info/tx/" + tx.getHashAsString()));
-                    startActivity(intent);
-                }
-            });
+        ((TextView)child.findViewById(R.id.ts)).setTypeface(TypefaceUtil.getInstance(getActivity()).getGravityBoldTypeface());
+        
+        ((TextView)child.findViewById(R.id.ts)).setText(DateUtil.getInstance().formatted(txTime));
 
-			balance_extHiddenLayout.addView(child);
-		}
+        if (isSending) {
+	        TxBitmap txBitmap = new TxBitmap(getActivity(), addressValueEntryList);
+	        ((ImageView)child.findViewById(R.id.txbitmap)).setImageBitmap(txBitmap.createArrowsBitmap(200, TxBitmap.SENDING, addressValueEntryList.size()));
+	        ((ImageView)child.findViewById(R.id.address)).setImageBitmap(txBitmap.createListBitmap(200));
+	        ((TextView)child.findViewById(R.id.amount)).setTypeface(TypefaceUtil.getInstance(getActivity()).getGravityBoldTypeface());
+	        ((TextView)child.findViewById(R.id.amount)).setTextColor(BlockchainUtil.BLOCKCHAIN_RED);
+        } else {
+	        TxBitmap txBitmap = new TxBitmap(getActivity(), addressValueEntryList);
+	        ((ImageView)child.findViewById(R.id.txbitmap)).setImageBitmap(txBitmap.createArrowsBitmap(200, TxBitmap.RECEIVING, addressValueEntryList.size()));
+	        ((ImageView)child.findViewById(R.id.address)).setImageBitmap(txBitmap.createListBitmap(200));
+	        ((TextView)child.findViewById(R.id.amount)).setTypeface(TypefaceUtil.getInstance(getActivity()).getGravityBoldTypeface());
+	        ((TextView)child.findViewById(R.id.amount)).setTextColor(BlockchainUtil.BLOCKCHAIN_GREEN);
+        }
+        
+        if(isBTC) {
+	        ((TextView)child.findViewById(R.id.amount)).setText(BlockchainUtil.formatBitcoin(result) + " BTC");
+        }
+        else {
+	        ((TextView)child.findViewById(R.id.amount)).setText((BlockchainUtil.BTC2Fiat(WalletUtils.formatValue(result)) + " USD"));
+        }
+        
+        final String transactionHash = txHash;
+        
+		child.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_VIEW , Uri.parse("https://blockchain.info/tx/" + transactionHash));
+                startActivity(intent);
+            }
+        });
+		
+    	final LinearLayout balance_extHiddenLayout = (LinearLayout)view.findViewById(R.id.balance_ext_hidden);
+		balance_extHiddenLayout.addView(child);
+	
 
 		balance_extHiddenLayout.setVisibility(View.VISIBLE);
-        balance_extLayout.setVisibility(View.VISIBLE);
-//        balance_extLayout.startAnimation(slideDown);
+	    balance_extLayout.setVisibility(View.VISIBLE);
+//	    balance_extLayout.startAnimation(slideDown);
     }
-
+    
     private Bitmap generateQRCode(String uri) {
 
         Bitmap bitmap = null;
