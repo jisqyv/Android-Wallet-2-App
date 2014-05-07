@@ -680,9 +680,9 @@ public class SendFragment extends Fragment   {
 		        	SpannableStringBuilder a1 = new SpannableStringBuilder(amount1);
 		        	SpannableStringBuilder a2 = new SpannableStringBuilder(amount2);
 		        	a1.setSpan(new SuperscriptSpan(), amount1.length() - 4, amount1.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-		        	a1.setSpan(new RelativeSizeSpan((float)0.75), amount1.length() - 4, amount1.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+		        	a1.setSpan(new RelativeSizeSpan((float)0.50), amount1.length() - 4, amount1.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 		        	a2.setSpan(new SuperscriptSpan(), amount2.length() - 4, amount2.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-		        	a2.setSpan(new RelativeSizeSpan((float)0.75), amount2.length() - 4, amount2.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+		        	a2.setSpan(new RelativeSizeSpan((float)0.50), amount2.length() - 4, amount2.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 		        	tvAmount.setText(a1);
 		        	tvAmountBis.setText(a2);
 

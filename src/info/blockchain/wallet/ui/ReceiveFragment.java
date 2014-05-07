@@ -65,12 +65,12 @@ public class ReceiveFragment extends Fragment   {
     private TextView tvAmount2 = null;
     private EditText edAddress = null;
     private TextView tvCurrency = null;
-    private LinearLayout summary = null;
-    private LinearLayout summary2 = null;
+//    private LinearLayout summary = null;
+//    private LinearLayout summary2 = null;
     
-    private TextView tvAmount = null;
-    private TextView tvAmountBis = null;
-    private TextView tvArrow = null;
+//    private TextView tvAmount = null;
+//    private TextView tvAmountBis = null;
+//    private TextView tvArrow = null;
     private TextView tvAddress = null;
     private TextView tvAddressBis = null;
     private ImageView ivReceivingQR = null;
@@ -102,21 +102,25 @@ public class ReceiveFragment extends Fragment   {
 
         rootView = inflater.inflate(R.layout.fragment_receive, container, false);
 
+        /*
         tvAmount = (TextView)rootView.findViewById(R.id.amount);
         tvAmount.setVisibility(View.INVISIBLE);
         tvAmountBis = (TextView)rootView.findViewById(R.id.amount_bis);
         tvAmountBis.setVisibility(View.INVISIBLE);
         tvArrow = (TextView)rootView.findViewById(R.id.arrow);
         tvArrow.setVisibility(View.INVISIBLE);
+        */
         tvAddress = (TextView)rootView.findViewById(R.id.receiving_address);
         tvAddress.setVisibility(View.INVISIBLE);
         tvAddressBis = (TextView)rootView.findViewById(R.id.receiving_address_bis);
         tvAddressBis.setVisibility(View.INVISIBLE);
-
+        
+        /*
         summary = (LinearLayout)rootView.findViewById(R.id.summary);
         summary.setVisibility(View.INVISIBLE);
         summary2 = (LinearLayout)rootView.findViewById(R.id.summary2);
         summary2.setVisibility(View.INVISIBLE);
+        */
 
         ivReceivingQR = (ImageView)rootView.findViewById(R.id.qr);
         ivReceivingQR.setVisibility(View.INVISIBLE);
@@ -177,13 +181,13 @@ public class ReceiveFragment extends Fragment   {
 		    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 		        if(actionId == EditorInfo.IME_ACTION_DONE) {
 
-		        	summary.setVisibility(View.VISIBLE);
-		        	summary2.setVisibility(View.VISIBLE);
+//		        	summary.setVisibility(View.VISIBLE);
+//		        	summary2.setVisibility(View.VISIBLE);
 		        	tvAddress.setVisibility(View.VISIBLE);
 		        	tvAddressBis.setVisibility(View.VISIBLE);
-		        	tvArrow.setVisibility(View.VISIBLE);
-		        	tvAmount.setVisibility(View.VISIBLE);
-		        	tvAmountBis.setVisibility(View.VISIBLE);
+//		        	tvArrow.setVisibility(View.VISIBLE);
+//		        	tvAmount.setVisibility(View.VISIBLE);
+//		        	tvAmountBis.setVisibility(View.VISIBLE);
 		        	ivReceivingQR.setVisibility(View.VISIBLE);
 
 //		        	final WalletApplication application = (WalletApplication)getActivity().getApplication();
@@ -192,7 +196,8 @@ public class ReceiveFragment extends Fragment   {
  		    		String destination = null;
  		            if(xlatLabel.get(edAddress.getText().toString()) != null) {
  		            	destination = xlatLabel.get(edAddress.getText().toString());
- 		            	tvAddressBis.setText(destination.substring(0,  15) + "...");
+// 		            	tvAddressBis.setText(destination.substring(0,  15) + "...");
+ 		            	tvAddressBis.setText(destination);
  		            }
  		            else {
  		            	destination = edAddress.getText().toString();
@@ -201,13 +206,14 @@ public class ReceiveFragment extends Fragment   {
  //					Toast.makeText(application, "BTC going to:" + destination, Toast.LENGTH_LONG).show();
 
 		        	if(edAddress.getText().toString().length() > 15) {
-			        	tvAddress.setText(edAddress.getText().toString().subSequence(0, 15) + "...");
+//			        	tvAddress.setText(edAddress.getText().toString().subSequence(0, 15) + "...");
+			        	tvAddress.setText(edAddress.getText().toString());
 		        	}
 		        	else {
 			        	tvAddress.setText(edAddress.getText().toString());
 		        	}
 
-		        	tvArrow.setText(Character.toString((char)0x2192));
+//		        	tvArrow.setText(Character.toString((char)0x2192));
 
 		        	String amount1 = edAmount1.getText().toString();
 		        	String amount2 = tvAmount2.getText().toString().substring(0, tvAmount2.getText().toString().length() - 4);
@@ -225,6 +231,7 @@ public class ReceiveFragment extends Fragment   {
 		        		amount1 += " USD";
 		        		amount2 += " BTC";
 		        	}
+		        	/*
 		        	SpannableStringBuilder a1 = new SpannableStringBuilder(amount1);
 		        	SpannableStringBuilder a2 = new SpannableStringBuilder(amount2);
 		        	a1.setSpan(new SuperscriptSpan(), amount1.length() - 4, amount1.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -233,6 +240,7 @@ public class ReceiveFragment extends Fragment   {
 		        	a2.setSpan(new RelativeSizeSpan((float)0.75), amount2.length() - 4, amount2.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 		        	tvAmount.setText(a1);
 		        	tvAmountBis.setText(a2);
+		        	*/
 
 		            ivReceivingQR.setImageBitmap(generateQRCode(BitcoinURI.convertToBitcoinURI(edAddress.getText().toString(), BigInteger.valueOf(btcValue), "", "")));
 
@@ -355,7 +363,8 @@ public class ReceiveFragment extends Fragment   {
             	edAddress.setText("");
             	edAmount1.setText("");
             	tvAmount2.setText("");
-            	
+
+            	/*
                 summary.setVisibility(View.INVISIBLE);
                 summary2.setVisibility(View.INVISIBLE);
                 tvAmount.setText("");
@@ -364,6 +373,7 @@ public class ReceiveFragment extends Fragment   {
                 tvAmountBis.setVisibility(View.INVISIBLE);
                 tvArrow.setText("");
                 tvArrow.setVisibility(View.INVISIBLE);
+                */
                 tvAddress.setText("");
                 tvAddress.setVisibility(View.INVISIBLE);
                 tvAddressBis.setText("");
@@ -413,7 +423,7 @@ public class ReceiveFragment extends Fragment   {
     private Bitmap generateQRCode(String uri) {
 
         Bitmap bitmap = null;
-        int qrCodeDimension = 200;
+        int qrCodeDimension = 280;
 
         QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(uri, null, Contents.Type.TEXT, BarcodeFormat.QR_CODE.toString(), qrCodeDimension);
 
@@ -500,24 +510,6 @@ public class ReceiveFragment extends Fragment   {
     }
 
     private void initMagicList() {
-
-    	/*
-        magicData = new HashMap<String,String>();
-        
-        if(addressesOn) {
-            magicData.put("Cold Storage", "11 BTC");
-            magicData.put("1Zs4532d76HB...", "0.3 BTC");
-            magicData.put("Walk around money", "0.3 BTC");
-    	}
-    	else {
-            magicData.put("Alice", "1Zs4532d76HB...");
-            magicData.put("Bob", "18Uj9vBd76HB...");
-            magicData.put("Kebab shop guy", "1Wx55328k4B...");
-    	}
-        
-        String[] sKeys = magicData.keySet().toArray(new String[0]);
-        keys = new ArrayList<String>(Arrays.asList(sKeys));
-        */
 
 		final WalletApplication application = (WalletApplication)getActivity().getApplication();
 		MyRemoteWallet wallet = application.getRemoteWallet();
@@ -672,6 +664,7 @@ public class ReceiveFragment extends Fragment   {
 
 
     private void clearReceive()	{
+    	/*
         summary.setVisibility(View.INVISIBLE);
         summary2.setVisibility(View.INVISIBLE);
         tvAmount.setText("");
@@ -680,6 +673,7 @@ public class ReceiveFragment extends Fragment   {
         tvAmountBis.setVisibility(View.INVISIBLE);
         tvArrow.setText("");
         tvArrow.setVisibility(View.INVISIBLE);
+        */
         tvAddress.setText("");
         tvAddress.setVisibility(View.INVISIBLE);
         tvAddressBis.setText("");
