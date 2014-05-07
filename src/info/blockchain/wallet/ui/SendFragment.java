@@ -9,7 +9,6 @@ import java.util.Map;
 
 import org.json.simple.JSONObject;
 
-import net.sourceforge.zbar.Symbol;
 import piuk.EventListeners;
 import piuk.MyRemoteWallet;
 import piuk.MyRemoteWallet.SendProgress;
@@ -21,13 +20,16 @@ import piuk.blockchain.android.ui.SendCoinsActivity;
 import piuk.blockchain.android.ui.SuccessCallback;
 import piuk.blockchain.android.ui.SendCoinsActivity.OnChangedSendTypeListener;
 import piuk.blockchain.android.ui.dialogs.RequestPasswordDialog;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -70,8 +72,11 @@ import android.widget.TextView.OnEditorActionListener;
 import android.provider.ContactsContract.CommonDataKinds;
 import android.provider.ContactsContract.Contacts;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
+import android.content.BroadcastReceiver;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import net.sourceforge.zbar.Symbol;
 import com.dm.zbar.android.scanner.ZBarConstants;
 import com.dm.zbar.android.scanner.ZBarScannerActivity;
 import com.google.bitcoin.core.Address;
@@ -154,6 +159,25 @@ public class SendFragment extends Fragment   {
 	private Runnable sentRunnable;
 	private String sendType;
 	private BlockchainServiceImpl service;
+	
+	public static final String ACTION_INTENT = "info.blockchain.wallet.ui.SendFragment.BTC_ADDRESS_SCAN";
+
+    protected BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(ACTION_INTENT.equals(intent.getAction())) {
+                String address = intent.getStringExtra("BTC_ADDRESS");
+                edAddress.setText(address);
+
+                InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(edAddress.getWindowToken(), 0);
+                edAmount1.requestFocus();
+                edAmount1.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
+
+            }
+        }
+    };
 
 	private final ServiceConnection serviceConnection = new ServiceConnection()
 	{
@@ -170,6 +194,9 @@ public class SendFragment extends Fragment   {
 
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    	
+        IntentFilter filter = new IntentFilter(ACTION_INTENT);
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiver, filter);
 
 		final MainActivity activity = (MainActivity) getActivity();
 		application = (WalletApplication) activity.getApplication();
@@ -957,6 +984,9 @@ public class SendFragment extends Fragment   {
 		MyRemoteWallet remoteWallet = application.getRemoteWallet();
 
 		remoteWallet.setTemporySecondPassword(null);
+		
+	    LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(receiver);
+	      
 	}
 	
 	@Override
@@ -1645,11 +1675,10 @@ public class SendFragment extends Fragment   {
 		*/
 	}
 	
-/*
 	public void doQRScan(String address) {
 		
 		edAddress.setText(address);
 
 	}
-*/
+
 }

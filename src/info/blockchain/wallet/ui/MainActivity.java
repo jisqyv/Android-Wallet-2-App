@@ -32,6 +32,7 @@ import android.view.Gravity;
 import android.view.View.OnTouchListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
+import android.support.v4.content.LocalBroadcastManager;
 import android.widget.Toast;
 
 //import android.util.Log;
@@ -184,12 +185,11 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 			if(BitcoinAddressCheck.isValid(BitcoinAddressCheck.clean(strResult))) {
 				Toast.makeText(this, strResult, Toast.LENGTH_LONG).show();
 
-				/*
 		        viewPager.setCurrentItem(0);
-				SendFragment sf = (SendFragment)getSupportFragmentManager().findFragmentById(R.id.SendFragment);
-			    sf.doQRScan(strResult);
-			    */
 
+				Intent intent = new Intent("info.blockchain.wallet.ui.SendFragment.BTC_ADDRESS_SCAN");
+			    intent.putExtra("BTC_ADDRESS", strResult);
+			    LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
 			}
 			else {
 				Toast.makeText(this, "Invalid address", Toast.LENGTH_LONG).show();
