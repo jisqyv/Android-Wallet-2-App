@@ -158,7 +158,8 @@ public class ReceiveFragment extends Fragment   {
                 edAmount1.requestFocus();
                 edAmount1.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
                 imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-                ivReceivingQR.setVisibility(View.INVISIBLE);
+
+                // ivReceivingQR.setVisibility(View.INVISIBLE);
 
             }
         });
