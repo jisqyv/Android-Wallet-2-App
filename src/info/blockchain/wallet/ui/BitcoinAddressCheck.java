@@ -1,5 +1,7 @@
 package info.blockchain.wallet.ui;
 
+import piuk.blockchain.android.R;
+
 import com.google.bitcoin.uri.BitcoinURI;
 import com.google.bitcoin.uri.BitcoinURIParseException;
 import com.google.bitcoin.core.Address;
@@ -7,13 +9,15 @@ import com.google.bitcoin.core.AddressFormatException;
 import com.google.bitcoin.core.NetworkParameters;
 import com.google.bitcoin.core.WrongNetworkException;
 
+import android.util.Log;
+
 public class BitcoinAddressCheck {
 	
 	private BitcoinAddressCheck() { ; }
 
 	public static String validate(final String btcaddress) {
 		
-		if(isValid(btcaddress)) {
+		if(isValidAddress(btcaddress)) {
 			return btcaddress;
 		}
 		else {
@@ -43,7 +47,71 @@ public class BitcoinAddressCheck {
 		return ret;
 	}
 
-	private static boolean isValid(final String btcaddress) {
+	public static boolean isUri(final String s) {
+
+		boolean ret = false;
+		BitcoinURI uri = null;
+		
+		try {
+			uri = new BitcoinURI(s);
+			ret = true;
+		}
+		catch(BitcoinURIParseException bupe) {
+			ret = false;
+		}
+		
+		return ret;
+	}
+
+	public static String getUri(final String s) {
+
+		String ret = null;
+		BitcoinURI uri = null;
+		
+		try {
+			uri = new BitcoinURI(s);
+			ret = uri.toString();
+		}
+		catch(BitcoinURIParseException bupe) {
+			ret = null;
+		}
+		
+		return ret;
+	}
+
+	public static String getAddress(final String s) {
+
+		String ret = null;
+		BitcoinURI uri = null;
+		
+		try {
+			uri = new BitcoinURI(s);
+			ret = uri.getAddress().toString();
+		}
+		catch(BitcoinURIParseException bupe) {
+			ret = null;
+		}
+
+		return ret;
+	}
+
+	public static String getAmount(final String s) {
+
+		String ret = null;
+		BitcoinURI uri = null;
+		
+		try {
+			uri = new BitcoinURI(s);
+			ret = uri.getAmount().toString();
+		}
+		catch(BitcoinURIParseException bupe) {
+			ret = null;
+		}
+
+		return ret;
+	}
+
+	public static boolean isValidAddress(final String btcaddress) {
 
 		boolean ret = false;
 		Address address = null;

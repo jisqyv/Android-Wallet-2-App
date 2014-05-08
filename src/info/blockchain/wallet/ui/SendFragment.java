@@ -175,23 +175,40 @@ public class SendFragment extends Fragment   {
 
                 String address = intent.getStringExtra("BTC_ADDRESS");
 
-                InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(edAddress.getWindowToken(), 0);
+                if(BitcoinAddressCheck.isValidAddress(address)) {
 
-                edAddress.setText(address);
+                    InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(edAddress.getWindowToken(), 0);
 
-                edAmount1.requestFocus();
-                edAmount1.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-                
-            	if(isBTC) {
+                    edAddress.setText(address);
+
+                    edAmount1.requestFocus();
+                    edAmount1.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                    imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+                }
+                else if(BitcoinAddressCheck.isUri(address)) {
+
+                    InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(edAddress.getWindowToken(), 0);
+                    
+                    String btc_address = BitcoinAddressCheck.getAddress(address);
+                    String btc_amount = BitcoinAddressCheck.getAmount(address);
+                    
+                    edAddress.setText(btc_address);
+                    edAmount1.setText(Double.toString(Double.parseDouble(btc_amount) / 100000000.0));
+
+                    edAmount1.requestFocus();
+                    edAmount1.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                    imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+
+                    isBTC = true;
             	    tvCurrency.setTypeface(TypefaceUtil.getInstance(getActivity()).getBTCTypeface());
             		tvCurrency.setText(Character.toString((char)TypefaceUtil.getInstance(getActivity()).getBTCSymbol()));
-            	}
-            	else {
-            	    tvCurrency.setTypeface(TypefaceUtil.getInstance(getActivity()).getBTCTypeface());
-            		tvCurrency.setText("$");
-            	}
+                    
+                }
+                else {
+                	;
+                }
 
             }
         }

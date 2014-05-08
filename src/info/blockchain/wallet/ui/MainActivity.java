@@ -183,11 +183,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 		if(resultCode == Activity.RESULT_OK && requestCode == ZBAR_SCANNER_REQUEST)	{
 
 			String strResult = data.getStringExtra(ZBarConstants.SCAN_RESULT);
-        	Log.d("Scan result", strResult);
 
-        	strResult = BitcoinAddressCheck.validate(strResult);
         	if(strResult != null) {
-				Toast.makeText(this, strResult, Toast.LENGTH_LONG).show();
 
 		        viewPager.setCurrentItem(0);
 
