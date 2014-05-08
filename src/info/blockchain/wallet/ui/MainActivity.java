@@ -159,10 +159,10 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 			Intent intent3 = new Intent(MainActivity.this, MapActivity.class);
 			startActivity(intent3);
     		return true;
-    	*/
     	case R.id.send_to_friends:
     		doSend2Friends();
     		return true;
+    	*/
     	case R.id.action_about:
     		doAbout();
     		return true;
