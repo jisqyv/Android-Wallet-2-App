@@ -40,10 +40,13 @@ import org.spongycastle.util.encoders.Hex;
 import piuk.blockchain.android.Constants;
 import piuk.blockchain.android.ui.SuccessCallback;
 import piuk.blockchain.android.util.WalletUtils;
+import android.util.Log;
 import android.util.Pair;
 
 import com.google.bitcoin.core.Address;
 import com.google.bitcoin.core.AddressFormatException;
+import com.google.bitcoin.core.Base58;
+import com.google.bitcoin.core.DumpedPrivateKey;
 import com.google.bitcoin.core.ECKey;
 import com.google.bitcoin.core.NetworkParameters;
 import com.google.bitcoin.core.Sha256Hash;
@@ -562,6 +565,134 @@ public class MyRemoteWallet extends MyWallet {
 		return filtered;
 	}
 
+	public void sendCoinsEmail(final String email, final BigInteger amount, final SendProgress progress) throws Exception {
+		sendCoinsToFriend("email", email, amount, progress);
+	}
+	public void sendCoinsSMS(final String number, final BigInteger amount, final SendProgress progress) throws Exception {
+		sendCoinsToFriend("sms", number, amount, progress);
+	}
+
+	private void sendCoinsToFriend(final String sendType,final String emailOrNumber, final BigInteger amount, final SendProgress progress) throws Exception {
+		final String[] from = getActiveAddresses();
+	
+		final ECKey key = generateECKey();
+		new Thread() {
+			@Override
+			public void run() {
+				final List<ECKey> tempKeys = new ArrayList<ECKey>();
+
+				try {
+					//Construct a new transaction
+					progress.onProgress("Getting Unspent Outputs");
+
+					List<MyTransactionOutPoint> allUnspent = getUnspentOutputPoints(from);
+
+					Pair<Transaction, Long> pair = null;
+
+					progress.onProgress("Constructing Transaction");
+					
+			        //final String privateKey = key.toStringWithPrivate();
+			        final DumpedPrivateKey dumpedPrivateKey = key.getPrivateKeyEncoded(params);
+			        String privateKey = Base58.encode(dumpedPrivateKey.bytes);
+			        
+			        final String toAddress = key.toAddress(params).toString();
+					Log.d("sendCoinsToFriend", "sendCoinsToFriend: privateKey: " + privateKey);
+					Log.d("sendCoinsToFriend", "sendCoinsToFriend: toAddress: " + toAddress);
+					BigInteger fee = BigInteger.ZERO;
+					
+					try {
+						//Try without asking for watch only addresses
+						List<MyTransactionOutPoint> unspent = filter(allUnspent, tempKeys, false, progress);
+
+						pair = makeTransaction(unspent, toAddress, amount, fee);
+
+						//Transaction cancelled
+						if (pair == null)
+							return;
+					} catch (InsufficientFundsException e) {
+
+						//Try with asking for watch only
+						List<MyTransactionOutPoint> unspent = filter(allUnspent, tempKeys, true, progress);
+
+						pair = makeTransaction(unspent, toAddress, amount, fee);
+
+						//Transaction cancelled
+						if (pair == null)
+							return;
+					}
+					
+					
+					if (allUnspent != null) {
+						Transaction tx = pair.first;
+
+						progress.onProgress("Signing Inputs");
+
+						Wallet wallet = new Wallet(NetworkParameters.prodNet());
+						for (TransactionInput input : tx.getInputs()) {
+
+							try {
+								byte[] scriptBytes = input.getOutpoint().getConnectedPubKeyScript();
+
+								String address = new BitcoinScript(scriptBytes).getAddress().toString();
+
+								ECKey key = getECKey(address);
+								if (key != null) {
+									wallet.addKey(key);
+								}
+							} catch (Exception e) {}
+						}
+
+						wallet.addKeys(tempKeys);
+
+						//Now sign the inputs
+						tx.signInputs(SigHash.ALL, wallet);
+
+						progress.onProgress("Broadcasting Transaction");
+						
+				        final String txHash = tx.getHashAsString();
+												
+						Log.d("sendCoinsToFriend", "sendCoinsToFriend: txHash: " + txHash);						
+						
+						StringBuilder args = new StringBuilder();
+
+						args.append("type=" + sendType);
+						args.append("&guid=" + getGUID());
+						args.append("&priv=" + privateKey);
+						args.append("&sharedKey=" + getSharedKey());
+						args.append("&hash=" + txHash);
+						args.append("&to=" + emailOrNumber);
+						try {
+							String response = postURL(WebROOT + "send-via", args.toString());
+							if (response != null && response.length() > 0) {
+								progress.onProgress("Send Transaction");
+								Log.d("sendCoinsToFriend", "sendCoinsToFriend: send-via response: " + response);
+								String response2 = pushTx(tx);						
+								if (response2 != null && response2.length() > 0) {
+									Log.d("sendCoinsToFriend", "sendCoinsToFriend: pushTx response: " + response2);
+									progress.onSend(tx, response2);
+									
+									String label = sendType == "email" ? emailOrNumber + " Sent Via Email" : emailOrNumber + " Sent Via Email";									
+									addKey(key, toAddress, label);
+									setTag(toAddress, 2);
+								}
+							}
+						} catch (Exception e) {
+							progress.onError(e.getMessage());							
+							e.printStackTrace();
+						}
+					}
+					
+				} catch (Exception e) {
+					progress.onError(e.getMessage());							
+					e.printStackTrace();
+				}				
+				
+		
+			}
+		}.start();
+		
+	}
+	
 	public void sendCoinsAsync(final String toAddress, final BigInteger amount, final FeePolicy feePolicy, final BigInteger fee, final SendProgress progress) {
 		sendCoinsAsync(getActiveAddresses(), toAddress, amount, feePolicy, fee, progress);
 	}
