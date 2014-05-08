@@ -1087,6 +1087,7 @@ public class SendFragment extends Fragment   {
 		                    		
 		                    		final String em = strEmail;
 		                    		final String sms = strNumber;
+		                    		final String name = strName;
 		                    		
 		                			new AlertDialog.Builder(getActivity())
 		                            .setIcon(R.drawable.ic_launcher).setTitle("Send Bitcoins to a Friend")
@@ -1096,7 +1097,7 @@ public class SendFragment extends Fragment   {
 		                              public void onClick(DialogInterface dialog, int which) {
 		                            	  
 		                            	  
-				                    		edAddress.setText(em);
+				                    		edAddress.setText(name);
 				                    		
 				                    		// go out via email here
 				                    		Toast.makeText(getActivity(), em, Toast.LENGTH_SHORT).show();
@@ -1107,7 +1108,7 @@ public class SendFragment extends Fragment   {
 		                              public void onClick(DialogInterface dialog, int which) {
 		                            	  
 		                            	  
-				                    		edAddress.setText(sms);
+				                    		edAddress.setText(name);
 				                    		
 				                    		// go out via sms here
 				                    		Toast.makeText(getActivity(), sms, Toast.LENGTH_SHORT).show();
