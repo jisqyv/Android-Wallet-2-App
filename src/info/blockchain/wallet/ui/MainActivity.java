@@ -34,6 +34,7 @@ import android.view.View.OnTouchListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.support.v4.content.LocalBroadcastManager;
+import android.widget.TextView;
 import android.widget.Toast;
 
 //import android.util.Log;
@@ -251,6 +252,33 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     	startActivityForResult(intent, PICK_CONTACT);
     }
     
+	public final void toast(final String text, final Object... formatArgs) {
+		toast(text, 0, Toast.LENGTH_SHORT, formatArgs);
+	}
+
+	public final void longToast(final String text, final Object... formatArgs) {
+		toast(text, 0, Toast.LENGTH_LONG, formatArgs);
+	}
+	
+	public final void toast(final String text, final int imageResId,
+			final int duration, final Object... formatArgs) {
+
+		if (text == null)
+			return;
+
+		final View view = getLayoutInflater().inflate(
+				R.layout.transient_notification, null);
+		TextView tv = (TextView) view
+				.findViewById(R.id.transient_notification_text);
+		tv.setText(String.format(text, formatArgs));
+		tv.setCompoundDrawablesWithIntrinsicBounds(imageResId, 0, 0, 0);
+
+		final Toast toast = new Toast(this);
+		toast.setView(view);
+		toast.setDuration(duration);
+		toast.show();
+	}
+	
 	public final void toast(final int textResId, final Object... formatArgs) {
 		toast(textResId, 0, Toast.LENGTH_SHORT, formatArgs);
 	}
@@ -259,13 +287,21 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 		toast(textResId, 0, Toast.LENGTH_LONG, formatArgs);
 	}
 	
-	public final void toast(final String text, final Object... formatArgs) {
-		toast(text, 0, Toast.LENGTH_SHORT, formatArgs);
+	public final void toast(final int textResId, final int imageResId,
+			final int duration, final Object... formatArgs) {
+		final View view = getLayoutInflater().inflate(
+				R.layout.transient_notification, null);
+		TextView tv = (TextView) view
+				.findViewById(R.id.transient_notification_text);
+		tv.setText(getString(textResId, formatArgs));
+		tv.setCompoundDrawablesWithIntrinsicBounds(imageResId, 0, 0, 0);
+
+		final Toast toast = new Toast(this);
+		toast.setView(view);
+		toast.setDuration(duration);
+		toast.show();
 	}
 
-	public final void longToast(final String text, final Object... formatArgs) {
-		toast(text, 0, Toast.LENGTH_LONG, formatArgs);
-	}
 /*
 	public void validatePIN(final WalletApplication application, final String PIN) {
 
