@@ -76,6 +76,7 @@ import android.provider.ContactsContract.CommonDataKinds;
 import android.provider.ContactsContract.Contacts;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.content.BroadcastReceiver;
+import android.content.pm.PackageManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
@@ -1069,17 +1070,78 @@ public class SendFragment extends Fragment   {
 		                    }
 		                    cn.close();
 		                    
-		                    if(strEmail != null || strNumber != null)
-		                    {
-		                    	//
-		                    	// add hooks here
-		                    	//
-		    	        		Toast.makeText(getActivity(), "Name:" + strName + ",Email:" + strEmail + ",Number:" + strNumber, Toast.LENGTH_SHORT).show();
+		                    if(strEmail != null && strEmail.equals("null"))	{
+		                    	strEmail = null;
 		                    }
-		                    else
-		                    {
-		                    	// inform user that an email or a cell no. is needed
+		                    if(strNumber != null && strNumber.equals("null"))	{
+		                    	strNumber = null;
 		                    }
+		                    if(strName != null && strName.equals("null"))	{
+		                    	strName = "";
+		                    }
+		                    
+		                    	if(strEmail != null && strNumber != null)	{
+		                    		//
+		                    		// choose send method here
+		                    		//
+		                    		
+		                    		final String em = strEmail;
+		                    		final String sms = strNumber;
+		                    		
+		                			new AlertDialog.Builder(getActivity())
+		                            .setIcon(R.drawable.ic_launcher).setTitle("Send Bitcoins to a Friend")
+		                            .setMessage("Send Bitcoins to " + strName + " via which method?")
+		                            .setPositiveButton(em, new DialogInterface.OnClickListener() {
+//		                              @Override
+		                              public void onClick(DialogInterface dialog, int which) {
+		                            	  
+		                            	  
+				                    		edAddress.setText(em);
+				                    		
+				                    		// go out via email here
+				                    		Toast.makeText(getActivity(), em, Toast.LENGTH_SHORT).show();
+		                              }
+		                           })
+		                            .setNegativeButton(sms, new DialogInterface.OnClickListener() {
+//		                              @Override
+		                              public void onClick(DialogInterface dialog, int which) {
+		                            	  
+		                            	  
+				                    		edAddress.setText(sms);
+				                    		
+				                    		// go out via sms here
+				                    		Toast.makeText(getActivity(), sms, Toast.LENGTH_SHORT).show();
+
+		                              }
+		                            }
+		                            ).show();
+
+		                    	}
+		                    	else if(strEmail != null)	{
+		                    		//
+		                    		// send via email here
+		                    		//
+		                    		Toast.makeText(getActivity(), strEmail, Toast.LENGTH_SHORT).show();
+		                    		
+		                    		edAddress.setText(strName);
+		                    		
+		                    		// go out via email here
+			                    }
+		                    	else if(strNumber != null)	{
+		                    		//
+		                    		// send via sms here
+		                    		//
+		                    		Toast.makeText(getActivity(), strNumber, Toast.LENGTH_SHORT).show();
+		                    		
+		                    		edAddress.setText(strName);
+		                    		
+		                    		//go out via sms here
+			                    }
+		                    	else
+		                    	{
+		                    		// this will be replaced by proper model dialog by Bill w/ official text
+		                    		Toast.makeText(getActivity(), "In order to use this service, bla bla bla...", Toast.LENGTH_SHORT).show();
+		                    	}
 
 		                }
 		    	    }
