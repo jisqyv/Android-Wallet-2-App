@@ -84,7 +84,6 @@ public class BalanceFragment extends Fragment   {
 	private EventListeners.EventListener eventListener = new EventListeners.EventListener() {
 		@Override
 		public String getDescription() {
-			setAdapterContent();
 			return "Wallet Balance Listener";
 		}
 
@@ -198,6 +197,8 @@ public class BalanceFragment extends Fragment   {
 		BigInteger balance = remoteWallet.getBalance();
         tViewAmount1.setText(BlockchainUtil.formatBitcoin(balance));
         tViewAmount2.setText("$" + BlockchainUtil.BTC2Fiat(WalletUtils.formatValue(balance)));
+        if (adapter != null)
+        	adapter.notifyDataSetChanged();
     }
 	
     @Override
@@ -363,6 +364,8 @@ public class BalanceFragment extends Fragment   {
     @Override
     public void onResume() {
     	super.onResume();
+
+		setAdapterContent();
 
     	System.gc();
 
