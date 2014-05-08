@@ -1338,7 +1338,7 @@ public class SendFragment extends Fragment   {
 
  		        HashMap<String,String> row = new HashMap<String,String>();
  		        row.put("label", label.toString());
- 		        row.put("address", address.toString());
+ 		        row.put("address", address.toString().substring(0, 15) + "...");
 		        row.put("labelOrAddress", label.toString());
 
     			magicData.add(row);
@@ -1378,15 +1378,15 @@ public class SendFragment extends Fragment   {
 		childIcons = inflater.inflate(R.layout.magic, null);
         ivAddresses = (ImageView)childIcons.findViewById(R.id.addresses);
         ivAddresses.setImageResource(R.drawable.my_addresses);
-        ivAddresses.setBackgroundColor(colorOn);
+        ivAddresses.setBackgroundColor(colorOff);
         ivContacts = (ImageView)childIcons.findViewById(R.id.contacts);
         ivContacts.setImageResource(R.drawable.address_book);
-        ivContacts.setBackgroundColor(colorOff);
+        ivContacts.setBackgroundColor(colorOn);
         ivPhoneContacts = (ImageView)childIcons.findViewById(R.id.phone_contacts);
         ivPhoneContacts.setImageResource(R.drawable.phone_contacts);
         ivPhoneContacts.setBackgroundColor(colorOff);
-        addressesOn = true;
-        contactsOn = false;
+        addressesOn = false;
+        contactsOn = true;
         phoneContactsOn = false;
         ivAddresses.setOnClickListener(new View.OnClickListener() {        
             @Override
@@ -1540,7 +1540,8 @@ public class SendFragment extends Fragment   {
             oldView.setVisibility(View.VISIBLE);
         }
 
-        initMagicList();
+//        initMagicList();
+        initAddressBookList();
     }
 
     private void doSimpleSend() {
