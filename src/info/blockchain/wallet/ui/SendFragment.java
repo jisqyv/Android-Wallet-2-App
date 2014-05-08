@@ -2,15 +2,12 @@ package info.blockchain.wallet.ui;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import org.json.simple.JSONObject;
 
 import piuk.EventListeners;
 import piuk.MyRemoteWallet;
@@ -21,7 +18,6 @@ import piuk.blockchain.android.WalletApplication;
 import piuk.blockchain.android.service.BlockchainServiceImpl;
 import piuk.blockchain.android.ui.SendCoinsActivity;
 import piuk.blockchain.android.ui.SuccessCallback;
-import piuk.blockchain.android.ui.SendCoinsActivity.OnChangedSendTypeListener;
 import piuk.blockchain.android.ui.dialogs.RequestPasswordDialog;
 
 import android.app.Activity;
@@ -32,7 +28,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -76,7 +71,6 @@ import android.provider.ContactsContract.CommonDataKinds;
 import android.provider.ContactsContract.Contacts;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.content.BroadcastReceiver;
-import android.content.pm.PackageManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
@@ -189,6 +183,15 @@ public class SendFragment extends Fragment   {
                 edAmount1.requestFocus();
                 edAmount1.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
                 imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+                
+            	if(isBTC) {
+            	    tvCurrency.setTypeface(TypefaceUtil.getInstance(getActivity()).getBTCTypeface());
+            		tvCurrency.setText(Character.toString((char)TypefaceUtil.getInstance(getActivity()).getBTCSymbol()));
+            	}
+            	else {
+            	    tvCurrency.setTypeface(TypefaceUtil.getInstance(getActivity()).getBTCTypeface());
+            		tvCurrency.setText("$");
+            	}
 
             }
         }
@@ -1030,32 +1033,6 @@ public class SendFragment extends Fragment   {
                 imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
         		 */
 
-        		/*
-        		 * gets user to address field filled in + keyboard pop up 
-        		 * 
-            	if(isMagic) {
-	        		removeMagicList();
-	        	}
-
-                InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                edAddress.setText(strResult);
-                edAmount1.requestFocus();
-                edAmount1.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-                imm.hideSoftInputFromWindow(edAddress.getWindowToken(), 0);
-                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-                */
-                
-            	if(isMagic) {
-	        		removeMagicList();
-	        	}
-
-                InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                edAmount1.requestFocus();
-                edAmount1.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-                imm.hideSoftInputFromWindow(edAddress.getWindowToken(), 0);
-                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-                edAddress.setText(strResult);
-                edAmount1.requestFocus();
 
 			}
 			else {
@@ -1456,6 +1433,8 @@ public class SendFragment extends Fragment   {
         });
 
         final ImageView qr_scan = (ImageView)childIcons.findViewById(R.id.qr_icon);
+        qr_scan.setVisibility(View.INVISIBLE);
+        /*
         qr_scan.setBackgroundColor(colorOff);
         qr_scan.setOnTouchListener(new OnTouchListener() {
             @Override
@@ -1483,6 +1462,7 @@ public class SendFragment extends Fragment   {
                 return true;
             }
         });
+        */
 //	    parent.addView(child, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 	    parent.addView(childIcons);
 	    children++;
@@ -1518,6 +1498,16 @@ public class SendFragment extends Fragment   {
                 edAmount1.requestFocus();
                 edAmount1.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
                 imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
+
+            	if(isBTC) {
+            	    tvCurrency.setTypeface(TypefaceUtil.getInstance(getActivity()).getBTCTypeface());
+            		tvCurrency.setText(Character.toString((char)TypefaceUtil.getInstance(getActivity()).getBTCSymbol()));
+            	}
+            	else {
+            	    tvCurrency.setTypeface(TypefaceUtil.getInstance(getActivity()).getBTCTypeface());
+            		tvCurrency.setText("$");
+            	}
+                
             }
         });
 
@@ -1823,12 +1813,6 @@ public class SendFragment extends Fragment   {
 		viewCancel.setEnabled(state != MyRemoteWallet.State.SENDING);
 		viewCancel.setText(state != MyRemoteWallet.State.SENT ? R.string.button_cancel : R.string.send_coins_fragment_button_back);
 		*/
-	}
-	
-	public void doQRScan(String address) {
-		
-		edAddress.setText(address);
-
 	}
 
 }
