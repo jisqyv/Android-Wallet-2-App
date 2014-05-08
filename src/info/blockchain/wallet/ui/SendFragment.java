@@ -561,12 +561,12 @@ public class SendFragment extends Fragment   {
 				final BigInteger amount;
 
 				if (sendType != null && sendType.equals(SendTypeSharedCoin)) {
-					BigDecimal amountDecimal = BigDecimal.valueOf(bitcoinAmountStringToBigInteger(edAmount1.getText().toString().trim()).doubleValue());
+					BigDecimal amountDecimal = BigDecimal.valueOf(BlockchainUtil.bitcoinAmountStringToBigInteger(edAmount1.getText().toString().trim()).doubleValue());
 
 					//Add the fee
 					amount = amountDecimal.add(amountDecimal.divide(BigDecimal.valueOf(100)).multiply(BigDecimal.valueOf(application.getRemoteWallet().getSharedFee()))).toBigInteger();
 				} else {
-					amount = bitcoinAmountStringToBigInteger(edAmount1.getText().toString().trim());
+					amount = BlockchainUtil.bitcoinAmountStringToBigInteger(edAmount1.getText().toString().trim());
 				} 
 
 				final WalletApplication application = (WalletApplication) getActivity().getApplication();
@@ -583,7 +583,7 @@ public class SendFragment extends Fragment   {
 					}
 
 					// create spend
-					final SendRequest sendRequest = SendRequest.to(receivingAddress, bitcoinAmountStringToBigInteger(edAmount1.getText().toString().trim()));
+					final SendRequest sendRequest = SendRequest.to(receivingAddress, BlockchainUtil.bitcoinAmountStringToBigInteger(edAmount1.getText().toString().trim()));
 
 					sendRequest.fee = fee;
 
@@ -1100,26 +1100,6 @@ public class SendFragment extends Fragment   {
 			;
 		}
 		
-	}
-
-	public BigInteger bitcoinAmountStringToBigInteger(String amount) {
-		if (isValidAmount(amount))
-			return Utils.toNanoCoins(amount);
-		else
-			return null;
-	}
-	
-	private boolean isValidAmount(String amount) {
-		try {
-			if (amount.length() > 0) {
-				final BigInteger nanoCoins = Utils.toNanoCoins(amount);
-				if (nanoCoins.signum() >= 0)
-					return true;
-			}
-		} catch (final Exception x) {
-		}
-
-		return false;
 	}
 	
     private Bitmap generateQRCode(String uri) {

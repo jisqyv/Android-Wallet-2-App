@@ -3,6 +3,8 @@ package info.blockchain.wallet.ui;
 import java.math.BigInteger;
 import java.text.DecimalFormat;
 
+import com.google.bitcoin.core.Utils;
+
 import piuk.blockchain.android.util.WalletUtils;
 
 public class BlockchainUtil {
@@ -57,4 +59,23 @@ public class BlockchainUtil {
 		return df.format(Double.parseDouble(WalletUtils.formatValue(value)));
 	}
 
+	public static BigInteger bitcoinAmountStringToBigInteger(String amount) {
+		if (isValidAmount(amount))
+			return Utils.toNanoCoins(amount);
+		else
+			return null;
+	}
+	
+	private static boolean isValidAmount(String amount) {
+		try {
+			if (amount.length() > 0) {
+				final BigInteger nanoCoins = Utils.toNanoCoins(amount);
+				if (nanoCoins.signum() >= 0)
+					return true;
+			}
+		} catch (final Exception x) {
+		}
+
+		return false;
+	}
 }
