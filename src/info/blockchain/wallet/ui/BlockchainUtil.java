@@ -14,7 +14,7 @@ public class BlockchainUtil {
     
     public static String ZEROBLOCK_PACKAGE = "com.phlint.android.zeroblock";
     
-    private static double BTC_RATE = 438.00;
+    private static double BTC_RATE = 441.0;
 
 	private BlockchainUtil() { ; }
 
@@ -74,6 +74,7 @@ public class BlockchainUtil {
 					return true;
 			}
 		} catch (final Exception x) {
+			;
 		}
 
 		return false;

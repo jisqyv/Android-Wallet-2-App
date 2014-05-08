@@ -53,6 +53,7 @@ import android.view.ViewGroup;
 import android.view.View.OnTouchListener;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -931,6 +932,14 @@ public class SendFragment extends Fragment   {
 		    }
 		});
 
+        edAmount1.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus) {
+                    getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+                }
+            }
+        });
+
         edAmount1.addTextChangedListener(new TextWatcher()	{
 
         	public void afterTextChanged(Editable s) {
@@ -1224,7 +1233,15 @@ public class SendFragment extends Fragment   {
 		                    if(strName != null && strName.equals("null"))	{
 		                    	strName = "";
 		                    }
-		                    
+
+
+	                    	//
+	                    	//
+	                    	//
+	                        InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+	                        imm.hideSoftInputFromWindow(edAddress.getWindowToken(), 0);
+	                        
+	                        
 		                    	if(strEmail != null && strNumber != null)	{
 		                    		//
 		                    		// choose send method here
@@ -1270,6 +1287,7 @@ public class SendFragment extends Fragment   {
 		                    		Toast.makeText(getActivity(), strEmail, Toast.LENGTH_SHORT).show();
 		                    		
 		                    		edAddress.setText(strName);
+		                    		emailOrNumber = strEmail;
 		                    		
 		                    		// go out via email here
 			                    }
@@ -1280,6 +1298,7 @@ public class SendFragment extends Fragment   {
 		                    		Toast.makeText(getActivity(), strNumber, Toast.LENGTH_SHORT).show();
 		                    		
 		                    		edAddress.setText(strName);
+		                    		emailOrNumber = strNumber;
 		                    		
 		                    		//go out via sms here
 			                    }
@@ -1288,6 +1307,15 @@ public class SendFragment extends Fragment   {
 		                    		// this will be replaced by proper model dialog by Bill w/ official text
 		                    		Toast.makeText(getActivity(), "In order to use this service, bla bla bla...", Toast.LENGTH_SHORT).show();
 		                    	}
+
+
+		                    	
+		                    	//
+		                    	//
+		                    	//
+		                        edAmount1.requestFocus();
+		                        edAmount1.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+		                        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
 
 		                }
 		    	    }
@@ -1471,7 +1499,6 @@ public class SendFragment extends Fragment   {
         }
         
      }
- 
 
     private void displayMagicList() {
     	LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -1551,7 +1578,6 @@ public class SendFragment extends Fragment   {
                         ivContacts.setBackgroundColor(colorOff);
                         ivPhoneContacts.setBackgroundColor(colorOn);
             		}
-//            		initMagicList();
             		if(isMagic) {
             			removeMagicList();
             		}
@@ -1889,8 +1915,6 @@ public class SendFragment extends Fragment   {
 
     private void doSend2Friends() throws Exception	{
     	Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
-//    	intent.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE);
-//    	intent.setType(ContactsContract.CommonDataKinds.Email.CONTENT_TYPE);
     	intent.setData(ContactsContract.Contacts.CONTENT_URI);
     	startActivityForResult(intent, PICK_CONTACT);    	
     }
