@@ -840,8 +840,14 @@ public class SendFragment extends Fragment   {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
             	edAddress.setText("");
-            	edAmount1.setText("");
-            	tvAmount2.setText("");
+            	if(isBTC) {
+                	edAmount1.setText("0.00");
+                	tvAmount2.setText("0.00");
+            	}
+            	else {
+                	edAmount1.setText("0.00");
+                	tvAmount2.setText("0.00");
+            	}
             	
                 summary.setVisibility(View.INVISIBLE);
                 summary2.setVisibility(View.INVISIBLE);
