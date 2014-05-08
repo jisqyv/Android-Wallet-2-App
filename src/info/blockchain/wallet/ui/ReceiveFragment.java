@@ -400,6 +400,8 @@ public class ReceiveFragment extends Fragment   {
                 	displayMagicList();
             	}
 
+                clear_input.setVisibility(View.INVISIBLE);
+
                 return false;
             }
         });
