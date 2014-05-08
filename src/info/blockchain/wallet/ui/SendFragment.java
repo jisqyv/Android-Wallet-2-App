@@ -174,14 +174,21 @@ public class SendFragment extends Fragment   {
         @Override
         public void onReceive(Context context, Intent intent) {
             if(ACTION_INTENT.equals(intent.getAction())) {
+
+            	if(isMagic) {
+	        		removeMagicList();
+	        	}
+
                 String address = intent.getStringExtra("BTC_ADDRESS");
-                edAddress.setText(address);
 
                 InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(edAddress.getWindowToken(), 0);
+
+                edAddress.setText(address);
+
                 edAmount1.requestFocus();
                 edAmount1.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-                imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
+                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
 
             }
         }
@@ -696,7 +703,7 @@ public class SendFragment extends Fragment   {
 		        	tvArrow.setText(Character.toString((char)0x2192));
 
 		        	String amount1 = edAmount1.getText().toString();
-		        	String amount2 = tvAmount2.getText().toString().substring(0, tvAmount2.getText().toString().length() - 4);
+		        	String amount2 = tvAmount2.getText().toString().substring(0, tvAmount2.getText().toString().length() - 4);	// buggy
 		        	if(isBTC) {
 		        		amount1 += " BTC";
 		        		amount2 += " USD";
@@ -1005,17 +1012,50 @@ public class SendFragment extends Fragment   {
         	
         	strResult = BitcoinAddressCheck.validate(strResult);
         	if(strResult != null) {
-	            edAddress.setText(strResult);
-	            
-	            if(isMagic) {
-	            	removeMagicList();
-	            }
-	            
+        		
+        		/*
+        		 * gets user to address field filled in + keyboard pop up 
+        		 * 
+                edAddress.setText(strResult);
+
                 InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(edAddress.getWindowToken(), 0);
+
+            	if(isMagic) {
+	        		removeMagicList();
+	        	}
+
                 edAmount1.requestFocus();
                 edAmount1.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-                imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
+                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+        		 */
+
+        		/*
+        		 * gets user to address field filled in + keyboard pop up 
+        		 * 
+            	if(isMagic) {
+	        		removeMagicList();
+	        	}
+
+                InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                edAddress.setText(strResult);
+                edAmount1.requestFocus();
+                edAmount1.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                imm.hideSoftInputFromWindow(edAddress.getWindowToken(), 0);
+                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+                */
+                
+            	if(isMagic) {
+	        		removeMagicList();
+	        	}
+
+                InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                edAmount1.requestFocus();
+                edAmount1.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                imm.hideSoftInputFromWindow(edAddress.getWindowToken(), 0);
+                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+                edAddress.setText(strResult);
+                edAmount1.requestFocus();
 
 			}
 			else {
