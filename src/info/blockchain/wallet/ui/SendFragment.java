@@ -301,8 +301,6 @@ public class SendFragment extends Fragment   {
 							intent.putExtra("tx", tx.getHash());
 							activity.setResult(Activity.RESULT_OK, intent);
 
-							activity.finish();
-
 							updateView();
 						}
 					});
@@ -612,8 +610,6 @@ public class SendFragment extends Fragment   {
 										Intent intent = activity.getIntent();
 										intent.putExtra("tx", transaction.getHash());
 										activity.setResult(Activity.RESULT_OK, intent);
-
-										activity.finish();
 
 										updateView();
 
