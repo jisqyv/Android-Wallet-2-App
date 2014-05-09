@@ -734,6 +734,7 @@ public class SendFragment extends Fragment   {
 										updateView();
 
 										EventListeners.invokeOnTransactionsChanged();
+
 									}
 									else
 									{
@@ -749,6 +750,14 @@ public class SendFragment extends Fragment   {
 					}).start();
 				} else {
 					application.getRemoteWallet().sendCoinsAsync(from, receivingAddress.toString(), amount, feePolicy, fee, progress);
+					
+					//
+					//
+					//
+					btSend.setVisibility(View.GONE);
+			        ivCheck.setVisibility(View.VISIBLE);
+			        tvSentPrompt.setVisibility(View.VISIBLE);
+
 				}
 			}
         	
@@ -810,10 +819,6 @@ public class SendFragment extends Fragment   {
 						makeTransaction(MyRemoteWallet.FeePolicy.FeeOnlyIfNeeded);
 					}
 				}
-
-				btSend.setVisibility(View.GONE);
-		        ivCheck.setVisibility(View.VISIBLE);
-		        tvSentPrompt.setVisibility(View.VISIBLE);
 
             }
 
