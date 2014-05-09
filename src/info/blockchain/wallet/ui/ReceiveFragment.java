@@ -127,7 +127,7 @@ public class ReceiveFragment extends Fragment   {
             		tvCurrency.setText("$");
             		String tmp = edAmount1.getText().toString();
             		if(tmp.length() < 1) {
-            			tmp = "0.00";
+            			tmp = "0.0000";
             		}
             		String tmp2 = tvAmount2.getText().toString().substring(0, tvAmount2.getText().toString().length() - 4);
             		try {
@@ -185,7 +185,7 @@ public class ReceiveFragment extends Fragment   {
         initMagicList();
 
         tvAmount2 = ((TextView)rootView.findViewById(R.id.amount2));
-        tvAmount2.setText("0.00 BTC");
+        tvAmount2.setText("0.0000 BTC");
         edAmount1 = ((EditText)rootView.findViewById(R.id.amount1));
         edAmount1.setOnEditorActionListener(new OnEditorActionListener() {
 		    @Override
