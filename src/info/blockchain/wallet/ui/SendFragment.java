@@ -83,6 +83,9 @@ import com.google.bitcoin.core.Transaction;
 import com.google.bitcoin.core.TransactionOutput;
 import com.google.bitcoin.core.Utils;
 import com.google.bitcoin.core.Wallet.SendRequest;
+import com.google.i18n.phonenumbers.NumberParseException;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 //import com.google.bitcoin.uri.BitcoinURI;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
@@ -1294,13 +1297,18 @@ public class SendFragment extends Fragment   {
 		                              public void onClick(DialogInterface dialog, int which) {
 		                            	  
 				                    		edAddress.setText(name);
-				                    		emailOrNumber = sms;
 				                        	sendViaEmail = false;
 				                        	sentViaSMS = true;
 				                        	
+				                    		emailOrNumber = sms;				                        		
+				                        	if (sms.substring(0, 2).equals("00") || sms.indexOf(0) == '+') {
+					                    		Log.d("emailOrNumber", "setSMSNumber: " + emailOrNumber);
+				                        	} else {
+				                    			doSelectInternationalPrefix();				                        		
+				                        	}
+				                        					                    		
 				                    		// go out via sms here
 				                    		Toast.makeText(getActivity(), sms, Toast.LENGTH_SHORT).show();
-
 		                              }
 		                            }
 		                            ).show();
@@ -1328,7 +1336,7 @@ public class SendFragment extends Fragment   {
 		                    		
 		                    		//go out via sms here
 		                    		
-//		                    		doSelectInternationalPrefix();
+		                    		doSelectInternationalPrefix();
 		                    		
 			                    }
 		                    	else
@@ -1366,12 +1374,37 @@ public class SendFragment extends Fragment   {
 
 		}
 		else if(resultCode == Activity.RESULT_OK && requestCode == SELECT_INTL_PREFIX) {
-			
-    		Toast.makeText(getActivity(), "prefix returned:" + data.getAction(), Toast.LENGTH_SHORT).show();
+    		//Toast.makeText(getActivity(), "prefix returned:" + data.getAction(), Toast.LENGTH_SHORT).show();
 
+    		String region = "US";
+    		PhoneNumberUtil p = PhoneNumberUtil.getInstance();
+    		PhoneNumber pn;
+    		try {
+        		//emailOrNumber = "+442012345678";
+    			pn = p.parse(emailOrNumber, region);
+    			String nationalnumber = String.valueOf(pn.getNationalNumber());
+        		emailOrNumber = "+" + data.getAction() + nationalnumber;
+        		Log.d("emailOrNumber", "setSMSNumber with prefix: " + emailOrNumber);
+    		} catch (NumberParseException e1) {
+    			// TODO Auto-generated catch block
+    			e1.printStackTrace();
+    		}
 	      }
 		else if(resultCode == Activity.RESULT_CANCELED && requestCode == SELECT_INTL_PREFIX) {
+	  		final Context context = getActivity().getApplicationContext();
 
+    		String region = context.getResources().getConfiguration().locale.getCountry();
+    		PhoneNumberUtil p = PhoneNumberUtil.getInstance();
+    		PhoneNumber pn;
+    		try {
+				pn = p.parse(emailOrNumber, region);
+				String nationalnumber = String.valueOf(pn.getNationalNumber());
+	    		emailOrNumber = "+" + pn.getCountryCode() + nationalnumber;
+        		Log.d("emailOrNumber", "setSMSNumber default to local: " + emailOrNumber);
+    		} catch (NumberParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 	      }
 		else {
 			;
