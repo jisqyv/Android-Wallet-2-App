@@ -109,9 +109,9 @@ public class SendFragment extends Fragment   {
 	
 	private LinearLayout lastSendingAddress = null;
 	
-	private boolean addressesOn = true;
+	private boolean addressesOn = false;
 	private boolean contactsOn = true;
-	private boolean phoneContactsOn = true;
+	private boolean phoneContactsOn = false;
 	
 	private View rootView = null;
 
@@ -339,11 +339,13 @@ public class SendFragment extends Fragment   {
         ((TextView)rootView.findViewById(R.id.currency)).setTypeface(TypefaceUtil.getInstance(getActivity()).getGravityBoldTypeface());
 
         xlatLabel = new HashMap<String,String>();
-        initMagicList();
+//        initMagicList();
+        initAddressBookList();
 
         btSend = ((Button)rootView.findViewById(R.id.send));
         btSend.setVisibility(View.INVISIBLE);
         btSend.setOnClickListener(new Button.OnClickListener() {
+
 			final SendProgress progress = new SendProgress() {
 				public void onSend(final Transaction tx, final String message) {
 					handler.post(new Runnable() {
@@ -808,7 +810,13 @@ public class SendFragment extends Fragment   {
 						makeTransaction(MyRemoteWallet.FeePolicy.FeeOnlyIfNeeded);
 					}
 				}
+
+				btSend.setVisibility(View.GONE);
+		        ivCheck.setVisibility(View.VISIBLE);
+		        tvSentPrompt.setVisibility(View.VISIBLE);
+
             }
+
         });
 
         tvAmount2 = ((TextView)rootView.findViewById(R.id.amount2));
@@ -1348,8 +1356,6 @@ public class SendFragment extends Fragment   {
 		                    		Toast.makeText(getActivity(), "To use this service select a contact with an email address or a mobile phone number. Thank you.", Toast.LENGTH_SHORT).show();
 		                    	}
 
-
-		                    
 	                    	//
 	                    	//
 	                    	//
@@ -1362,9 +1368,6 @@ public class SendFragment extends Fragment   {
 		                        edAmount1.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
 		                        imm.showSoftInput(edAmount1, InputMethodManager.SHOW_FORCED);
 
-
-		                        
-		                        
 		                }
 		    	    }
 		    	    finally
@@ -1608,15 +1611,15 @@ public class SendFragment extends Fragment   {
 		childIcons = inflater.inflate(R.layout.magic, null);
         ivAddresses = (ImageView)childIcons.findViewById(R.id.addresses);
         ivAddresses.setImageResource(R.drawable.my_addresses);
-        ivAddresses.setBackgroundColor(colorOn);
+        ivAddresses.setBackgroundColor(colorOff);
         ivContacts = (ImageView)childIcons.findViewById(R.id.contacts);
         ivContacts.setImageResource(R.drawable.address_book);
-        ivContacts.setBackgroundColor(colorOff);
+        ivContacts.setBackgroundColor(colorOn);
         ivPhoneContacts = (ImageView)childIcons.findViewById(R.id.phone_contacts);
         ivPhoneContacts.setImageResource(R.drawable.phone_contacts);
         ivPhoneContacts.setBackgroundColor(colorOff);
-        addressesOn = true;
-        contactsOn = false;
+        addressesOn = false;
+        contactsOn = true;
         phoneContactsOn = false;
         ivAddresses.setOnClickListener(new View.OnClickListener() {        
             @Override
@@ -1771,7 +1774,13 @@ public class SendFragment extends Fragment   {
             oldView.setVisibility(View.VISIBLE);
         }
 
-        initMagicList();
+        if(addressesOn) {
+            initMagicList();
+        }
+        else {
+    		initAddressBookList();
+        }
+
     }
 
     private void doSimpleSend() {
