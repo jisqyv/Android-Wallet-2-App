@@ -458,6 +458,11 @@ public class BalanceFragment extends Fragment   {
 	        if(addressLabelTxsDisplayed[position]) {
 				Log.d("List refresh sub", "" + position);
 		    	System.gc();
+		    	
+	    		if(balance_extHiddenLayout.getChildCount() > 1) {
+    		        balance_extHiddenLayout.removeViews(1, balance_extHiddenLayout.getChildCount() - 1);
+	    		}
+
 		        doDisplaySubList(view, position);
 	        }
 

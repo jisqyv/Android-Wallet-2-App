@@ -787,6 +787,7 @@ public class SendFragment extends Fragment   {
         tvAmount2 = ((TextView)rootView.findViewById(R.id.amount2));
         tvAmount2.setText("0.00 USD");
         edAmount1 = ((EditText)rootView.findViewById(R.id.amount1));
+        edAmount1.setFocusableInTouchMode(true);
         edAmount1.setOnEditorActionListener(new OnEditorActionListener() {
 		    @Override
 		    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -849,7 +850,6 @@ public class SendFragment extends Fragment   {
 		    }
 		});
 
-        edAmount1 = ((EditText)rootView.findViewById(R.id.amount1));
         edAmount1.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
 
@@ -858,6 +858,39 @@ public class SendFragment extends Fragment   {
             	}
 
             }
+        });
+
+        edAmount1.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus) {
+                    getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+                }
+            }
+        });
+
+        edAmount1.addTextChangedListener(new TextWatcher()	{
+
+        	public void afterTextChanged(Editable s) {
+        		if((edAddress.getText().toString() != null && edAddress.getText().toString().length() > 0) || (edAmount1.getText().toString() != null && edAmount1.getText().toString().length() > 0)) {
+        			
+        			if(isBTC)	{
+            			tvAmount2.setText(BlockchainUtil.BTC2Fiat(edAmount1.getText().toString()) + " USD");
+        			}
+        			else	{
+//                		tvAmount2.setTypeface(TypefaceUtil.getInstance(getActivity()).getBTCTypeface());
+        				tvAmount2.setText(BlockchainUtil.Fiat2BTC(edAmount1.getText().toString()) + " BTC");
+        			}
+
+        			clear_input.setVisibility(View.VISIBLE);
+        		}
+        		else {
+        			clear_input.setVisibility(View.INVISIBLE);
+        		}
+        	}
+
+        	public void beforeTextChanged(CharSequence s, int start, int count, int after)	{ ; }
+        
+        	public void onTextChanged(CharSequence s, int start, int before, int count)	{ ; }
         });
 
         edAddress = ((EditText)rootView.findViewById(R.id.address));
@@ -931,39 +964,6 @@ public class SendFragment extends Fragment   {
 		        return false;
 		    }
 		});
-
-        edAmount1.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(hasFocus) {
-                    getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-                }
-            }
-        });
-
-        edAmount1.addTextChangedListener(new TextWatcher()	{
-
-        	public void afterTextChanged(Editable s) {
-        		if((edAddress.getText().toString() != null && edAddress.getText().toString().length() > 0) || (edAmount1.getText().toString() != null && edAmount1.getText().toString().length() > 0)) {
-        			
-        			if(isBTC)	{
-            			tvAmount2.setText(BlockchainUtil.BTC2Fiat(edAmount1.getText().toString()) + " USD");
-        			}
-        			else	{
-//                		tvAmount2.setTypeface(TypefaceUtil.getInstance(getActivity()).getBTCTypeface());
-        				tvAmount2.setText(BlockchainUtil.Fiat2BTC(edAmount1.getText().toString()) + " BTC");
-        			}
-
-        			clear_input.setVisibility(View.VISIBLE);
-        		}
-        		else {
-        			clear_input.setVisibility(View.INVISIBLE);
-        		}
-        	}
-
-        	public void beforeTextChanged(CharSequence s, int start, int count, int after)	{ ; }
-        
-        	public void onTextChanged(CharSequence s, int start, int before, int count)	{ ; }
-        });
 
         clear_input.setOnTouchListener(new OnTouchListener() {
             @Override
@@ -1235,14 +1235,7 @@ public class SendFragment extends Fragment   {
 		                    }
 
 
-	                    	//
-	                    	//
-	                    	//
-	                        InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-	                        imm.hideSoftInputFromWindow(edAddress.getWindowToken(), 0);
-	                        
-	                        
-		                    	if(strEmail != null && strNumber != null)	{
+		                    if(strEmail != null && strNumber != null)	{
 		                    		//
 		                    		// choose send method here
 		                    		//
@@ -1302,7 +1295,7 @@ public class SendFragment extends Fragment   {
 		                    		
 		                    		//go out via sms here
 		                    		
-		                    		doSelectInternationalPrefix();
+//		                    		doSelectInternationalPrefix();
 		                    		
 			                    }
 		                    	else
@@ -1312,14 +1305,22 @@ public class SendFragment extends Fragment   {
 		                    	}
 
 
-		                    	
-		                    	//
-		                    	//
-		                    	//
+		                    
+	                    	//
+	                    	//
+	                    	//
+		            		if(isMagic) {
+		            			removeMagicList();
+		            		}
+	                        InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+	                        imm.hideSoftInputFromWindow(edAddress.getWindowToken(), 0);
 		                        edAmount1.requestFocus();
-//		                        edAmount1.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-		                        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+		                        edAmount1.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+		                        imm.showSoftInput(edAmount1, InputMethodManager.SHOW_FORCED);
 
+
+		                        
+		                        
 		                }
 		    	    }
 		    	    finally
@@ -1589,9 +1590,6 @@ public class SendFragment extends Fragment   {
                         ivAddresses.setBackgroundColor(colorOff);
                         ivContacts.setBackgroundColor(colorOff);
                         ivPhoneContacts.setBackgroundColor(colorOn);
-            		}
-            		if(isMagic) {
-            			removeMagicList();
             		}
             		try {
 						doSend2Friends();
