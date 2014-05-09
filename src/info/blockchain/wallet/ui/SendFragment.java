@@ -162,6 +162,8 @@ public class SendFragment extends Fragment   {
 	private Map<String,String> labels;
 	private List<Map<String, Object>> addressBookMapList;
 	private String emailOrNumber;
+	boolean sendViaEmail;
+	boolean sentViaSMS;
 	
 	public static final String ACTION_INTENT = "info.blockchain.wallet.ui.SendFragment.BTC_ADDRESS_SCAN";
 
@@ -238,7 +240,9 @@ public class SendFragment extends Fragment   {
 		application = (WalletApplication) activity.getApplication();
 		activity.bindService(new Intent(activity, BlockchainServiceImpl.class), serviceConnection, Context.BIND_AUTO_CREATE);
     	sendType = SendTypeQuickSend;
-
+    	sendViaEmail = false;
+    	sentViaSMS = false;
+    	
         rootView = inflater.inflate(R.layout.fragment_send, container, false);
         
     	simple_spend = (LinearLayout)rootView.findViewById(R.id.send_container);
@@ -734,21 +738,22 @@ public class SendFragment extends Fragment   {
 				if (remoteWallet.isDoubleEncrypted() && remoteWallet.temporySecondPassword == null) {
 					RequestPasswordDialog.show(getFragmentManager(), new SuccessCallback() {
 
-						public void onSuccess() {
-							if(emailOrNumber != null && emailOrNumber.contains("@")) {	
+						public void onSuccess() {							
+							if(sendViaEmail && emailOrNumber != null && emailOrNumber.contains("@")) {	
 								BigInteger amount = BlockchainUtil.bitcoinAmountStringToBigInteger(edAmount1.getText().toString().trim());							
 								try {
 									remoteWallet.sendCoinsEmail(emailOrNumber, amount, progressEmailSMS);
 								} catch (Exception e) {
-									// TODO Auto-generated catch block
 									e.printStackTrace();
 								}
-							} else if (emailOrNumber != null && emailOrNumber.contains("-")) {								
+							} else if (sentViaSMS && emailOrNumber != null) {								
 								BigInteger amount = BlockchainUtil.bitcoinAmountStringToBigInteger(edAmount1.getText().toString().trim());							
 								try {
-									remoteWallet.sendCoinsSMS(emailOrNumber, amount, progressEmailSMS);										
+									String numberFormated = emailOrNumber.replaceAll("\\D+","");	
+									numberFormated = "+"+numberFormated;
+									Log.d("sendCoinsSMS", "numberFormated: "+ numberFormated);
+									remoteWallet.sendCoinsSMS(numberFormated, amount, progressEmailSMS);										
 								} catch (Exception e) {
-									// TODO Auto-generated catch block
 									e.printStackTrace();
 								}								
 							} else {
@@ -761,20 +766,21 @@ public class SendFragment extends Fragment   {
 						}
 					}, RequestPasswordDialog.PasswordTypeSecond);
 				} else {
-					if(emailOrNumber != null && emailOrNumber.contains("@")) {	
+					if(sendViaEmail && emailOrNumber != null && emailOrNumber.contains("@")) {	
 						BigInteger amount = BlockchainUtil.bitcoinAmountStringToBigInteger(edAmount1.getText().toString().trim());							
 						try {
 							remoteWallet.sendCoinsEmail(emailOrNumber, amount, progressEmailSMS);
 						} catch (Exception e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
-					} else if (emailOrNumber != null && emailOrNumber.contains("-")) {								
+					} else if (sentViaSMS && emailOrNumber != null) {								
 						BigInteger amount = BlockchainUtil.bitcoinAmountStringToBigInteger(edAmount1.getText().toString().trim());							
 						try {
-							remoteWallet.sendCoinsSMS(emailOrNumber, amount, progressEmailSMS);										
+							String numberFormated = emailOrNumber.replaceAll("\\D+","");	
+							numberFormated = "+"+numberFormated;
+							Log.d("sendCoinsSMS", "numberFormated: "+ numberFormated);
+							remoteWallet.sendCoinsSMS(numberFormated, amount, progressEmailSMS);										
 						} catch (Exception e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}								
 					} else {
@@ -909,6 +915,8 @@ public class SendFragment extends Fragment   {
                 
                 //clear emailOrNumber if made change to name in edit text
                 emailOrNumber = "";
+            	sendViaEmail = false;
+            	sentViaSMS = false;
             }
         });
 
@@ -1260,7 +1268,9 @@ public class SendFragment extends Fragment   {
 		                            	  
 				                    		edAddress.setText(name);
 				                    		emailOrNumber = em;
-				                    				
+				                        	sendViaEmail = true;
+				                        	sentViaSMS = false;
+				                        	
 				                    		// go out via email here
 				                    		Toast.makeText(getActivity(), em, Toast.LENGTH_SHORT).show();
 		                              }
@@ -1271,7 +1281,9 @@ public class SendFragment extends Fragment   {
 		                            	  
 				                    		edAddress.setText(name);
 				                    		emailOrNumber = sms;
-
+				                        	sendViaEmail = false;
+				                        	sentViaSMS = true;
+				                        	
 				                    		// go out via sms here
 				                    		Toast.makeText(getActivity(), sms, Toast.LENGTH_SHORT).show();
 

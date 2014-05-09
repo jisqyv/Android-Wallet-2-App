@@ -21,6 +21,7 @@ package piuk;
 import java.math.BigInteger;
 import java.net.URLEncoder;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -565,23 +566,80 @@ public class MyRemoteWallet extends MyWallet {
 		return filtered;
 	}
 
+	private Pair<ECKey, String> generateNewMiniPrivateKey() {
+	    while (true) {
+	        Log.d("generateNewMiniPrivateKey", "generateNewMiniPrivateKey");
+	        //Use a normal ECKey to generate random bytes
+			ECKey key = generateECKey();
+
+	        //Make Candidate Mini Key
+	        final DumpedPrivateKey dumpedPrivateKey = key.getPrivateKeyEncoded(params);
+	        String privateKey = Base58.encode(dumpedPrivateKey.bytes);
+	        //TODO: Casascius Series 1 22-character variant, remember to notify Ben about updating to 30-character variant
+	        String minikey = 'S' + privateKey.substring(0, 21);
+	        //minikey = "S8osZG4hyGCsMxfxuTUfrF"; // canned data
+
+	        try {
+		        //Append ? & hash it again
+				byte[] bytes_appended = MessageDigest.getInstance("SHA-256").digest((minikey + '?').getBytes());
+				
+		        //If zero byte then the key is valid
+		        if (bytes_appended[0] == 0) {		        					
+
+					try {
+			            //SHA256
+						byte[] bytes = MessageDigest.getInstance("SHA-256").digest(minikey.getBytes());
+						
+						final ECKey eckey = new ECKey(bytes, null);
+							
+				        final DumpedPrivateKey dumpedPrivateKey1 = eckey.getPrivateKeyEncoded(params);
+				        String privateKey1 = Base58.encode(dumpedPrivateKey1.bytes);
+				        
+				        final String toAddress = eckey.toAddress(params).toString();
+						Log.d("sendCoinsToFriend", "generateNewMiniPrivateKey: privateKey: " + privateKey1);
+						Log.d("sendCoinsToFriend", "generateNewMiniPrivateKey: address: " + toAddress);
+						
+		            	return new Pair<ECKey, String>(eckey, minikey);
+
+					} catch (NoSuchAlgorithmException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}	            	            	
+		        }
+			} catch (NoSuchAlgorithmException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	    }
+	}
+	
 	public void sendCoinsEmail(final String email, final BigInteger amount, final SendProgress progress) throws Exception {
 		sendCoinsToFriend("email", email, amount, progress);
 	}
+	
 	public void sendCoinsSMS(final String number, final BigInteger amount, final SendProgress progress) throws Exception {
 		sendCoinsToFriend("sms", number, amount, progress);
 	}
 
 	private void sendCoinsToFriend(final String sendType,final String emailOrNumber, final BigInteger amount, final SendProgress progress) throws Exception {
-		final String[] from = getActiveAddresses();
-	
-		final ECKey key = generateECKey();
+		
 		new Thread() {
 			@Override
 			public void run() {
+
 				final List<ECKey> tempKeys = new ArrayList<ECKey>();
 
 				try {
+					final String[] from = getActiveAddresses();					
+					final ECKey key;
+					Pair<ECKey, String> keyAndMiniKey = null;
+					if (sendType == "sms") {
+						keyAndMiniKey = generateNewMiniPrivateKey();
+						key = keyAndMiniKey.first;							
+					} else {
+						key = generateECKey();
+					}
+					
 					//Construct a new transaction
 					progress.onProgress("Getting Unspent Outputs");
 
@@ -635,9 +693,9 @@ public class MyRemoteWallet extends MyWallet {
 
 								String address = new BitcoinScript(scriptBytes).getAddress().toString();
 
-								ECKey key = getECKey(address);
-								if (key != null) {
-									wallet.addKey(key);
+								ECKey addKey = getECKey(address);
+								if (addKey != null) {
+									wallet.addKey(addKey);
 								}
 							} catch (Exception e) {}
 						}
@@ -652,17 +710,19 @@ public class MyRemoteWallet extends MyWallet {
 				        final String txHash = tx.getHashAsString();
 												
 						Log.d("sendCoinsToFriend", "sendCoinsToFriend: txHash: " + txHash);						
-						
-						StringBuilder args = new StringBuilder();
+						Log.d("sendCoinsToFriend", "sendCoinsToFriend: emailOrNumber: " + emailOrNumber);						
 
-						args.append("type=" + sendType);
-						args.append("&guid=" + getGUID());
-						args.append("&priv=" + privateKey);
-						args.append("&sharedKey=" + getSharedKey());
-						args.append("&hash=" + txHash);
-						args.append("&to=" + emailOrNumber);
+  						Map<Object, Object> params = new HashMap<Object, Object>();
+						params.put("type", sendType);
+						String privParameter = (sendType == "sms") ? keyAndMiniKey.second : privateKey;
+						params.put("priv", privParameter);
+						params.put("hash", txHash);
+						params.put("to", emailOrNumber);			
+						params.put("guid", getGUID());						
+						params.put("sharedKey", getSharedKey());
+						
 						try {
-							String response = postURL(WebROOT + "send-via", args.toString());
+							String response = WalletUtils.postURLWithParams(WebROOT + "send-via", params);
 							if (response != null && response.length() > 0) {
 								progress.onProgress("Send Transaction");
 								Log.d("sendCoinsToFriend", "sendCoinsToFriend: send-via response: " + response);
@@ -671,7 +731,7 @@ public class MyRemoteWallet extends MyWallet {
 									Log.d("sendCoinsToFriend", "sendCoinsToFriend: pushTx response: " + response2);
 									progress.onSend(tx, response2);
 									
-									String label = sendType == "email" ? emailOrNumber + " Sent Via Email" : emailOrNumber + " Sent Via Email";									
+									String label = sendType == "email" ? emailOrNumber + " Sent Via Email" : emailOrNumber + " Sent Via SMS";									
 									addKey(key, toAddress, label);
 									setTag(toAddress, 2);
 								}
