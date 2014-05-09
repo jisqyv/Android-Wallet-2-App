@@ -1300,8 +1300,8 @@ public class SendFragment extends Fragment   {
 				                        	sendViaEmail = false;
 				                        	sentViaSMS = true;
 				                        	
-				                    		emailOrNumber = sms;				                        		
-				                        	if (sms.substring(0, 2).equals("00") || sms.indexOf(0) == '+') {
+				                    		emailOrNumber = sms;	
+				                        	if (sms.substring(0, 2).equals("00") || sms.charAt(0) == '+') {
 					                    		Log.d("emailOrNumber", "setSMSNumber: " + emailOrNumber);
 				                        	} else {
 				                    			doSelectInternationalPrefix();				                        		
