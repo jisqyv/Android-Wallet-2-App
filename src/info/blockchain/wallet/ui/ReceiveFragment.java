@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.json.simple.JSONObject;
+//import org.json.simple.JSONObject;
 
 import piuk.MyRemoteWallet;
 import piuk.blockchain.android.R;
@@ -14,10 +14,8 @@ import piuk.blockchain.android.WalletApplication;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -34,18 +32,12 @@ import android.widget.ImageView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.AdapterView;
-import android.widget.ImageButton;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.TextView.OnEditorActionListener;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.text.InputType;
-import android.text.SpannableStringBuilder;
-import android.text.style.RelativeSizeSpan;
-import android.text.style.SuperscriptSpan;
-import android.text.style.StyleSpan;
-import android.text.Spannable;
 import android.util.Log;
 
 import com.google.bitcoin.uri.BitcoinURI;
@@ -137,9 +129,17 @@ public class ReceiveFragment extends Fragment   {
             		if(tmp.length() < 1) {
             			tmp = "0.00";
             		}
-//            		edAmount1.setText(tvAmount2.getText().toString().substring(1));
-            		edAmount1.setText(tvAmount2.getText().toString().substring(0, tvAmount2.getText().toString().length() - 4));
-//            		tvAmount2.setTypeface(TypefaceUtil.getInstance(getActivity()).getBTCTypeface());
+            		String tmp2 = tvAmount2.getText().toString().substring(0, tvAmount2.getText().toString().length() - 4);
+            		try {
+            			double d = Double.parseDouble(tmp2);
+            			if(0.0 == d) {
+            				tmp2 = "";
+            			}
+            		}
+            		catch(Exception e) {
+            			tmp2 = "";
+            		}
+            		edAmount1.setText(tmp2);
                     tvAmount2.setText(tmp + " BTC");
             	}
             	else {
@@ -149,13 +149,21 @@ public class ReceiveFragment extends Fragment   {
             		if(tmp.length() < 1) {
             			tmp = "0.00";
             		}
-                    edAmount1.setText(tvAmount2.getText().toString().substring(0, tvAmount2.getText().toString().length() - 4));
+            		String tmp2 = tvAmount2.getText().toString().substring(0, tvAmount2.getText().toString().length() - 4);
+            		try {
+            			double d = Double.parseDouble(tmp2);
+            			if(0.0 == d) {
+            				tmp2 = "";
+            			}
+            		}
+            		catch(Exception e) {
+            			tmp2 = "";
+            		}
+                    edAmount1.setText(tmp2);
                     tvAmount2.setText(tmp + " USD");
             	}
             	isBTC = isBTC ? false : true;
-
                 // ivReceivingQR.setVisibility(View.INVISIBLE);
-
             }
         });
 
@@ -177,7 +185,7 @@ public class ReceiveFragment extends Fragment   {
         initMagicList();
 
         tvAmount2 = ((TextView)rootView.findViewById(R.id.amount2));
-        tvAmount2.setText("0.00 USD");
+        tvAmount2.setText("0.00 BTC");
         edAmount1 = ((EditText)rootView.findViewById(R.id.amount1));
         edAmount1.setOnEditorActionListener(new OnEditorActionListener() {
 		    @Override

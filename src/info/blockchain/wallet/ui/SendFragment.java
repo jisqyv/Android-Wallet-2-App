@@ -285,9 +285,17 @@ public class SendFragment extends Fragment   {
             		if(tmp.length() < 1) {
             			tmp = "0.00";
             		}
-//            		edAmount1.setText(tvAmount2.getText().toString().substring(1));
-            		edAmount1.setText(tvAmount2.getText().toString().substring(0, tvAmount2.getText().toString().length() - 4));
-//            		tvAmount2.setTypeface(TypefaceUtil.getInstance(getActivity()).getBTCTypeface());
+            		String tmp2 = tvAmount2.getText().toString().substring(0, tvAmount2.getText().toString().length() - 4);
+            		try {
+            			double d = Double.parseDouble(tmp2);
+            			if(0.0 == d) {
+            				tmp2 = "";
+            			}
+            		}
+            		catch(Exception e) {
+            			tmp2 = "";
+            		}
+            		edAmount1.setText(tmp2);
                     tvAmount2.setText(tmp + " BTC");
             	}
             	else {
@@ -297,7 +305,17 @@ public class SendFragment extends Fragment   {
             		if(tmp.length() < 1) {
             			tmp = "0.00";
             		}
-                    edAmount1.setText(tvAmount2.getText().toString().substring(0, tvAmount2.getText().toString().length() - 4));
+            		String tmp2 = tvAmount2.getText().toString().substring(0, tvAmount2.getText().toString().length() - 4);
+            		try {
+            			double d = Double.parseDouble(tmp2);
+            			if(0.0 == d) {
+            				tmp2 = "";
+            			}
+            		}
+            		catch(Exception e) {
+            			tmp2 = "";
+            		}
+                    edAmount1.setText(tmp2);
                     tvAmount2.setText(tmp + " USD");
             	}
             	isBTC = isBTC ? false : true;
@@ -791,7 +809,7 @@ public class SendFragment extends Fragment   {
         });
 
         tvAmount2 = ((TextView)rootView.findViewById(R.id.amount2));
-        tvAmount2.setText("0.00 USD");
+        tvAmount2.setText("0.00 BTC");
         edAmount1 = ((EditText)rootView.findViewById(R.id.amount1));
         edAmount1.setFocusableInTouchMode(true);
         edAmount1.setOnEditorActionListener(new OnEditorActionListener() {
@@ -831,6 +849,9 @@ public class SendFragment extends Fragment   {
 		        	tvArrow.setText(Character.toString((char)0x2192));
 
 		        	String amount1 = edAmount1.getText().toString();
+		        	if(amount1 == null || amount1.length() < 1) {
+		        		amount1 = "0.00";
+		        	}
 		        	String amount2 = tvAmount2.getText().toString().substring(0, tvAmount2.getText().toString().length() - 4);	// buggy
 		        	if(isBTC) {
 		        		amount1 += " BTC";
