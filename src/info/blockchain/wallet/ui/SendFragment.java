@@ -1345,7 +1345,7 @@ public class SendFragment extends Fragment   {
 		                    	else
 		                    	{
 		                    		// this will be replaced by proper model dialog by Bill w/ official text
-		                    		Toast.makeText(getActivity(), "In order to use this service, bla bla bla...", Toast.LENGTH_SHORT).show();
+		                    		Toast.makeText(getActivity(), "To use this service select a contact with an email address or a mobile phone number. Thank you.", Toast.LENGTH_SHORT).show();
 		                    	}
 
 

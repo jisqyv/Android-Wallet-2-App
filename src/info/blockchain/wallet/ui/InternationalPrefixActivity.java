@@ -259,6 +259,8 @@ public class InternationalPrefixActivity extends Activity {
         setContentView(R.layout.sms_send_country);
         setTheme(android.R.style.Theme_Dialog);
         
+        setTitle("Choose international dial prefix");
+        
 //        i2p = new ISO2PlainText();
 //        tvPrompt = (TextView)findViewById(R.id.prompt);
 

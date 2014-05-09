@@ -375,6 +375,14 @@ public class BalanceFragment extends Fragment   {
 
         if(isVisibleToUser) {
         	System.gc();
+        	
+            new Thread()
+            {
+                public void run() {
+                    BlockchainUtil.getInstance(getActivity());
+                }
+            }.start();
+
         }
         else {
         	;

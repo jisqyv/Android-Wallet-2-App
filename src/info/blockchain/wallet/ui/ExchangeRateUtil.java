@@ -16,7 +16,7 @@ import org.json.JSONObject;
 public class ExchangeRateUtil {
 	
     private static ExchangeRateUtil instance = null;
-    private static double USD = 450.0;
+    private static double USD = 452.0;
 
 	private ExchangeRateUtil() { ; }
 
