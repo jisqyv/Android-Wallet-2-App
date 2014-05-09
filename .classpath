@@ -23,5 +23,6 @@
 	<classpathentry exported="true" kind="lib" path="libs/slf4j-api-1.6.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/slf4j-jdk14-1.6.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/zbar.jar"/>
+	<classpathentry kind="lib" path="libs/libphonenumber-5.9.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
