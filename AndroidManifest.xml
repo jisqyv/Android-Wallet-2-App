@@ -219,6 +219,11 @@
 			<intent-filter /> 
         </activity>
 
+        <activity android:name="info.blockchain.wallet.ui.InternationalPrefixActivity"
+			android:label="@string/app_name" >
+			<intent-filter /> 
+        </activity>
+
         </application>
 
 </manifest>

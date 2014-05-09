@@ -99,6 +99,8 @@ public class SendFragment extends Fragment   {
 	private static int SHARED_SEND = 3;
 
 	private static int PICK_CONTACT = 10;
+	private static int SELECT_INTL_PREFIX = 11;
+	private static int ZBAR_SCANNER_REQUEST = 2026;
 
 	private static int CURRENT_SEND = SIMPLE_SEND;
 	
@@ -149,8 +151,6 @@ public class SendFragment extends Fragment   {
 	private HashMap<String,String> xlatLabel = null;
 	
 	private boolean isBTC = false;
-
-	private static int ZBAR_SCANNER_REQUEST = 2026;
 
 	private WalletApplication application;
 	private final Handler handler = new Handler();
@@ -1301,6 +1301,9 @@ public class SendFragment extends Fragment   {
 		                    		emailOrNumber = strNumber;
 		                    		
 		                    		//go out via sms here
+		                    		
+		                    		doSelectInternationalPrefix();
+		                    		
 			                    }
 		                    	else
 		                    	{
@@ -1314,7 +1317,7 @@ public class SendFragment extends Fragment   {
 		                    	//
 		                    	//
 		                        edAmount1.requestFocus();
-		                        edAmount1.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+//		                        edAmount1.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
 		                        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
 
 		                }
@@ -1328,6 +1331,15 @@ public class SendFragment extends Fragment   {
 		    }
 
 		}
+		else if(resultCode == Activity.RESULT_OK && requestCode == SELECT_INTL_PREFIX) {
+			
+    		Toast.makeText(getActivity(), "prefix returned:" + data.getAction(), Toast.LENGTH_SHORT).show();
+			
+
+	      }
+		else if(resultCode == Activity.RESULT_CANCELED && requestCode == SELECT_INTL_PREFIX) {
+
+	      }
 		else {
 			;
 		}
@@ -1971,5 +1983,10 @@ public class SendFragment extends Fragment   {
 		viewCancel.setText(state != MyRemoteWallet.State.SENT ? R.string.button_cancel : R.string.send_coins_fragment_button_back);
 		*/
 	}
+	
+    private void doSelectInternationalPrefix()	{
+		Intent intent = new Intent(getActivity(), InternationalPrefixActivity.class);
+    	startActivityForResult(intent, SELECT_INTL_PREFIX);
+    }
 
 }
