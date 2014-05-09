@@ -219,6 +219,9 @@ public class ReceiveFragment extends Fragment   {
 //		        	tvArrow.setText(Character.toString((char)0x2192));
 
 		        	String amount1 = edAmount1.getText().toString();
+		        	if(amount1 == null || amount1.length() < 1) {
+		        		amount1 = "0.00";
+		        	}
 		        	String amount2 = tvAmount2.getText().toString().substring(0, tvAmount2.getText().toString().length() - 4);
 		        	long btcValue;
 		        	double value;
