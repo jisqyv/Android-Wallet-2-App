@@ -1,6 +1,8 @@
 package info.blockchain.wallet.ui;
  
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import java.net.URL;
@@ -14,12 +16,20 @@ import org.json.JSONObject;
 public class ExchangeRateUtil {
 	
     private static ExchangeRateUtil instance = null;
-    private static double USD = 441.0;
+    private static double USD = 450.0;
 
 	private ExchangeRateUtil() { ; }
 
+	private static SharedPreferences prefs = null;
+    private static SharedPreferences.Editor editor = null;
+    
+    private static long ts = 0L;
+
 	public static ExchangeRateUtil getInstance(Context ctx) {
 		
+		prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+        editor = prefs.edit();
+
 		if(instance == null) {
 			instance = new ExchangeRateUtil();
 		}
@@ -34,7 +44,9 @@ public class ExchangeRateUtil {
 		String fx = null;
 		
         try {
-            get("USD", IOUtils.toString(new URL("http://blockchain.info/ticker"), "UTF-8"));
+        	if(System.currentTimeMillis() - ts > (15 * 60 * 1000)) {
+                get("USD", IOUtils.toString(new URL("http://blockchain.info/ticker"), "UTF-8"));
+        	}
         }
         catch(MalformedURLException mue) {
         	mue.printStackTrace();
@@ -47,7 +59,15 @@ public class ExchangeRateUtil {
 	}
 
 	public double getUSD() {
-		return USD;
+		
+		if(USD > 0.0) {
+			return USD;
+		}
+		else {
+			String s = prefs.getString("USD", "0.1");
+			double usd = Double.parseDouble(s);
+			return usd;
+		}
 	}
 
     private static void get(String currency, String data)	 {
@@ -57,6 +77,9 @@ public class ExchangeRateUtil {
     			JSONObject jsonCurr = jsonObject.getJSONObject(currency);
         		if(jsonCurr != null)	{
         			USD = jsonCurr.getDouble("last");
+        			editor.putString("USD", Double.toString(USD));
+        			editor.commit();
+        			ts = System.currentTimeMillis();
         			Log.d("Blockchain/Bitstamp USD", "" + USD);
         		}
     		}

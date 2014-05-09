@@ -1333,10 +1333,13 @@ public class SendFragment extends Fragment   {
 		                    		
 		                    		edAddress.setText(strName);
 		                    		emailOrNumber = strNumber;
+		                        	if (strNumber.substring(0, 2).equals("00") || strNumber.charAt(0) == '+') {
+			                    		Log.d("emailOrNumber", "setSMSNumber: " + emailOrNumber);
+		                        	} else {
+		                    			doSelectInternationalPrefix();				                        		
+		                        	}
 		                    		
 		                    		//go out via sms here
-		                    		
-		                    		doSelectInternationalPrefix();
 		                    		
 			                    }
 		                    	else
