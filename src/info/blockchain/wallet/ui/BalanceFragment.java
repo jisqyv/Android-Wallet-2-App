@@ -127,9 +127,7 @@ public class BalanceFragment extends Fragment   {
 	};
 
 	public void setAdapterContent() {
-		
-		Log.d("BalanceFragment", "set adapter content");
-		
+
 		if (application == null)
 			return;
 		MyRemoteWallet remoteWallet = application.getRemoteWallet();
@@ -137,13 +135,13 @@ public class BalanceFragment extends Fragment   {
 			return;
 		}
 
-		if(!isReturnFromQR) {
-			addressLabels = remoteWallet.getActiveAddresses();
-			if (addressLabels == null)
-				return;
+		addressLabels = remoteWallet.getActiveAddresses();
+		if (addressLabels == null)
+			return;
 
-			addressAmounts = new String[addressLabels.length];
+		addressAmounts = new String[addressLabels.length];
 
+   		if(!isReturnFromQR) {
 			addressLabelTxsDisplayed = new boolean[addressLabels.length];
 			for (int i = 0; i < addressLabelTxsDisplayed.length; i++) {
 				addressLabelTxsDisplayed[i] = false;
@@ -408,7 +406,6 @@ public class BalanceFragment extends Fragment   {
 	        if(adapter != null)	{
 	        	isReturnFromQR = true;
 	        	adapter.notifyDataSetChanged();
-     			Toast.makeText(getActivity(), "Returned from QR", Toast.LENGTH_LONG).show();
 	        }
 	    }
 		else {
