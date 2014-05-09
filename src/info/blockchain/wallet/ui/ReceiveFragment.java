@@ -153,11 +153,6 @@ public class ReceiveFragment extends Fragment   {
                     tvAmount2.setText(tmp + " USD");
             	}
             	isBTC = isBTC ? false : true;
-            	
-                InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                edAmount1.requestFocus();
-                edAmount1.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
 
                 // ivReceivingQR.setVisibility(View.INVISIBLE);
 

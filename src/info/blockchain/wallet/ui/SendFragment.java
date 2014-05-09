@@ -1335,7 +1335,6 @@ public class SendFragment extends Fragment   {
 		else if(resultCode == Activity.RESULT_OK && requestCode == SELECT_INTL_PREFIX) {
 			
     		Toast.makeText(getActivity(), "prefix returned:" + data.getAction(), Toast.LENGTH_SHORT).show();
-			
 
 	      }
 		else if(resultCode == Activity.RESULT_CANCELED && requestCode == SELECT_INTL_PREFIX) {
