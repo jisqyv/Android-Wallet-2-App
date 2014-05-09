@@ -15,9 +15,11 @@ import piuk.EventListeners;
 import piuk.MyRemoteWallet;
 import piuk.MyTransaction;
 import piuk.MyTransactionInput;
+import piuk.blockchain.android.R;
 import piuk.blockchain.android.WalletApplication;
 import piuk.blockchain.android.util.WalletUtils;
 
+import com.dm.zbar.android.scanner.ZBarConstants;
 import com.google.bitcoin.core.Address;
 import com.google.bitcoin.core.ScriptException;
 import com.google.bitcoin.core.Transaction;
@@ -30,13 +32,20 @@ import com.google.zxing.client.android.encode.QRCodeEncoder;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract.CommonDataKinds;
+import android.provider.ContactsContract.Contacts;
+import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.graphics.Color;
 import android.graphics.Bitmap;
 import android.support.v4.app.Fragment;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -52,6 +61,7 @@ import android.widget.Toast;
 import android.view.View.OnTouchListener;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Animation;
+import android.view.inputmethod.InputMethodManager;
 import android.util.Log;
 
 @SuppressLint("NewApi")
@@ -80,6 +90,9 @@ public class BalanceFragment extends Fragment   {
 
 	private WalletApplication application;
 	private Map<String, String> labelMap;
+	
+	private static int QR_GENERATION = 1;
+	private boolean isReturnFromQR = false;
 
 	private EventListeners.EventListener eventListener = new EventListeners.EventListener() {
 		@Override
@@ -114,6 +127,9 @@ public class BalanceFragment extends Fragment   {
 	};
 
 	public void setAdapterContent() {
+		
+		Log.d("BalanceFragment", "set adapter content");
+		
 		if (application == null)
 			return;
 		MyRemoteWallet remoteWallet = application.getRemoteWallet();
@@ -121,15 +137,21 @@ public class BalanceFragment extends Fragment   {
 			return;
 		}
 
-		addressLabels = remoteWallet.getActiveAddresses();
-		if (addressLabels == null)
-			return;
+		if(!isReturnFromQR) {
+			addressLabels = remoteWallet.getActiveAddresses();
+			if (addressLabels == null)
+				return;
 
-		addressAmounts = new String[addressLabels.length];
-		addressLabelTxsDisplayed = new boolean[addressLabels.length];
-		for (int i = 0; i < addressLabelTxsDisplayed.length; i++) {
-			addressLabelTxsDisplayed[i] = false;
-		}		
+			addressAmounts = new String[addressLabels.length];
+
+			addressLabelTxsDisplayed = new boolean[addressLabels.length];
+			for (int i = 0; i < addressLabelTxsDisplayed.length; i++) {
+				addressLabelTxsDisplayed[i] = false;
+			}		
+		}
+		else {
+			isReturnFromQR = false;
+		}
 
 		labelMap = remoteWallet.getLabelMap();
 		
@@ -378,6 +400,23 @@ public class BalanceFragment extends Fragment   {
 		EventListeners.removeEventListener(eventListener);
 	}
 
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+
+		if(requestCode == QR_GENERATION)	{
+	        if(adapter != null)	{
+	        	isReturnFromQR = true;
+	        	adapter.notifyDataSetChanged();
+     			Toast.makeText(getActivity(), "Returned from QR", Toast.LENGTH_LONG).show();
+	        }
+	    }
+		else {
+			;
+		}
+		
+	}
+
     private class TransactionAdapter extends BaseAdapter {
     	
 		private LayoutInflater inflater = null;
@@ -495,7 +534,7 @@ public class BalanceFragment extends Fragment   {
                 Intent intent;
         		intent = new Intent(getActivity(), QRActivity.class);
         		intent.putExtra("BTC_ADDRESS", address);
-        		startActivity(intent);
+        		startActivityForResult(intent, QR_GENERATION);
 
                 return false;
             }
