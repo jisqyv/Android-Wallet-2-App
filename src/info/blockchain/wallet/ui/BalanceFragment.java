@@ -516,6 +516,13 @@ public class BalanceFragment extends Fragment   {
 		        doDisplaySubList(view, position);
 	        }
 
+	        if(addressLabelTxsDisplayed[position]) {
+	            ((ImageView)view.findViewById(R.id.address_type)).setImageResource(R.drawable.address_active);
+	        }
+	        else {
+	            ((ImageView)view.findViewById(R.id.address_type)).setImageResource(R.drawable.address_inactive);
+	        }
+
 	        return view;
 		}
 
