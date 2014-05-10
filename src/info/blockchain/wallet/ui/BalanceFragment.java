@@ -154,11 +154,11 @@ public class BalanceFragment extends Fragment   {
 		}
 
 		labelMap = remoteWallet.getLabelMap();
-		
+
 		for (int i = 0; i < addressLabels.length; i++) {
 			String address = addressLabels[i];
 
-		    BigInteger finalBalance = remoteWallet.getBalance(address);	
+		    BigInteger finalBalance = remoteWallet.getBalance(address);
 		    if (finalBalance != null)
 		    	addressAmounts[i] = BlockchainUtil.formatBitcoin(finalBalance);
 		    else
@@ -170,58 +170,9 @@ public class BalanceFragment extends Fragment   {
 		    }  		   		    
 	    }
 
-		//
-		//
-		//
-		totalInputsValue = BigInteger.ZERO;
-		totalOutputsValue = BigInteger.ZERO;
+		totalInputsValue = remoteWallet.getTotal_received();
+		totalOutputsValue = remoteWallet.getTotal_sent();
 
-		String[] activeAddresses = remoteWallet.getActiveAddresses();
-	    List<MyTransaction> transactionsList = remoteWallet.getTransactions();
-	    //for (MyTransaction transaction : transactionsList) {
-		for (Iterator<MyTransaction> it = transactionsList.iterator(); it.hasNext();) {
-    		MyTransaction transaction = it.next();
-		    Log.d("transactionHash: ", transaction.getHashAsString());
-		    BigInteger result = transaction.getResult();
-	    	List<TransactionOutput> transactionOutputs = transaction.getOutputs();
-	    	List<TransactionInput> transactionInputs = transaction.getInputs();	 
-
-//	    	for (TransactionOutput transactionOutput : transactionOutputs) {
-	    	for(Iterator<TransactionOutput> ito = transactionOutputs.iterator(); ito.hasNext(); )	{
-	    		TransactionOutput transactionOutput = ito.next();
-	        	try {
-	        		com.google.bitcoin.core.Script script = transactionOutput.getScriptPubKey();
-	        		String addr = null;
-	        		if (script != null)
-	        			addr = script.getToAddress().toString();
-	        		
-	        		if (addr != null && Arrays.asList(activeAddresses).contains(addr)) {
-	        		    totalInputsValue = totalInputsValue.add(transactionOutput.getValue());
-	        		}
-	            } catch (ScriptException e) {
-	                e.printStackTrace();
-	            } catch (Exception e) {
-	                e.printStackTrace();
-	            }			    		
-	    	}
-	    	    		
-//	    	for (TransactionInput transactionInput : transactionInputs) {
-		    for (Iterator<TransactionInput> iti = transactionInputs.iterator(); iti.hasNext();) {
-	    		TransactionInput transactionInput = iti.next();
-	        	try {
-	        		Address addr = transactionInput.getFromAddress();
-	        		if (addr != null && Arrays.asList(activeAddresses).contains(addr.toString())) {
-		        		MyTransactionInput ti = (MyTransactionInput)transactionInput;				        			
-	        		    totalOutputsValue = totalOutputsValue.add(ti.getValue());
-	        		}
-	            } catch (ScriptException e) {
-	                e.printStackTrace();
-	            } catch (Exception e) {
-	                e.printStackTrace();
-	            }			    		
-	    	}
-	    } 
-	    
 		BigInteger balance = remoteWallet.getBalance();
         tViewAmount1.setText(BlockchainUtil.formatBitcoin(balance));
         tViewAmount2.setText(strCurrentFiatSymbol + BlockchainUtil.BTC2Fiat(WalletUtils.formatValue(balance)));
