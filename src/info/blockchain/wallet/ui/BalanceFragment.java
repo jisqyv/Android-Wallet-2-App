@@ -87,6 +87,8 @@ public class BalanceFragment extends Fragment   {
 	//private Map<String, List<TxBitmap>> address2TxBitmapList;	
 	private BigInteger totalInputsValue = BigInteger.ZERO;
 	private BigInteger totalOutputsValue = BigInteger.ZERO;
+	private String strCurrentFiatSymbol = "$";
+	private String strCurrentFiatCode = "USD";
 
 	private WalletApplication application;
 	private Map<String, String> labelMap;
@@ -222,7 +224,7 @@ public class BalanceFragment extends Fragment   {
 	    
 		BigInteger balance = remoteWallet.getBalance();
         tViewAmount1.setText(BlockchainUtil.formatBitcoin(balance));
-        tViewAmount2.setText("$" + BlockchainUtil.BTC2Fiat(WalletUtils.formatValue(balance)));
+        tViewAmount2.setText(strCurrentFiatSymbol + BlockchainUtil.BTC2Fiat(WalletUtils.formatValue(balance)));
         if (adapter != null)
         	adapter.notifyDataSetChanged();
     }
@@ -247,7 +249,7 @@ public class BalanceFragment extends Fragment   {
             @Override
             public void onClick(View v) {
             	if(isBTC) {
-            		tViewCurrencySymbol.setText("$");
+            		tViewCurrencySymbol.setText(strCurrentFiatSymbol);
             		String tmp = tViewAmount1.getText().toString(); 
             		tViewAmount1.setText(tViewAmount2.getText().toString().substring(1));
             		tViewAmount2.setTypeface(TypefaceUtil.getInstance(getActivity()).getBTCTypeface());
@@ -257,7 +259,7 @@ public class BalanceFragment extends Fragment   {
                     tViewCurrencySymbol.setText(Character.toString((char)TypefaceUtil.getInstance(getActivity()).getBTCSymbol()));
             		String tmp = tViewAmount1.getText().toString(); 
                     tViewAmount1.setText(tViewAmount2.getText().toString().substring(1));
-                    tViewAmount2.setText("$" + tmp);
+                    tViewAmount2.setText(strCurrentFiatSymbol + tmp);
             	}
             	isBTC = isBTC ? false : true;
 
@@ -271,7 +273,7 @@ public class BalanceFragment extends Fragment   {
 
         tViewAmount2 = (TextView)rootView.findViewById(R.id.amount2);
         tViewAmount1.setTypeface(TypefaceUtil.getInstance(getActivity()).getRobotoLightTypeface());
-        tViewAmount2.setText("$" + BlockchainUtil.BTC2Fiat("0"));
+        tViewAmount2.setText(strCurrentFiatSymbol + BlockchainUtil.BTC2Fiat("0"));
 
         txList = (ListView)rootView.findViewById(R.id.txList);
 
@@ -503,7 +505,7 @@ public class BalanceFragment extends Fragment   {
         	}
 	        ((TextView)view.findViewById(R.id.amount)).setTypeface(TypefaceUtil.getInstance(getActivity()).getRobotoBoldTypeface());
 	        ((TextView)view.findViewById(R.id.amount)).setText(amount);
-	        ((TextView)view.findViewById(R.id.currency_code)).setText(isBTC ? "BTC" : "USD");
+	        ((TextView)view.findViewById(R.id.currency_code)).setText(isBTC ? "BTC" : strCurrentFiatCode);
 	        
 	        if(addressLabelTxsDisplayed[position]) {
 				Log.d("List refresh sub", "" + position);
@@ -746,7 +748,7 @@ public class BalanceFragment extends Fragment   {
 	        ((TextView)child.findViewById(R.id.amount)).setText(BlockchainUtil.formatBitcoin(result) + " BTC");
         }
         else {
-	        ((TextView)child.findViewById(R.id.amount)).setText((BlockchainUtil.BTC2Fiat(WalletUtils.formatValue(result)) + " USD"));
+	        ((TextView)child.findViewById(R.id.amount)).setText((BlockchainUtil.BTC2Fiat(WalletUtils.formatValue(result)) + " " + strCurrentFiatCode));
         }
         
         final String transactionHash = txHash;

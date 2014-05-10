@@ -66,6 +66,8 @@ public class ReceiveFragment extends Fragment   {
     private TextView tvAddress = null;
     private TextView tvAddressBis = null;
     private ImageView ivReceivingQR = null;
+	private String strCurrentFiatSymbol = "$";
+	private String strCurrentFiatCode = "USD";
 
 	private boolean isMagic = false;
     private View oldView = null;
@@ -124,7 +126,7 @@ public class ReceiveFragment extends Fragment   {
             @Override
             public void onClick(View v) {
             	if(isBTC) {
-            		tvCurrency.setText("$");
+            		tvCurrency.setText(strCurrentFiatSymbol);
             		String tmp = edAmount1.getText().toString();
             		if(tmp.length() < 1) {
             			tmp = "0.0000";
@@ -160,7 +162,7 @@ public class ReceiveFragment extends Fragment   {
             			tmp2 = "";
             		}
                     edAmount1.setText(tmp2);
-                    tvAmount2.setText(tmp + " USD");
+                    tvAmount2.setText(tmp + " " + strCurrentFiatCode);
             	}
             	isBTC = isBTC ? false : true;
                 // ivReceivingQR.setVisibility(View.INVISIBLE);
@@ -177,7 +179,7 @@ public class ReceiveFragment extends Fragment   {
 //        ((TextView)rootView.findViewById(R.id.direction)).setTypeface(TypefaceUtil.getInstance(getActivity()).getGravityBoldTypeface());
 //        ((TextView)rootView.findViewById(R.id.direction)).setText(Character.toString((char)0x2192));
         ((ImageView)rootView.findViewById(R.id.direction)).setImageResource(R.drawable.green_arrow);
-        ((TextView)rootView.findViewById(R.id.currency)).setText("$");
+        ((TextView)rootView.findViewById(R.id.currency)).setText(strCurrentFiatSymbol);
         ((TextView)rootView.findViewById(R.id.currency)).setTypeface(TypefaceUtil.getInstance(getActivity()).getGravityBoldTypeface());
         ((ImageView)rootView.findViewById(R.id.qr)).setImageBitmap(generateQRCode(BitcoinURI.convertToBitcoinURI("18nkx4epNwy4nEfFWZEtdBucwtj5TdSAm", BigInteger.valueOf(300000L), "", "")));
 
@@ -237,12 +239,12 @@ public class ReceiveFragment extends Fragment   {
 		            	value = Math.round(Double.parseDouble(amount1) * 100000000.0);
 		            	btcValue = (Double.valueOf(value)).longValue();
 		        		amount1 += " BTC";
-		        		amount2 += " USD";
+		        		amount2 += " " + strCurrentFiatCode;
 		        	}
 		        	else {
 		            	value = Math.round(Double.parseDouble(amount2) * 100000000.0);
 		            	btcValue = (Double.valueOf(value)).longValue();
-		        		amount1 += " USD";
+		        		amount1 += " " + strCurrentFiatCode;
 		        		amount2 += " BTC";
 		        	}
 		        	/*
@@ -352,7 +354,7 @@ public class ReceiveFragment extends Fragment   {
         		if((edAddress.getText().toString() != null && edAddress.getText().toString().length() > 0) || (edAmount1.getText().toString() != null && edAmount1.getText().toString().length() > 0)) {
         			
         			if(isBTC)	{
-            			tvAmount2.setText(BlockchainUtil.BTC2Fiat(edAmount1.getText().toString()) + " USD");
+            			tvAmount2.setText(BlockchainUtil.BTC2Fiat(edAmount1.getText().toString()) + " " + strCurrentFiatCode);
         			}
         			else	{
 //                		tvAmount2.setTypeface(TypefaceUtil.getInstance(getActivity()).getBTCTypeface());
@@ -668,7 +670,7 @@ public class ReceiveFragment extends Fragment   {
             	}
             	else {
             	    tvCurrency.setTypeface(TypefaceUtil.getInstance(getActivity()).getBTCTypeface());
-            		tvCurrency.setText("$");
+            		tvCurrency.setText(strCurrentFiatSymbol);
             	}
 
             }
@@ -689,7 +691,7 @@ public class ReceiveFragment extends Fragment   {
 		isMagic = false;
 
         ((TextView)rootView.findViewById(R.id.currency)).setBackgroundColor(0xFFFFFFFF);
-        ((TextView)rootView.findViewById(R.id.currency)).setText("$");
+        ((TextView)rootView.findViewById(R.id.currency)).setText(strCurrentFiatSymbol);
         
         if(parent != null) {
             parent.removeViews(parent.getChildCount() - children, children);
