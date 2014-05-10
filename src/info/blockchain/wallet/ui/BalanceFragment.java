@@ -168,6 +168,12 @@ public class BalanceFragment extends Fragment   {
 		    }  		   		    
 	    }
 
+		//
+		//
+		//
+		totalInputsValue = BigInteger.ZERO;
+		totalOutputsValue = BigInteger.ZERO;
+
 		String[] activeAddresses = remoteWallet.getActiveAddresses();
 	    List<MyTransaction> transactionsList = remoteWallet.getTransactions();
 	    //for (MyTransaction transaction : transactionsList) {
