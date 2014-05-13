@@ -22,6 +22,7 @@ import java.math.BigInteger;
 import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -567,16 +568,21 @@ public class MyRemoteWallet extends MyWallet {
 	}
 
 	private Pair<ECKey, String> generateNewMiniPrivateKey() {
-	    while (true) {
-	        Log.d("generateNewMiniPrivateKey", "generateNewMiniPrivateKey");
-	        //Use a normal ECKey to generate random bytes
-			ECKey key = generateECKey();
+		SecureRandom random = new SecureRandom();
 
+		if (extra_seed != null) {
+			random.setSeed(extra_seed);
+		}
+
+		while (true) {
+			Log.d("generateNewMiniPrivateKey", "generateNewMiniPrivateKey");
+			
 	        //Make Candidate Mini Key
-	        final DumpedPrivateKey dumpedPrivateKey = key.getPrivateKeyEncoded(params);
-	        String privateKey = Base58.encode(dumpedPrivateKey.bytes);
+		    byte randomBytes[] = new byte[16];
+		    random.nextBytes(randomBytes);		 
+	        String encodedBytes = Base58.encode(randomBytes);
 	        //TODO: Casascius Series 1 22-character variant, remember to notify Ben about updating to 30-character variant
-	        String minikey = 'S' + privateKey.substring(0, 21);
+	        String minikey = 'S' + encodedBytes.substring(0,21);
 	        //minikey = "S8osZG4hyGCsMxfxuTUfrF"; // canned data
 
 	        try {
@@ -596,6 +602,7 @@ public class MyRemoteWallet extends MyWallet {
 				        String privateKey1 = Base58.encode(dumpedPrivateKey1.bytes);
 				        
 				        final String toAddress = eckey.toAddress(params).toString();
+						Log.d("sendCoinsToFriend", "generateNewMiniPrivateKey: minikey: " + minikey);
 						Log.d("sendCoinsToFriend", "generateNewMiniPrivateKey: privateKey: " + privateKey1);
 						Log.d("sendCoinsToFriend", "generateNewMiniPrivateKey: address: " + toAddress);
 						
