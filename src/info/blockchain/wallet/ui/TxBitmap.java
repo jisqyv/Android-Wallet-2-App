@@ -131,15 +131,9 @@ public class TxBitmap {
 			String addressLabel = addressValueEntry.getKey();
 			String addressLabelConcat;
 			if (scale <= REG_RES) {
-				if (addressLabel.length() > 8)
-					addressLabelConcat = addressLabel.substring(0,7) + "...";
-				else
-					addressLabelConcat = addressLabel;
+				addressLabelConcat = BlockchainUtil.formatAddress(addressLabel, 7);
 			} else {
-				if (addressLabel.length() > 16)
-					addressLabelConcat = addressLabel.substring(0,15) + "...";
-				else
-					addressLabelConcat = addressLabel;
+				addressLabelConcat = BlockchainUtil.formatAddress(addressLabel, 15);
 			}
 
 			canvas.drawText(addressLabelConcat, fX, fY + (vOffset * i) + vXtraOffset, paintAddressLabel);

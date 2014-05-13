@@ -75,6 +75,14 @@ public class BlockchainUtil {
 		return df.format(Double.parseDouble(WalletUtils.formatValue(value)));
 	}
 
+	public static String formatAddress(String address, int charactersToDisplay) {
+		if (address.length() > charactersToDisplay+1)
+			return address.substring(0,charactersToDisplay) + "...";
+		else
+			return address;
+	}
+
+	
 	public static BigInteger bitcoinAmountStringToBigInteger(String amount) {
 		if (isValidAmount(amount))
 			return Utils.toNanoCoins(amount);

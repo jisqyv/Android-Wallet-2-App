@@ -1507,7 +1507,9 @@ public class SendFragment extends Fragment   {
 	        else {
 		        ((TextView)view.findViewById(R.id.p1)).setTextColor(0xFF616161);
 	        }
-	        ((TextView)view.findViewById(R.id.p1)).setText(row.get("labelOrAddress"));
+	        
+	        String labelOrAddress = BlockchainUtil.formatAddress(row.get("labelOrAddress"), 15) ;
+	        ((TextView)view.findViewById(R.id.p1)).setText(labelOrAddress);
 	        
 	        if (contactsOn) {
 		        ((TextView)view.findViewById(R.id.p2)).setText(row.get("address"));	        	
