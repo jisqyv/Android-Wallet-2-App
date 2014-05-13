@@ -4,6 +4,8 @@ import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 //import org.json.simple.JSONObject;
@@ -84,10 +86,14 @@ public class ReceiveFragment extends Fragment   {
 
     private ImageView ivCheck = null;
 
-    private HashMap<String,String> magicData = null;
-    private ArrayList<String> keys = null;
+    private List<HashMap<String,String>> magicData = null;
+    private List<HashMap<String,String>> filteredDisplayList = null;
 	private MagicAdapter adapter = null;
 	private HashMap<String,String> xlatLabel = null;
+
+	private List<String> activeAddresses;
+	private Map<String,String> labels;
+	private List<Map<String, Object>> addressBookMapList;
 
 	private boolean isBTC = false;
 
@@ -184,7 +190,8 @@ public class ReceiveFragment extends Fragment   {
         ((ImageView)rootView.findViewById(R.id.qr)).setImageBitmap(generateQRCode(BitcoinURI.convertToBitcoinURI("18nkx4epNwy4nEfFWZEtdBucwtj5TdSAm", BigInteger.valueOf(300000L), "", "")));
 
         xlatLabel = new HashMap<String,String>();
-        initMagicList();
+//      initMagicList();
+      initAddressBookList();
 
         tvAmount2 = ((TextView)rootView.findViewById(R.id.amount2));
         tvAmount2.setText("0.0000 BTC");
@@ -309,19 +316,20 @@ public class ReceiveFragment extends Fragment   {
 
         	public void beforeTextChanged(CharSequence s, int start, int count, int after)	{ ; }
         
-        	public void onTextChanged(CharSequence s, int start, int before, int count)	{
-        		
-        		String[] sKeys = magicData.keySet().toArray(new String[0]);
+        	public void onTextChanged(CharSequence s, int start, int before, int count)	{        		
         		int len = edAddress.getText().length();
-        		ArrayList<String> filtered = new ArrayList<String>();
-        		for (int i = 0; i < sKeys.length; i++)	{
-	                if (len <= sKeys[i].length())	{
-	                	if(edAddress.getText().toString().equalsIgnoreCase((String)sKeys[i].subSequence(0, len))) {
-	                		filtered.add(sKeys[i]);
-	                	}
-	                }
+        		List<HashMap<String,String>> filtered = new ArrayList<HashMap<String,String>>();
+        		
+        		for (HashMap<String,String> row : magicData) {
+        			String labelOrAddress = row.get("labelOrAddress");
+        		    if (len <= labelOrAddress.length()) {
+            			if(edAddress.getText().toString().equalsIgnoreCase((String) labelOrAddress.subSequence(0, len))) {
+            				filtered.add(row);
+            			}
+        		    }
         		}
-                keys = filtered;
+
+                filteredDisplayList = filtered;
                 if(adapter != null)	{
             		adapter.notifyDataSetChanged();
                 }
@@ -486,8 +494,8 @@ public class ReceiveFragment extends Fragment   {
 
 		@Override
 		public int getCount() {
-			if(keys != null) {
-				return keys.size();
+			if(filteredDisplayList != null) {
+				return filteredDisplayList.size();
 			}
 			else {
 				return 0;
@@ -496,7 +504,8 @@ public class ReceiveFragment extends Fragment   {
 
 		@Override
 		public String getItem(int position) {
-			return keys.get(position);
+			HashMap<String,String> row = filteredDisplayList.get(position);
+			return row.get("labelOrAddress");
 		}
 
 		@Override
@@ -516,8 +525,8 @@ public class ReceiveFragment extends Fragment   {
 	        }
 
 	        ((TextView)view.findViewById(R.id.p1)).setTypeface(TypefaceUtil.getInstance(getActivity()).getGravityBoldTypeface());
-	        // address or label ?
-	        if(!keys.get(position).startsWith("1Z")) {
+	        HashMap<String,String> row = filteredDisplayList.get(position);
+	        if(row.get("label") != null) {
 		        ((TextView)view.findViewById(R.id.p1)).setTypeface(TypefaceUtil.getInstance(getActivity()).getGravityBoldTypeface());
 	        }
 	        else {
@@ -525,14 +534,19 @@ public class ReceiveFragment extends Fragment   {
 	        }
 
 	        // Names, Labels in black, addresses in GREY
-	        if(!keys.get(position).startsWith("1Z")) {
+	        if(row.get("label") != null) {
 		        ((TextView)view.findViewById(R.id.p1)).setTextColor(Color.BLACK);
 	        }
 	        else {
 		        ((TextView)view.findViewById(R.id.p1)).setTextColor(0xFF616161);
 	        }
-	        ((TextView)view.findViewById(R.id.p1)).setText(keys.get(position));
-	        ((TextView)view.findViewById(R.id.p2)).setText(magicData.get(keys.get(position)));
+	        ((TextView)view.findViewById(R.id.p1)).setText(row.get("labelOrAddress"));
+	        
+	        if (contactsOn) {
+		        ((TextView)view.findViewById(R.id.p2)).setText(row.get("address"));	        	
+	        } else {
+		        ((TextView)view.findViewById(R.id.p2)).setText(row.get("amount"));	        	
+	        }
 
 	        return view;
 		}
@@ -543,26 +557,72 @@ public class ReceiveFragment extends Fragment   {
 
 		final WalletApplication application = (WalletApplication)getActivity().getApplication();
 		MyRemoteWallet wallet = application.getRemoteWallet();
-		String[] from = wallet.getActiveAddresses();
-		Map<String,String> labels = wallet.getLabelMap();
-
-        magicData = new HashMap<String,String>();
+		activeAddresses = Arrays.asList(wallet.getActiveAddresses());
+		labels = wallet.getLabelMap();
+        
+        magicData =  new ArrayList<HashMap<String,String>>();
         
         xlatLabel.clear();
-        for(int i = 0; i < from.length; i++) {
+        filteredDisplayList = new ArrayList<HashMap<String,String>>();
+
+        for(int i = 0; i < activeAddresses.size(); i++) {
+		    String address = activeAddresses.get(i);
         	String amount = "0.000";
-		    BigInteger finalBalance = wallet.getBalance(from[i]);	
+		    BigInteger finalBalance = wallet.getBalance(address);	
 		    if (finalBalance != null)
 		    	amount = BlockchainUtil.formatBitcoin(finalBalance);
-        	
-        	magicData.put(labels.get(from[i]) == null ? from[i] : labels.get(from[i]), amount + " BTC");
-        	xlatLabel.put(labels.get(from[i]) == null ? from[i] : labels.get(from[i]), from[i]);
+
+		        HashMap<String,String> row = new HashMap<String,String>();
+		        
+		        String label = labels.get(address);
+		        String labelOrAddress;
+		        if (label != null) {
+		            row.put("label", label.toString());	
+		            labelOrAddress = label;
+		        } else {
+		        	labelOrAddress = address;
+		        }
+		        row.put("address", address.toString());
+		        row.put("amount", amount);
+		        row.put("labelOrAddress", labelOrAddress);
+
+				magicData.add(row);    
+						
+	        	xlatLabel.put(labelOrAddress, address);
+	        	filteredDisplayList.add(row);
         }
 
-        String[] sKeys = magicData.keySet().toArray(new String[0]);
-        keys = new ArrayList<String>(Arrays.asList(sKeys));
-
     }
+
+    private void initAddressBookList() {
+ 		final WalletApplication application = (WalletApplication)getActivity().getApplication();
+ 		MyRemoteWallet wallet = application.getRemoteWallet();
+ 		
+        magicData =  new ArrayList<HashMap<String,String>>();
+
+        addressBookMapList = wallet.getAddressBookMap();
+        filteredDisplayList = new ArrayList<HashMap<String,String>>();
+
+        if (addressBookMapList != null) {
+            xlatLabel.clear();
+  		    for (Iterator<Map<String, Object>> iti = addressBookMapList.iterator(); iti.hasNext();) {
+ 		    	Map<String, Object> addressBookMap = iti.next();
+ 		    	Object address = addressBookMap.get("addr");
+ 		    	Object label = addressBookMap.get("label");
+
+ 		        HashMap<String,String> row = new HashMap<String,String>();
+ 		        row.put("label", label.toString());
+ 		        row.put("address", address.toString());
+		        row.put("labelOrAddress", label.toString());
+
+    			magicData.add(row);
+	        	xlatLabel.put(label.toString(), address.toString());
+	         	filteredDisplayList.add(row);
+ 		    }
+
+        }
+        
+     }
 
     private void displayMagicList() {
     	LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -593,14 +653,11 @@ public class ReceiveFragment extends Fragment   {
         ivAddresses.setImageResource(R.drawable.my_addresses);
         ivAddresses.setBackgroundColor(colorOn);
         ivContacts = (ImageView)childIcons.findViewById(R.id.contacts);
-        ivContacts.setVisibility(View.GONE);
+        ivContacts.setVisibility(View.VISIBLE);
+        ivContacts.setImageResource(R.drawable.address_book);
+        ivContacts.setBackgroundColor(colorOff);
         ivPhoneContacts = (ImageView)childIcons.findViewById(R.id.phone_contacts);
         ivPhoneContacts.setVisibility(View.GONE);
-        /*
-        ivContacts = (ImageView)childIcons.findViewById(R.id.contacts);
-        ivContacts.setImageResource(R.drawable.my_contacts_icon);
-        ivContacts.setBackgroundColor(colorOff);
-        */
         addressesOn = true;
         contactsOn = false;
         ivAddresses.setOnClickListener(new View.OnClickListener() {        
@@ -610,13 +667,12 @@ public class ReceiveFragment extends Fragment   {
             			addressesOn = true;
             			contactsOn = false;
                         ivAddresses.setBackgroundColor(colorOn);
-//                        ivContacts.setBackgroundColor(colorOff);
+                        ivContacts.setBackgroundColor(colorOff);
             		}
             		initMagicList();
             		adapter.notifyDataSetChanged();                            		
                 }
         });
-        /*
         ivContacts.setOnClickListener(new View.OnClickListener() {        
             @Override
                 public void onClick(View view) {
@@ -626,11 +682,10 @@ public class ReceiveFragment extends Fragment   {
                         ivAddresses.setBackgroundColor(colorOff);
                         ivContacts.setBackgroundColor(colorOn);
             		}
-            		initMagicList();
+            		initAddressBookList();
             		adapter.notifyDataSetChanged();                            		
                 }
         });
-        */
 
         final ImageView qr_scan = (ImageView)childIcons.findViewById(R.id.qr_icon);
         qr_scan.setVisibility(View.INVISIBLE);
@@ -655,15 +710,22 @@ public class ReceiveFragment extends Fragment   {
 	    
         magicList.setOnItemClickListener(new OnItemClickListener() {
 	        public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3)	{
-                Toast.makeText(getActivity(), keys.get(position), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getActivity(), keys.get(position), Toast.LENGTH_SHORT).show();
                 InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(edAddress.getWindowToken(), 0);
-                edAddress.setText(keys.get(position));
+
+                Log.d("filteredDisplayList", "filteredDisplayList: " + filteredDisplayList);
+                Log.d("filteredDisplayList", "filteredDisplayListposition: " + position);
+                HashMap<String, String> map = filteredDisplayList.get(position);
+                String address = map.get("address");
+                Log.d("filteredDisplayList", "filteredDisplayListaddress: " + address);
+            	edAddress.setText(address);            	                	               
+                
                 removeMagicList();
                 edAmount1.requestFocus();
                 edAmount1.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
                 imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
-                
+
             	if(isBTC) {
             	    tvCurrency.setTypeface(TypefaceUtil.getInstance(getActivity()).getBTCTypeface());
             		tvCurrency.setText(Character.toString((char)TypefaceUtil.getInstance(getActivity()).getBTCSymbol()));
@@ -672,7 +734,7 @@ public class ReceiveFragment extends Fragment   {
             	    tvCurrency.setTypeface(TypefaceUtil.getInstance(getActivity()).getBTCTypeface());
             		tvCurrency.setText(strCurrentFiatSymbol);
             	}
-
+                
             }
         });
 
@@ -699,7 +761,12 @@ public class ReceiveFragment extends Fragment   {
             oldView.setVisibility(View.VISIBLE);
         }
         
-        initMagicList();
+        if(addressesOn) {
+            initMagicList();
+        }
+        else {
+    		initAddressBookList();
+        }
     }
 
 
