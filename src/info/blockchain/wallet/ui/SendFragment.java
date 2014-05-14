@@ -153,8 +153,8 @@ public class SendFragment extends Fragment   {
     private List<HashMap<String,String>> magicData = null;
     private List<HashMap<String,String>> filteredDisplayList = null;
 	private MagicAdapter adapter = null;
-	private HashMap<String,String> xlatLabel = null;
-	
+	private String currentSelectedAddress = null;
+
 	private boolean isBTC = false;
 
 	private WalletApplication application;
@@ -340,7 +340,6 @@ public class SendFragment extends Fragment   {
         ((TextView)rootView.findViewById(R.id.currency)).setText(strCurrentFiatSymbol);
         ((TextView)rootView.findViewById(R.id.currency)).setTypeface(TypefaceUtil.getInstance(getActivity()).getGravityBoldTypeface());
 
-        xlatLabel = new HashMap<String,String>();
 //        initMagicList();
         initAddressBookList();
 
@@ -846,13 +845,10 @@ public class SendFragment extends Fragment   {
 //		        	final WalletApplication application = (WalletApplication)getActivity().getApplication();
 // 		    		MyRemoteWallet wallet = application.getRemoteWallet();
 // 		    		Map<String,String> labels = wallet.getLabelMap();
- 		    		String destination = null;
- 		            if(xlatLabel.get(edAddress.getText().toString()) != null) {
- 		            	destination = xlatLabel.get(edAddress.getText().toString());
- 		            	tvAddressBis.setText(destination.substring(0, 20) + "...");
+ 		            if(currentSelectedAddress != null) {
+ 		            	tvAddressBis.setText(currentSelectedAddress.substring(0, 20) + "...");
  		            }
  		            else {
- 		            	destination = edAddress.getText().toString();
  		            	tvAddressBis.setVisibility(View.GONE);
  		            }
  //					Toast.makeText(application, "BTC going to:" + destination, Toast.LENGTH_LONG).show();
@@ -968,18 +964,24 @@ public class SendFragment extends Fragment   {
         	public void beforeTextChanged(CharSequence s, int start, int count, int after)	{ ; }
         
         	public void onTextChanged(CharSequence s, int start, int before, int count)	{        		
+        		String inputAddress = edAddress.getText().toString();
         		int len = edAddress.getText().length();
         		List<HashMap<String,String>> filtered = new ArrayList<HashMap<String,String>>();
         		
         		for (HashMap<String,String> row : magicData) {
         			String labelOrAddress = row.get("labelOrAddress");
         		    if (len <= labelOrAddress.length()) {
-            			if(edAddress.getText().toString().equalsIgnoreCase((String) labelOrAddress.subSequence(0, len))) {
+            			if(inputAddress.equalsIgnoreCase((String) labelOrAddress.subSequence(0, len))) {
             				filtered.add(row);
             			}
         		    }
         		}
 
+        		if (BitcoinAddressCheck.isValidAddress(inputAddress)) {
+            		currentSelectedAddress = inputAddress;                        			
+        		} else {
+            		currentSelectedAddress = null;                        			
+        		}
                 filteredDisplayList = filtered;
                 if(adapter != null)	{
             		adapter.notifyDataSetChanged();
@@ -1531,7 +1533,6 @@ public class SendFragment extends Fragment   {
         
         magicData =  new ArrayList<HashMap<String,String>>();
         
-        xlatLabel.clear();
         filteredDisplayList = new ArrayList<HashMap<String,String>>();
 
         for(int i = 0; i < activeAddresses.size(); i++) {
@@ -1557,7 +1558,6 @@ public class SendFragment extends Fragment   {
 
 				magicData.add(row);    
 						
-	        	xlatLabel.put(labelOrAddress, address);
 	        	filteredDisplayList.add(row);
         }
 
@@ -1573,7 +1573,6 @@ public class SendFragment extends Fragment   {
         filteredDisplayList = new ArrayList<HashMap<String,String>>();
 
         if (addressBookMapList != null) {
-            xlatLabel.clear();
   		    for (Iterator<Map<String, Object>> iti = addressBookMapList.iterator(); iti.hasNext();) {
  		    	Map<String, Object> addressBookMap = iti.next();
  		    	Object address = addressBookMap.get("addr");
@@ -1585,7 +1584,6 @@ public class SendFragment extends Fragment   {
 		        row.put("labelOrAddress", label.toString());
 
     			magicData.add(row);
-	        	xlatLabel.put(label.toString(), address.toString());
 	         	filteredDisplayList.add(row);
  		    }
 
@@ -1736,13 +1734,11 @@ public class SendFragment extends Fragment   {
                 InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(edAddress.getWindowToken(), 0);
 
-                Log.d("filteredDisplayList", "filteredDisplayList: " + filteredDisplayList);
-                Log.d("filteredDisplayList", "filteredDisplayListposition: " + position);
                 HashMap<String, String> map = filteredDisplayList.get(position);
-                String address = map.get("address");
-                Log.d("filteredDisplayList", "filteredDisplayListaddress: " + address);
-            	edAddress.setText(address);            	                	               
-                
+                String labelOrAddress = map.get("labelOrAddress");
+            	edAddress.setText(labelOrAddress);         	                	               
+            	currentSelectedAddress = map.get("address");
+
                 removeMagicList();
                 edAmount1.requestFocus();
                 edAmount1.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
