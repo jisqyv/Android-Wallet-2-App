@@ -96,7 +96,7 @@ public class SendFragment extends Fragment   {
 	private static final String SendTypeQuickSend = "Quick Send";
 	private static final String SendTypeCustomSend = "Custom Send";
 	private static final String SendTypeSharedCoin = "Shared Coin";
-	
+
 	private static int SIMPLE_SEND = 1;
 	private static int CUSTOM_SEND = 2;
 	private static int SHARED_SEND = 3;
@@ -182,7 +182,8 @@ public class SendFragment extends Fragment   {
 	        	}
 
                 String address = intent.getStringExtra("BTC_ADDRESS");
-
+                
+                /*
                 if(BitcoinAddressCheck.isValidAddress(address)) {
 
                     InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -217,6 +218,9 @@ public class SendFragment extends Fragment   {
                 else {
                 	;
                 }
+                */
+                
+    			doScanInput(address);
 
             }
         }
@@ -1196,15 +1200,13 @@ public class SendFragment extends Fragment   {
 
 		if(resultCode == Activity.RESULT_OK && requestCode == ZBAR_SCANNER_REQUEST)	{
 
-			String strResult = data.getStringExtra(ZBarConstants.SCAN_RESULT);
-        	Log.d("Scan result", strResult);
-        	
+			String address = data.getStringExtra(ZBarConstants.SCAN_RESULT);
+//        	Log.d("Scan result", strResult);
+
+        	/*
         	strResult = BitcoinAddressCheck.validate(strResult);
         	if(strResult != null) {
         		
-        		/*
-        		 * gets user to address field filled in + keyboard pop up 
-        		 * 
                 edAddress.setText(strResult);
 
                 InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -1217,13 +1219,52 @@ public class SendFragment extends Fragment   {
                 edAmount1.requestFocus();
                 edAmount1.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
                 imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-        		 */
 
 
 			}
 			else {
 				Toast.makeText(getActivity(), "Invalid address", Toast.LENGTH_LONG).show();
 			}
+			*/
+
+			/*
+            if(BitcoinAddressCheck.isValidAddress(address)) {
+
+                InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(edAddress.getWindowToken(), 0);
+
+                edAddress.setText(address);
+
+                edAmount1.requestFocus();
+                edAmount1.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+            }
+            else if(BitcoinAddressCheck.isUri(address)) {
+
+                InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(edAddress.getWindowToken(), 0);
+                
+                String btc_address = BitcoinAddressCheck.getAddress(address);
+                String btc_amount = BitcoinAddressCheck.getAmount(address);
+                
+                edAddress.setText(btc_address);
+                edAmount1.setText(Double.toString(Double.parseDouble(btc_amount) / 100000000.0));
+
+                edAmount1.requestFocus();
+                edAmount1.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+
+                isBTC = true;
+        	    tvCurrency.setTypeface(TypefaceUtil.getInstance(getActivity()).getBTCTypeface());
+        		tvCurrency.setText(Character.toString((char)TypefaceUtil.getInstance(getActivity()).getBTCSymbol()));
+                
+            }
+            else {
+            	;
+            }
+            */
+			
+			doScanInput(address);
 
         }
 		else if(resultCode == Activity.RESULT_CANCELED && requestCode == ZBAR_SCANNER_REQUEST) {
@@ -1681,8 +1722,7 @@ public class SendFragment extends Fragment   {
         });
 
         final ImageView qr_scan = (ImageView)childIcons.findViewById(R.id.qr_icon);
-        qr_scan.setVisibility(View.INVISIBLE);
-        /*
+//        qr_scan.setVisibility(View.INVISIBLE);
         qr_scan.setBackgroundColor(colorOff);
         qr_scan.setOnTouchListener(new OnTouchListener() {
             @Override
@@ -1707,10 +1747,10 @@ public class SendFragment extends Fragment   {
                 		break;
                 	}
 
-                return true;
+                return false;
             }
         });
-        */
+
 //	    parent.addView(child, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 	    parent.addView(childIcons);
 	    children++;
@@ -2068,6 +2108,49 @@ public class SendFragment extends Fragment   {
     private void doSelectInternationalPrefix()	{
 		Intent intent = new Intent(getActivity(), InternationalPrefixActivity.class);
     	startActivityForResult(intent, SELECT_INTL_PREFIX);
+    }
+    
+    private void doScanInput(String address)	{
+        if(BitcoinAddressCheck.isValidAddress(address)) {
+    		Toast.makeText(getActivity(), "is valid address", Toast.LENGTH_SHORT).show();
+
+            InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(edAddress.getWindowToken(), 0);
+
+            edAddress.setText(address);
+
+            edAmount1.requestFocus();
+            edAmount1.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+        }
+        else if(BitcoinAddressCheck.isUri(address)) {
+    		Toast.makeText(getActivity(), "is uri", Toast.LENGTH_SHORT).show();
+    		
+    		if(isMagic) {
+    			removeMagicList();
+    		}
+
+            InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(edAddress.getWindowToken(), 0);
+            
+            String btc_address = BitcoinAddressCheck.getAddress(address);
+            String btc_amount = BitcoinAddressCheck.getAmount(address);
+            
+            edAddress.setText(btc_address);
+            edAmount1.setText(Double.toString(Double.parseDouble(btc_amount) / 100000000.0));
+
+            edAmount1.requestFocus();
+            edAmount1.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+
+            isBTC = true;
+    	    tvCurrency.setTypeface(TypefaceUtil.getInstance(getActivity()).getBTCTypeface());
+    		tvCurrency.setText(Character.toString((char)TypefaceUtil.getInstance(getActivity()).getBTCSymbol()));
+            
+        }
+        else {
+    		Toast.makeText(getActivity(), "not processed", Toast.LENGTH_SHORT).show();
+        }
     }
 
 }

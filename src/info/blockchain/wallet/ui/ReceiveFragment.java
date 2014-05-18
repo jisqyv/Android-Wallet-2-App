@@ -552,7 +552,8 @@ public class ReceiveFragment extends Fragment   {
 	        ((TextView)view.findViewById(R.id.p1)).setText(labelOrAddress);
 	        
 	        if (contactsOn) {
-		        ((TextView)view.findViewById(R.id.p2)).setText(row.get("address"));	        	
+		        String address = BlockchainUtil.formatAddress(row.get("address"), 15) ;
+		        ((TextView)view.findViewById(R.id.p2)).setText(address);
 	        } else {
 		        ((TextView)view.findViewById(R.id.p2)).setText(row.get("amount"));	        	
 	        }
