@@ -684,12 +684,12 @@ public class SendFragment extends Fragment   {
 				final BigInteger amount;
 
 				if (sendType != null && sendType.equals(SendTypeSharedCoin)) {
-					BigDecimal amountDecimal = BigDecimal.valueOf(BlockchainUtil.bitcoinAmountStringToBigInteger(edAmount1.getText().toString().trim()).doubleValue());
+					BigDecimal amountDecimal = BigDecimal.valueOf(getBTCAmountToSend().doubleValue());
 
 					//Add the fee
 					amount = amountDecimal.add(amountDecimal.divide(BigDecimal.valueOf(100)).multiply(BigDecimal.valueOf(application.getRemoteWallet().getSharedFee()))).toBigInteger();
 				} else {
-					amount = BlockchainUtil.bitcoinAmountStringToBigInteger(edAmount1.getText().toString().trim());
+					amount = getBTCAmountToSend();
 				} 
 
 				final WalletApplication application = (WalletApplication) getActivity().getApplication();
@@ -706,7 +706,7 @@ public class SendFragment extends Fragment   {
 					}
 
 					// create spend
-					final SendRequest sendRequest = SendRequest.to(receivingAddress, BlockchainUtil.bitcoinAmountStringToBigInteger(edAmount1.getText().toString().trim()));
+					final SendRequest sendRequest = SendRequest.to(receivingAddress, getBTCAmountToSend());
 
 					sendRequest.fee = fee;
 
@@ -777,19 +777,18 @@ public class SendFragment extends Fragment   {
 
 						public void onSuccess() {							
 							if(sendViaEmail && emailOrNumber != null && emailOrNumber.contains("@")) {	
-								BigInteger amount = BlockchainUtil.bitcoinAmountStringToBigInteger(edAmount1.getText().toString().trim());							
-								try {
-									remoteWallet.sendCoinsEmail(emailOrNumber, amount, progressEmailSMS);
+
+				            	try {
+									remoteWallet.sendCoinsEmail(emailOrNumber, getBTCAmountToSend(), progressEmailSMS);
 								} catch (Exception e) {
 									e.printStackTrace();
 								}
 							} else if (sentViaSMS && emailOrNumber != null) {								
-								BigInteger amount = BlockchainUtil.bitcoinAmountStringToBigInteger(edAmount1.getText().toString().trim());							
 								try {
 									String numberFormated = emailOrNumber.replaceAll("\\D+","");	
 									numberFormated = "+"+numberFormated;
 									Log.d("sendCoinsSMS", "numberFormated: "+ numberFormated);
-									remoteWallet.sendCoinsSMS(numberFormated, amount, progressEmailSMS);										
+									remoteWallet.sendCoinsSMS(numberFormated, getBTCAmountToSend(), progressEmailSMS);										
 								} catch (Exception e) {
 									e.printStackTrace();
 								}								
@@ -804,19 +803,17 @@ public class SendFragment extends Fragment   {
 					}, RequestPasswordDialog.PasswordTypeSecond);
 				} else {
 					if(sendViaEmail && emailOrNumber != null && emailOrNumber.contains("@")) {	
-						BigInteger amount = BlockchainUtil.bitcoinAmountStringToBigInteger(edAmount1.getText().toString().trim());							
 						try {
-							remoteWallet.sendCoinsEmail(emailOrNumber, amount, progressEmailSMS);
+							remoteWallet.sendCoinsEmail(emailOrNumber, getBTCAmountToSend(), progressEmailSMS);
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
 					} else if (sentViaSMS && emailOrNumber != null) {								
-						BigInteger amount = BlockchainUtil.bitcoinAmountStringToBigInteger(edAmount1.getText().toString().trim());							
 						try {
 							String numberFormated = emailOrNumber.replaceAll("\\D+","");	
 							numberFormated = "+"+numberFormated;
 							Log.d("sendCoinsSMS", "numberFormated: "+ numberFormated);
-							remoteWallet.sendCoinsSMS(numberFormated, amount, progressEmailSMS);										
+							remoteWallet.sendCoinsSMS(numberFormated, getBTCAmountToSend(), progressEmailSMS);										
 						} catch (Exception e) {
 							e.printStackTrace();
 						}								
@@ -1135,6 +1132,15 @@ public class SendFragment extends Fragment   {
         return rootView;
     }
 
+    public BigInteger getBTCAmountToSend() {
+		String amountString = edAmount1.getText().toString().trim();
+    	if(! isBTC) {
+    		return BlockchainUtil.bitcoinAmountStringToBigInteger(BlockchainUtil.BTC2Fiat(amountString));
+    	} else {
+    		return BlockchainUtil.bitcoinAmountStringToBigInteger(amountString);
+    	}
+    }    
+    
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
