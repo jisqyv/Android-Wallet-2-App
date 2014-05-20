@@ -106,6 +106,8 @@ public class ReceiveFragment extends Fragment   {
 
 	private boolean isBTC = false;
 
+	private boolean isReturnFromOutsideApp = false;
+
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -168,6 +170,8 @@ public class ReceiveFragment extends Fragment   {
         				;
         			}
 
+        			isReturnFromOutsideApp = true;
+        			
         	        Intent intent = new Intent(); 
         	        intent.setAction(Intent.ACTION_SEND); 
         	        intent.setType("*/*"); 
@@ -534,9 +538,15 @@ public class ReceiveFragment extends Fragment   {
     	super.onResume();
 
         Log.d("BlockchainWallet", "onResume");
+        
+        if(!isReturnFromOutsideApp) {
+    		removeMagicList();
+        	displayMagicList();
+        }
+        else {
+        	isReturnFromOutsideApp = false;
+        }
 
-		removeMagicList();
-    	displayMagicList();
 
     }
 
