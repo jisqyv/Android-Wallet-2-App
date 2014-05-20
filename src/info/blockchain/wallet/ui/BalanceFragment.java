@@ -551,7 +551,7 @@ public class BalanceFragment extends Fragment   {
 		for (Iterator<MyTransaction> it = transactionsList.iterator(); it.hasNext();) {
 			MyTransaction transaction = it.next();
 		    Log.d("transactionHash: ", transaction.getHashAsString());
-		    BigInteger result = transaction.getResult();
+		    BigInteger result = BigInteger.ZERO;
 	    	List<TransactionOutput> transactionOutputs = transaction.getOutputs();
 	    	List<TransactionInput> transactionInputs = transaction.getInputs();	 
 		    List<Map.Entry<String, String>> addressValueEntryList = new ArrayList<Map.Entry<String, String>>();
@@ -568,6 +568,7 @@ public class BalanceFragment extends Fragment   {
 
 	        		if (addr != null && addr.equals(address)) {
 	        			isAddressPartofTransaction = true;
+	        			result = result.add(transactionOutput.getValue());
 	        			break;
 	        		}
 	            } catch (ScriptException e) {
@@ -621,6 +622,8 @@ public class BalanceFragment extends Fragment   {
 
 	        		if (addr != null && addr.toString().equals(address)) {
 	        			isAddressPartofTransaction = true;
+		        		MyTransactionInput ti = (MyTransactionInput)transactionInput;
+		        		result = result.subtract(ti.getValue());
 	        			break;
 	        		}
 	            } catch (ScriptException e) {
