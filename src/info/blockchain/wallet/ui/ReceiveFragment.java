@@ -14,7 +14,6 @@ import java.util.Map;
 
 //import org.json.simple.JSONObject;
 
-
 import piuk.MyRemoteWallet;
 import piuk.blockchain.android.R;
 import piuk.blockchain.android.WalletApplication;
@@ -35,6 +34,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnTouchListener;
+import android.view.View.OnFocusChangeListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -337,6 +337,53 @@ public class ReceiveFragment extends Fragment   {
             }
         });
 
+        edAmount1.addTextChangedListener(new TextWatcher()	{
+
+        	public void afterTextChanged(Editable s) {
+        		if((edAddress.getText().toString() != null && edAddress.getText().toString().length() > 0) || (edAmount1.getText().toString() != null && edAmount1.getText().toString().length() > 0)) {
+        			
+        			if(isBTC)	{
+            			tvAmount2.setText(BlockchainUtil.BTC2Fiat(edAmount1.getText().toString()) + " " + strCurrentFiatCode);
+        			}
+        			else	{
+//                		tvAmount2.setTypeface(TypefaceUtil.getInstance(getActivity()).getBTCTypeface());
+        				tvAmount2.setText(BlockchainUtil.Fiat2BTC(edAmount1.getText().toString()) + " BTC");
+        			}
+
+        			clear_input.setVisibility(View.VISIBLE);
+        		}
+        		else {
+        			clear_input.setVisibility(View.INVISIBLE);
+        		}
+        	}
+
+        	public void beforeTextChanged(CharSequence s, int start, int count, int after)	{ ; }
+        
+        	public void onTextChanged(CharSequence s, int start, int before, int count)	{ ; }
+        });
+
+        edAmount1.setOnFocusChangeListener(new OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus) {
+                    if(edAmount1.getText().toString() != null && edAmount1.getText().toString().length() > 0) {
+            			edAmount1.setText("");
+                    	/*
+                    	try {
+                    		Double val = Double.parseDouble(edAmount1.getText().toString());
+                    		if(val == 0.0) {
+                    			edAmount1.setText("");
+                    		}
+                    	}
+                    	catch(NumberFormatException nfe) {
+                			edAmount1.setText("");
+                    	}
+                    	*/
+                    }
+                }
+            }
+        });
+
         edAddress = ((EditText)rootView.findViewById(R.id.address));
         edAddress.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
@@ -415,31 +462,6 @@ public class ReceiveFragment extends Fragment   {
 		        return false;
 		    }
 		});
-
-        edAmount1.addTextChangedListener(new TextWatcher()	{
-
-        	public void afterTextChanged(Editable s) {
-        		if((edAddress.getText().toString() != null && edAddress.getText().toString().length() > 0) || (edAmount1.getText().toString() != null && edAmount1.getText().toString().length() > 0)) {
-        			
-        			if(isBTC)	{
-            			tvAmount2.setText(BlockchainUtil.BTC2Fiat(edAmount1.getText().toString()) + " " + strCurrentFiatCode);
-        			}
-        			else	{
-//                		tvAmount2.setTypeface(TypefaceUtil.getInstance(getActivity()).getBTCTypeface());
-        				tvAmount2.setText(BlockchainUtil.Fiat2BTC(edAmount1.getText().toString()) + " BTC");
-        			}
-
-        			clear_input.setVisibility(View.VISIBLE);
-        		}
-        		else {
-        			clear_input.setVisibility(View.INVISIBLE);
-        		}
-        	}
-
-        	public void beforeTextChanged(CharSequence s, int start, int count, int after)	{ ; }
-        
-        	public void onTextChanged(CharSequence s, int start, int before, int count)	{ ; }
-        });
 
         clear_input.setOnTouchListener(new OnTouchListener() {
             @Override
