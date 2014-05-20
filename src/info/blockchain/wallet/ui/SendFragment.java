@@ -50,6 +50,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnFocusChangeListener;
 import android.view.View.OnTouchListener;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
@@ -902,14 +903,6 @@ public class SendFragment extends Fragment   {
             }
         });
 
-        edAmount1.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(hasFocus) {
-                    getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-                }
-            }
-        });
-
         edAmount1.addTextChangedListener(new TextWatcher()	{
 
         	public void afterTextChanged(Editable s) {
@@ -933,6 +926,38 @@ public class SendFragment extends Fragment   {
         	public void beforeTextChanged(CharSequence s, int start, int count, int after)	{ ; }
         
         	public void onTextChanged(CharSequence s, int start, int before, int count)	{ ; }
+        });
+
+        /*
+        edAmount1.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus) {
+                    getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+                }
+            }
+        });
+        */
+
+        edAmount1.setOnFocusChangeListener(new OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus) {
+                    if(edAmount1.getText().toString() != null && edAmount1.getText().toString().length() > 0) {
+            			edAmount1.setText("");
+                    	/*
+                    	try {
+                    		Double val = Double.parseDouble(edAmount1.getText().toString());
+                    		if(val == 0.0) {
+                    			edAmount1.setText("");
+                    		}
+                    	}
+                    	catch(NumberFormatException nfe) {
+                			edAmount1.setText("");
+                    	}
+                    	*/
+                    }
+                }
+            }
         });
 
         edAddress = ((EditText)rootView.findViewById(R.id.address));
