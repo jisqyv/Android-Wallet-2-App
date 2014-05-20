@@ -1,5 +1,9 @@
 package info.blockchain.wallet.ui;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.ArrayList;
@@ -15,8 +19,12 @@ import piuk.MyRemoteWallet;
 import piuk.blockchain.android.R;
 import piuk.blockchain.android.WalletApplication;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Bitmap.CompressFormat;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -125,6 +133,51 @@ public class ReceiveFragment extends Fragment   {
 
         ivReceivingQR = (ImageView)rootView.findViewById(R.id.qr);
         ivReceivingQR.setVisibility(View.INVISIBLE);
+        ivReceivingQR.setOnLongClickListener(new View.OnLongClickListener() {
+      	  public boolean onLongClick(View view) {
+//    			Toast.makeText(PaymentFragment.this.getActivity(), "Address copied:" + input_address, Toast.LENGTH_LONG).show();
+    			
+    			android.content.ClipboardManager clipboard = (android.content.ClipboardManager)getActivity().getSystemService(android.content.Context.CLIPBOARD_SERVICE);
+    		    android.content.ClipData clip = null;
+	        	if (currentSelectedAddress != null) {
+	    		    clip = android.content.ClipData.newPlainText("Send address", currentSelectedAddress);
+	        	} else {
+	    		    clip = android.content.ClipData.newPlainText("Send address", edAddress.getText().toString());
+	        	}
+    		    clipboard.setPrimaryClip(clip);
+    			
+    		    String strFileName = getActivity().getCacheDir() + File.separator + "qr.png";
+    		    File file = new File(strFileName);
+    		    file.setReadable(true, false);
+    			FileOutputStream fos = null;
+    			try {
+        			fos = new FileOutputStream(file);
+    			}
+    			catch(FileNotFoundException fnfe) {
+    				;
+    			}
+    			
+    			if(file != null && fos != null) {
+        			Bitmap bitmap = ((BitmapDrawable)ivReceivingQR.getDrawable()).getBitmap();
+        	        bitmap.compress(CompressFormat.PNG, 0, fos);
+        	        
+        			try {
+            			fos.close();
+        			}
+        			catch(IOException ioe) {
+        				;
+        			}
+
+        	        Intent intent = new Intent(); 
+        	        intent.setAction(Intent.ACTION_SEND); 
+        	        intent.setType("*/*"); 
+        	        intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
+        	        startActivity(Intent.createChooser(intent, "Send payment code"));
+    			}
+    	        
+      	    return true;
+      	  }
+      	});
         
         tvCurrency = (TextView)rootView.findViewById(R.id.currency);
         tvCurrency.setTypeface(TypefaceUtil.getInstance(getActivity()).getBTCTypeface());
@@ -188,7 +241,7 @@ public class ReceiveFragment extends Fragment   {
         ((ImageView)rootView.findViewById(R.id.direction)).setImageResource(R.drawable.green_arrow);
         ((TextView)rootView.findViewById(R.id.currency)).setText(strCurrentFiatSymbol);
         ((TextView)rootView.findViewById(R.id.currency)).setTypeface(TypefaceUtil.getInstance(getActivity()).getGravityBoldTypeface());
-        ((ImageView)rootView.findViewById(R.id.qr)).setImageBitmap(generateQRCode(BitcoinURI.convertToBitcoinURI("18nkx4epNwy4nEfFWZEtdBucwtj5TdSAm", BigInteger.valueOf(300000L), "", "")));
+//        ((ImageView)rootView.findViewById(R.id.qr)).setImageBitmap(generateQRCode(BitcoinURI.convertToBitcoinURI("18nkx4epNwy4nEfFWZEtdBucwtj5TdSAm", BigInteger.valueOf(300000L), "", "")));
 
 //      initMagicList();
       initAddressBookList();
