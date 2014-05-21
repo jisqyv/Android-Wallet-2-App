@@ -15,7 +15,7 @@ import android.net.Uri;
 //import android.util.Log;
 
 public class AboutActivity extends Activity	{
-	
+
 	private TextView tvAbout = null;
 	private Button bRate = null;
 	private Button bSupport = null;
@@ -33,7 +33,7 @@ public class AboutActivity extends Activity	{
 	    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         tvAbout = (TextView)findViewById(R.id.about);
-        tvAbout.setText(getString(R.string.about, "0.9 beta", "2014"));
+        tvAbout.setText(getString(R.string.about, "0.9.01 beta", "2014"));
 
         bRate = (Button)findViewById(R.id.rate_us);
         bRate.setOnClickListener(new Button.OnClickListener() {

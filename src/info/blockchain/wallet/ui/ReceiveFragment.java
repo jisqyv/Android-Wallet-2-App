@@ -325,6 +325,11 @@ public class ReceiveFragment extends Fragment   {
 		        	} else {
 			            ivReceivingQR.setImageBitmap(generateQRCode(BitcoinURI.convertToBitcoinURI(edAddress.getText().toString(), BigInteger.valueOf(btcValue), "", "")));		        		
 		        	}
+		        	
+		        	edAmount1.clearFocus();
+	                InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+	                imm.hideSoftInputFromWindow(edAmount1.getWindowToken(), 0);
+		        	
 		        }
 		        return false;
 		    }
