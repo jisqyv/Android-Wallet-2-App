@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import piuk.EventListeners;
@@ -178,11 +179,53 @@ public class SendFragment extends Fragment   {
         public void onReceive(Context context, Intent intent) {
             if(ACTION_INTENT.equals(intent.getAction())) {
 
-            	if(isMagic) {
-	        		removeMagicList();
-	        	}
-
                 String address = intent.getStringExtra("BTC_ADDRESS");
+                
+                /*
+                if(BitcoinAddressCheck.isValidAddress(address)) {
+            		Toast.makeText(getActivity(), "is valid address", Toast.LENGTH_SHORT).show();
+
+            		if(isMagic) {
+            			removeMagicList();
+            		}
+
+                    InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(edAddress.getWindowToken(), 0);
+
+                    edAddress.setText(address);
+
+                    edAmount1.requestFocus();
+                    edAmount1.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                    imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+                }
+                else if(BitcoinAddressCheck.isUri(address)) {
+            		Toast.makeText(getActivity(), "is uri", Toast.LENGTH_SHORT).show();
+
+            		if(isMagic) {
+            			removeMagicList();
+            		}
+
+                    String btc_address = BitcoinAddressCheck.getAddress(address);
+                    String btc_amount = BitcoinAddressCheck.getAmount(address);
+                    
+                    edAddress.setText(btc_address);
+                    InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(edAddress.getWindowToken(), 0);
+
+                    edAmount1.requestFocus();
+                    edAmount1.setText(Double.toString(Double.parseDouble(btc_amount) / 100000000.0));
+                    edAmount1.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                    imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+
+                    isBTC = true;
+            	    tvCurrency.setTypeface(TypefaceUtil.getInstance(getActivity()).getBTCTypeface());
+            		tvCurrency.setText(Character.toString((char)TypefaceUtil.getInstance(getActivity()).getBTCSymbol()));
+                    
+                }
+                else {
+            		Toast.makeText(getActivity(), "not processed", Toast.LENGTH_SHORT).show();
+                }
+                */
 
     			doScanInput(address);
 
@@ -850,10 +893,12 @@ public class SendFragment extends Fragment   {
 		        	tvAmountBis.setText(a2);
 
 	            	btSend.setVisibility(View.VISIBLE);
-	            	
+
+	            	/*
 		        	edAmount1.clearFocus();
 	                InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 	                imm.hideSoftInputFromWindow(edAmount1.getWindowToken(), 0);
+	                */
 
 		        }
 		        return false;
@@ -1052,20 +1097,20 @@ public class SendFragment extends Fragment   {
 
         final ImageView imgSimpleSend = ((ImageView)rootView.findViewById(R.id.simple));
         final ImageView imgCustomSend = ((ImageView)rootView.findViewById(R.id.custom));
-        final ImageView imgSharedSend = ((ImageView)rootView.findViewById(R.id.shared));
+//        final ImageView imgSharedSend = ((ImageView)rootView.findViewById(R.id.shared));
         final LinearLayout layoutSimpleSend = ((LinearLayout)rootView.findViewById(R.id.simple_bg));
         final LinearLayout layoutCustomSend = ((LinearLayout)rootView.findViewById(R.id.custom_bg));
-        final LinearLayout layoutSharedSend = ((LinearLayout)rootView.findViewById(R.id.shared_bg));
+//        final LinearLayout layoutSharedSend = ((LinearLayout)rootView.findViewById(R.id.shared_bg));
         
         final int color_spend_selected = 0xff808080;
         final int color_spend_unselected = 0xffa0a0a0;
         
     	imgSimpleSend.setBackgroundColor(color_spend_selected);
     	imgCustomSend.setBackgroundColor(color_spend_unselected);
-    	imgSharedSend.setBackgroundColor(color_spend_unselected);
+//    	imgSharedSend.setBackgroundColor(color_spend_unselected);
     	layoutSimpleSend.setBackgroundColor(color_spend_selected);
     	layoutCustomSend.setBackgroundColor(color_spend_unselected);
-    	layoutSharedSend.setBackgroundColor(color_spend_unselected);
+//    	layoutSharedSend.setBackgroundColor(color_spend_unselected);
 
         imgSimpleSend.setOnTouchListener(new OnTouchListener() {
             @Override
@@ -1074,10 +1119,10 @@ public class SendFragment extends Fragment   {
 
             	imgSimpleSend.setBackgroundColor(color_spend_selected);
             	imgCustomSend.setBackgroundColor(color_spend_unselected);
-            	imgSharedSend.setBackgroundColor(color_spend_unselected);
+//            	imgSharedSend.setBackgroundColor(color_spend_unselected);
             	layoutSimpleSend.setBackgroundColor(color_spend_selected);
             	layoutCustomSend.setBackgroundColor(color_spend_unselected);
-            	layoutSharedSend.setBackgroundColor(color_spend_unselected);
+//            	layoutSharedSend.setBackgroundColor(color_spend_unselected);
 
             	doSimpleSend();
 
@@ -1092,17 +1137,18 @@ public class SendFragment extends Fragment   {
 
             	imgSimpleSend.setBackgroundColor(color_spend_unselected);
             	imgCustomSend.setBackgroundColor(color_spend_selected);
-            	imgSharedSend.setBackgroundColor(color_spend_unselected);
+//            	imgSharedSend.setBackgroundColor(color_spend_unselected);
             	layoutSimpleSend.setBackgroundColor(color_spend_unselected);
             	layoutCustomSend.setBackgroundColor(color_spend_selected);
-            	layoutSharedSend.setBackgroundColor(color_spend_unselected);
-
-//    			doCustomSend();
+//            	layoutSharedSend.setBackgroundColor(color_spend_unselected);
+            	
+    			doCustomSend();
 
                 return true;
             }
         });
 
+        /*
         imgSharedSend.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -1120,6 +1166,7 @@ public class SendFragment extends Fragment   {
                 return true;
             }
         });
+        */
 
         return rootView;
     }
@@ -1201,10 +1248,6 @@ public class SendFragment extends Fragment   {
 			String address = data.getStringExtra(ZBarConstants.SCAN_RESULT);
 //        	Log.d("Scan result", strResult);
 			
-        	if(isMagic) {
-        		removeMagicList();
-        	}
-
 			doScanInput(address);
 
         }
@@ -1672,18 +1715,12 @@ public class SendFragment extends Fragment   {
                 switch (event.getAction())	{
                 	case android.view.MotionEvent.ACTION_DOWN:
                 	case android.view.MotionEvent.ACTION_MOVE:
-                    	if(isMagic) {
-        	        		removeMagicList();
-        	        	}
-
                 		Toast.makeText(getActivity(), "Show QR reader", Toast.LENGTH_SHORT).show();
                 		Log.d("QR icon", "DOWN");
-                		qr_scan.setBackgroundColor(colorOn);
-                		
+                		qr_scan.setBackgroundColor(colorOn);                		
                 		Intent intent = new Intent(getActivity(), ZBarScannerActivity.class);
                 		intent.putExtra(ZBarConstants.SCAN_MODES, new int[]{ Symbol.QRCODE } );
                 		startActivityForResult(intent, ZBAR_SCANNER_REQUEST);
-
                 		break;
                 	case android.view.MotionEvent.ACTION_UP:
                 	case android.view.MotionEvent.ACTION_CANCEL:
@@ -1775,6 +1812,10 @@ public class SendFragment extends Fragment   {
     }
 
     private void doSimpleSend() {
+    	if(magic != null) {
+    		magic.setVisibility(View.VISIBLE);
+    	}
+
     	simple_spend.setVisibility(View.VISIBLE);
     	custom_spend.setVisibility(View.GONE);
         LinearLayout container = ((LinearLayout)rootView.findViewById(R.id.send_container));
@@ -1783,6 +1824,14 @@ public class SendFragment extends Fragment   {
     }
 
     private void doCustomSend() {
+    	if(isMagic) {
+    		removeMagicList();
+    	}
+
+    	if(magic != null) {
+    		magic.setVisibility(View.GONE);
+    	}
+
     	simple_spend.setVisibility(View.GONE);
     	custom_spend.setVisibility(View.VISIBLE);
     	CURRENT_SEND = CUSTOM_SEND;
@@ -1892,7 +1941,8 @@ public class SendFragment extends Fragment   {
     	((LinearLayout)layout_fee.findViewById(R.id.p3)).addView(tvFee3);
     	layout_fee.setPadding(0, 10, 0, 0);
     	((LinearLayout)layout_custom_spend.findViewById(R.id.custom_spend)).addView(layout_fee);
-    	
+
+    	/*
         //
         // 'CHANGE' layout
         //
@@ -1924,6 +1974,7 @@ public class SendFragment extends Fragment   {
     	((LinearLayout)layout_change.findViewById(R.id.p3)).addView(tvChange3);
     	layout_change.setPadding(0, 10, 0, 0);
     	((LinearLayout)layout_custom_spend.findViewById(R.id.custom_spend)).addView(layout_change);
+    	*/
     	
         LinearLayout container = ((LinearLayout)rootView.findViewById(R.id.custom_spend));
         sendViewToBack(container);
@@ -2059,6 +2110,10 @@ public class SendFragment extends Fragment   {
         if(BitcoinAddressCheck.isValidAddress(address)) {
     		Toast.makeText(getActivity(), "is valid address", Toast.LENGTH_SHORT).show();
 
+    		if(isMagic) {
+    			removeMagicList();
+    		}
+
             InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(edAddress.getWindowToken(), 0);
 
@@ -2070,21 +2125,20 @@ public class SendFragment extends Fragment   {
         }
         else if(BitcoinAddressCheck.isUri(address)) {
     		Toast.makeText(getActivity(), "is uri", Toast.LENGTH_SHORT).show();
-    		
+
     		if(isMagic) {
     			removeMagicList();
     		}
 
-            InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(edAddress.getWindowToken(), 0);
-            
             String btc_address = BitcoinAddressCheck.getAddress(address);
             String btc_amount = BitcoinAddressCheck.getAmount(address);
             
             edAddress.setText(btc_address);
-            edAmount1.setText(Double.toString(Double.parseDouble(btc_amount) / 100000000.0));
+            InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(edAddress.getWindowToken(), 0);
 
             edAmount1.requestFocus();
+            edAmount1.setText(Double.toString(Double.parseDouble(btc_amount) / 100000000.0));
             edAmount1.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
             imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
 
