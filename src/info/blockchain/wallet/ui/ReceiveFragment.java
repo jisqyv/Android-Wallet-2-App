@@ -137,16 +137,6 @@ public class ReceiveFragment extends Fragment   {
         ivReceivingQR.setVisibility(View.INVISIBLE);
         ivReceivingQR.setOnLongClickListener(new View.OnLongClickListener() {
       	  public boolean onLongClick(View view) {
-    			android.content.ClipboardManager clipboard = (android.content.ClipboardManager)getActivity().getSystemService(android.content.Context.CLIPBOARD_SERVICE);
-    		    android.content.ClipData clip = null;
-	        	if (currentSelectedAddress != null) {
-	    		    clip = android.content.ClipData.newPlainText("Send address", currentSelectedAddress);
-	    			Toast.makeText(getActivity(), currentSelectedAddress, Toast.LENGTH_LONG).show();
-	        	} else {
-	    		    clip = android.content.ClipData.newPlainText("Send address", edAddress.getText().toString());
-	    			Toast.makeText(getActivity(), edAddress.getText().toString(), Toast.LENGTH_LONG).show();
-	        	}
-    		    clipboard.setPrimaryClip(clip);
     			
     		    String strFileName = getActivity().getCacheDir() + File.separator + "qr.png";
     		    File file = new File(strFileName);
@@ -159,6 +149,17 @@ public class ReceiveFragment extends Fragment   {
     				;
     			}
     			
+    			android.content.ClipboardManager clipboard = (android.content.ClipboardManager)getActivity().getSystemService(android.content.Context.CLIPBOARD_SERVICE);
+    		    android.content.ClipData clip = null;
+	        	if (currentSelectedAddress != null) {
+	    		    clip = android.content.ClipData.newPlainText("Send address", currentSelectedAddress);
+	    			Toast.makeText(getActivity(), currentSelectedAddress, Toast.LENGTH_LONG).show();
+	        	} else {
+	    		    clip = android.content.ClipData.newPlainText("Send address", edAddress.getText().toString());
+	    			Toast.makeText(getActivity(), edAddress.getText().toString(), Toast.LENGTH_LONG).show();
+	        	}
+    		    clipboard.setPrimaryClip(clip);
+
     			if(file != null && fos != null) {
         			Bitmap bitmap = ((BitmapDrawable)ivReceivingQR.getDrawable()).getBitmap();
         	        bitmap.compress(CompressFormat.PNG, 0, fos);
