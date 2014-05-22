@@ -2116,6 +2116,7 @@ public class SendFragment extends Fragment   {
 
             InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(edAddress.getWindowToken(), 0);
+            imm.hideSoftInputFromWindow(edAmount1.getWindowToken(), 0);
 
             edAddress.setText(address);
 
@@ -2136,6 +2137,7 @@ public class SendFragment extends Fragment   {
             edAddress.setText(btc_address);
             InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(edAddress.getWindowToken(), 0);
+            imm.hideSoftInputFromWindow(edAmount1.getWindowToken(), 0);
 
             edAmount1.requestFocus();
             edAmount1.setText(Double.toString(Double.parseDouble(btc_amount) / 100000000.0));
