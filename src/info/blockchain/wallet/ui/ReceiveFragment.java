@@ -175,7 +175,7 @@ public class ReceiveFragment extends Fragment   {
         			
         	        Intent intent = new Intent(); 
         	        intent.setAction(Intent.ACTION_SEND); 
-        	        intent.setType("*/*"); 
+        	        intent.setType("image/png"); 
         	        intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
         	        startActivity(Intent.createChooser(intent, "Send payment code"));
     			}
