@@ -33,6 +33,7 @@ import com.google.zxing.client.android.encode.QRCodeEncoder;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -45,6 +46,7 @@ import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.graphics.Color;
 import android.graphics.Bitmap;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -95,6 +97,7 @@ public class BalanceFragment extends Fragment   {
 	
 	private static int QR_GENERATION = 1;
 	private boolean isReturnFromQR = false;
+	private Transaction sentTx = null;
 
 	private EventListeners.EventListener eventListener = new EventListeners.EventListener() {
 		@Override
@@ -104,7 +107,10 @@ public class BalanceFragment extends Fragment   {
 
 		@Override
 		public void onCoinsSent(final Transaction tx, final long result) {
+			sentTx = tx;
+	        ((ViewPager)getActivity().findViewById(info.blockchain.wallet.ui.R.id.pager)).setCurrentItem(1);
 			setAdapterContent();
+			sentTx = null;
 		};
 
 		@Override
@@ -130,19 +136,22 @@ public class BalanceFragment extends Fragment   {
 
 	public void setAdapterContent() {
 
-		if (application == null)
+		if (application == null) {
 			return;
+		}
+
 		MyRemoteWallet remoteWallet = application.getRemoteWallet();
 		if (remoteWallet == null) {
 			return;
 		}
 
 		addressLabels = remoteWallet.getActiveAddresses();
-		if (addressLabels == null)
+		if (addressLabels == null) {
 			return;
+		}
 
 		addressAmounts = new String[addressLabels.length];
-
+		
    		if(!isReturnFromQR) {
 			addressLabelTxsDisplayed = new boolean[addressLabels.length];
 			for (int i = 0; i < addressLabelTxsDisplayed.length; i++) {
@@ -543,7 +552,6 @@ public class BalanceFragment extends Fragment   {
             ((ProgressBar)progression_received.findViewById(R.id.bar)).setProgress((int)((totalReceived.doubleValue() / (totalSent.doubleValue() + totalReceived.doubleValue())) * 100));
             ((ProgressBar)progression_received.findViewById(R.id.bar)).setProgressDrawable(getResources().getDrawable(R.drawable.progress_green2));
         } 
-
 
         final List<MyTransaction> transactionsList = remoteWallet.getTransactions();
 

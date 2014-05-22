@@ -74,6 +74,7 @@ import android.provider.ContactsContract.Contacts;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.content.BroadcastReceiver;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import net.sourceforge.zbar.Symbol;
 
@@ -714,7 +715,6 @@ public class SendFragment extends Fragment   {
 
 					// create spend
 					final SendRequest sendRequest = SendRequest.to(receivingAddress, getBTCAmountToSend());
-
 					sendRequest.fee = fee;
 
 					new Thread(new Runnable()
@@ -894,11 +894,9 @@ public class SendFragment extends Fragment   {
 
 	            	btSend.setVisibility(View.VISIBLE);
 
-	            	/*
 		        	edAmount1.clearFocus();
 	                InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 	                imm.hideSoftInputFromWindow(edAmount1.getWindowToken(), 0);
-	                */
 
 		        }
 		        return false;
@@ -1706,7 +1704,8 @@ public class SendFragment extends Fragment   {
         });
 
         final ImageView qr_scan = (ImageView)childIcons.findViewById(R.id.qr_icon);
-//        qr_scan.setVisibility(View.INVISIBLE);
+        qr_scan.setVisibility(View.INVISIBLE);
+        /*
         qr_scan.setBackgroundColor(colorOff);
         qr_scan.setOnTouchListener(new OnTouchListener() {
             @Override
@@ -1732,6 +1731,7 @@ public class SendFragment extends Fragment   {
                 return false;
             }
         });
+        */
 
 //	    parent.addView(child, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 	    parent.addView(childIcons);
