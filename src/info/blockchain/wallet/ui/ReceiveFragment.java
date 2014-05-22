@@ -137,14 +137,14 @@ public class ReceiveFragment extends Fragment   {
         ivReceivingQR.setVisibility(View.INVISIBLE);
         ivReceivingQR.setOnLongClickListener(new View.OnLongClickListener() {
       	  public boolean onLongClick(View view) {
-//    			Toast.makeText(PaymentFragment.this.getActivity(), "Address copied:" + input_address, Toast.LENGTH_LONG).show();
-    			
     			android.content.ClipboardManager clipboard = (android.content.ClipboardManager)getActivity().getSystemService(android.content.Context.CLIPBOARD_SERVICE);
     		    android.content.ClipData clip = null;
 	        	if (currentSelectedAddress != null) {
 	    		    clip = android.content.ClipData.newPlainText("Send address", currentSelectedAddress);
+	    			Toast.makeText(getActivity(), currentSelectedAddress, Toast.LENGTH_LONG).show();
 	        	} else {
 	    		    clip = android.content.ClipData.newPlainText("Send address", edAddress.getText().toString());
+	    			Toast.makeText(getActivity(), edAddress.getText().toString(), Toast.LENGTH_LONG).show();
 	        	}
     		    clipboard.setPrimaryClip(clip);
     			
@@ -323,6 +323,7 @@ public class ReceiveFragment extends Fragment   {
 		        		Log.d("currentSelectedAddress", "currentSelectedAddress " + currentSelectedAddress);
 			            ivReceivingQR.setImageBitmap(generateQRCode(BitcoinURI.convertToBitcoinURI(currentSelectedAddress, BigInteger.valueOf(btcValue), "", "")));		        		
 		        	} else {
+		        		Log.d("currentSelectedAddress", "currentSelectedAddress:" + edAddress.getText().toString());
 			            ivReceivingQR.setImageBitmap(generateQRCode(BitcoinURI.convertToBitcoinURI(edAddress.getText().toString(), BigInteger.valueOf(btcValue), "", "")));		        		
 		        	}
 
