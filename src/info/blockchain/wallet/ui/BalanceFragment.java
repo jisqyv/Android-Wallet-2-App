@@ -98,7 +98,8 @@ public class BalanceFragment extends Fragment   {
 	private static int QR_GENERATION = 1;
 	private boolean isReturnFromQR = false;
 	private Transaction sentTx = null;
-
+	private List<String> activeAddresses;
+	
 	private EventListeners.EventListener eventListener = new EventListeners.EventListener() {
 		@Override
 		public String getDescription() {
@@ -108,7 +109,7 @@ public class BalanceFragment extends Fragment   {
 		@Override
 		public void onCoinsSent(final Transaction tx, final long result) {
 			sentTx = tx;
-	        ((ViewPager)getActivity().findViewById(info.blockchain.wallet.ui.R.id.pager)).setCurrentItem(1);
+			((ViewPager)getActivity().findViewById(info.blockchain.wallet.ui.R.id.pager)).setCurrentItem(1);
 			setAdapterContent();
 			sentTx = null;
 		};
@@ -134,6 +135,45 @@ public class BalanceFragment extends Fragment   {
 		};
 	};
 
+	public List<String> getAddressesPartOfLastSentTransaction(final Transaction tx) {
+    	List<String> addressesPartOfLastSentTransaction = new ArrayList<String>();
+
+    	List<TransactionOutput> transactionOutputs = tx.getOutputs();
+		for (Iterator<TransactionOutput> ito = transactionOutputs.iterator(); ito.hasNext();) {
+			TransactionOutput transactionOutput = ito.next();
+        	try {
+        		com.google.bitcoin.core.Script script = transactionOutput.getScriptPubKey();
+        		String addr = null;
+        		if (script != null)
+        			addr = script.getToAddress().toString();
+
+        		addressesPartOfLastSentTransaction.add(addr);
+            } catch (ScriptException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }				
+		}
+		
+    	List<TransactionInput> transactionInputs = tx.getInputs();	 
+	    for (Iterator<TransactionInput> iti = transactionInputs.iterator(); iti.hasNext();) {
+    		TransactionInput transactionInput = iti.next();
+        	try {
+        		Address addr = transactionInput.getFromAddress();
+        		if (addr != null) {
+        			addressesPartOfLastSentTransaction.add(addr.toString());
+        		}
+            } catch (ScriptException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }			    		
+    	}
+		
+        Log.d("transaction", "transaction addressesPartOfLastSentTransaction: " + addressesPartOfLastSentTransaction);
+        return addressesPartOfLastSentTransaction;	
+	}
+	
 	public void setAdapterContent() {
 
 		if (application == null) {
@@ -144,24 +184,43 @@ public class BalanceFragment extends Fragment   {
 		if (remoteWallet == null) {
 			return;
 		}
+		
+	    ;
 
 		addressLabels = remoteWallet.getActiveAddresses();
+	    activeAddresses = Arrays.asList(addressLabels);
+	    
 		if (addressLabels == null) {
 			return;
 		}
 
 		addressAmounts = new String[addressLabels.length];
-		
+
    		if(!isReturnFromQR) {
 			addressLabelTxsDisplayed = new boolean[addressLabels.length];
-			for (int i = 0; i < addressLabelTxsDisplayed.length; i++) {
-				addressLabelTxsDisplayed[i] = false;
-			}		
+
+			if(sentTx != null) {
+				List<String> addressesPartOfLastSentTransaction = getAddressesPartOfLastSentTransaction(sentTx);
+				for (int i = 0; i < addressLabelTxsDisplayed.length; i++) {
+					if (addressesPartOfLastSentTransaction.contains(activeAddresses.get(i)))
+						addressLabelTxsDisplayed[i] = true;
+					else
+						addressLabelTxsDisplayed[i] = false;
+				}		
+
+			} else {
+				for (int i = 0; i < addressLabelTxsDisplayed.length; i++) {
+					addressLabelTxsDisplayed[i] = false;
+				}			
+			}
 		}
 		else {
 			isReturnFromQR = false;
 		}
 
+
+		
+   		
 		labelMap = remoteWallet.getLabelMap();
 
 		for (int i = 0; i < addressLabels.length; i++) {
@@ -498,8 +557,7 @@ public class BalanceFragment extends Fragment   {
 			return;
 		}
 
-	    final String[] activeAddresses = remoteWallet.getActiveAddresses();
-    	final String address = activeAddresses[position];
+    	final String address = activeAddresses.get(position);
 
     	ImageView qr_icon = ((ImageView)balance_extLayout.findViewById(R.id.balance_qr_icon));
         qr_icon.setOnTouchListener(new OnTouchListener() {
@@ -576,7 +634,7 @@ public class BalanceFragment extends Fragment   {
 
 	        		if (addr != null && addr.equals(address)) {
 	        			isAddressPartofTransaction = true;
-	        			result = result.add(transactionOutput.getValue());
+	        			result = result.add(transactionOutput.getValue());   
 	        			break;
 	        		}
 	            } catch (ScriptException e) {
