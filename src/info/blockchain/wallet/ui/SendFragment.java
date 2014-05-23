@@ -1172,7 +1172,7 @@ public class SendFragment extends Fragment   {
     public BigInteger getBTCAmountToSend() {
 		String amountString = edAmount1.getText().toString().trim();
     	if(! isBTC) {
-    		return BlockchainUtil.bitcoinAmountStringToBigInteger(BlockchainUtil.BTC2Fiat(amountString));
+    		return BlockchainUtil.bitcoinAmountStringToBigInteger(BlockchainUtil.Fiat2BTC(amountString));
     	} else {
     		return BlockchainUtil.bitcoinAmountStringToBigInteger(amountString);
     	}
