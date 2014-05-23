@@ -1362,7 +1362,8 @@ public class SendFragment extends Fragment   {
 		                    		
 		                    		edAddress.setText(strName);
 		                    		emailOrNumber = strEmail;
-		                    		
+		                        	sendViaEmail = true;
+		                        	sentViaSMS = false;
 		                    		// go out via email here
 			                    }
 		                    	else if(strNumber != null)	{
@@ -1378,7 +1379,8 @@ public class SendFragment extends Fragment   {
 		                        	} else {
 		                    			doSelectInternationalPrefix();				                        		
 		                        	}
-		                    		
+		                        	sendViaEmail = false;
+		                        	sentViaSMS = true;
 		                    		//go out via sms here
 		                    		
 			                    }
