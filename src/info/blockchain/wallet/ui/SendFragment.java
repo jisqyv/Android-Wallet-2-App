@@ -173,6 +173,7 @@ public class SendFragment extends Fragment   {
 	private String emailOrNumber;
 	boolean sendViaEmail;
 	boolean sentViaSMS;
+	private CustomSend cs;
 	
 	public static final String ACTION_INTENT = "info.blockchain.wallet.ui.SendFragment.BTC_ADDRESS_SCAN";
 
@@ -606,8 +607,7 @@ public class SendFragment extends Fragment   {
 						fee = baseFee;
 					} else if (sendType != null && sendType.equals(SendTypeCustomSend)) {
 						feePolicy = MyRemoteWallet.FeePolicy.FeeOnlyIfNeeded;
-						//fee = feeAmountView.getAmount();
-						fee = BigInteger.ZERO;
+						fee = cs.getFee();
 					} else {
 						fee = (wallet.getFeePolicy() == 1) ? baseFee : BigInteger.ZERO;
 					}
@@ -627,7 +627,7 @@ public class SendFragment extends Fragment   {
 										@Override
 										public void run() {
 											try {
-												send(new Address(Constants.NETWORK_PARAMETERS, addressString), finalFee, finalFeePolicy);
+												sharedSend(new Address(Constants.NETWORK_PARAMETERS, addressString), finalFee, finalFeePolicy);
 											} catch (Exception e) {
 												e.printStackTrace();
 
@@ -655,54 +655,24 @@ public class SendFragment extends Fragment   {
 
 						Address receivingAddress = new Address(Constants.NETWORK_PARAMETERS, addressString);
 
-						send(receivingAddress, fee, feePolicy);
+						if (sendType != null && sendType == SendTypeQuickSend) {
+							quickSend(receivingAddress, fee, feePolicy);
+						} else if (sendType != null && sendType == SendTypeCustomSend) {
+							customSend(receivingAddress, fee, feePolicy);
+						}
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 
-			public void send(Address receivingAddress, BigInteger fee, MyRemoteWallet.FeePolicy feePolicy) {
-
+			public void quickSend(Address receivingAddress, BigInteger fee, MyRemoteWallet.FeePolicy feePolicy) {
 				if (application.getRemoteWallet() == null)
 					return;
 
-				if (sendType != null && !sendType.equals(SendTypeQuickSend) && application.isInP2PFallbackMode()) {
-					activity.longToast(R.string.only_quick_supported);
-					return;
-				}
-
-				String[] from;
-				if (sendType != null && sendType.equals(SendTypeCustomSend)) {
-					//TODO:
-					/*
-					Pair<String, String> selected = (Pair<String, String>) sendCoinsFromSpinner.getSelectedItem();
-
-					if (selected.first.equals("Any Address")) {
-						from = application.getRemoteWallet().getActiveAddresses();
-					} else {
-						from = new String[] {selected.first.toString()};
-					}
-					*/
-					from = application.getRemoteWallet().getActiveAddresses();
-
-				} else { 
-					from = application.getRemoteWallet().getActiveAddresses();
-				}
-
-				final BigInteger amount;
-
-				if (sendType != null && sendType.equals(SendTypeSharedCoin)) {
-					BigDecimal amountDecimal = BigDecimal.valueOf(getBTCAmountToSend().doubleValue());
-
-					//Add the fee
-					amount = amountDecimal.add(amountDecimal.divide(BigDecimal.valueOf(100)).multiply(BigDecimal.valueOf(application.getRemoteWallet().getSharedFee()))).toBigInteger();
-				} else {
-					amount = getBTCAmountToSend();
-				} 
-
+				String[] from = application.getRemoteWallet().getActiveAddresses();
+				final BigInteger amount = getBTCEnteredOutputValue(edAmount1);
 				final WalletApplication application = (WalletApplication) getActivity().getApplication();
-
 				if (application.isInP2PFallbackMode()) {
 
 					final long blockchainLag = System.currentTimeMillis() - service.blockChain.getChainHead().getHeader().getTime().getTime();
@@ -715,7 +685,7 @@ public class SendFragment extends Fragment   {
 					}
 
 					// create spend
-					final SendRequest sendRequest = SendRequest.to(receivingAddress, getBTCAmountToSend());
+					final SendRequest sendRequest = SendRequest.to(receivingAddress, getBTCEnteredOutputValue(edAmount1));
 					sendRequest.fee = fee;
 
 					new Thread(new Runnable()
@@ -773,7 +743,64 @@ public class SendFragment extends Fragment   {
 
 				}
 			}
-        	
+			
+			public void customSend(Address receivingAddress, BigInteger fee, MyRemoteWallet.FeePolicy feePolicy) {
+				if (application.getRemoteWallet() == null)
+					return;
+
+				if (sendType != null && !sendType.equals(SendTypeQuickSend) && application.isInP2PFallbackMode()) {
+					activity.longToast(R.string.only_quick_supported);
+					return;
+				}
+				//TODO:
+				/*
+				Pair<String, String> selected = (Pair<String, String>) sendCoinsFromSpinner.getSelectedItem();
+
+				if (selected.first.equals("Any Address")) {
+					from = application.getRemoteWallet().getActiveAddresses();
+				} else {
+					from = new String[] {selected.first.toString()};
+				}
+				*/
+				String[] from = application.getRemoteWallet().getActiveAddresses();
+				final BigInteger amount = getBTCEnteredOutputValue(edAmount1);
+				final WalletApplication application = (WalletApplication) getActivity().getApplication();
+
+				application.getRemoteWallet().sendCoinsAsync(from, receivingAddress.toString(), amount, feePolicy, fee, progress);
+				
+				//
+				//
+				//
+				btSend.setVisibility(View.GONE);
+		        ivCheck.setVisibility(View.VISIBLE);
+		        tvSentPrompt.setVisibility(View.VISIBLE);
+
+			}
+			
+			public void sharedSend(Address receivingAddress, BigInteger fee, MyRemoteWallet.FeePolicy feePolicy) {
+				if (application.getRemoteWallet() == null)
+					return;
+
+				if (sendType != null && !sendType.equals(SendTypeQuickSend) && application.isInP2PFallbackMode()) {
+					activity.longToast(R.string.only_quick_supported);
+					return;
+				}
+				String[] from = application.getRemoteWallet().getActiveAddresses();
+
+				BigDecimal amountDecimal = BigDecimal.valueOf(getBTCEnteredOutputValue(edAmount1).doubleValue());
+				//Add the fee
+				final BigInteger amount = amountDecimal.add(amountDecimal.divide(BigDecimal.valueOf(100)).multiply(BigDecimal.valueOf(application.getRemoteWallet().getSharedFee()))).toBigInteger();
+
+				application.getRemoteWallet().sendCoinsAsync(from, receivingAddress.toString(), amount, feePolicy, fee, progress);
+				
+				//
+				//
+				//
+				btSend.setVisibility(View.GONE);
+		        ivCheck.setVisibility(View.VISIBLE);
+		        tvSentPrompt.setVisibility(View.VISIBLE);
+			}
+
             public void onClick(View v) {
 				if (application.getRemoteWallet() == null)
 					return;
@@ -787,7 +814,7 @@ public class SendFragment extends Fragment   {
 							if(sendViaEmail && emailOrNumber != null && emailOrNumber.contains("@")) {	
 
 				            	try {
-									remoteWallet.sendCoinsEmail(emailOrNumber, getBTCAmountToSend(), progressEmailSMS);
+									remoteWallet.sendCoinsEmail(emailOrNumber, getBTCEnteredOutputValue(edAmount1), progressEmailSMS);
 								} catch (Exception e) {
 									e.printStackTrace();
 								}
@@ -796,7 +823,7 @@ public class SendFragment extends Fragment   {
 									String numberFormated = emailOrNumber.replaceAll("\\D+","");	
 									numberFormated = "+"+numberFormated;
 									Log.d("sendCoinsSMS", "numberFormated: "+ numberFormated);
-									remoteWallet.sendCoinsSMS(numberFormated, getBTCAmountToSend(), progressEmailSMS);										
+									remoteWallet.sendCoinsSMS(numberFormated, getBTCEnteredOutputValue(edAmount1), progressEmailSMS);										
 								} catch (Exception e) {
 									e.printStackTrace();
 								}								
@@ -812,7 +839,7 @@ public class SendFragment extends Fragment   {
 				} else {
 					if(sendViaEmail && emailOrNumber != null && emailOrNumber.contains("@")) {	
 						try {
-							remoteWallet.sendCoinsEmail(emailOrNumber, getBTCAmountToSend(), progressEmailSMS);
+							remoteWallet.sendCoinsEmail(emailOrNumber, getBTCEnteredOutputValue(edAmount1), progressEmailSMS);
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
@@ -821,7 +848,7 @@ public class SendFragment extends Fragment   {
 							String numberFormated = emailOrNumber.replaceAll("\\D+","");	
 							numberFormated = "+"+numberFormated;
 							Log.d("sendCoinsSMS", "numberFormated: "+ numberFormated);
-							remoteWallet.sendCoinsSMS(numberFormated, getBTCAmountToSend(), progressEmailSMS);										
+							remoteWallet.sendCoinsSMS(numberFormated, getBTCEnteredOutputValue(edAmount1), progressEmailSMS);										
 						} catch (Exception e) {
 							e.printStackTrace();
 						}								
@@ -1179,8 +1206,8 @@ public class SendFragment extends Fragment   {
         return rootView;
     }
 
-    public BigInteger getBTCAmountToSend() {
-		String amountString = edAmount1.getText().toString().trim();
+    public BigInteger getBTCEnteredOutputValue(EditText edAmount) {
+		String amountString = edAmount.getText().toString().trim();
     	if(! isBTC) {
     		return BlockchainUtil.bitcoinAmountStringToBigInteger(BlockchainUtil.Fiat2BTC(amountString));
     	} else {
@@ -2067,29 +2094,30 @@ public class SendFragment extends Fragment   {
             	//
             	// get data entered by user and pass custom send instance
             	//
-            	CustomSend cs = new CustomSend();
+            	cs = new CustomSend();
             	
             	if(edAddress.getText().toString() != null && edAddress.getText().toString().length() > 0 &&
             			edAmount.getText().toString() != null && edAmount.getText().toString().length() > 0 &&
             			Double.parseDouble(edAmount.getText().toString()) > 0.0) {
-            		cs.addReceivingAddress(edAddress.getText().toString(), Double.parseDouble(edAmount.getText().toString()));
+            		cs.addReceivingAddress(edAddress.getText().toString(), getBTCEnteredOutputValue(edAmount));
+            		
             	}
             	
             	if(edAddress2.getText().toString() != null && edAddress2.getText().toString().length() > 0 &&
             			edAmount2.getText().toString() != null && edAmount2.getText().toString().length() > 0 &&
             			Double.parseDouble(edAmount2.getText().toString()) > 0.0) {
-            		cs.addReceivingAddress(edAddress2.getText().toString(), Double.parseDouble(edAmount2.getText().toString()));
+            		cs.addReceivingAddress(edAddress2.getText().toString(), getBTCEnteredOutputValue(edAmount2));
             	}
             	
             	if(edFee.getText().toString() != null && edFee.getText().toString().length() > 0 &&
             			Double.parseDouble(edFee.getText().toString()) > 0.0) {
-            		cs.setFee(Double.parseDouble(edFee.getText().toString()));
+            		cs.setFee(getBTCEnteredOutputValue(edFee));
             	}
 
             	//
             	//
             	//
-            	HashMap<String, Double> addresses = cs.getReceivingAddresses();
+            	HashMap<String, BigInteger> addresses = cs.getReceivingAddresses();
             	Set<String> keys = addresses.keySet();
             	for (Iterator iterator = keys.iterator(); iterator.hasNext();) {
                     String s = (String)iterator.next();

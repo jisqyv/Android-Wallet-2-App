@@ -1,36 +1,37 @@
 package info.blockchain.wallet.ui;
 
+import java.math.BigInteger;
 import java.util.HashMap;
 
 //import android.util.Log;
 
 public class CustomSend {
 	
-	private HashMap<String, Double> receivingAddresses;
-	private Double fee = 0.0;
+	private HashMap<String, BigInteger> receivingAddresses;
+	private BigInteger fee = null;
 	private String changeAddress = null;
 
 	public CustomSend() {
-		receivingAddresses = new HashMap<String, Double>();
+		receivingAddresses = new HashMap<String, BigInteger>();
 	}
 
-	public void addReceivingAddress(String address, double amount) {
+	public void addReceivingAddress(String address, BigInteger amount) {
 		receivingAddresses.put(address, amount);
 	}
 	
-	public void setReceivingAddresses(HashMap<String, Double> addresses) {
+	public void setReceivingAddresses(HashMap<String, BigInteger> addresses) {
 		receivingAddresses = addresses;
 	}
 
-	public HashMap<String, Double> getReceivingAddresses() {
+	public HashMap<String, BigInteger> getReceivingAddresses() {
 		return receivingAddresses;
 	}
 
-	public void setFee(double fee) {
+	public void setFee(BigInteger fee) {
 		this.fee = fee;
 	}
 
-	public double getFee() {
+	public BigInteger getFee() {
 		return fee;
 	}
 
