@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import piuk.EventListeners;
 import piuk.MyRemoteWallet;
@@ -842,61 +843,70 @@ public class SendFragment extends Fragment   {
 		    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 		        if(actionId == EditorInfo.IME_ACTION_DONE) {
 		        	
-		        	summary.setVisibility(View.VISIBLE);
-		        	summary2.setVisibility(View.VISIBLE);
-		        	tvAddress.setVisibility(View.VISIBLE);
-		        	tvAddressBis.setVisibility(View.VISIBLE);
-		        	tvArrow.setVisibility(View.VISIBLE);
-		        	tvAmount.setVisibility(View.VISIBLE);
-		        	tvAmountBis.setVisibility(View.VISIBLE);
-		        	
-//		        	final WalletApplication application = (WalletApplication)getActivity().getApplication();
-// 		    		MyRemoteWallet wallet = application.getRemoteWallet();
-// 		    		Map<String,String> labels = wallet.getLabelMap();
- 		            if(currentSelectedAddress != null) {
- 		            	tvAddressBis.setText(currentSelectedAddress.substring(0, 20) + "...");
- 		            }
- 		            else {
- 		            	tvAddressBis.setVisibility(View.GONE);
- 		            }
- //					Toast.makeText(application, "BTC going to:" + destination, Toast.LENGTH_LONG).show();
-		        	
-		        	if(edAddress.getText().toString().length() > 15) {
-			        	tvAddress.setText(edAddress.getText().toString().substring(0, 15) + "...");
+		        	if(sendType == SendTypeCustomSend) {
+
+		        		doCustomSend();
+
 		        	}
 		        	else {
-			        	tvAddress.setText(edAddress.getText().toString());
-		        	}
 
-		        	tvArrow.setText(Character.toString((char)0x2192));
+			        	summary.setVisibility(View.VISIBLE);
+			        	summary2.setVisibility(View.VISIBLE);
+			        	tvAddress.setVisibility(View.VISIBLE);
+			        	tvAddressBis.setVisibility(View.VISIBLE);
+			        	tvArrow.setVisibility(View.VISIBLE);
+			        	tvAmount.setVisibility(View.VISIBLE);
+			        	tvAmountBis.setVisibility(View.VISIBLE);
+			        	
+//			        	final WalletApplication application = (WalletApplication)getActivity().getApplication();
+//	 		    		MyRemoteWallet wallet = application.getRemoteWallet();
+//	 		    		Map<String,String> labels = wallet.getLabelMap();
+	 		            if(currentSelectedAddress != null) {
+	 		            	tvAddressBis.setText(currentSelectedAddress.substring(0, 20) + "...");
+	 		            }
+	 		            else {
+	 		            	tvAddressBis.setVisibility(View.GONE);
+	 		            }
+	 //					Toast.makeText(application, "BTC going to:" + destination, Toast.LENGTH_LONG).show();
+			        	
+			        	if(edAddress.getText().toString().length() > 15) {
+				        	tvAddress.setText(edAddress.getText().toString().substring(0, 15) + "...");
+			        	}
+			        	else {
+				        	tvAddress.setText(edAddress.getText().toString());
+			        	}
 
-		        	String amount1 = edAmount1.getText().toString();
-		        	if(amount1 == null || amount1.length() < 1) {
-		        		amount1 = "0.00";
-		        	}
-		        	String amount2 = tvAmount2.getText().toString().substring(0, tvAmount2.getText().toString().length() - 4);	// buggy
-		        	if(isBTC) {
-		        		amount1 += " BTC";
-		        		amount2 += " " + strCurrentFiatCode;
-		        	}
-		        	else {
-		        		amount1 += " " + strCurrentFiatCode;
-		        		amount2 += " BTC";
-		        	}
-		        	SpannableStringBuilder a1 = new SpannableStringBuilder(amount1);
-		        	SpannableStringBuilder a2 = new SpannableStringBuilder(amount2);
-		        	a1.setSpan(new SuperscriptSpan(), amount1.length() - 4, amount1.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-		        	a1.setSpan(new RelativeSizeSpan((float)0.50), amount1.length() - 4, amount1.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-		        	a2.setSpan(new SuperscriptSpan(), amount2.length() - 4, amount2.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-		        	a2.setSpan(new RelativeSizeSpan((float)0.50), amount2.length() - 4, amount2.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-		        	tvAmount.setText(a1);
-		        	tvAmountBis.setText(a2);
+			        	tvArrow.setText(Character.toString((char)0x2192));
 
-	            	btSend.setVisibility(View.VISIBLE);
+			        	String amount1 = edAmount1.getText().toString();
+			        	if(amount1 == null || amount1.length() < 1) {
+			        		amount1 = "0.00";
+			        	}
+			        	String amount2 = tvAmount2.getText().toString().substring(0, tvAmount2.getText().toString().length() - 4);	// buggy
+			        	if(isBTC) {
+			        		amount1 += " BTC";
+			        		amount2 += " " + strCurrentFiatCode;
+			        	}
+			        	else {
+			        		amount1 += " " + strCurrentFiatCode;
+			        		amount2 += " BTC";
+			        	}
+			        	SpannableStringBuilder a1 = new SpannableStringBuilder(amount1);
+			        	SpannableStringBuilder a2 = new SpannableStringBuilder(amount2);
+			        	a1.setSpan(new SuperscriptSpan(), amount1.length() - 4, amount1.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+			        	a1.setSpan(new RelativeSizeSpan((float)0.50), amount1.length() - 4, amount1.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+			        	a2.setSpan(new SuperscriptSpan(), amount2.length() - 4, amount2.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+			        	a2.setSpan(new RelativeSizeSpan((float)0.50), amount2.length() - 4, amount2.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+			        	tvAmount.setText(a1);
+			        	tvAmountBis.setText(a2);
 
-		        	edAmount1.clearFocus();
-	                InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-	                imm.hideSoftInputFromWindow(edAmount1.getWindowToken(), 0);
+		            	btSend.setVisibility(View.VISIBLE);
+
+			        	edAmount1.clearFocus();
+		                InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+		                imm.hideSoftInputFromWindow(edAmount1.getWindowToken(), 0);
+
+		        	}
 
 		        }
 		        return false;
@@ -1140,7 +1150,7 @@ public class SendFragment extends Fragment   {
             	layoutCustomSend.setBackgroundColor(color_spend_selected);
 //            	layoutSharedSend.setBackgroundColor(color_spend_unselected);
             	
-    			doCustomSend();
+//    			doCustomSend();
 
                 return true;
             }
@@ -1830,9 +1840,11 @@ public class SendFragment extends Fragment   {
     		removeMagicList();
     	}
 
+    	/*
     	if(magic != null) {
     		magic.setVisibility(View.GONE);
     	}
+    	*/
 
     	simple_spend.setVisibility(View.GONE);
     	custom_spend.setVisibility(View.VISIBLE);
@@ -1876,8 +1888,10 @@ public class SendFragment extends Fragment   {
     	((LinearLayout)layout_from.findViewById(R.id.divider1)).setBackgroundColor(0xFF3eb6e2);
     	((LinearLayout)layout_from.findViewById(R.id.p1)).setGravity(Gravity.RIGHT|Gravity.CENTER_VERTICAL);
     	((LinearLayout)layout_from.findViewById(R.id.p1)).addView(tvSpend);
-    	
+
+    	/*
         TextView tvSendingAddress = new TextView(getActivity());
+        tvSendingAddress.setId(ViewIdGenerator.generateViewId());
         tvSendingAddress.setText("Walking around money");
         tvSendingAddress.setTextSize(16);
         tvSendingAddress.setPadding(5, 5, 5, 5);
@@ -1886,17 +1900,33 @@ public class SendFragment extends Fragment   {
         tvSendingAddress.setLayoutParams(layout_params);
     	((LinearLayout)layout_from.findViewById(R.id.p2)).setGravity(Gravity.LEFT|Gravity.CENTER_VERTICAL);
     	((LinearLayout)layout_from.findViewById(R.id.p2)).addView(tvSendingAddress);
+    	*/
 
-    	EditText edAmount = new EditText(getActivity());
+        final EditText edAddress = new EditText(getActivity());
+        edAddress.setId(ViewIdGenerator.generateViewId());
+        edAddress.setText("");
+        edAddress.setTextSize(16);
+        edAddress.setTextColor(Color.BLACK);
+        edAddress.setPadding(5, 5, 5, 5);
+        edAddress.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+        layout_params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+        edAddress.setLayoutParams(layout_params);
+    	((LinearLayout)layout_from.findViewById(R.id.p2)).setGravity(Gravity.LEFT|Gravity.CENTER_VERTICAL);
+    	((LinearLayout)layout_from.findViewById(R.id.p2)).addView(edAddress);
+
+    	final EditText edAmount = new EditText(getActivity());
+        edAmount.setId(ViewIdGenerator.generateViewId());
         edAmount.setText("0.00");
         edAmount.setTextSize(16);
+        edAmount.setTextColor(Color.BLACK);
         edAmount.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
         edAmount.setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
         edAmount.setTextColor(BlockchainUtil.BLOCKCHAIN_RED);
         edAmount.setLayoutParams(layout_params);
     	((LinearLayout)layout_from.findViewById(R.id.p3)).setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
     	((LinearLayout)layout_from.findViewById(R.id.p3)).addView(edAmount);
-    	
+
+    	/*
     	ImageButton ibPlus = new ImageButton(getActivity());
     	ibPlus.setImageResource(R.drawable.plus_icon);
     	((LinearLayout)layout_from.findViewById(R.id.plus)).addView(ibPlus);
@@ -1905,14 +1935,62 @@ public class SendFragment extends Fragment   {
             	addSendingAddress();
             }
         });
+        */
 
     	((LinearLayout)layout_custom_spend.findViewById(R.id.froms)).addView(layout_from);
     	lastSendingAddress = layout_from;
+    	
+    	/*
+    	 * 
+    	 */
 
+        // second send address
+        TextView tvSpend2 = new TextView(getActivity());
+        tvSpend2.setText("");
+        tvSpend2.setTextSize(12);
+        tvSpend2.setPadding(5, 5, 5, 5);
+        tvSpend2.setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
+        layout_params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+        tvSpend2.setLayoutParams(layout_params);
+    	((LinearLayout)layout_from2.findViewById(R.id.divider1)).setBackgroundColor(0xFF3eb6e2);
+    	((LinearLayout)layout_from2.findViewById(R.id.p1)).setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
+    	((LinearLayout)layout_from2.findViewById(R.id.p1)).addView(tvSpend2);
+    	
+        final EditText edAddress2 = new EditText(getActivity());
+        edAddress2.setId(ViewIdGenerator.generateViewId());
+        edAddress2.setText("");
+        edAddress2.setTextSize(16);
+        edAddress2.setTextColor(Color.BLACK);
+        edAddress2.setPadding(5, 5, 5, 5);
+        edAddress2.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+        layout_params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+        edAddress.setLayoutParams(layout_params);
+    	((LinearLayout)layout_from2.findViewById(R.id.p2)).setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+    	((LinearLayout)layout_from2.findViewById(R.id.p2)).addView(edAddress2);
+
+    	final EditText edAmount2 = new EditText(getActivity());
+        edAmount2.setId(ViewIdGenerator.generateViewId());
+        edAmount2.setText("0.00");
+        edAmount2.setTextSize(16);
+        edAmount2.setTextColor(Color.BLACK);
+        edAmount2.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        edAmount2.setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
+        edAmount2.setTextColor(BlockchainUtil.BLOCKCHAIN_RED);
+        edAmount2.setLayoutParams(layout_params);
+    	((LinearLayout)layout_from2.findViewById(R.id.p3)).setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
+    	((LinearLayout)layout_from2.findViewById(R.id.p3)).addView(edAmount2);
+
+    	((LinearLayout)layout_custom_spend.findViewById(R.id.froms)).addView(layout_from2);
+
+    	/*
+    	 * 
+    	 */
+    	
         //
         // 'FEE' layout
         //
         TextView tvFee = new TextView(getActivity());
+        tvFee.setId(ViewIdGenerator.generateViewId());
     	tvFee.setTextColor(0xFFFF0000);
     	tvFee.setTypeface(null, Typeface.BOLD);
         tvFee.setText("FEE");
@@ -1924,9 +2002,11 @@ public class SendFragment extends Fragment   {
     	((LinearLayout)layout_fee.findViewById(R.id.divider1)).setBackgroundColor(BlockchainUtil.BLOCKCHAIN_RED);
     	((LinearLayout)layout_fee.findViewById(R.id.p1)).setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
     	((LinearLayout)layout_fee.findViewById(R.id.p1)).addView(tvFee);
-    	EditText edFee = new EditText(getActivity());
+    	final EditText edFee = new EditText(getActivity());
+        edFee.setId(ViewIdGenerator.generateViewId());
         edFee.setText("0.005");
         edFee.setTextSize(16);
+        edFee.setTextColor(Color.BLACK);
         edFee.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
         edFee.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
         edFee.setLayoutParams(layout_params);
@@ -1978,6 +2058,56 @@ public class SendFragment extends Fragment   {
     	((LinearLayout)layout_custom_spend.findViewById(R.id.custom_spend)).addView(layout_change);
     	*/
     	
+    	Button btConfirm = new Button(getActivity());
+    	btConfirm.setText("OK");
+    	btConfirm.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+        btConfirm.setOnClickListener(new Button.OnClickListener() {
+            public void onClick(View v) {
+
+            	//
+            	// get data entered by user and pass custom send instance
+            	//
+            	CustomSend cs = new CustomSend();
+            	
+            	if(edAddress.getText().toString() != null && edAddress.getText().toString().length() > 0 &&
+            			edAmount.getText().toString() != null && edAmount.getText().toString().length() > 0 &&
+            			Double.parseDouble(edAmount.getText().toString()) > 0.0) {
+            		cs.addReceivingAddress(edAddress.getText().toString(), Double.parseDouble(edAmount.getText().toString()));
+            	}
+            	
+            	if(edAddress2.getText().toString() != null && edAddress2.getText().toString().length() > 0 &&
+            			edAmount2.getText().toString() != null && edAmount2.getText().toString().length() > 0 &&
+            			Double.parseDouble(edAmount2.getText().toString()) > 0.0) {
+            		cs.addReceivingAddress(edAddress2.getText().toString(), Double.parseDouble(edAmount2.getText().toString()));
+            	}
+            	
+            	if(edFee.getText().toString() != null && edFee.getText().toString().length() > 0 &&
+            			Double.parseDouble(edFee.getText().toString()) > 0.0) {
+            		cs.setFee(Double.parseDouble(edFee.getText().toString()));
+            	}
+
+            	//
+            	//
+            	//
+            	HashMap<String, Double> addresses = cs.getReceivingAddresses();
+            	Set<String> keys = addresses.keySet();
+            	for (Iterator iterator = keys.iterator(); iterator.hasNext();) {
+                    String s = (String)iterator.next();
+            		Toast.makeText(getActivity(), "Address:" + s + ", amount:" + addresses.get(s), Toast.LENGTH_SHORT).show();
+                }
+        		Toast.makeText(getActivity(), "Fee:" + cs.getFee(), Toast.LENGTH_SHORT).show();
+        		//
+        		//
+        		//
+
+            	//
+            	// take 'cs' here and initiate custom send
+            	//
+
+            }
+        });
+    	((LinearLayout)layout_custom_spend.findViewById(R.id.custom_spend)).addView(btConfirm);
+
         LinearLayout container = ((LinearLayout)rootView.findViewById(R.id.custom_spend));
         sendViewToBack(container);
 
@@ -2008,6 +2138,7 @@ public class SendFragment extends Fragment   {
     	((LinearLayout)layout_from2.findViewById(R.id.p1)).addView(tvSpend);
     	
         TextView tvSendingAddress = new TextView(getActivity());
+        tvSendingAddress.setId(ViewIdGenerator.generateViewId());
         tvSendingAddress.setText("Lukewarm storage");
         tvSendingAddress.setTextSize(16);
         tvSendingAddress.setPadding(5, 5, 5, 5);
@@ -2018,6 +2149,7 @@ public class SendFragment extends Fragment   {
     	((LinearLayout)layout_from2.findViewById(R.id.p2)).addView(tvSendingAddress);
 
     	EditText edAmount = new EditText(getActivity());
+        edAmount.setId(ViewIdGenerator.generateViewId());
         edAmount.setText("0.00");
         edAmount.setTextSize(16);
         edAmount.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
