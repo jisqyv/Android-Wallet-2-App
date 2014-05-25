@@ -524,7 +524,7 @@ public abstract class AbstractWalletActivity extends FragmentActivity {
 
 										BigInteger baseFee = wallet.getBaseFee();
 
-										wallet.sendCoinsAsync(to.toString(), finalBalance.subtract(baseFee), MyRemoteWallet.FeePolicy.FeeForce, baseFee, new SendProgress() {
+										wallet.simpleSendCoinsAsync(to.toString(), finalBalance.subtract(baseFee), MyRemoteWallet.FeePolicy.FeeForce, baseFee, new SendProgress() {
 
 											@Override
 											public boolean onReady(

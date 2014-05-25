@@ -670,7 +670,6 @@ public class SendFragment extends Fragment   {
 				if (application.getRemoteWallet() == null)
 					return;
 
-				String[] from = application.getRemoteWallet().getActiveAddresses();
 				final BigInteger amount = getBTCEnteredOutputValue(edAmount1);
 				final WalletApplication application = (WalletApplication) getActivity().getApplication();
 				if (application.isInP2PFallbackMode()) {
@@ -732,7 +731,7 @@ public class SendFragment extends Fragment   {
 						}
 					}).start();
 				} else {
-					application.getRemoteWallet().sendCoinsAsync(from, receivingAddress.toString(), amount, feePolicy, fee, progress);
+					application.getRemoteWallet().simpleSendCoinsAsync(receivingAddress.toString(), amount, feePolicy, fee, progress);
 					
 					//
 					//
@@ -766,7 +765,7 @@ public class SendFragment extends Fragment   {
 				final BigInteger amount = getBTCEnteredOutputValue(edAmount1);
 				final WalletApplication application = (WalletApplication) getActivity().getApplication();
 
-				application.getRemoteWallet().sendCoinsAsync(from, receivingAddress.toString(), amount, feePolicy, fee, progress);
+				application.getRemoteWallet().sendCoinsAsync(from, cs.getReceivingAddresses(), feePolicy, fee, cs.getChangeAddress(), progress);
 				
 				//
 				//
@@ -791,7 +790,7 @@ public class SendFragment extends Fragment   {
 				//Add the fee
 				final BigInteger amount = amountDecimal.add(amountDecimal.divide(BigDecimal.valueOf(100)).multiply(BigDecimal.valueOf(application.getRemoteWallet().getSharedFee()))).toBigInteger();
 
-				application.getRemoteWallet().sendCoinsAsync(from, receivingAddress.toString(), amount, feePolicy, fee, progress);
+				//application.getRemoteWallet().sendCoinsAsync(from, receivingAddress.toString(), amount, feePolicy, fee, progress);
 				
 				//
 				//
