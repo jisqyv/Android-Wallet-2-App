@@ -246,7 +246,7 @@ public class RekeyWalletDialog extends DialogFragment {
 						} else {
 							//Else save and sweep the wallet
 							String[] type = new String[0];
-							wallet.sendCoinsAsync(insecure_addresses.toArray(type), new_address, balanceOfInsecureFinal.subtract(baseFee), MyRemoteWallet.FeePolicy.FeeForce, baseFee, new SendProgress() {
+							wallet.sendCoinsAsync(insecure_addresses.toArray(type), new_address, balanceOfInsecureFinal.subtract(baseFee), MyRemoteWallet.FeePolicy.FeeForce, baseFee, null, new SendProgress() {
 								@Override
 								public boolean onReady(
 										Transaction tx,

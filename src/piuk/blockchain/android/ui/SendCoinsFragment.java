@@ -582,7 +582,7 @@ public final class SendCoinsFragment extends Fragment
 						}
 					}).start();
 				} else {
-					application.getRemoteWallet().sendCoinsAsync(from, receivingAddress.toString(), amount, feePolicy, fee, progress);
+					application.getRemoteWallet().sendCoinsAsync(from, receivingAddress.toString(), amount, feePolicy, fee, null, progress);
 				}
 			}
 

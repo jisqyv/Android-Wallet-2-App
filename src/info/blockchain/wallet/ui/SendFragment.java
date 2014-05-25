@@ -123,8 +123,8 @@ public class SendFragment extends Fragment   {
     private TextView tvAmount2 = null;
     private EditText edAddress = null;
     private TextView tvCurrency = null;
-    private LinearLayout summary = null;
     private LinearLayout summary2 = null;
+    private LinearLayout summary3 = null;
     
     private TextView tvAmount = null;
     private TextView tvAmountBis = null;
@@ -151,7 +151,7 @@ public class SendFragment extends Fragment   {
     private ImageView ivPhoneContacts = null;
 
     private Button btSend = null;
-    private ImageView ivCheck = null;
+//    private ImageView ivCheck = null;
     private TextView tvSentPrompt = null;
     
     private List<HashMap<String,String>> magicData = null;
@@ -171,8 +171,8 @@ public class SendFragment extends Fragment   {
 	private Map<String,String> labels;
 	private List<Map<String, Object>> addressBookMapList;
 	private String emailOrNumber;
-	boolean sendViaEmail;
-	boolean sentViaSMS;
+	private boolean sendViaEmail;
+	private boolean sentViaSMS;
 	private CustomSend cs;
 	
 	public static final String ACTION_INTENT = "info.blockchain.wallet.ui.SendFragment.BTC_ADDRESS_SCAN";
@@ -281,14 +281,16 @@ public class SendFragment extends Fragment   {
         tvAddressBis = (TextView)rootView.findViewById(R.id.sending_address_bis);
         tvAddressBis.setVisibility(View.INVISIBLE);
 
-        summary = (LinearLayout)rootView.findViewById(R.id.summary);
-        summary.setVisibility(View.INVISIBLE);
+//        summary = (LinearLayout)rootView.findViewById(R.id.summary);
+//        summary.setVisibility(View.INVISIBLE);
         summary2 = (LinearLayout)rootView.findViewById(R.id.summary2);
         summary2.setVisibility(View.INVISIBLE);
+        summary3 = (LinearLayout)rootView.findViewById(R.id.summary3);
+        summary3.setVisibility(View.GONE);
 
         btSend = (Button)rootView.findViewById(R.id.send);
-        ivCheck = ((ImageButton)rootView.findViewById(R.id.sent_check));
-        ivCheck.setVisibility(View.GONE);
+//        ivCheck = ((ImageButton)rootView.findViewById(R.id.sent_check));
+//        ivCheck.setVisibility(View.GONE);
         tvSentPrompt = (TextView)rootView.findViewById(R.id.sent_prompt);
         tvSentPrompt.setVisibility(View.GONE);
         
@@ -737,7 +739,8 @@ public class SendFragment extends Fragment   {
 					//
 					//
 					btSend.setVisibility(View.GONE);
-			        ivCheck.setVisibility(View.VISIBLE);
+//			        ivCheck.setVisibility(View.VISIBLE);
+			        summary3.setVisibility(View.VISIBLE);
 			        tvSentPrompt.setVisibility(View.VISIBLE);
 
 				}
@@ -771,7 +774,8 @@ public class SendFragment extends Fragment   {
 				//
 				//
 				btSend.setVisibility(View.GONE);
-		        ivCheck.setVisibility(View.VISIBLE);
+//		        ivCheck.setVisibility(View.VISIBLE);
+		        summary3.setVisibility(View.VISIBLE);
 		        tvSentPrompt.setVisibility(View.VISIBLE);
 
 			}
@@ -796,7 +800,8 @@ public class SendFragment extends Fragment   {
 				//
 				//
 				btSend.setVisibility(View.GONE);
-		        ivCheck.setVisibility(View.VISIBLE);
+//		        ivCheck.setVisibility(View.VISIBLE);
+		        summary3.setVisibility(View.VISIBLE);
 		        tvSentPrompt.setVisibility(View.VISIBLE);
 			}
 
@@ -876,7 +881,7 @@ public class SendFragment extends Fragment   {
 		        	}
 		        	else {
 
-			        	summary.setVisibility(View.VISIBLE);
+//			        	summary.setVisibility(View.VISIBLE);
 			        	summary2.setVisibility(View.VISIBLE);
 			        	tvAddress.setVisibility(View.VISIBLE);
 			        	tvAddressBis.setVisibility(View.VISIBLE);
@@ -942,9 +947,11 @@ public class SendFragment extends Fragment   {
         edAmount1.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
 
+            	/*
             	if(ivCheck.getVisibility() == View.VISIBLE) {
             		clearSent();
             	}
+            	*/
 
             }
         });
@@ -1016,9 +1023,11 @@ public class SendFragment extends Fragment   {
 
             	}
 
+            	/*
             	if(ivCheck.getVisibility() == View.VISIBLE) {
             		clearSent();
             	}
+            	*/
             }
         });
 
@@ -1099,7 +1108,7 @@ public class SendFragment extends Fragment   {
                 	tvAmount2.setText("0.00");
             	}
             	
-                summary.setVisibility(View.INVISIBLE);
+//                summary.setVisibility(View.INVISIBLE);
                 summary2.setVisibility(View.INVISIBLE);
                 tvAmount.setText("");
                 tvAmount.setVisibility(View.INVISIBLE);
@@ -1115,7 +1124,8 @@ public class SendFragment extends Fragment   {
                 btSend.setText("Send money");
                 btSend.setVisibility(View.INVISIBLE);
 
-                ivCheck.setVisibility(View.GONE);
+//                ivCheck.setVisibility(View.GONE);
+                summary3.setVisibility(View.GONE);
                 tvSentPrompt.setVisibility(View.GONE);
 
             	if(!isMagic) {
@@ -2210,8 +2220,9 @@ public class SendFragment extends Fragment   {
     }
 
     private void clearSent()	{
-        summary.setVisibility(View.INVISIBLE);
+//        summary.setVisibility(View.INVISIBLE);
         summary2.setVisibility(View.INVISIBLE);
+        summary3.setVisibility(View.GONE);
         tvAmount.setText("");
         tvAmount.setVisibility(View.INVISIBLE);
         tvAmountBis.setText("");
@@ -2226,7 +2237,7 @@ public class SendFragment extends Fragment   {
         btSend.setText("Send money");
         btSend.setVisibility(View.INVISIBLE);
 
-        ivCheck.setVisibility(View.GONE);
+//        ivCheck.setVisibility(View.GONE);
         tvSentPrompt.setVisibility(View.GONE);
     }
 
