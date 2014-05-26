@@ -1906,7 +1906,7 @@ public class SendFragment extends Fragment   {
 		final List<String> addresses = new ArrayList<String>();
 		addresses.add("");
 		addresses.addAll(Arrays.asList(wallet.getActiveAddresses()));
-		List<String> displayAddresses = new ArrayList<String>();
+		final List<String> displayAddresses = new ArrayList<String>();
 		displayAddresses.add("Select address");
 		Map<String,String> labels = wallet.getLabelMap();
         for(int i = 1; i < addresses.size(); i++) {
@@ -1991,7 +1991,7 @@ public class SendFragment extends Fragment   {
 
     	final EditText edAmount = new EditText(new ContextThemeWrapper(getActivity(), android.R.style.Theme_Holo_InputMethod));
         edAmount.setId(ViewIdGenerator.generateViewId());
-//        edAmount.setHint("0.0000");
+        edAmount.setHint("0.0000");
         edAmount.setTextSize(16);
         edAmount.setTextColor(Color.BLACK);
         edAmount.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
@@ -2001,16 +2001,14 @@ public class SendFragment extends Fragment   {
     	((LinearLayout)layout_from.findViewById(R.id.p3)).setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
     	((LinearLayout)layout_from.findViewById(R.id.p3)).addView(edAmount);
 
-    	/*
     	ImageButton ibPlus = new ImageButton(getActivity());
     	ibPlus.setImageResource(R.drawable.plus_icon);
     	((LinearLayout)layout_from.findViewById(R.id.plus)).addView(ibPlus);
         ibPlus.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
-            	addSendingAddress();
+            	addSendingAddress(displayAddresses);
             }
         });
-        */
 
     	((LinearLayout)layout_custom_spend.findViewById(R.id.froms)).addView(layout_from);
     	lastSendingAddress = layout_from;
@@ -2019,6 +2017,7 @@ public class SendFragment extends Fragment   {
     	 * 
     	 */
 
+    	/*
         // second send address
         TextView tvSpend2 = new TextView(getActivity());
         tvSpend2.setText("");
@@ -2044,7 +2043,7 @@ public class SendFragment extends Fragment   {
 
     	final EditText edAmount2 = new EditText(new ContextThemeWrapper(getActivity(), android.R.style.Theme_Holo_InputMethod));
         edAmount2.setId(ViewIdGenerator.generateViewId());
-//        edAmount2.setHint("0.0000");
+        edAmount2.setHint("0.0000");
         edAmount2.setTextSize(16);
         edAmount2.setTextColor(Color.BLACK);
         edAmount2.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
@@ -2055,6 +2054,7 @@ public class SendFragment extends Fragment   {
     	((LinearLayout)layout_from2.findViewById(R.id.p3)).addView(edAmount2);
 
     	((LinearLayout)layout_custom_spend.findViewById(R.id.froms)).addView(layout_from2);
+    	*/
 
     	/*
     	 * 
@@ -2088,7 +2088,7 @@ public class SendFragment extends Fragment   {
     	((LinearLayout)layout_fee.findViewById(R.id.p2)).setGravity(Gravity.LEFT|Gravity.CENTER_VERTICAL);
     	final EditText edFee = new EditText(new ContextThemeWrapper(getActivity(), android.R.style.Theme_Holo_InputMethod));
         edFee.setId(ViewIdGenerator.generateViewId());
-//        edFee.setHint("0.0001");
+        edFee.setHint("0.0001");
         edFee.setTextSize(16);
         edFee.setTextColor(Color.BLACK);
         edFee.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
@@ -2176,11 +2176,13 @@ public class SendFragment extends Fragment   {
             		cs.addReceivingAddress(addresses.get(spAddress.getSelectedItemPosition()), getBTCEnteredOutputValue(edAmount));
             	}
 
+            	/*
             	if(spAddress2.getSelectedItemPosition() != 0 &&
             			edAmount2.getText().toString() != null && edAmount2.getText().toString().length() > 0 &&
             			Double.parseDouble(edAmount2.getText().toString()) > 0.0) {
             		cs.addReceivingAddress(addresses.get(spAddress2.getSelectedItemPosition()), getBTCEnteredOutputValue(edAmount2));
             	}
+            	*/
             	
             	if(edFee.getText().toString() != null && edFee.getText().toString().length() > 0 &&
             			Double.parseDouble(edFee.getText().toString()) > 0.0) {
@@ -2214,7 +2216,7 @@ public class SendFragment extends Fragment   {
 
     }
 
-    private void addSendingAddress() {
+    private void addSendingAddress(final List<String> displayAddresses) {
     	
     	if(lastSendingAddress != null) {
         	((LinearLayout)lastSendingAddress.findViewById(R.id.plus)).getChildAt(0).setVisibility(View.INVISIBLE);
@@ -2238,21 +2240,23 @@ public class SendFragment extends Fragment   {
     	((LinearLayout)layout_from2.findViewById(R.id.p1)).setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
     	((LinearLayout)layout_from2.findViewById(R.id.p1)).addView(tvSpend);
     	
-        TextView tvSendingAddress = new TextView(getActivity());
-        tvSendingAddress.setId(ViewIdGenerator.generateViewId());
-        tvSendingAddress.setText("Lukewarm storage");
-        tvSendingAddress.setTextSize(16);
-        tvSendingAddress.setPadding(5, 5, 5, 5);
-        tvSendingAddress.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+    	final Spinner spAddress = new Spinner(getActivity());
+        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.layout_spinner_item, displayAddresses);
+        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spAddress.setAdapter(spinnerArrayAdapter);
+        spAddress.setSelection(0);
+        spAddress.setPadding(5, 5, 5, 5);
+        spAddress.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
         layout_params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-        tvSendingAddress.setLayoutParams(layout_params);
-    	((LinearLayout)layout_from2.findViewById(R.id.p2)).setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
-    	((LinearLayout)layout_from2.findViewById(R.id.p2)).addView(tvSendingAddress);
+        spAddress.setLayoutParams(layout_params);
+    	((LinearLayout)layout_from2.findViewById(R.id.p2)).setGravity(Gravity.LEFT|Gravity.CENTER_VERTICAL);
+    	((LinearLayout)layout_from2.findViewById(R.id.p2)).addView(spAddress);
 
-    	EditText edAmount = new EditText(getActivity());
+    	final EditText edAmount = new EditText(new ContextThemeWrapper(getActivity(), android.R.style.Theme_Holo_InputMethod));
         edAmount.setId(ViewIdGenerator.generateViewId());
-        edAmount.setText("0.00");
+        edAmount.setHint("0.0000");
         edAmount.setTextSize(16);
+        edAmount.setTextColor(Color.BLACK);
         edAmount.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
         edAmount.setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
         edAmount.setTextColor(BlockchainUtil.BLOCKCHAIN_RED);
@@ -2265,7 +2269,7 @@ public class SendFragment extends Fragment   {
     	((LinearLayout)layout_from2.findViewById(R.id.plus)).addView(ibPlus);
         ibPlus.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
-            	addSendingAddress();
+            	addSendingAddress(displayAddresses);
             }
         });
 
