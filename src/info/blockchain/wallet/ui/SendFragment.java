@@ -1890,11 +1890,20 @@ public class SendFragment extends Fragment   {
 		Map<String,String> labels = wallet.getLabelMap();
         for(int i = 1; i < addresses.size(); i++) {
 	        String label = labels.get(addresses.get(i));
-	        String labelOrAddress;
+	        String amount = null;
+		    BigInteger finalBalance = wallet.getBalance(addresses.get(i));
+
+		    if(finalBalance != null) {
+		    	amount = ", " + BlockchainUtil.formatBitcoin(finalBalance) + "BTC";
+		    }
+		    else {
+		    	amount = "";
+		    }
+
 	        if (label != null) {
-	        	displayAddresses.add(label);
+	        	displayAddresses.add(label + amount);
 	        } else {
-	        	displayAddresses.add(addresses.get(i));
+	        	displayAddresses.add(addresses.get(i).substring(0,  15) + "..." + amount);
 	        }
         }
 
