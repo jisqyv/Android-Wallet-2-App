@@ -254,6 +254,13 @@ public class ReceiveFragment extends Fragment   {
         tvAmount2 = ((TextView)rootView.findViewById(R.id.amount2));
         tvAmount2.setText("0.00 USD");
         edAmount1 = ((EditText)rootView.findViewById(R.id.amount1));
+      	edAmount1.setText("");
+      	if(isBTC) {
+          	edAmount1.setHint("0.0000");
+      	}
+      	else {
+          	edAmount1.setHint("0.00");
+      	}
         edAmount1.setOnEditorActionListener(new OnEditorActionListener() {
 		    @Override
 		    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -379,6 +386,12 @@ public class ReceiveFragment extends Fragment   {
                 if(hasFocus) {
                     if(edAmount1.getText().toString() != null && edAmount1.getText().toString().length() > 0) {
             			edAmount1.setText("");
+                    	if(isBTC) {
+                			edAmount1.setHint("0.0000");
+                    	}
+                    	else {
+                			edAmount1.setHint("0.00");
+                    	}
                     	/*
                     	try {
                     		Double val = Double.parseDouble(edAmount1.getText().toString());
@@ -478,6 +491,13 @@ public class ReceiveFragment extends Fragment   {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
             	edAddress.setText("");
+              	edAmount1.setText("");
+              	if(isBTC) {
+                  	edAmount1.setHint("0.0000");
+              	}
+              	else {
+                  	edAmount1.setHint("0.00");
+              	}
             	edAmount1.setText("0.0000");
             	tvAmount2.setText("0.0000");
             	isBTC = true;
@@ -872,6 +892,13 @@ public class ReceiveFragment extends Fragment   {
         tvArrow.setText("");
         tvArrow.setVisibility(View.INVISIBLE);
         */
+      	edAmount1.setText("");
+      	if(isBTC) {
+          	edAmount1.setHint("0.0000");
+      	}
+      	else {
+          	edAmount1.setHint("0.00");
+      	}
         tvAddress.setText("");
         tvAddress.setVisibility(View.INVISIBLE);
         tvAddressBis.setText("");

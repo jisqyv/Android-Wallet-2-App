@@ -871,6 +871,13 @@ public class SendFragment extends Fragment   {
         tvAmount2 = ((TextView)rootView.findViewById(R.id.amount2));
         tvAmount2.setText("0.00 USD");
         edAmount1 = ((EditText)rootView.findViewById(R.id.amount1));
+      	edAmount1.setText("");
+      	if(isBTC) {
+          	edAmount1.setHint("0.0000");
+      	}
+      	else {
+          	edAmount1.setHint("0.00");
+      	}
         edAmount1.setFocusableInTouchMode(true);
         edAmount1.setOnEditorActionListener(new OnEditorActionListener() {
 		    @Override
@@ -1000,6 +1007,12 @@ public class SendFragment extends Fragment   {
                 if(hasFocus) {
                     if(edAmount1.getText().toString() != null && edAmount1.getText().toString().length() > 0) {
             			edAmount1.setText("");
+                    	if(isBTC) {
+                			edAmount1.setHint("0.0000");
+                    	}
+                    	else {
+                			edAmount1.setHint("0.00");
+                    	}
                     	/*
                     	try {
                     		Double val = Double.parseDouble(edAmount1.getText().toString());
@@ -1102,7 +1115,13 @@ public class SendFragment extends Fragment   {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
             	edAddress.setText("");
-            	edAmount1.setText("0.0000");
+              	edAmount1.setText("");
+              	if(isBTC) {
+                  	edAmount1.setHint("0.0000");
+              	}
+              	else {
+                  	edAmount1.setHint("0.00");
+              	}
             	tvAmount2.setText("0.0000");
             	isBTC = true;
             	
@@ -2252,6 +2271,13 @@ public class SendFragment extends Fragment   {
 //        summary.setVisibility(View.INVISIBLE);
         summary2.setVisibility(View.INVISIBLE);
         summary3.setVisibility(View.GONE);
+      	edAmount1.setText("");
+      	if(isBTC) {
+          	edAmount1.setHint("0.0000");
+      	}
+      	else {
+          	edAmount1.setHint("0.00");
+      	}
         tvAmount.setText("");
         tvAmount.setVisibility(View.INVISIBLE);
         tvAmountBis.setText("");
@@ -2263,7 +2289,7 @@ public class SendFragment extends Fragment   {
         tvAddressBis.setText("");
         tvAddressBis.setVisibility(View.INVISIBLE);
 
-        btSend.setText("Send money");
+        btSend.setText("Send");
         btSend.setVisibility(View.INVISIBLE);
 
 //        ivCheck.setVisibility(View.GONE);
