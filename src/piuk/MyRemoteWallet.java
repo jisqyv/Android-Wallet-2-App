@@ -920,7 +920,7 @@ public class MyRemoteWallet extends MyWallet {
 		BigInteger valueNeeded =  outputValueSum.add(fee);
 		BigInteger minFreeOutputSize = BigInteger.valueOf(1000000);
 
-		MyTransactionOutPoint firstOutPoint = null;
+		MyTransactionOutPoint changeOutPoint = null;
 
 		for (MyTransactionOutPoint outPoint : unspent) {
 
@@ -940,11 +940,18 @@ public class MyRemoteWallet extends MyWallet {
 
 			priority += outPoint.value.longValue() * outPoint.confirmations;
 
-			if (firstOutPoint == null)
-				firstOutPoint = outPoint;
+			if (changeAddress == null && changeOutPoint == null) {
+				BitcoinScript inputScript = new BitcoinScript(outPoint.getConnectedPubKeyScript());
+				if (receivingAddresses.get(inputScript.getAddress().toString()) == null)
+					changeOutPoint = outPoint;
+			}
 
-			if (valueSelected.compareTo(valueNeeded) == 0 || valueSelected.compareTo(valueNeeded.add(minFreeOutputSize)) >= 0)
+			if (valueSelected.compareTo(valueNeeded) == 0 || valueSelected.compareTo(valueNeeded.add(minFreeOutputSize)) >= 0) {
+				if (changeAddress == null && changeOutPoint == null) {
+					changeOutPoint = outPoint;
+				}
 				break;
+			}
 		}
 
 		//Check the amount we have selected is greater than the amount we need
@@ -959,11 +966,13 @@ public class MyRemoteWallet extends MyWallet {
 			BitcoinScript change_script;
 			if (changeAddress != null) {
 				change_script = BitcoinScript.createSimpleOutBitoinScript(new BitcoinAddress(changeAddress));
-			} else {
-				BitcoinScript inputScript = new BitcoinScript(firstOutPoint.getConnectedPubKeyScript());
+			} else if (changeOutPoint != null) {
+				BitcoinScript inputScript = new BitcoinScript(changeOutPoint.getConnectedPubKeyScript());
 				
 				//Return change to the first address
 				change_script = BitcoinScript.createSimpleOutBitoinScript(inputScript.getAddress());
+			} else {
+				throw new Exception("Invalid transaction attempt");
 			}
 			TransactionOutput change_output = new TransactionOutput(params, null, change, change_script.getProgram());
 
