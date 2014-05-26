@@ -66,6 +66,9 @@ import android.widget.ImageView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ImageButton;
+import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
+import android.widget.ArrayAdapter;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.LinearLayout.LayoutParams;
@@ -159,7 +162,7 @@ public class SendFragment extends Fragment   {
 	private MagicAdapter adapter = null;
 	private String currentSelectedAddress = null;
 
-	private boolean isBTC = false;
+	private boolean isBTC = true;
 
 	private WalletApplication application;
 	private final Handler handler = new Handler();
@@ -866,7 +869,7 @@ public class SendFragment extends Fragment   {
         });
 
         tvAmount2 = ((TextView)rootView.findViewById(R.id.amount2));
-        tvAmount2.setText("0.0000 BTC");
+        tvAmount2.setText("0.00 USD");
         edAmount1 = ((EditText)rootView.findViewById(R.id.amount1));
         edAmount1.setFocusableInTouchMode(true);
         edAmount1.setOnEditorActionListener(new OnEditorActionListener() {
@@ -1099,14 +1102,9 @@ public class SendFragment extends Fragment   {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
             	edAddress.setText("");
-            	if(isBTC) {
-                	edAmount1.setText("0.00");
-                	tvAmount2.setText("0.00");
-            	}
-            	else {
-                	edAmount1.setText("0.00");
-                	tvAmount2.setText("0.00");
-            	}
+            	edAmount1.setText("0.0000");
+            	tvAmount2.setText("0.0000");
+            	isBTC = true;
             	
 //                summary.setVisibility(View.INVISIBLE);
                 summary2.setVisibility(View.INVISIBLE);
@@ -1881,6 +1879,30 @@ public class SendFragment extends Fragment   {
     		magic.setVisibility(View.GONE);
     	}
     	*/
+    	
+		final WalletApplication application = (WalletApplication)getActivity().getApplication();
+		MyRemoteWallet wallet = application.getRemoteWallet();
+		final List<String> addresses = new ArrayList<String>();
+		addresses.add("");
+		addresses.addAll(Arrays.asList(wallet.getActiveAddresses()));
+		List<String> displayAddresses = new ArrayList<String>();
+		displayAddresses.add("Select address");
+		Map<String,String> labels = wallet.getLabelMap();
+        for(int i = 1; i < addresses.size(); i++) {
+	        String label = labels.get(addresses.get(i));
+	        String labelOrAddress;
+	        if (label != null) {
+	        	displayAddresses.add(label);
+	        } else {
+	        	displayAddresses.add(addresses.get(i));
+	        }
+        }
+
+		final List<String> feeTypes = new ArrayList<String>();
+		feeTypes.add("Select fee");
+		feeTypes.add("Frugal");
+		feeTypes.add("Standard");
+		feeTypes.add("Generous");
 
     	simple_spend.setVisibility(View.GONE);
     	custom_spend.setVisibility(View.VISIBLE);
@@ -1925,30 +1947,17 @@ public class SendFragment extends Fragment   {
     	((LinearLayout)layout_from.findViewById(R.id.p1)).setGravity(Gravity.RIGHT|Gravity.CENTER_VERTICAL);
     	((LinearLayout)layout_from.findViewById(R.id.p1)).addView(tvSpend);
 
-    	/*
-        TextView tvSendingAddress = new TextView(getActivity());
-        tvSendingAddress.setId(ViewIdGenerator.generateViewId());
-        tvSendingAddress.setText("Walking around money");
-        tvSendingAddress.setTextSize(16);
-        tvSendingAddress.setPadding(5, 5, 5, 5);
-        tvSendingAddress.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+    	final Spinner spAddress = new Spinner(getActivity());
+        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.layout_spinner_item, displayAddresses);
+        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spAddress.setAdapter(spinnerArrayAdapter);
+        spAddress.setSelection(0);
+        spAddress.setPadding(5, 5, 5, 5);
+        spAddress.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
         layout_params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-        tvSendingAddress.setLayoutParams(layout_params);
+        spAddress.setLayoutParams(layout_params);
     	((LinearLayout)layout_from.findViewById(R.id.p2)).setGravity(Gravity.LEFT|Gravity.CENTER_VERTICAL);
-    	((LinearLayout)layout_from.findViewById(R.id.p2)).addView(tvSendingAddress);
-    	*/
-
-        final EditText edAddress = new EditText(getActivity());
-        edAddress.setId(ViewIdGenerator.generateViewId());
-        edAddress.setText("");
-        edAddress.setTextSize(16);
-        edAddress.setTextColor(Color.BLACK);
-        edAddress.setPadding(5, 5, 5, 5);
-        edAddress.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
-        layout_params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-        edAddress.setLayoutParams(layout_params);
-    	((LinearLayout)layout_from.findViewById(R.id.p2)).setGravity(Gravity.LEFT|Gravity.CENTER_VERTICAL);
-    	((LinearLayout)layout_from.findViewById(R.id.p2)).addView(edAddress);
+    	((LinearLayout)layout_from.findViewById(R.id.p2)).addView(spAddress);
 
     	final EditText edAmount = new EditText(getActivity());
         edAmount.setId(ViewIdGenerator.generateViewId());
@@ -1992,17 +2001,16 @@ public class SendFragment extends Fragment   {
     	((LinearLayout)layout_from2.findViewById(R.id.p1)).setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
     	((LinearLayout)layout_from2.findViewById(R.id.p1)).addView(tvSpend2);
     	
-        final EditText edAddress2 = new EditText(getActivity());
-        edAddress2.setId(ViewIdGenerator.generateViewId());
-        edAddress2.setText("");
-        edAddress2.setTextSize(16);
-        edAddress2.setTextColor(Color.BLACK);
-        edAddress2.setPadding(5, 5, 5, 5);
-        edAddress2.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+    	final Spinner spAddress2 = new Spinner(getActivity());
+        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spAddress2.setAdapter(spinnerArrayAdapter);
+        spAddress2.setSelection(0);
+        spAddress2.setPadding(5, 5, 5, 5);
+        spAddress2.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
         layout_params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-        edAddress.setLayoutParams(layout_params);
-    	((LinearLayout)layout_from2.findViewById(R.id.p2)).setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
-    	((LinearLayout)layout_from2.findViewById(R.id.p2)).addView(edAddress2);
+        spAddress2.setLayoutParams(layout_params);
+    	((LinearLayout)layout_from2.findViewById(R.id.p2)).setGravity(Gravity.LEFT|Gravity.CENTER_VERTICAL);
+    	((LinearLayout)layout_from2.findViewById(R.id.p2)).addView(spAddress2);
 
     	final EditText edAmount2 = new EditText(getActivity());
         edAmount2.setId(ViewIdGenerator.generateViewId());
@@ -2038,32 +2046,33 @@ public class SendFragment extends Fragment   {
     	((LinearLayout)layout_fee.findViewById(R.id.divider1)).setBackgroundColor(BlockchainUtil.BLOCKCHAIN_RED);
     	((LinearLayout)layout_fee.findViewById(R.id.p1)).setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
     	((LinearLayout)layout_fee.findViewById(R.id.p1)).addView(tvFee);
+    	final Spinner spFeeType = new Spinner(getActivity());
+        ArrayAdapter<String> spinnerArrayAdapter2 = new ArrayAdapter<String>(getActivity(), R.layout.layout_spinner_item, feeTypes);
+        spinnerArrayAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spFeeType.setAdapter(spinnerArrayAdapter2);
+        spFeeType.setSelection(0);
+        spFeeType.setPadding(5, 5, 5, 5);
+        spFeeType.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+        layout_params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+        spFeeType.setLayoutParams(layout_params);
+    	((LinearLayout)layout_fee.findViewById(R.id.p2)).setGravity(Gravity.LEFT|Gravity.CENTER_VERTICAL);
+    	((LinearLayout)layout_fee.findViewById(R.id.p2)).addView(spFeeType);
     	final EditText edFee = new EditText(getActivity());
         edFee.setId(ViewIdGenerator.generateViewId());
-        edFee.setText("0.005");
+        edFee.setText("0.0001");
         edFee.setTextSize(16);
         edFee.setTextColor(Color.BLACK);
         edFee.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-        edFee.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+        edFee.setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
         edFee.setLayoutParams(layout_params);
-    	((LinearLayout)layout_fee.findViewById(R.id.p2)).addView(edFee);
-        TextView tvFee3 = new TextView(getActivity());
-        tvFee3.setText("0.005 BTC");
-        tvFee3.setTextSize(16);
-        tvFee3.setTextColor(BlockchainUtil.BLOCKCHAIN_RED);
-        tvFee3.setPadding(5, 5, 5, 5);
-        tvFee3.setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
-        layout_params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-        tvFee3.setLayoutParams(layout_params);
     	((LinearLayout)layout_fee.findViewById(R.id.p3)).setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
-    	((LinearLayout)layout_fee.findViewById(R.id.p3)).addView(tvFee3);
+    	((LinearLayout)layout_fee.findViewById(R.id.p3)).addView(edFee);
     	layout_fee.setPadding(0, 10, 0, 0);
     	((LinearLayout)layout_custom_spend.findViewById(R.id.custom_spend)).addView(layout_fee);
 
-    	/*
-        //
-        // 'CHANGE' layout
-        //
+    	//
+    	// 'CHANGE' layout
+    	//
         TextView tvChange = new TextView(getActivity());
         tvChange.setTypeface(null, Typeface.BOLD);
         tvChange.setText("CHANGE");
@@ -2075,6 +2084,7 @@ public class SendFragment extends Fragment   {
     	((LinearLayout)layout_change.findViewById(R.id.divider1)).setBackgroundColor(0xFF808080);
     	((LinearLayout)layout_change.findViewById(R.id.p1)).setGravity(Gravity.RIGHT|Gravity.CENTER_VERTICAL);
     	((LinearLayout)layout_change.findViewById(R.id.p1)).addView(tvChange);
+    	/*
         TextView tvChange2 = new TextView(getActivity());
         tvChange2.setText("Savings address");
         tvChange2.setTextSize(16);
@@ -2082,8 +2092,19 @@ public class SendFragment extends Fragment   {
         tvChange2.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
     	((LinearLayout)layout_change.findViewById(R.id.p2)).setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
     	((LinearLayout)layout_change.findViewById(R.id.p2)).addView(tvChange2);
+    	*/
+    	final Spinner spChangeAddress = new Spinner(getActivity());
+        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spChangeAddress.setAdapter(spinnerArrayAdapter);
+        spChangeAddress.setSelection(0);
+        spChangeAddress.setPadding(5, 5, 5, 5);
+        spChangeAddress.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+        layout_params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+        spChangeAddress.setLayoutParams(layout_params);
+    	((LinearLayout)layout_change.findViewById(R.id.p2)).setGravity(Gravity.LEFT|Gravity.CENTER_VERTICAL);
+    	((LinearLayout)layout_change.findViewById(R.id.p2)).addView(spChangeAddress);
         TextView tvChange3 = new TextView(getActivity());
-        tvChange3.setText("1.965 BTC");
+//        tvChange3.setText("1.965 BTC");
         tvChange3.setTextSize(16);
         tvChange3.setTextColor(BlockchainUtil.BLOCKCHAIN_GREEN);
         tvChange3.setPadding(5, 5, 5, 5);
@@ -2092,7 +2113,6 @@ public class SendFragment extends Fragment   {
     	((LinearLayout)layout_change.findViewById(R.id.p3)).addView(tvChange3);
     	layout_change.setPadding(0, 10, 0, 0);
     	((LinearLayout)layout_custom_spend.findViewById(R.id.custom_spend)).addView(layout_change);
-    	*/
     	
     	Button btConfirm = new Button(getActivity());
     	btConfirm.setText("OK");
@@ -2104,18 +2124,18 @@ public class SendFragment extends Fragment   {
             	// get data entered by user and pass custom send instance
             	//
             	cs = new CustomSend();
-            	
-            	if(edAddress.getText().toString() != null && edAddress.getText().toString().length() > 0 &&
+
+            	if(spAddress.getSelectedItemPosition() != 0 &&
             			edAmount.getText().toString() != null && edAmount.getText().toString().length() > 0 &&
             			Double.parseDouble(edAmount.getText().toString()) > 0.0) {
-            		cs.addReceivingAddress(edAddress.getText().toString(), getBTCEnteredOutputValue(edAmount));
+            		cs.addReceivingAddress(addresses.get(spAddress.getSelectedItemPosition()), getBTCEnteredOutputValue(edAmount));
             		
             	}
-            	
-            	if(edAddress2.getText().toString() != null && edAddress2.getText().toString().length() > 0 &&
+
+            	if(spAddress2.getSelectedItemPosition() != 0 &&
             			edAmount2.getText().toString() != null && edAmount2.getText().toString().length() > 0 &&
             			Double.parseDouble(edAmount2.getText().toString()) > 0.0) {
-            		cs.addReceivingAddress(edAddress2.getText().toString(), getBTCEnteredOutputValue(edAmount2));
+            		cs.addReceivingAddress(addresses.get(spAddress2.getSelectedItemPosition()), getBTCEnteredOutputValue(edAmount2));
             	}
             	
             	if(edFee.getText().toString() != null && edFee.getText().toString().length() > 0 &&

@@ -104,7 +104,7 @@ public class ReceiveFragment extends Fragment   {
 	private Map<String,String> labels;
 	private List<Map<String, Object>> addressBookMapList;
 
-	private boolean isBTC = false;
+	private boolean isBTC = true;
 
 	private boolean isReturnFromOutsideApp = false;
 
@@ -252,7 +252,7 @@ public class ReceiveFragment extends Fragment   {
       initAddressBookList();
 
         tvAmount2 = ((TextView)rootView.findViewById(R.id.amount2));
-        tvAmount2.setText("0.0000 BTC");
+        tvAmount2.setText("0.00 USD");
         edAmount1 = ((EditText)rootView.findViewById(R.id.amount1));
         edAmount1.setOnEditorActionListener(new OnEditorActionListener() {
 		    @Override
@@ -478,14 +478,9 @@ public class ReceiveFragment extends Fragment   {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
             	edAddress.setText("");
-            	if(isBTC) {
-                	edAmount1.setText("0.00");
-                	tvAmount2.setText("0.00");
-            	}
-            	else {
-                	edAmount1.setText("0.00");
-                	tvAmount2.setText("0.00");
-            	}
+            	edAmount1.setText("0.0000");
+            	tvAmount2.setText("0.0000");
+            	isBTC = true;
 
             	/*
                 summary.setVisibility(View.INVISIBLE);
