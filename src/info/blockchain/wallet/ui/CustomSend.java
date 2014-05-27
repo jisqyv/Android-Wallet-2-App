@@ -7,24 +7,24 @@ import java.util.HashMap;
 
 public class CustomSend {
 	
-	private HashMap<String, BigInteger> receivingAddresses;
+	private HashMap<String, BigInteger> sendingAddresses;
 	private BigInteger fee = null;
 	private String changeAddress = null;
 
 	public CustomSend() {
-		receivingAddresses = new HashMap<String, BigInteger>();
+		sendingAddresses = new HashMap<String, BigInteger>();
 	}
 
-	public void addReceivingAddress(String address, BigInteger amount) {
-		receivingAddresses.put(address, amount);
+	public void addSendingAddress(String address, BigInteger amount) {
+		sendingAddresses.put(address, amount);
 	}
 	
-	public void setReceivingAddresses(HashMap<String, BigInteger> addresses) {
-		receivingAddresses = addresses;
+	public void setSendingAddresses(HashMap<String, BigInteger> addresses) {
+		sendingAddresses = addresses;
 	}
 
-	public HashMap<String, BigInteger> getReceivingAddresses() {
-		return receivingAddresses;
+	public HashMap<String, BigInteger> getSendingAddresses() {
+		return sendingAddresses;
 	}
 
 	public void setFee(BigInteger fee) {

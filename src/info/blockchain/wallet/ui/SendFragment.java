@@ -178,8 +178,9 @@ public class SendFragment extends Fragment   {
 	private String emailOrNumber;
 	private boolean sendViaEmail;
 	private boolean sentViaSMS;
+
 	private CustomSend cs;
-	
+
 	public static final String ACTION_INTENT = "info.blockchain.wallet.ui.SendFragment.BTC_ADDRESS_SCAN";
 
     protected BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -773,7 +774,7 @@ public class SendFragment extends Fragment   {
 				final BigInteger amount = getBTCEnteredOutputValue(edAmount1);
 				final WalletApplication application = (WalletApplication) getActivity().getApplication();
 
-				application.getRemoteWallet().sendCoinsAsync(false, from, cs.getReceivingAddresses(), feePolicy, fee, cs.getChangeAddress(), progress);
+				application.getRemoteWallet().sendCoinsAsync(false, from, cs.getSendingAddresses(), feePolicy, fee, cs.getChangeAddress(), progress);
 				
 				//
 				//
@@ -1945,11 +1946,11 @@ public class SendFragment extends Fragment   {
     	LinearLayout layout_custom_spend = (LinearLayout)rootView.findViewById(R.id.custom_spend);
 
     	// all 'sending address' entries go here:
-    	LinearLayout layout_froms = (LinearLayout)layout_custom_spend.findViewById(R.id.froms);
+    	final LinearLayout layout_froms = (LinearLayout)layout_custom_spend.findViewById(R.id.froms);
     	// first 'sending address':
         LinearLayout layout_from = (LinearLayout)inflater.inflate(R.layout.layout_custom_segment, layout_custom_spend, false);
     	// additional 'sending address':
-        LinearLayout layout_from2 = (LinearLayout)inflater.inflate(R.layout.layout_custom_segment, layout_custom_spend, false);
+//        LinearLayout layout_from2 = (LinearLayout)inflater.inflate(R.layout.layout_custom_segment, layout_custom_spend, false);
     	// 'fee':
         LinearLayout layout_fee = (LinearLayout)inflater.inflate(R.layout.layout_custom_segment, layout_custom_spend, false);
     	// 'change address':
@@ -2000,7 +2001,7 @@ public class SendFragment extends Fragment   {
         edAmount.setLayoutParams(layout_params);
     	((LinearLayout)layout_from.findViewById(R.id.p3)).setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
     	((LinearLayout)layout_from.findViewById(R.id.p3)).addView(edAmount);
-
+    	
     	/*
     	ImageButton ibPlus = new ImageButton(getActivity());
     	ibPlus.setImageResource(R.drawable.plus_icon);
@@ -2128,7 +2129,26 @@ public class SendFragment extends Fragment   {
             	if(spAddress.getSelectedItemPosition() != 0 &&
             			edAmount.getText().toString() != null && edAmount.getText().toString().length() > 0 &&
             			Double.parseDouble(edAmount.getText().toString()) > 0.0) {
-            		cs.addReceivingAddress(addresses.get(spAddress.getSelectedItemPosition()), getBTCEnteredOutputValue(edAmount));
+            		cs.addSendingAddress(addresses.get(spAddress.getSelectedItemPosition()), getBTCEnteredOutputValue(edAmount));
+            	}
+
+                LinearLayout sending_layout = null;
+                LinearLayout p_layout = null;
+                Spinner selected_address = null;
+                EditText amount = null;
+            	for(int i = 0; i < layout_froms.getChildCount(); i++) {
+            		sending_layout = (LinearLayout)layout_froms.getChildAt(i);
+                	p_layout = (LinearLayout)sending_layout.findViewById(R.id.p2);
+                	selected_address = (Spinner)p_layout.getChildAt(0);
+                	p_layout = (LinearLayout)sending_layout.findViewById(R.id.p3);
+                	amount = ((EditText)p_layout.getChildAt(0));
+
+                	if(selected_address.getSelectedItemPosition() != 0 &&
+                			amount.getText().toString() != null && amount.getText().toString().length() > 0 &&
+                			Double.parseDouble(amount.getText().toString()) > 0.0) {
+                		cs.addSendingAddress(addresses.get(selected_address.getSelectedItemPosition()), getBTCEnteredOutputValue(amount));
+                	}
+
             	}
 
             	if(edFee.getText().toString() != null && edFee.getText().toString().length() > 0 &&
@@ -2136,16 +2156,23 @@ public class SendFragment extends Fragment   {
             		cs.setFee(getBTCEnteredOutputValue(edFee));
             	}
 
+            	if(spChangeAddress.getSelectedItemPosition() != 0) {
+            		cs.setChangeAddress(addresses.get(spChangeAddress.getSelectedItemPosition()));
+            	}
+
             	//
             	//
             	//
-            	HashMap<String, BigInteger> addresses = cs.getReceivingAddresses();
+        		Toast.makeText(getActivity(), "Sending addresses:" + cs.getSendingAddresses().size(), Toast.LENGTH_SHORT).show();
+
+        		HashMap<String, BigInteger> addresses = cs.getSendingAddresses();
             	Set<String> keys = addresses.keySet();
             	for (Iterator iterator = keys.iterator(); iterator.hasNext();) {
                     String s = (String)iterator.next();
             		Toast.makeText(getActivity(), "Address:" + s + ", amount:" + addresses.get(s), Toast.LENGTH_SHORT).show();
                 }
         		Toast.makeText(getActivity(), "Fee:" + cs.getFee(), Toast.LENGTH_SHORT).show();
+        		Toast.makeText(getActivity(), "Change:" + cs.getChangeAddress(), Toast.LENGTH_SHORT).show();
         		//
         		//
         		//
