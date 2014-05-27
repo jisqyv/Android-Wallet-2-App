@@ -1146,6 +1146,12 @@ public class SendFragment extends Fragment   {
 //                ivCheck.setVisibility(View.GONE);
                 summary3.setVisibility(View.GONE);
                 tvSentPrompt.setVisibility(View.GONE);
+                
+            	LinearLayout layout_custom_spend = (LinearLayout)rootView.findViewById(R.id.custom_spend);
+            	// all 'sending address' entries go here:
+            	LinearLayout layout_froms = (LinearLayout)layout_custom_spend.findViewById(R.id.froms);
+            	layout_froms.removeAllViews();
+            	layout_custom_spend.removeViews(1, layout_custom_spend.getChildCount() - 1);
 
             	if(!isMagic) {
                 	displayMagicList();
@@ -1895,12 +1901,6 @@ public class SendFragment extends Fragment   {
     		removeMagicList();
     	}
 
-    	/*
-    	if(magic != null) {
-    		magic.setVisibility(View.GONE);
-    	}
-    	*/
-    	
 		final WalletApplication application = (WalletApplication)getActivity().getApplication();
 		MyRemoteWallet wallet = application.getRemoteWallet();
 		final List<String> addresses = new ArrayList<String>();
@@ -2001,6 +2001,7 @@ public class SendFragment extends Fragment   {
     	((LinearLayout)layout_from.findViewById(R.id.p3)).setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
     	((LinearLayout)layout_from.findViewById(R.id.p3)).addView(edAmount);
 
+    	/*
     	ImageButton ibPlus = new ImageButton(getActivity());
     	ibPlus.setImageResource(R.drawable.plus_icon);
     	((LinearLayout)layout_from.findViewById(R.id.plus)).addView(ibPlus);
@@ -2009,57 +2010,11 @@ public class SendFragment extends Fragment   {
             	addSendingAddress(displayAddresses);
             }
         });
+        */
 
     	((LinearLayout)layout_custom_spend.findViewById(R.id.froms)).addView(layout_from);
     	lastSendingAddress = layout_from;
-    	
-    	/*
-    	 * 
-    	 */
 
-    	/*
-        // second send address
-        TextView tvSpend2 = new TextView(getActivity());
-        tvSpend2.setText("");
-        tvSpend2.setTextSize(12);
-        tvSpend2.setPadding(5, 5, 5, 5);
-        tvSpend2.setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
-        layout_params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-        tvSpend2.setLayoutParams(layout_params);
-    	((LinearLayout)layout_from2.findViewById(R.id.divider1)).setBackgroundColor(0xFF3eb6e2);
-    	((LinearLayout)layout_from2.findViewById(R.id.p1)).setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
-    	((LinearLayout)layout_from2.findViewById(R.id.p1)).addView(tvSpend2);
-    	
-    	final Spinner spAddress2 = new Spinner(getActivity());
-        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spAddress2.setAdapter(spinnerArrayAdapter);
-        spAddress2.setSelection(0);
-        spAddress2.setPadding(5, 5, 5, 5);
-        spAddress2.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
-        layout_params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-        spAddress2.setLayoutParams(layout_params);
-    	((LinearLayout)layout_from2.findViewById(R.id.p2)).setGravity(Gravity.LEFT|Gravity.CENTER_VERTICAL);
-    	((LinearLayout)layout_from2.findViewById(R.id.p2)).addView(spAddress2);
-
-    	final EditText edAmount2 = new EditText(new ContextThemeWrapper(getActivity(), android.R.style.Theme_Holo_InputMethod));
-        edAmount2.setId(ViewIdGenerator.generateViewId());
-        edAmount2.setHint("0.0000");
-        edAmount2.setTextSize(16);
-        edAmount2.setTextColor(Color.BLACK);
-        edAmount2.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-        edAmount2.setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
-        edAmount2.setTextColor(BlockchainUtil.BLOCKCHAIN_RED);
-        edAmount2.setLayoutParams(layout_params);
-    	((LinearLayout)layout_from2.findViewById(R.id.p3)).setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
-    	((LinearLayout)layout_from2.findViewById(R.id.p3)).addView(edAmount2);
-
-    	((LinearLayout)layout_custom_spend.findViewById(R.id.froms)).addView(layout_from2);
-    	*/
-
-    	/*
-    	 * 
-    	 */
-    	
         //
         // 'FEE' layout
         //
@@ -2176,14 +2131,6 @@ public class SendFragment extends Fragment   {
             		cs.addReceivingAddress(addresses.get(spAddress.getSelectedItemPosition()), getBTCEnteredOutputValue(edAmount));
             	}
 
-            	/*
-            	if(spAddress2.getSelectedItemPosition() != 0 &&
-            			edAmount2.getText().toString() != null && edAmount2.getText().toString().length() > 0 &&
-            			Double.parseDouble(edAmount2.getText().toString()) > 0.0) {
-            		cs.addReceivingAddress(addresses.get(spAddress2.getSelectedItemPosition()), getBTCEnteredOutputValue(edAmount2));
-            	}
-            	*/
-            	
             	if(edFee.getText().toString() != null && edFee.getText().toString().length() > 0 &&
             			Double.parseDouble(edFee.getText().toString()) > 0.0) {
             		cs.setFee(getBTCEnteredOutputValue(edFee));
@@ -2209,7 +2156,22 @@ public class SendFragment extends Fragment   {
 
             }
         });
-    	((LinearLayout)layout_custom_spend.findViewById(R.id.custom_spend)).addView(btConfirm);
+//    	((LinearLayout)layout_custom_spend.findViewById(R.id.custom_spend)).addView(btConfirm);
+
+    	Button btNewAddress = new Button(getActivity());
+    	btNewAddress.setText("Add send address");
+    	btNewAddress.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+        btNewAddress.setOnClickListener(new Button.OnClickListener() {
+            public void onClick(View v) {
+            	addSendingAddress(displayAddresses);
+            }
+        });
+//    	((LinearLayout)layout_custom_spend.findViewById(R.id.custom_spend)).addView(btNewAddress);
+    	
+    	LinearLayout buttonsLayout = (LinearLayout)inflater.inflate(R.layout.layout_2, null);
+    	((LinearLayout)buttonsLayout.findViewById(R.id.p1)).addView(btNewAddress);
+    	((LinearLayout)buttonsLayout.findViewById(R.id.p2)).addView(btConfirm);
+    	((LinearLayout)layout_custom_spend.findViewById(R.id.custom_spend)).addView(buttonsLayout);
 
         LinearLayout container = ((LinearLayout)rootView.findViewById(R.id.custom_spend));
         sendViewToBack(container);
@@ -2219,7 +2181,7 @@ public class SendFragment extends Fragment   {
     private void addSendingAddress(final List<String> displayAddresses) {
     	
     	if(lastSendingAddress != null) {
-        	((LinearLayout)lastSendingAddress.findViewById(R.id.plus)).getChildAt(0).setVisibility(View.INVISIBLE);
+//        	((LinearLayout)lastSendingAddress.findViewById(R.id.plus)).getChildAt(0).setVisibility(View.INVISIBLE);
     	}
 
     	final LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -2263,7 +2225,8 @@ public class SendFragment extends Fragment   {
         edAmount.setLayoutParams(layout_params);
     	((LinearLayout)layout_from2.findViewById(R.id.p3)).setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
     	((LinearLayout)layout_from2.findViewById(R.id.p3)).addView(edAmount);
-    	
+
+    	/*
     	ImageButton ibPlus = new ImageButton(getActivity());
     	ibPlus.setImageResource(R.drawable.plus_icon);
     	((LinearLayout)layout_from2.findViewById(R.id.plus)).addView(ibPlus);
@@ -2272,6 +2235,7 @@ public class SendFragment extends Fragment   {
             	addSendingAddress(displayAddresses);
             }
         });
+        */
 
     	((LinearLayout)layout_custom_spend.findViewById(R.id.froms)).addView(layout_from2);
     	lastSendingAddress = layout_from2;
