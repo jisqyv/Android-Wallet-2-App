@@ -672,7 +672,7 @@ public class MyRemoteWallet extends MyWallet {
 						List<MyTransactionOutPoint> unspent = filter(allUnspent, tempKeys, false, progress);
 						HashMap<String, BigInteger> receivingAddresses = new HashMap<String, BigInteger>();
 						receivingAddresses.put(toAddress, amount);
-						pair = makeTransaction(unspent, receivingAddresses, fee, null);
+						pair = makeTransaction(false, unspent, receivingAddresses, fee, null);
 
 						//Transaction cancelled
 						if (pair == null)
@@ -683,7 +683,7 @@ public class MyRemoteWallet extends MyWallet {
 						List<MyTransactionOutPoint> unspent = filter(allUnspent, tempKeys, true, progress);
 						HashMap<String, BigInteger> receivingAddresses = new HashMap<String, BigInteger>();
 						receivingAddresses.put(toAddress, amount);
-						pair = makeTransaction(unspent, receivingAddresses, fee, null);
+						pair = makeTransaction(false, unspent, receivingAddresses, fee, null);
 
 						//Transaction cancelled
 						if (pair == null)
@@ -767,16 +767,16 @@ public class MyRemoteWallet extends MyWallet {
 	public void simpleSendCoinsAsync(final String toAddress, final BigInteger amount, final FeePolicy feePolicy, final BigInteger fee, final SendProgress progress) {
 		HashMap<String, BigInteger> receivingAddresses = new HashMap<String, BigInteger>();
 		receivingAddresses.put(toAddress, amount);
-		sendCoinsAsync(getActiveAddresses(), receivingAddresses, feePolicy, fee, null, progress);
+		sendCoinsAsync(true, getActiveAddresses(), receivingAddresses, feePolicy, fee, null, progress);
 	}
 
 	public void sendCoinsAsync(final String[] from, final String toAddress, final BigInteger amount, final FeePolicy feePolicy, final BigInteger fee, final String changeAddress, final SendProgress progress) {
 		HashMap<String, BigInteger> receivingAddresses = new HashMap<String, BigInteger>();
 		receivingAddresses.put(toAddress, amount);
-		sendCoinsAsync(getActiveAddresses(), receivingAddresses, feePolicy, fee, changeAddress, progress);
+		sendCoinsAsync(false, getActiveAddresses(), receivingAddresses, feePolicy, fee, changeAddress, progress);
 	}
 	
-	public void sendCoinsAsync(final String[] from, final HashMap<String, BigInteger> receivingAddresses, final FeePolicy feePolicy, final BigInteger fee, final String changeAddress, final SendProgress progress) {
+	public void sendCoinsAsync(final boolean isSimpleSend, final String[] from, final HashMap<String, BigInteger> receivingAddresses, final FeePolicy feePolicy, final BigInteger fee, final String changeAddress, final SendProgress progress) {
 
 		new Thread() {
 			@Override
@@ -798,7 +798,7 @@ public class MyRemoteWallet extends MyWallet {
 						//Try without asking for watch only addresses
 						List<MyTransactionOutPoint> unspent = filter(allUnspent, tempKeys, false, progress);
 
-						pair = makeTransaction(unspent, receivingAddresses, fee, changeAddress);
+						pair = makeTransaction(isSimpleSend, unspent, receivingAddresses, fee, changeAddress);
 
 						//Transaction cancelled
 						if (pair == null)
@@ -808,7 +808,7 @@ public class MyRemoteWallet extends MyWallet {
 						//Try with asking for watch only
 						List<MyTransactionOutPoint> unspent = filter(allUnspent, tempKeys, true, progress);
 
-						pair = makeTransaction(unspent, receivingAddresses, fee, changeAddress);
+						pair = makeTransaction(isSimpleSend, unspent, receivingAddresses, fee, changeAddress);
 
 						//Transaction cancelled
 						if (pair == null)
@@ -883,7 +883,7 @@ public class MyRemoteWallet extends MyWallet {
 	}
 
 	//You must sign the inputs
-	public Pair<Transaction, Long> makeTransaction(List<MyTransactionOutPoint> unspent, HashMap<String, BigInteger> receivingAddresses, BigInteger fee, final String changeAddress) throws Exception {
+	public Pair<Transaction, Long> makeTransaction(boolean isSimpleSend, List<MyTransactionOutPoint> unspent, HashMap<String, BigInteger> receivingAddresses, BigInteger fee, final String changeAddress) throws Exception {
 
 		long priority = 0;
 
@@ -929,7 +929,13 @@ public class MyRemoteWallet extends MyWallet {
 			if (script.getOutType() == BitcoinScript.ScriptOutTypeStrange)
 				continue;
 
+			BitcoinScript inputScript = new BitcoinScript(outPoint.getConnectedPubKeyScript());
+			String address = inputScript.getAddress().toString();
 
+			//if isSimpleSend don't use address as input if is output 
+			if (isSimpleSend && receivingAddresses.get(address) != null)
+				continue;
+				
 			MyTransactionInput input = new MyTransactionInput(params, null, new byte[0], outPoint);
 
 			input.outpoint = outPoint;
@@ -941,17 +947,11 @@ public class MyRemoteWallet extends MyWallet {
 			priority += outPoint.value.longValue() * outPoint.confirmations;
 
 			if (changeAddress == null && changeOutPoint == null) {
-				BitcoinScript inputScript = new BitcoinScript(outPoint.getConnectedPubKeyScript());
-				if (receivingAddresses.get(inputScript.getAddress().toString()) == null)
-					changeOutPoint = outPoint;
+				changeOutPoint = outPoint;
 			}
 
-			if (valueSelected.compareTo(valueNeeded) == 0 || valueSelected.compareTo(valueNeeded.add(minFreeOutputSize)) >= 0) {
-				if (changeAddress == null && changeOutPoint == null) {
-					changeOutPoint = outPoint;
-				}
+			if (valueSelected.compareTo(valueNeeded) == 0 || valueSelected.compareTo(valueNeeded.add(minFreeOutputSize)) >= 0)
 				break;
-			}
 		}
 
 		//Check the amount we have selected is greater than the amount we need
