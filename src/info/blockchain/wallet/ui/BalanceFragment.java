@@ -112,6 +112,7 @@ public class BalanceFragment extends Fragment   {
 	        ((ViewPager)getActivity().findViewById(info.blockchain.wallet.ui.R.id.pager)).setCurrentItem(1);
 			setAdapterContent();
 			sentTx = null;
+			adapter.notifyDataSetChanged();
 		};
 
 		@Override
