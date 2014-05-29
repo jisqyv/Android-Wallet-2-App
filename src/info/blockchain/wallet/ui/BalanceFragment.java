@@ -80,13 +80,11 @@ public class BalanceFragment extends Fragment   {
 	private Animation slideUp = null;
 	private Animation slideDown = null;
 	private boolean isSwipedDown = false;
-//    private Typeface btc_font = null;
     private String[] addressLabels = null;
     private boolean[] addressLabelTxsDisplayed = null;
     private String[] addressAmounts = null;
 	private TransactionAdapter adapter = null;
 	private boolean isBTC = true;
-	//private Map<String, List<TxBitmap>> address2TxBitmapList;	
 	private BigInteger totalInputsValue = BigInteger.ZERO;
 	private BigInteger totalOutputsValue = BigInteger.ZERO;
 	private String strCurrentFiatSymbol = "$";
@@ -96,6 +94,8 @@ public class BalanceFragment extends Fragment   {
 	private Map<String, String> labelMap;
 	
 	private static int QR_GENERATION = 1;
+	private static int TX_ACTIVITY = 2;
+	
 	private boolean isNoRefreshOnReturn = false;
 	private Transaction sentTx = null;
 	private List<String> activeAddresses;
@@ -118,21 +118,25 @@ public class BalanceFragment extends Fragment   {
 		@Override
 		public void onCoinsReceived(final Transaction tx, final long result) {
 			setAdapterContent();
+			adapter.notifyDataSetChanged();
 		};
 
 		@Override
 		public void onTransactionsChanged() {
 			setAdapterContent();
+			adapter.notifyDataSetChanged();
 		};
 		
 		@Override
 		public void onWalletDidChange() {
 			setAdapterContent();
+			adapter.notifyDataSetChanged();
 		}
 		
 		@Override
 		public void onCurrencyChanged() {
 			setAdapterContent();
+			adapter.notifyDataSetChanged();
 		};
 	};
 
@@ -441,6 +445,12 @@ public class BalanceFragment extends Fragment   {
 	        	adapter.notifyDataSetChanged();
 	        }
 	    }
+		else if(requestCode == TX_ACTIVITY)	{
+	        if(adapter != null)	{
+	        	isNoRefreshOnReturn = true;
+	        	adapter.notifyDataSetChanged();
+	        }
+	    }
 		else {
 			;
 		}
@@ -673,7 +683,8 @@ public class BalanceFragment extends Fragment   {
 	    	
         	final LinearLayout balance_extHiddenLayout = (LinearLayout)view.findViewById(R.id.balance_ext_hidden);
         	if (addressValueEntryList.size() > 0) {
-        		View child = getTxChildView(view, addressValueEntryList, result, transaction.getHashAsString(), transaction.getTime().getTime()/1000, false);	        		
+//        		View child = getTxChildView(view, addressValueEntryList, result, transaction.getHashAsString(), transaction.getTime().getTime()/1000, false);	        		
+        		View child = getTxChildView(view, addressValueEntryList, result, transaction, false);	        		
 	    		balance_extHiddenLayout.addView(child);	    	
         	}
 
@@ -730,7 +741,8 @@ public class BalanceFragment extends Fragment   {
 			}
 
         	if (addressValueEntryList.size() > 0) {
-        		View child = getTxChildView(view, addressValueEntryList, result, transaction.getHashAsString(), transaction.getTime().getTime()/1000, true);	        	
+//        		View child = getTxChildView(view, addressValueEntryList, result, transaction.getHashAsString(), transaction.getTime().getTime()/1000, true);	        	
+        		View child = getTxChildView(view, addressValueEntryList, result, transaction, true);
 	    		balance_extHiddenLayout.addView(child);	    	
         	}	   
 
@@ -740,14 +752,14 @@ public class BalanceFragment extends Fragment   {
 	    }
     }
     
-    private View getTxChildView(final View view, List<Map.Entry<String, String>> addressValueEntryList, BigInteger result, String txHash, long txTime, boolean isSending) {
+    private View getTxChildView(final View view, List<Map.Entry<String, String>> addressValueEntryList, final BigInteger result, final MyTransaction transaction, final boolean isSending) {
   		View child = null;
         LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		child = inflater.inflate(R.layout.tx_layout, null);
 
         ((TextView)child.findViewById(R.id.ts)).setTypeface(TypefaceUtil.getInstance(getActivity()).getGravityBoldTypeface());
         
-        ((TextView)child.findViewById(R.id.ts)).setText(DateUtil.getInstance().formatted(txTime));
+        ((TextView)child.findViewById(R.id.ts)).setText(DateUtil.getInstance().formatted(transaction.getTime().getTime()/1000));
 
         if (isSending) {
 	        TxBitmap txBitmap = new TxBitmap(getActivity(), addressValueEntryList);
@@ -770,13 +782,22 @@ public class BalanceFragment extends Fragment   {
 	        ((TextView)child.findViewById(R.id.amount)).setText((BlockchainUtil.BTC2Fiat(WalletUtils.formatValue(result)) + " " + strCurrentFiatCode));
         }
         
-        final String transactionHash = txHash;
+        final String transactionHash = transaction.getHashAsString();
         
 		child.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+            	/*
                 Intent intent = new Intent(Intent.ACTION_VIEW , Uri.parse("https://blockchain.info/tx/" + transactionHash));
                 startActivity(intent);
+                */
+                Intent intent;
+        		intent = new Intent(getActivity(), TxActivity.class);
+        		intent.putExtra("TX", transactionHash);
+        		intent.putExtra("TS", transaction.getTime().getTime() / 1000);
+        		intent.putExtra("RESULT", BlockchainUtil.formatBitcoin(result));
+        		intent.putExtra("SENDING", isSending);
+        		startActivityForResult(intent, TX_ACTIVITY);
             }
         });
 		
