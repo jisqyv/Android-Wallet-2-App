@@ -1,12 +1,5 @@
 package info.blockchain.wallet.ui;
 
-import piuk.blockchain.android.R;
-
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.WriterException;
-import com.google.zxing.client.android.Contents;
-import com.google.zxing.client.android.encode.QRCodeEncoder;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -17,8 +10,14 @@ import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 //import android.util.Log;
 import android.widget.Toast;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import piuk.blockchain.android.R;
 
 public class TxActivity extends Activity	{
 
@@ -30,6 +29,8 @@ public class TxActivity extends Activity	{
 	private TextView tvValueAmount = null;
 	private TextView tvValueFee = null;
 	private TextView tvValueTx = null;
+	private TextView tvResult = null;
+	private TextView tvTS = null;
 	
 	private String strTxHash = null;
 	private boolean isSending = false;
@@ -57,13 +58,32 @@ public class TxActivity extends Activity	{
         tvValueAmount = (TextView)findViewById(R.id.amount_value);
         tvValueFee = (TextView)findViewById(R.id.fee_value);
         tvValueTx = (TextView)findViewById(R.id.tx_value);
+        tvResult = (TextView)findViewById(R.id.result);
+        tvTS = (TextView)findViewById(R.id.ts);
 
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssz");
+        tvTS.setText(sdf.format(new Date(ts * 1000)));
+        
         tvLabelConfirmations.setText("Confirmations");
         if(isSending)	{
             tvLabelAmount.setText("Amount sent");
+            tvResult.setText("SENT " + strResult + " BTC");
+            tvResult.setBackgroundResource(R.drawable.rounded_view_red);
+            tvTS.setTextColor(getResources().getColor(R.color.blockchain_red));
+            ((LinearLayout)findViewById(R.id.div1)).setBackgroundResource(R.color.blockchain_red);
+            ((LinearLayout)findViewById(R.id.div2)).setBackgroundResource(R.color.blockchain_red);
+            ((LinearLayout)findViewById(R.id.div3)).setBackgroundResource(R.color.blockchain_red);
+            ((LinearLayout)findViewById(R.id.div4)).setBackgroundResource(R.color.blockchain_red);
         }
         else	{
             tvLabelAmount.setText("Amount received");
+            tvResult.setText("RECEIVED " + strResult + " BTC");
+            tvResult.setBackgroundResource(R.drawable.rounded_view_green);
+            tvTS.setTextColor(getResources().getColor(R.color.blockchain_green));
+            ((LinearLayout)findViewById(R.id.div1)).setBackgroundResource(R.color.blockchain_green);
+            ((LinearLayout)findViewById(R.id.div2)).setBackgroundResource(R.color.blockchain_green);
+            ((LinearLayout)findViewById(R.id.div3)).setBackgroundResource(R.color.blockchain_green);
+            ((LinearLayout)findViewById(R.id.div4)).setBackgroundResource(R.color.blockchain_green);
         }
         tvLabelFee.setText("Transaction fee");
         tvLabelTx.setText("Transaction hash");
