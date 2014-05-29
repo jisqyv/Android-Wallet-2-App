@@ -113,6 +113,10 @@ public class WalletApplication extends Application {
 		}
 	};
 
+	public Handler getHandler() {
+		return handler;
+	}
+	
 	public void clearWallet() {
 
 		if (this.isInP2PFallbackMode())
