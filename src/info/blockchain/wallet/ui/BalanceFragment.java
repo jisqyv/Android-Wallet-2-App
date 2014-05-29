@@ -96,7 +96,7 @@ public class BalanceFragment extends Fragment   {
 	private Map<String, String> labelMap;
 	
 	private static int QR_GENERATION = 1;
-	private boolean isReturnFromQR = false;
+	private boolean isNoRefreshOnReturn = false;
 	private Transaction sentTx = null;
 	private List<String> activeAddresses;
 
@@ -193,7 +193,7 @@ public class BalanceFragment extends Fragment   {
 	    activeAddresses = Arrays.asList(addressLabels);
 		addressAmounts = new String[addressLabels.length];
 
-   		if(!isReturnFromQR) {
+   		if(!isNoRefreshOnReturn) {
 			addressLabelTxsDisplayed = new boolean[addressLabels.length];
 
 			if(sentTx != null) {
@@ -206,7 +206,7 @@ public class BalanceFragment extends Fragment   {
 						addressLabelTxsDisplayed[i] = false;
 					}
 				}
-				isReturnFromQR = true;
+				isNoRefreshOnReturn = true;
 			}
 			else {
 				for (int i = 0; i < addressLabelTxsDisplayed.length; i++) {
@@ -215,7 +215,7 @@ public class BalanceFragment extends Fragment   {
 			}
 		}
 		else {
-			isReturnFromQR = false;
+			isNoRefreshOnReturn = false;
 		}
 
 		labelMap = remoteWallet.getLabelMap();
@@ -437,7 +437,7 @@ public class BalanceFragment extends Fragment   {
 
 		if(requestCode == QR_GENERATION)	{
 	        if(adapter != null)	{
-	        	isReturnFromQR = true;
+	        	isNoRefreshOnReturn = true;
 	        	adapter.notifyDataSetChanged();
 	        }
 	    }

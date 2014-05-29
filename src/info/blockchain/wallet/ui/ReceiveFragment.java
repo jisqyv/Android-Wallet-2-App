@@ -751,8 +751,15 @@ public class ReceiveFragment extends Fragment   {
 		if(rootView == null) {
 	        rootView = inflater.inflate(R.layout.fragment_receive, null, false);
 		}
-        ((TextView)rootView.findViewById(R.id.currency)).setText("");
-        ((TextView)rootView.findViewById(R.id.currency)).setBackgroundColor(0xFF232223);
+
+		tvCurrency.setBackgroundColor(0xFF232223);
+        if(isBTC) {
+    	    tvCurrency.setTypeface(TypefaceUtil.getInstance(getActivity()).getBTCTypeface());
+    		tvCurrency.setText(Character.toString((char)TypefaceUtil.getInstance(getActivity()).getBTCSymbol()));
+        }
+        else {
+    		tvCurrency.setText(strCurrentFiatSymbol);
+        }
 
 		//
         // add view with my_addresses and contacts
@@ -863,8 +870,14 @@ public class ReceiveFragment extends Fragment   {
     private void removeMagicList() {
 		isMagic = false;
 
-        ((TextView)rootView.findViewById(R.id.currency)).setBackgroundColor(0xFFFFFFFF);
-        ((TextView)rootView.findViewById(R.id.currency)).setText(strCurrentFiatSymbol);
+		tvCurrency.setBackgroundColor(Color.WHITE);
+        if(isBTC) {
+    	    tvCurrency.setTypeface(TypefaceUtil.getInstance(getActivity()).getBTCTypeface());
+    		tvCurrency.setText(Character.toString((char)TypefaceUtil.getInstance(getActivity()).getBTCSymbol()));
+        }
+        else {
+    		tvCurrency.setText(strCurrentFiatSymbol);
+        }
         
         if(parent != null) {
             parent.removeViews(parent.getChildCount() - children, children);
