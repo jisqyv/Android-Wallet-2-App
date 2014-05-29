@@ -2360,8 +2360,6 @@ public class SendFragment extends Fragment   {
     
     private void doScanInput(String address)	{
         if(BitcoinAddressCheck.isValidAddress(address)) {
-    		Toast.makeText(getActivity(), "is valid address", Toast.LENGTH_SHORT).show();
-
     		if(isMagic) {
     			removeMagicList();
     		}
@@ -2377,8 +2375,6 @@ public class SendFragment extends Fragment   {
             imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
         }
         else if(BitcoinAddressCheck.isUri(address)) {
-    		Toast.makeText(getActivity(), "is uri", Toast.LENGTH_SHORT).show();
-
     		if(isMagic) {
     			removeMagicList();
     		}
