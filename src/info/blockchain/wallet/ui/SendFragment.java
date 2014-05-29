@@ -2371,6 +2371,9 @@ public class SendFragment extends Fragment   {
 
             String btc_address = BitcoinAddressCheck.getAddress(address);
             String btc_amount = BitcoinAddressCheck.getAmount(address);
+            if(btc_amount == null) {
+            	btc_amount = "0.0000";
+            }
             
             edAddress.setText(btc_address);
             InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);

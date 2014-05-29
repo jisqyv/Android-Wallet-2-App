@@ -102,7 +102,12 @@ public class BitcoinAddressCheck {
 		
 		try {
 			uri = new BitcoinURI(s);
-			ret = uri.getAmount().toString();
+			if(uri.getAmount() != null) {
+				ret = uri.getAmount().toString();
+			}
+			else {
+				ret = "0.0000";
+			}
 		}
 		catch(BitcoinURIParseException bupe) {
 			ret = null;
