@@ -1,22 +1,28 @@
 package info.blockchain.wallet.ui;
 
-import android.widget.Toast;
+import android.app.Activity;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 import com.google.bitcoin.core.ECKey;
 import com.google.bitcoin.core.NetworkParameters;
 
 import piuk.EventListeners;
 import piuk.MyRemoteWallet;
+import piuk.blockchain.android.Constants;
 import piuk.blockchain.android.WalletApplication;
 import piuk.blockchain.android.WalletApplication.AddAddressCallback;
 import piuk.blockchain.android.ui.SuccessCallback;
 
 public class AddressManager {
-	private MyRemoteWallet blockchainWallet;
-	private WalletApplication application;
-	
-	public AddressManager(MyRemoteWallet remoteWallet, WalletApplication application) {
+	private MyRemoteWallet blockchainWallet = null;
+	private WalletApplication application = null;
+	private Activity activity = null;
+
+	public AddressManager(MyRemoteWallet remoteWallet, WalletApplication application, Activity activity) {
 		this.blockchainWallet = remoteWallet;
+		this.application = application;
+		this.activity = activity;
 	}	
 	
 	public void setAddressLabel(final String address, final String label,
@@ -168,6 +174,11 @@ public class AddressManager {
 		}
 		
 		return false;
+	}
+	
+	public void setDefaultAddress(final String address) {
+		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+		prefs.edit().putString(Constants.PREFS_KEY_SELECTED_ADDRESS, address.toString()).commit();
 	}
 
 }
