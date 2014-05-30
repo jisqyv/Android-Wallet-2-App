@@ -386,6 +386,19 @@ public class MyWallet {
 		return this.decodePK(base58Priv);
 	}
 
+
+	public boolean isWatchOnly(String address) throws Exception {
+		Map<String, Object> key = this.findKey(address);
+
+		if (key == null) {
+			throw new Exception("Key not found");
+		}
+
+		String base58Priv = (String) key.get("priv");
+
+		return base58Priv == null ? true : false;
+	}
+	
 	protected void addKeysTobitoinJWallet(Wallet wallet, boolean enableTagFiler, int tagFilter) throws Exception {
 
 		wallet.keychain.clear();

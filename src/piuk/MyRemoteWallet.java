@@ -764,10 +764,26 @@ public class MyRemoteWallet extends MyWallet {
 		
 	}
 
+	public String[] getNotWatchOnlyActiveAddresses() {
+		String[] from = getActiveAddresses();
+		List<String> notWatchOnlyActiveAddresses = new ArrayList<String>(from.length);
+		
+        for(int i = 0; i < from.length; i++){
+            try {
+				if (! isWatchOnly(from[i]))
+				    notWatchOnlyActiveAddresses.add(from[i]);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+        }
+        return notWatchOnlyActiveAddresses.toArray(new String[notWatchOnlyActiveAddresses.size()]);
+	}
+	
 	public void simpleSendCoinsAsync(final String toAddress, final BigInteger amount, final FeePolicy feePolicy, final BigInteger fee, final SendProgress progress) {
 		HashMap<String, BigInteger> receivingAddresses = new HashMap<String, BigInteger>();
 		receivingAddresses.put(toAddress, amount);
-		sendCoinsAsync(true, getActiveAddresses(), receivingAddresses, feePolicy, fee, null, progress);
+		
+        sendCoinsAsync(true, getNotWatchOnlyActiveAddresses(), receivingAddresses, feePolicy, fee, null, progress);
 	}
 
 	public void sendCoinsAsync(final String[] from, final String toAddress, final BigInteger amount, final FeePolicy feePolicy, final BigInteger fee, final String changeAddress, final SendProgress progress) {
