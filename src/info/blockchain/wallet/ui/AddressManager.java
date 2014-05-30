@@ -73,9 +73,12 @@ public class AddressManager {
 	
 	public void newAddress(final AddAddressCallback callback) {
 		final ECKey key = application.getRemoteWallet().generateECKey();			
-		final String address = key.toAddress(NetworkParameters.prodNet()).toString();
-		final String label = null;
-		
+		addKeyToWallet(key, key.toAddress(NetworkParameters.prodNet()).toString(), null, 0, callback);
+	}
+
+	public void addKeyToWallet(final ECKey key, final String address, final String label, final int tag,
+			final AddAddressCallback callback) {
+
 		if (blockchainWallet == null) {
 			callback.onError("Wallet null.");
 			return;
