@@ -135,4 +135,39 @@ public class AddressManager {
 			callback.onError(e.getLocalizedMessage());
 		}
 	}
+	
+	
+	public boolean archiveAddress(final String address) {
+		return setAddressTag(address, 2);
+	}
+
+	public boolean unArchiveAddress(final String address) {
+		return setAddressTag(address, 0);
+	}
+
+	private boolean setAddressTag(final String address, long tag) {
+		try {
+			if (blockchainWallet == null)
+				return true;
+
+			blockchainWallet.setTag(address, 0);
+
+			application.saveWallet(new SuccessCallback() {
+				@Override
+				public void onSuccess() {
+					EventListeners.invokeWalletDidChange();
+				}
+
+				@Override
+				public void onFail() {
+				}
+			});
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return false;
+	}
+
 }
