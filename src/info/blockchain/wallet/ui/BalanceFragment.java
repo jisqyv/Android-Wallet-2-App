@@ -5,7 +5,6 @@ import java.text.DecimalFormat;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Currency;
 import java.util.List;
 import java.util.Iterator;
 import java.util.Map;
@@ -248,16 +247,15 @@ public class BalanceFragment extends Fragment   {
 		application = (WalletApplication) activity.getApplication();
 
         rootView = inflater.inflate(info.blockchain.wallet.ui.R.layout.fragment_balance, container, false);
-        
-        slideUp = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.slide_up);
-        slideDown = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.slide_down);
-        
-//        btc_font = TypefaceUtil.getInstance(getActivity()).getBTCTypeface();
-//        btc_bold_font = TypefaceUtil.getInstance(getActivity()).getBTCBoldTypeface();
-        
+
+        /*
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         strCurrentFiatCode = prefs.getString("ccurrency", "USD");
         strCurrentFiatSymbol = prefs.getString(strCurrentFiatCode + "-SYM", "$");
+        */
+
+        slideUp = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.slide_up);
+        slideDown = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.slide_down);
 
         tViewCurrencySymbol = (TextView)rootView.findViewById(R.id.currency_symbol);
         tViewCurrencySymbol.setTypeface(TypefaceUtil.getInstance(getActivity()).getBTCTypeface());

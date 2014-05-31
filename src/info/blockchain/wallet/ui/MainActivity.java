@@ -134,7 +134,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         }
         
         viewPager.setCurrentItem(1);
-        
+
         new Thread()
         {
             public void run() {

@@ -29,6 +29,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -37,6 +38,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -269,7 +271,13 @@ public class SendFragment extends Fragment   {
     	sentViaSMS = false;
     	
         rootView = inflater.inflate(R.layout.fragment_send, container, false);
-        
+
+        /*
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        strCurrentFiatCode = prefs.getString("ccurrency", "USD");
+        strCurrentFiatSymbol = prefs.getString(strCurrentFiatCode + "-SYM", "$");
+        */
+
     	simple_spend = (LinearLayout)rootView.findViewById(R.id.send_container);
     	custom_spend = (LinearLayout)rootView.findViewById(R.id.custom_spend);
     	custom_spend.setVisibility(View.GONE);
@@ -287,16 +295,12 @@ public class SendFragment extends Fragment   {
         tvAddressBis = (TextView)rootView.findViewById(R.id.sending_address_bis);
         tvAddressBis.setVisibility(View.INVISIBLE);
 
-//        summary = (LinearLayout)rootView.findViewById(R.id.summary);
-//        summary.setVisibility(View.INVISIBLE);
         summary2 = (LinearLayout)rootView.findViewById(R.id.summary2);
         summary2.setVisibility(View.INVISIBLE);
         summary3 = (LinearLayout)rootView.findViewById(R.id.summary3);
         summary3.setVisibility(View.GONE);
 
         btSend = (Button)rootView.findViewById(R.id.send);
-//        ivCheck = ((ImageButton)rootView.findViewById(R.id.sent_check));
-//        ivCheck.setVisibility(View.GONE);
         tvSentPrompt = (TextView)rootView.findViewById(R.id.sent_prompt);
         tvSentPrompt.setVisibility(View.GONE);
         
@@ -356,13 +360,10 @@ public class SendFragment extends Fragment   {
     	LinearLayout divider2 = (LinearLayout)rootView.findViewById(R.id.divider2);
     	divider2.setBackgroundColor(BlockchainUtil.BLOCKCHAIN_RED);
 
-//        ((TextView)rootView.findViewById(R.id.direction)).setTypeface(TypefaceUtil.getInstance(getActivity()).getGravityBoldTypeface());
-//        ((TextView)rootView.findViewById(R.id.direction)).setText(Character.toString((char)0x2192));
         ((ImageView)rootView.findViewById(R.id.direction)).setImageResource(R.drawable.red_arrow);
         ((TextView)rootView.findViewById(R.id.currency)).setText(strCurrentFiatSymbol);
         ((TextView)rootView.findViewById(R.id.currency)).setTypeface(TypefaceUtil.getInstance(getActivity()).getGravityBoldTypeface());
 
-//        initMagicList();
         initAddressBookList();
 
         btSend = ((Button)rootView.findViewById(R.id.send));
@@ -745,7 +746,6 @@ public class SendFragment extends Fragment   {
 					//
 					//
 					btSend.setVisibility(View.GONE);
-//			        ivCheck.setVisibility(View.VISIBLE);
 			        summary3.setVisibility(View.VISIBLE);
 			        tvSentPrompt.setVisibility(View.VISIBLE);
 
@@ -780,7 +780,6 @@ public class SendFragment extends Fragment   {
 				//
 				//
 				btSend.setVisibility(View.GONE);
-//		        ivCheck.setVisibility(View.VISIBLE);
 		        summary3.setVisibility(View.VISIBLE);
 		        tvSentPrompt.setVisibility(View.VISIBLE);
 
@@ -806,7 +805,6 @@ public class SendFragment extends Fragment   {
 				//
 				//
 				btSend.setVisibility(View.GONE);
-//		        ivCheck.setVisibility(View.VISIBLE);
 		        summary3.setVisibility(View.VISIBLE);
 		        tvSentPrompt.setVisibility(View.VISIBLE);
 			}
@@ -893,8 +891,6 @@ public class SendFragment extends Fragment   {
 
 		        	}
 		        	else {
-
-//			        	summary.setVisibility(View.VISIBLE);
 			        	summary2.setVisibility(View.VISIBLE);
 			        	tvAddress.setVisibility(View.VISIBLE);
 			        	tvAddressBis.setVisibility(View.VISIBLE);
@@ -902,16 +898,12 @@ public class SendFragment extends Fragment   {
 			        	tvAmount.setVisibility(View.VISIBLE);
 			        	tvAmountBis.setVisibility(View.VISIBLE);
 			        	
-//			        	final WalletApplication application = (WalletApplication)getActivity().getApplication();
-//	 		    		MyRemoteWallet wallet = application.getRemoteWallet();
-//	 		    		Map<String,String> labels = wallet.getLabelMap();
 	 		            if(currentSelectedAddress != null) {
 	 		            	tvAddressBis.setText(currentSelectedAddress.substring(0, 20) + "...");
 	 		            }
 	 		            else {
 	 		            	tvAddressBis.setVisibility(View.GONE);
 	 		            }
-	 //					Toast.makeText(application, "BTC going to:" + destination, Toast.LENGTH_LONG).show();
 			        	
 			        	if(edAddress.getText().toString().length() > 15) {
 				        	tvAddress.setText(edAddress.getText().toString().substring(0, 15) + "...");
@@ -959,13 +951,7 @@ public class SendFragment extends Fragment   {
 
         edAmount1.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
-
-            	/*
-            	if(ivCheck.getVisibility() == View.VISIBLE) {
-            		clearSent();
-            	}
-            	*/
-
+            	;
             }
         });
 
@@ -994,16 +980,6 @@ public class SendFragment extends Fragment   {
         	public void onTextChanged(CharSequence s, int start, int before, int count)	{ ; }
         });
 
-        /*
-        edAmount1.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(hasFocus) {
-                    getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-                }
-            }
-        });
-        */
-
         edAmount1.setOnFocusChangeListener(new OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -1016,17 +992,6 @@ public class SendFragment extends Fragment   {
                     	else {
                 			edAmount1.setHint("0.00");
                     	}
-                    	/*
-                    	try {
-                    		Double val = Double.parseDouble(edAmount1.getText().toString());
-                    		if(val == 0.0) {
-                    			edAmount1.setText("");
-                    		}
-                    	}
-                    	catch(NumberFormatException nfe) {
-                			edAmount1.setText("");
-                    	}
-                    	*/
                     }
                 }
             }
@@ -1041,12 +1006,6 @@ public class SendFragment extends Fragment   {
             		displayMagicList();
 
             	}
-
-            	/*
-            	if(ivCheck.getVisibility() == View.VISIBLE) {
-            		clearSent();
-            	}
-            	*/
             }
         });
 
@@ -1128,7 +1087,6 @@ public class SendFragment extends Fragment   {
             	tvAmount2.setText("0.0000");
             	isBTC = true;
             	
-//                summary.setVisibility(View.INVISIBLE);
                 summary2.setVisibility(View.INVISIBLE);
                 tvAmount.setText("");
                 tvAmount.setVisibility(View.INVISIBLE);
@@ -1144,7 +1102,6 @@ public class SendFragment extends Fragment   {
                 btSend.setText("Send money");
                 btSend.setVisibility(View.INVISIBLE);
 
-//                ivCheck.setVisibility(View.GONE);
                 summary3.setVisibility(View.GONE);
                 tvSentPrompt.setVisibility(View.GONE);
                 
@@ -1835,7 +1792,6 @@ public class SendFragment extends Fragment   {
 
         magicList.setOnItemClickListener(new OnItemClickListener() {
 	        public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3)	{
-//                Toast.makeText(getActivity(), keys.get(position), Toast.LENGTH_SHORT).show();
                 InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(edAddress.getWindowToken(), 0);
 
