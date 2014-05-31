@@ -5,6 +5,7 @@ import java.text.DecimalFormat;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Currency;
 import java.util.List;
 import java.util.Iterator;
 import java.util.Map;
@@ -19,7 +20,6 @@ import piuk.blockchain.android.R;
 import piuk.blockchain.android.WalletApplication;
 import piuk.blockchain.android.util.WalletUtils;
 
-import com.dm.zbar.android.scanner.ZBarConstants;
 import com.google.bitcoin.core.Address;
 import com.google.bitcoin.core.ScriptException;
 import com.google.bitcoin.core.Transaction;
@@ -34,7 +34,9 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.graphics.Color;
 import android.graphics.Bitmap;
 import android.support.v4.app.Fragment;
@@ -165,7 +167,7 @@ public class BalanceFragment extends Fragment   {
             }			    		
     	}
 		
-        Log.d("transaction", "transaction addressesPartOfLastSentTransaction: " + addressesPartOfLastSentTransaction);
+//        Log.d("transaction", "transaction addressesPartOfLastSentTransaction: " + addressesPartOfLastSentTransaction);
         return addressesPartOfLastSentTransaction;	
 	}
 
@@ -252,6 +254,10 @@ public class BalanceFragment extends Fragment   {
         
 //        btc_font = TypefaceUtil.getInstance(getActivity()).getBTCTypeface();
 //        btc_bold_font = TypefaceUtil.getInstance(getActivity()).getBTCBoldTypeface();
+        
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        strCurrentFiatCode = prefs.getString("ccurrency", "USD");
+        strCurrentFiatSymbol = prefs.getString(strCurrentFiatCode + "-SYM", "$");
 
         tViewCurrencySymbol = (TextView)rootView.findViewById(R.id.currency_symbol);
         tViewCurrencySymbol.setTypeface(TypefaceUtil.getInstance(getActivity()).getBTCTypeface());
@@ -442,7 +448,7 @@ public class BalanceFragment extends Fragment   {
 	        }
 	    }
 		else {
-			;
+        	adapter.notifyDataSetChanged();
 		}
 		
 	}
@@ -582,9 +588,9 @@ public class BalanceFragment extends Fragment   {
 		final JSONObject addressRoot = multiAddrBalancesRoot.get(address);
 	    final BigInteger totalReceived = BigInteger.valueOf(((Number)addressRoot.get("total_received")).longValue());
 	    final BigInteger totalSent = BigInteger.valueOf(((Number)addressRoot.get("total_sent")).longValue());
-	    Log.d("totalReceived: ", "totalReceived: " + totalReceived);
+//	    Log.d("totalReceived: ", "totalReceived: " + totalReceived);
 
-	    Log.d("totalSent: ", "totalSent: " + totalSent);
+//	    Log.d("totalSent: ", "totalSent: " + totalSent);
         LinearLayout progression_sent = ((LinearLayout)balance_extLayout.findViewById(R.id.progression_sent));
         ((TextView)progression_sent.findViewById(R.id.total_type)).setTypeface(TypefaceUtil.getInstance(getActivity()).getRobotoTypeface());
         ((TextView)progression_sent.findViewById(R.id.total_type)).setTextColor(0xFF9b9b9b);
@@ -614,7 +620,7 @@ public class BalanceFragment extends Fragment   {
 
 		for (Iterator<MyTransaction> it = transactionsList.iterator(); it.hasNext();) {
 			MyTransaction transaction = it.next();
-		    Log.d("transactionHash: ", transaction.getHashAsString());
+//		    Log.d("transactionHash: ", transaction.getHashAsString());
 		    BigInteger result = BigInteger.ZERO;
 	    	List<TransactionOutput> transactionOutputs = transaction.getOutputs();
 	    	List<TransactionInput> transactionInputs = transaction.getInputs();	 
@@ -649,7 +655,7 @@ public class BalanceFragment extends Fragment   {
 		        		Address addr = transactionInput.getFromAddress();
 		        		//second condition is required so that inputs are not displayed if it is also an output 
 		        		if (addr != null && ! addr.toString().equals(address)) {
-		        		    Log.d("transactionInput: ", addr.toString());
+//		        		    Log.d("transactionInput: ", addr.toString());
 			        		MyTransactionInput ti = (MyTransactionInput)transactionInput;
 		        			String value = BlockchainUtil.formatBitcoin(ti.getValue()) + " BTC";
 		        			String label = labelMap.get(addr.toString());
@@ -706,7 +712,7 @@ public class BalanceFragment extends Fragment   {
 		        		
 		        		//second condition is required so that outputs are not displayed if it is also an input 
 		        		if (addr != null && ! addr.toString().equals(address)) {			        		
-		        		    Log.d("transactionOutput: ", addr.toString());
+//		        		    Log.d("transactionOutput: ", addr.toString());
 		        			String value = BlockchainUtil.formatBitcoin(transactionOutput.getValue()) + " BTC";
 		        			String label = labelMap.get(addr.toString());
 		        			if (label != null) {
@@ -771,14 +777,9 @@ public class BalanceFragment extends Fragment   {
 		child.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            	/*
-                Intent intent = new Intent(Intent.ACTION_VIEW , Uri.parse("https://blockchain.info/tx/" + transactionHash));
-                startActivity(intent);
-                */
                 Intent intent;
         		intent = new Intent(getActivity(), TxActivity.class);
         		intent.putExtra("TX", transactionHash);
-        		intent.putExtra("HEIGHT", transaction.getHeight());
         		intent.putExtra("TS", transaction.getTime().getTime() / 1000);
         		intent.putExtra("RESULT", BlockchainUtil.formatBitcoin(result));
         		intent.putExtra("SENDING", isSending);

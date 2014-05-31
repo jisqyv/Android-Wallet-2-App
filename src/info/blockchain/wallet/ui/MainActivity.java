@@ -49,6 +49,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     private static int ABOUT_ACTIVITY 		= 3;
     private static int PICK_CONTACT 		= 4;
     private static int NEARBY_MERCHANTS 	= 5;
+    private static int SELECT_FIAT		 	= 6;
 
 	private ViewPager viewPager;
     private TabsPagerAdapter mAdapter;
@@ -161,13 +162,13 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     	case R.id.exchange_rates:
     		doExchangeRates();
     		return true;
+    	case R.id.select_fiat:
+    		doSelectFiat();
+    		return true;
     	/*	
     	case R.id.nearby_merchants:
 			Intent intent3 = new Intent(MainActivity.this, MapActivity.class);
 			startActivity(intent3);
-    		return true;
-    	case R.id.send_to_friends:
-    		doSend2Friends();
     		return true;
     	*/
     	case R.id.action_about:
@@ -247,6 +248,11 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     private void doAbout()	{
     	Intent intent = new Intent(MainActivity.this, AboutActivity.class);
 		startActivityForResult(intent, ABOUT_ACTIVITY);
+    }
+
+    private void doSelectFiat()	{
+    	Intent intent = new Intent(MainActivity.this, CurrencySelector.class);
+		startActivityForResult(intent, SELECT_FIAT);
     }
 
     private void doSend2Friends()	{

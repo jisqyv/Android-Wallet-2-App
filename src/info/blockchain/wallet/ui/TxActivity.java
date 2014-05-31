@@ -62,7 +62,6 @@ public class TxActivity extends Activity	{
         	strTxHash = extras.getString("TX");
         	isSending = extras.getBoolean("SENDING");
         	strResult = extras.getString("RESULT");
-//        	height = extras.getInt("HEIGHT");
         	ts = extras.getLong("TS");
         }
         
