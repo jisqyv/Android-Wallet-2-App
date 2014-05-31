@@ -32,22 +32,13 @@ import com.google.zxing.client.android.encode.QRCodeEncoder;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.ContactsContract.CommonDataKinds;
-import android.provider.ContactsContract.Contacts;
-import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.graphics.Color;
 import android.graphics.Bitmap;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -63,7 +54,6 @@ import android.widget.Toast;
 import android.view.View.OnTouchListener;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Animation;
-import android.view.inputmethod.InputMethodManager;
 import android.util.Log;
 
 @SuppressLint("NewApi")
@@ -622,7 +612,6 @@ public class BalanceFragment extends Fragment   {
 
         final List<MyTransaction> transactionsList = remoteWallet.getTransactions();
 
-//	    for (final MyTransaction transaction : transactionsList) {
 		for (Iterator<MyTransaction> it = transactionsList.iterator(); it.hasNext();) {
 			MyTransaction transaction = it.next();
 		    Log.d("transactionHash: ", transaction.getHashAsString());
@@ -654,7 +643,6 @@ public class BalanceFragment extends Fragment   {
 	    	}
 	    	
 	    	if (transactionInputs != null && isAddressPartofTransaction) {
-		    	//for (TransactionInput transactionInput : transactionInputs) {
 		    	for (Iterator<TransactionInput> iti = transactionInputs.iterator(); iti.hasNext();) {
 		    		TransactionInput transactionInput = iti.next();
 		        	try {
@@ -683,14 +671,12 @@ public class BalanceFragment extends Fragment   {
 	    	
         	final LinearLayout balance_extHiddenLayout = (LinearLayout)view.findViewById(R.id.balance_ext_hidden);
         	if (addressValueEntryList.size() > 0) {
-//        		View child = getTxChildView(view, addressValueEntryList, result, transaction.getHashAsString(), transaction.getTime().getTime()/1000, false);	        		
         		View child = getTxChildView(view, addressValueEntryList, result, transaction, false);	        		
 	    		balance_extHiddenLayout.addView(child);	    	
         	}
 
         	addressValueEntryList.clear();
 	    	isAddressPartofTransaction = false;
-	    	//for (TransactionInput transactionInput : transactionInputs) {
 		    for (Iterator<TransactionInput> iti = transactionInputs.iterator(); iti.hasNext();) {
 	    		TransactionInput transactionInput = iti.next();
 	        	try {
@@ -710,7 +696,6 @@ public class BalanceFragment extends Fragment   {
 	    	}
 	    	
 			if (transactionOutputs != null && isAddressPartofTransaction) {
-		    	//for (TransactionOutput transactionOutput : transactionOutputs) {
 				for (Iterator<TransactionOutput> ito = transactionOutputs.iterator(); ito.hasNext();) {
 		    		TransactionOutput transactionOutput = ito.next();
 		        	try {
@@ -741,7 +726,6 @@ public class BalanceFragment extends Fragment   {
 			}
 
         	if (addressValueEntryList.size() > 0) {
-//        		View child = getTxChildView(view, addressValueEntryList, result, transaction.getHashAsString(), transaction.getTime().getTime()/1000, true);	        	
         		View child = getTxChildView(view, addressValueEntryList, result, transaction, true);
 	    		balance_extHiddenLayout.addView(child);	    	
         	}	   
@@ -759,7 +743,7 @@ public class BalanceFragment extends Fragment   {
 
         ((TextView)child.findViewById(R.id.ts)).setTypeface(TypefaceUtil.getInstance(getActivity()).getGravityBoldTypeface());
         
-        ((TextView)child.findViewById(R.id.ts)).setText(DateUtil.getInstance().formatted(transaction.getTime().getTime()/1000));
+        ((TextView)child.findViewById(R.id.ts)).setText(DateUtil.getInstance().formatted(transaction.getTime().getTime() / 1000));
 
         if (isSending) {
 	        TxBitmap txBitmap = new TxBitmap(getActivity(), addressValueEntryList);
@@ -794,6 +778,7 @@ public class BalanceFragment extends Fragment   {
                 Intent intent;
         		intent = new Intent(getActivity(), TxActivity.class);
         		intent.putExtra("TX", transactionHash);
+        		intent.putExtra("HEIGHT", transaction.getHeight());
         		intent.putExtra("TS", transaction.getTime().getTime() / 1000);
         		intent.putExtra("RESULT", BlockchainUtil.formatBitcoin(result));
         		intent.putExtra("SENDING", isSending);

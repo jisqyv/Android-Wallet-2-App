@@ -1989,7 +1989,7 @@ public class SendFragment extends Fragment   {
         LayoutParams layout_params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         tvSpend.setLayoutParams(layout_params);
     	((LinearLayout)layout_from.findViewById(R.id.divider1)).setBackgroundColor(0xFF3eb6e2);
-    	((LinearLayout)layout_from.findViewById(R.id.p1)).setGravity(Gravity.RIGHT|Gravity.CENTER_VERTICAL);
+    	((LinearLayout)layout_from.findViewById(R.id.p1)).setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
     	((LinearLayout)layout_from.findViewById(R.id.p1)).addView(tvSpend);
 
     	final Spinner spAddress = new Spinner(getActivity());
@@ -2001,7 +2001,7 @@ public class SendFragment extends Fragment   {
         spAddress.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
         layout_params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         spAddress.setLayoutParams(layout_params);
-    	((LinearLayout)layout_from.findViewById(R.id.p2)).setGravity(Gravity.LEFT|Gravity.CENTER_VERTICAL);
+    	((LinearLayout)layout_from.findViewById(R.id.p2)).setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
     	((LinearLayout)layout_from.findViewById(R.id.p2)).addView(spAddress);
 
     	final EditText edAmount = new EditText(new ContextThemeWrapper(getActivity(), android.R.style.Theme_Holo_InputMethod));
@@ -2055,7 +2055,7 @@ public class SendFragment extends Fragment   {
         spFeeType.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
         layout_params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         spFeeType.setLayoutParams(layout_params);
-    	((LinearLayout)layout_fee.findViewById(R.id.p2)).setGravity(Gravity.LEFT|Gravity.CENTER_VERTICAL);
+    	((LinearLayout)layout_fee.findViewById(R.id.p2)).setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
     	final EditText edFee = new EditText(new ContextThemeWrapper(getActivity(), android.R.style.Theme_Holo_InputMethod));
         edFee.setId(ViewIdGenerator.generateViewId());
         edFee.setHint("0.0001");
@@ -2104,7 +2104,7 @@ public class SendFragment extends Fragment   {
         layout_params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         tvChange.setLayoutParams(layout_params);
     	((LinearLayout)layout_change.findViewById(R.id.divider1)).setBackgroundColor(0xFF808080);
-    	((LinearLayout)layout_change.findViewById(R.id.p1)).setGravity(Gravity.RIGHT|Gravity.CENTER_VERTICAL);
+    	((LinearLayout)layout_change.findViewById(R.id.p1)).setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
     	((LinearLayout)layout_change.findViewById(R.id.p1)).addView(tvChange);
     	final Spinner spChangeAddress = new Spinner(getActivity());
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -2114,7 +2114,7 @@ public class SendFragment extends Fragment   {
         spChangeAddress.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
         layout_params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         spChangeAddress.setLayoutParams(layout_params);
-    	((LinearLayout)layout_change.findViewById(R.id.p2)).setGravity(Gravity.LEFT|Gravity.CENTER_VERTICAL);
+    	((LinearLayout)layout_change.findViewById(R.id.p2)).setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
     	((LinearLayout)layout_change.findViewById(R.id.p2)).addView(spChangeAddress);
     	/*
         TextView tvChange3 = new TextView(getActivity());
