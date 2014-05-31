@@ -815,6 +815,13 @@ public class SendFragment extends Fragment   {
 
 				final MyRemoteWallet remoteWallet = application.getRemoteWallet();
 
+				final MyRemoteWallet.FeePolicy feePolicy;
+				if (sendType != null && sendType == SendTypeQuickSend) {
+					feePolicy = MyRemoteWallet.FeePolicy.FeeForce;
+				} else {
+					feePolicy = MyRemoteWallet.FeePolicy.FeeOnlyIfNeeded;
+				}
+
 				if (remoteWallet.isDoubleEncrypted() && remoteWallet.temporySecondPassword == null) {
 					RequestPasswordDialog.show(getFragmentManager(), new SuccessCallback() {
 
@@ -836,7 +843,7 @@ public class SendFragment extends Fragment   {
 									e.printStackTrace();
 								}								
 							} else {
-								makeTransaction(MyRemoteWallet.FeePolicy.FeeOnlyIfNeeded);
+								makeTransaction(feePolicy);
 							}
 						}
 
@@ -861,7 +868,7 @@ public class SendFragment extends Fragment   {
 							e.printStackTrace();
 						}								
 					} else {
-						makeTransaction(MyRemoteWallet.FeePolicy.FeeOnlyIfNeeded);
+						makeTransaction(feePolicy);
 					}
 				}
 
