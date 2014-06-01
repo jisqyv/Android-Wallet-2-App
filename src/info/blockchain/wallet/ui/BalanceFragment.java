@@ -32,14 +32,17 @@ import com.google.zxing.client.android.encode.QRCodeEncoder;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.os.Bundle;
 import android.graphics.Color;
 import android.graphics.Bitmap;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -91,6 +94,18 @@ public class BalanceFragment extends Fragment   {
 	private boolean isNoRefreshOnReturn = false;
 	private Transaction sentTx = null;
 	private List<String> activeAddresses;
+
+	public static final String ACTION_INTENT = "info.blockchain.wallet.ui.BalanceFragment.REFRESH";
+
+    protected BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(ACTION_INTENT.equals(intent.getAction())) {
+        		setAdapterContent();
+        		adapter.notifyDataSetChanged();
+            }
+        }
+    };
 
 	private EventListeners.EventListener eventListener = new EventListeners.EventListener() {
 		@Override
@@ -435,6 +450,9 @@ public class BalanceFragment extends Fragment   {
     public void onResume() {
     	super.onResume();
 
+        IntentFilter filter = new IntentFilter(ACTION_INTENT);
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiver, filter);
+
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         strCurrentFiatCode = prefs.getString("ccurrency", "USD");
         strCurrentFiatSymbol = prefs.getString(strCurrentFiatCode + "-SYM", "$");
@@ -445,6 +463,13 @@ public class BalanceFragment extends Fragment   {
 		
     	System.gc();
 
+    }
+
+    @Override
+    public void onPause() {
+    	super.onPause();
+
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(receiver);
     }
 
 	@Override
