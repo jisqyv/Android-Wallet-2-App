@@ -17,8 +17,10 @@ import java.util.Map;
 import piuk.MyRemoteWallet;
 import piuk.blockchain.android.R;
 import piuk.blockchain.android.WalletApplication;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -28,6 +30,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -104,17 +107,15 @@ public class ReceiveFragment extends Fragment   {
 	private boolean isBTC = true;
 
 	private boolean isReturnFromOutsideApp = false;
-
+	
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         rootView = inflater.inflate(R.layout.fragment_receive, container, false);
 
-        /*
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         strCurrentFiatCode = prefs.getString("ccurrency", "USD");
         strCurrentFiatSymbol = prefs.getString(strCurrentFiatCode + "-SYM", "$");
-        */
 
         tvAddress = (TextView)rootView.findViewById(R.id.receiving_address);
         tvAddress.setVisibility(View.INVISIBLE);
@@ -236,7 +237,7 @@ public class ReceiveFragment extends Fragment   {
         initAddressBookList();
 
         tvAmount2 = ((TextView)rootView.findViewById(R.id.amount2));
-        tvAmount2.setText("0.00 USD");
+        tvAmount2.setText("0.00" + " " + strCurrentFiatCode);
         edAmount1 = ((EditText)rootView.findViewById(R.id.amount1));
       	edAmount1.setText("");
       	if(isBTC) {
@@ -499,7 +500,7 @@ public class ReceiveFragment extends Fragment   {
         Log.d("BlockchainWallet", "onResume");
         
         if(!isReturnFromOutsideApp) {
-    		removeMagicList();
+            removeMagicList();
         	displayMagicList();
         }
         else {
@@ -674,6 +675,11 @@ public class ReceiveFragment extends Fragment   {
      }
 
     private void displayMagicList() {
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        strCurrentFiatCode = prefs.getString("ccurrency", "USD");
+        strCurrentFiatSymbol = prefs.getString(strCurrentFiatCode + "-SYM", "$");
+
     	LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
     	isMagic = true;

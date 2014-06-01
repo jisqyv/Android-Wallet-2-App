@@ -259,9 +259,11 @@ public class SendFragment extends Fragment   {
 
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    	
+
+    	/*
         IntentFilter filter = new IntentFilter(ACTION_INTENT);
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiver, filter);
+        */
 
 		final MainActivity activity = (MainActivity) getActivity();
 		application = (WalletApplication) activity.getApplication();
@@ -272,11 +274,9 @@ public class SendFragment extends Fragment   {
     	
         rootView = inflater.inflate(R.layout.fragment_send, container, false);
 
-        /*
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         strCurrentFiatCode = prefs.getString("ccurrency", "USD");
         strCurrentFiatSymbol = prefs.getString(strCurrentFiatCode + "-SYM", "$");
-        */
 
     	simple_spend = (LinearLayout)rootView.findViewById(R.id.send_container);
     	custom_spend = (LinearLayout)rootView.findViewById(R.id.custom_spend);
@@ -877,7 +877,7 @@ public class SendFragment extends Fragment   {
         });
 
         tvAmount2 = ((TextView)rootView.findViewById(R.id.amount2));
-        tvAmount2.setText("0.00 USD");
+        tvAmount2.setText("0.00" + " " + strCurrentFiatCode);
         edAmount1 = ((EditText)rootView.findViewById(R.id.amount1));
       	edAmount1.setText("");
       	if(isBTC) {
@@ -1241,9 +1241,19 @@ public class SendFragment extends Fragment   {
 
         Log.d("BlockchainWallet", "onResume");
 
-		removeMagicList();
+        IntentFilter filter = new IntentFilter(ACTION_INTENT);
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiver, filter);
+
+        removeMagicList();
     	displayMagicList();
 
+    }
+
+    @Override
+    public void onPause() {
+    	super.onPause();
+
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(receiver);
     }
 
 	@Override
@@ -1654,6 +1664,11 @@ public class SendFragment extends Fragment   {
      }
 
     private void displayMagicList() {
+    	
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        strCurrentFiatCode = prefs.getString("ccurrency", "USD");
+        strCurrentFiatSymbol = prefs.getString(strCurrentFiatCode + "-SYM", "$");
+
     	LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
     	isMagic = true;

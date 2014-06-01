@@ -17,6 +17,8 @@ public class CurrencyExchange	{
     private static HashMap<String,Double> prices = null;
     private static HashMap<String,String> symbols = null;
 
+    private static long ts = 0L;
+
     private static Context context = null;
     
     private CurrencyExchange()	{ ; }
@@ -40,13 +42,14 @@ public class CurrencyExchange	{
 	    	instance = new CurrencyExchange();
 		}
 
-		getExchangeRates();
+    	if(System.currentTimeMillis() - ts > (15 * 60 * 1000)) {
+    		getExchangeRates();
+    	}
 
 		return instance;
 	}
 	
     public Double getCurrencyPrice(String currency)	{
-    	
     	if(prices.containsKey(currency) && prices.get(currency) != 0.0)	{
     		return prices.get(currency);
     	}
@@ -57,7 +60,6 @@ public class CurrencyExchange	{
     }
 
     public String getCurrencySymbol(String currency)	{
-    	
     	if(symbols.containsKey(currency) && symbols.get(currency) != null)	{
     		return symbols.get(currency);
     	}
@@ -70,6 +72,7 @@ public class CurrencyExchange	{
 	private static void getExchangeRates() {
         DownloadFXRatesTask task = new DownloadFXRatesTask(context, fxRates);
         task.execute(new String[] { fxRates.getUrl() });
+		ts = System.currentTimeMillis();
 	}
 
 }

@@ -206,7 +206,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
         }
 		else if(resultCode == Activity.RESULT_CANCELED && requestCode == ZBAR_SCANNER_REQUEST) {
-//            Toast.makeText(this, R.string.camera_unavailable, Toast.LENGTH_SHORT).show();
+//          Toast.makeText(this, R.string.camera_unavailable, Toast.LENGTH_SHORT).show();
 		}
 		else {
 			;

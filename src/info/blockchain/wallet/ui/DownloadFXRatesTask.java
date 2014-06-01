@@ -67,7 +67,26 @@ public class DownloadFXRatesTask extends AsyncTask<String, Void, String> {
 		String[] currencies = fxRates.getCurrencies();
     	for(int i = 0; i < currencies.length; i++)	 {
 	    	prices.put(currencies[i], fxRates.getLastPrice(currencies[i]));
-	    	symbols.put(currencies[i], fxRates.getSymbol(currencies[i]));
+
+			if(fxRates.getSymbol(currencies[i]).equals("kr"))	 {
+				symbols.put(currencies[i], "K");
+			}
+			else if(fxRates.getSymbol(currencies[i]).equals("CHF"))	 {
+				symbols.put(currencies[i], "F");
+			}
+			else if(fxRates.getSymbol(currencies[i]).equals("RUB"))	 {
+				symbols.put(currencies[i], "R");
+			}
+			else if(fxRates.getSymbol(currencies[i]).equals("zł"))	 {
+				symbols.put(currencies[i], "Z");
+			}
+			else if(fxRates.getSymbol(currencies[i]).endsWith("$"))	 {
+				symbols.put(currencies[i], "$");
+			}
+			else	 {
+		    	symbols.put(currencies[i], fxRates.getSymbol(currencies[i]));
+			}
+
     	}
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
