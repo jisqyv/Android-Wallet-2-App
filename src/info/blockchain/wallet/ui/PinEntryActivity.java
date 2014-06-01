@@ -108,6 +108,12 @@ public class PinEntryActivity extends FragmentActivity {
             }
             else	{
             	validating = true;
+            	new Thread()
+                {
+                    public void run() {
+                        BlockchainUtil.getInstance(PinEntryActivity.this);
+                    }
+                }.start();
             }
         }
 
