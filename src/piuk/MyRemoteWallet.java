@@ -786,13 +786,16 @@ public class MyRemoteWallet extends MyWallet {
         sendCoinsAsync(true, getNotWatchOnlyActiveAddresses(), receivingAddresses, feePolicy, fee, null, progress);
 	}
 
-	public void sendCoinsAsync(final String[] from, final String toAddress, final BigInteger amount, final FeePolicy feePolicy, final BigInteger fee, final String changeAddress, final SendProgress progress) {
+	public void sendCoinsAsync(final HashMap<String, BigInteger> sendingAddresses, final String toAddress, final BigInteger amount, final FeePolicy feePolicy, final BigInteger fee, final String changeAddress, final SendProgress progress) {
 		HashMap<String, BigInteger> receivingAddresses = new HashMap<String, BigInteger>();
 		receivingAddresses.put(toAddress, amount);
-		sendCoinsAsync(false, from, receivingAddresses, feePolicy, fee, changeAddress, progress);
+		
+		List<String> from = new ArrayList<String>(sendingAddresses.keySet());
+
+		sendCoinsAsync(false, from.toArray(new String[from.size()]), receivingAddresses, feePolicy, fee, changeAddress, progress);
 	}
 	
-	public void sendCoinsAsync(final boolean isSimpleSend, final String[] from, final HashMap<String, BigInteger> receivingAddresses, final FeePolicy feePolicy, final BigInteger fee, final String changeAddress, final SendProgress progress) {
+	private void sendCoinsAsync(final boolean isSimpleSend, final String[] from, final HashMap<String, BigInteger> receivingAddresses, final FeePolicy feePolicy, final BigInteger fee, final String changeAddress, final SendProgress progress) {
 
 		new Thread() {
 			@Override

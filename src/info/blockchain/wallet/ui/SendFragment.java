@@ -762,11 +762,10 @@ public class SendFragment extends Fragment   {
 					from = new String[] {selected.first.toString()};
 				}
 				*/
-				String[] from = application.getRemoteWallet().getActiveAddresses();
 				final BigInteger amount = getBTCEnteredOutputValue(edAmount1);
 				final WalletApplication application = (WalletApplication) getActivity().getApplication();
 
-				application.getRemoteWallet().sendCoinsAsync(false, from, cs.getSendingAddresses(), feePolicy, fee, cs.getChangeAddress(), progress);
+				application.getRemoteWallet().sendCoinsAsync(cs.getSendingAddresses(), receivingAddress.toString(), amount, feePolicy, fee, cs.getChangeAddress(), progress);
 
 				//
 				//
