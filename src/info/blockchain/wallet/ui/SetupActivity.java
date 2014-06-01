@@ -72,6 +72,13 @@ public class SetupActivity extends Activity		{
             }
         });
 
+    	new Thread()
+        {
+            public void run() {
+                BlockchainUtil.getInstance(SetupActivity.this);
+            }
+        }.start();
+
     }
     
 	@Override

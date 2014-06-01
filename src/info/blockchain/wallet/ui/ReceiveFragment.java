@@ -63,7 +63,7 @@ public class ReceiveFragment extends Fragment   {
 
 	private boolean addressesOn = true;
 	private boolean contactsOn = true;
-	
+
 	private View rootView = null;
 
     private EditText edAmount1 = null;
@@ -96,25 +96,23 @@ public class ReceiveFragment extends Fragment   {
     private List<HashMap<String,String>> filteredDisplayList = null;
 	private MagicAdapter adapter = null;
 	private String currentSelectedAddress = null;
-	
+
 	private List<String> activeAddresses;
 	private Map<String,String> labels;
 	private List<Map<String, Object>> addressBookMapList;
 
-	private boolean isBTC = true;
-
 	private boolean isReturnFromOutsideApp = false;
+
+	private boolean isBTC = true;
 
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         rootView = inflater.inflate(R.layout.fragment_receive, container, false);
 
-        /*
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         strCurrentFiatCode = prefs.getString("ccurrency", "USD");
         strCurrentFiatSymbol = prefs.getString(strCurrentFiatCode + "-SYM", "$");
-        */
 
         tvAddress = (TextView)rootView.findViewById(R.id.receiving_address);
         tvAddress.setVisibility(View.INVISIBLE);
@@ -236,7 +234,7 @@ public class ReceiveFragment extends Fragment   {
         initAddressBookList();
 
         tvAmount2 = ((TextView)rootView.findViewById(R.id.amount2));
-        tvAmount2.setText("0.00 USD");
+        tvAmount2.setText("0.00" + " " + strCurrentFiatCode);
         edAmount1 = ((EditText)rootView.findViewById(R.id.amount1));
       	edAmount1.setText("");
       	if(isBTC) {
@@ -298,7 +296,7 @@ public class ReceiveFragment extends Fragment   {
 		        	edAmount1.clearFocus();
 	                InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 	                imm.hideSoftInputFromWindow(edAmount1.getWindowToken(), 0);
-		        	
+
 		        }
 		        return false;
 		    }
@@ -419,7 +417,7 @@ public class ReceiveFragment extends Fragment   {
 		    @Override
 		    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 		        if(actionId == EditorInfo.IME_ACTION_NEXT) {
-		        	
+
 		        	if(isMagic) {
 		        		removeMagicList();
 		        	}
@@ -499,7 +497,7 @@ public class ReceiveFragment extends Fragment   {
         Log.d("BlockchainWallet", "onResume");
         
         if(!isReturnFromOutsideApp) {
-    		removeMagicList();
+            removeMagicList();
         	displayMagicList();
         }
         else {
@@ -562,12 +560,12 @@ public class ReceiveFragment extends Fragment   {
 		public long getItemId(int position) {
 			return position;
 		}
-		
+
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 
 			View view;
-	        
+
 	        if (convertView == null) {
 	            view = inflater.inflate(R.layout.magic_entry, parent, false);
 	        } else {
@@ -593,7 +591,7 @@ public class ReceiveFragment extends Fragment   {
 
 	        String labelOrAddress = BlockchainUtil.formatAddress(row.get("labelOrAddress"), 15) ;
 	        ((TextView)view.findViewById(R.id.p1)).setText(labelOrAddress);
-	        
+
 	        if (contactsOn) {
 		        String address = BlockchainUtil.formatAddress(row.get("address"), 15) ;
 		        ((TextView)view.findViewById(R.id.p2)).setText(address);
@@ -625,7 +623,7 @@ public class ReceiveFragment extends Fragment   {
 		    	amount = BlockchainUtil.formatBitcoin(finalBalance);
 
 		        HashMap<String,String> row = new HashMap<String,String>();
-		        
+
 		        String label = labels.get(address);
 		        String labelOrAddress;
 		        if (label != null) {
@@ -639,7 +637,7 @@ public class ReceiveFragment extends Fragment   {
 		        row.put("labelOrAddress", labelOrAddress);
 
 				magicData.add(row);    
-						
+
 	        	filteredDisplayList.add(row);
         }
 
@@ -674,10 +672,15 @@ public class ReceiveFragment extends Fragment   {
      }
 
     private void displayMagicList() {
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        strCurrentFiatCode = prefs.getString("ccurrency", "USD");
+        strCurrentFiatSymbol = prefs.getString(strCurrentFiatCode + "-SYM", "$");
+
     	LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
     	isMagic = true;
-		
+
 		final int colorOn = 0xFF9d9d9d;
 		final int colorOff = 0xFFb6b6b6;
 
@@ -749,7 +752,7 @@ public class ReceiveFragment extends Fragment   {
         //	    parent.addView(child, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 	    parent.addView(childIcons);
 	    children++;
-	    
+
     	LinearLayout divider1 = (LinearLayout)childIcons.findViewById(R.id.divider1);
     	divider1.setBackgroundColor(BlockchainUtil.BLOCKCHAIN_GREEN);
 
@@ -763,7 +766,7 @@ public class ReceiveFragment extends Fragment   {
         magicList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 	    parent.addView(childList);
 	    children++;
-	    
+
         magicList.setOnItemClickListener(new OnItemClickListener() {
 	        public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3)	{
 //                Toast.makeText(getActivity(), keys.get(position), Toast.LENGTH_SHORT).show();

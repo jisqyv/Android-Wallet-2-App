@@ -172,6 +172,10 @@ public class BalanceFragment extends Fragment   {
 
 	public void setAdapterContent() {
 
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        strCurrentFiatCode = prefs.getString("ccurrency", "USD");
+        strCurrentFiatSymbol = prefs.getString(strCurrentFiatCode + "-SYM", "$");
+
 		if (application == null) {
 			return;
 		}
@@ -234,8 +238,17 @@ public class BalanceFragment extends Fragment   {
 		totalOutputsValue = remoteWallet.getTotal_sent();
 
 		BigInteger balance = remoteWallet.getBalance();
-        tViewAmount1.setText(BlockchainUtil.formatBitcoin(balance));
-        tViewAmount2.setText(strCurrentFiatSymbol + BlockchainUtil.BTC2Fiat(WalletUtils.formatValue(balance)));
+		if(isBTC) {
+	        tViewCurrencySymbol.setText(Character.toString((char)TypefaceUtil.getInstance(getActivity()).getBTCSymbol()));
+	        tViewAmount1.setText(BlockchainUtil.formatBitcoin(balance));
+	        tViewAmount2.setText(strCurrentFiatSymbol + BlockchainUtil.BTC2Fiat(WalletUtils.formatValue(balance)));
+		}
+		else {
+	        tViewCurrencySymbol.setText(strCurrentFiatSymbol);
+	        tViewAmount1.setText(BlockchainUtil.BTC2Fiat(WalletUtils.formatValue(balance)));
+	        tViewAmount2.setText(Character.toString((char)TypefaceUtil.getInstance(getActivity()).getBTCSymbol()) + BlockchainUtil.formatBitcoin(balance));
+		}
+
         if (adapter != null) {
         	adapter.notifyDataSetChanged();
         }
@@ -248,11 +261,9 @@ public class BalanceFragment extends Fragment   {
 
         rootView = inflater.inflate(info.blockchain.wallet.ui.R.layout.fragment_balance, container, false);
 
-        /*
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         strCurrentFiatCode = prefs.getString("ccurrency", "USD");
         strCurrentFiatSymbol = prefs.getString(strCurrentFiatCode + "-SYM", "$");
-        */
 
         slideUp = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.slide_up);
         slideDown = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.slide_down);
@@ -446,7 +457,7 @@ public class BalanceFragment extends Fragment   {
 	        }
 	    }
 		else {
-        	adapter.notifyDataSetChanged();
+			;
 		}
 		
 	}
@@ -552,6 +563,10 @@ public class BalanceFragment extends Fragment   {
     }
 
     public void doDisplaySubList(final View view, int position) {
+    	
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        strCurrentFiatCode = prefs.getString("ccurrency", "USD");
+
     	final LinearLayout balance_extLayout = (LinearLayout)view.findViewById(R.id.balance_ext);
 
     	MyRemoteWallet remoteWallet = application.getRemoteWallet();

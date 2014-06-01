@@ -20,9 +20,9 @@ import info.blockchain.api.ExchangeRates;
 public class DownloadFXRatesTask extends AsyncTask<String, Void, String> {
 	
 	private Context context = null;
-	private ExchangeRates fxRates = null;
     private static HashMap<String,Double> prices = null;
     private static HashMap<String,String> symbols = null;
+	private ExchangeRates fxRates = null;
 	
 	public DownloadFXRatesTask(Context context, ExchangeRates fxRates) {
 		this.context = context;
@@ -75,7 +75,25 @@ public class DownloadFXRatesTask extends AsyncTask<String, Void, String> {
     	for(int i = 0; i < currencies.length; i++)	 {
 	    	if(prices.containsKey(currencies[i]) && prices.get(currencies[i]) != 0.0)	{
                 editor.putLong(currencies[i], Double.doubleToRawLongBits(prices.get(currencies[i])));
-                editor.putString(currencies[i] + "-SYM", symbols.get(currencies[i]));
+                
+		    	if(symbols.get(currencies[i]).endsWith("$"))	 {
+	                editor.putString(currencies[i] + "-SYM", "$");
+		    	}
+		    	else if(symbols.get(currencies[i]).equals("kr"))	 {
+	                editor.putString(currencies[i] + "-SYM", "K");
+		    	}
+		    	else if(symbols.get(currencies[i]).equals("CHF"))	 {
+	                editor.putString(currencies[i] + "-SYM", "F");
+		    	}
+		    	else if(symbols.get(currencies[i]).equals("zł"))	 {
+	                editor.putString(currencies[i] + "-SYM", "Z");
+		    	}
+		    	else if(symbols.get(currencies[i]).equals("RUB"))	 {
+	                editor.putString(currencies[i] + "-SYM", "R");
+		    	}
+		    	else	 {
+	                editor.putString(currencies[i] + "-SYM", symbols.get(currencies[i]));
+		    	}
 	    	}
     	}
         editor.commit();

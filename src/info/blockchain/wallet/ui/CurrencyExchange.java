@@ -13,9 +13,9 @@ public class CurrencyExchange	{
 
     private static CurrencyExchange instance = null;
     
-    private static ExchangeRates fxRates = null;
     private static HashMap<String,Double> prices = null;
     private static HashMap<String,String> symbols = null;
+    private static ExchangeRates fxRates = null;
 
     private static Context context = null;
     

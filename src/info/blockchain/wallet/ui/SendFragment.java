@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -58,7 +57,6 @@ import android.view.View.OnFocusChangeListener;
 import android.view.View.OnTouchListener;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -67,9 +65,7 @@ import android.widget.TextView;
 import android.widget.ImageView;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.ImageButton;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
@@ -81,18 +77,14 @@ import android.provider.ContactsContract.Contacts;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.content.BroadcastReceiver;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.view.ViewPager;
 import android.view.ContextThemeWrapper;
 import android.util.Log;
-import net.sourceforge.zbar.Symbol;
 
 import com.dm.zbar.android.scanner.ZBarConstants;
-import com.dm.zbar.android.scanner.ZBarScannerActivity;
 import com.google.bitcoin.core.Address;
 import com.google.bitcoin.core.ECKey;
 import com.google.bitcoin.core.Transaction;
 import com.google.bitcoin.core.TransactionOutput;
-import com.google.bitcoin.core.Utils;
 import com.google.bitcoin.core.Wallet.SendRequest;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
@@ -117,13 +109,13 @@ public class SendFragment extends Fragment   {
 	private static int ZBAR_SCANNER_REQUEST = 2026;
 
 	private static int CURRENT_SEND = SIMPLE_SEND;
-	
+
 	private LinearLayout lastSendingAddress = null;
-	
+
 	private boolean addressesOn = false;
 	private boolean contactsOn = true;
 	private boolean phoneContactsOn = false;
-	
+
 	private View rootView = null;
 
     private EditText edAmount1 = null;
@@ -160,20 +152,20 @@ public class SendFragment extends Fragment   {
     private Button btSend = null;
 //    private ImageView ivCheck = null;
     private TextView tvSentPrompt = null;
-    
+
+	private boolean isBTC = true;
+
     private List<HashMap<String,String>> magicData = null;
     private List<HashMap<String,String>> filteredDisplayList = null;
 	private MagicAdapter adapter = null;
 	private String currentSelectedAddress = null;
-
-	private boolean isBTC = true;
 
 	private WalletApplication application;
 	private final Handler handler = new Handler();
 	private Runnable sentRunnable;
 	private String sendType;
 	private BlockchainServiceImpl service;
-	
+
 	private List<String> activeAddresses;
 	private Map<String,String> labels;
 	private List<Map<String, Object>> addressBookMapList;
@@ -259,9 +251,11 @@ public class SendFragment extends Fragment   {
 
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    	
+
+    	/*
         IntentFilter filter = new IntentFilter(ACTION_INTENT);
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiver, filter);
+        */
 
 		final MainActivity activity = (MainActivity) getActivity();
 		application = (WalletApplication) activity.getApplication();
@@ -272,11 +266,9 @@ public class SendFragment extends Fragment   {
     	
         rootView = inflater.inflate(R.layout.fragment_send, container, false);
 
-        /*
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         strCurrentFiatCode = prefs.getString("ccurrency", "USD");
         strCurrentFiatSymbol = prefs.getString(strCurrentFiatCode + "-SYM", "$");
-        */
 
     	simple_spend = (LinearLayout)rootView.findViewById(R.id.send_container);
     	custom_spend = (LinearLayout)rootView.findViewById(R.id.custom_spend);
@@ -483,7 +475,7 @@ public class SendFragment extends Fragment   {
 					if (SendCoinsActivity.temporaryPrivateKeys.containsKey(address)) {
 						return SendCoinsActivity.temporaryPrivateKeys.get(address);
 					}
-					
+
 					handler.post(new Runnable() {
 						public void run() {
 							AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -741,7 +733,7 @@ public class SendFragment extends Fragment   {
 					}).start();
 				} else {
 					application.getRemoteWallet().simpleSendCoinsAsync(receivingAddress.toString(), amount, feePolicy, fee, progress);
-					
+
 					//
 					//
 					//
@@ -751,7 +743,7 @@ public class SendFragment extends Fragment   {
 
 				}
 			}
-			
+
 			public void customSend(Address receivingAddress, BigInteger fee, MyRemoteWallet.FeePolicy feePolicy) {
 				if (application.getRemoteWallet() == null)
 					return;
@@ -775,7 +767,7 @@ public class SendFragment extends Fragment   {
 				final WalletApplication application = (WalletApplication) getActivity().getApplication();
 
 				application.getRemoteWallet().sendCoinsAsync(false, from, cs.getSendingAddresses(), feePolicy, fee, cs.getChangeAddress(), progress);
-				
+
 				//
 				//
 				//
@@ -784,7 +776,7 @@ public class SendFragment extends Fragment   {
 		        tvSentPrompt.setVisibility(View.VISIBLE);
 
 			}
-			
+
 			public void sharedSend(Address receivingAddress, BigInteger fee, MyRemoteWallet.FeePolicy feePolicy) {
 				if (application.getRemoteWallet() == null)
 					return;
@@ -800,7 +792,7 @@ public class SendFragment extends Fragment   {
 				final BigInteger amount = amountDecimal.add(amountDecimal.divide(BigDecimal.valueOf(100)).multiply(BigDecimal.valueOf(application.getRemoteWallet().getSharedFee()))).toBigInteger();
 
 				//application.getRemoteWallet().sendCoinsAsync(from, receivingAddress.toString(), amount, feePolicy, fee, progress);
-				
+
 				//
 				//
 				//
@@ -814,6 +806,13 @@ public class SendFragment extends Fragment   {
 					return;
 
 				final MyRemoteWallet remoteWallet = application.getRemoteWallet();
+
+				final MyRemoteWallet.FeePolicy feePolicy;
+				if (sendType != null && sendType == SendTypeQuickSend) {
+					feePolicy = MyRemoteWallet.FeePolicy.FeeForce;
+				} else {
+					feePolicy = MyRemoteWallet.FeePolicy.FeeOnlyIfNeeded;
+				}
 
 				if (remoteWallet.isDoubleEncrypted() && remoteWallet.temporySecondPassword == null) {
 					RequestPasswordDialog.show(getFragmentManager(), new SuccessCallback() {
@@ -836,7 +835,7 @@ public class SendFragment extends Fragment   {
 									e.printStackTrace();
 								}								
 							} else {
-								makeTransaction(MyRemoteWallet.FeePolicy.FeeOnlyIfNeeded);
+								makeTransaction(feePolicy);
 							}
 						}
 
@@ -861,7 +860,7 @@ public class SendFragment extends Fragment   {
 							e.printStackTrace();
 						}								
 					} else {
-						makeTransaction(MyRemoteWallet.FeePolicy.FeeOnlyIfNeeded);
+						makeTransaction(feePolicy);
 					}
 				}
 
@@ -870,7 +869,7 @@ public class SendFragment extends Fragment   {
         });
 
         tvAmount2 = ((TextView)rootView.findViewById(R.id.amount2));
-        tvAmount2.setText("0.00 USD");
+        tvAmount2.setText("0.00" + " " + strCurrentFiatCode);
         edAmount1 = ((EditText)rootView.findViewById(R.id.amount1));
       	edAmount1.setText("");
       	if(isBTC) {
@@ -884,7 +883,7 @@ public class SendFragment extends Fragment   {
 		    @Override
 		    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 		        if(actionId == EditorInfo.IME_ACTION_DONE) {
-		        	
+
 		        	if(sendType == SendTypeCustomSend) {
 
 		        		doCustomSend();
@@ -897,14 +896,14 @@ public class SendFragment extends Fragment   {
 			        	tvArrow.setVisibility(View.VISIBLE);
 			        	tvAmount.setVisibility(View.VISIBLE);
 			        	tvAmountBis.setVisibility(View.VISIBLE);
-			        	
+
 	 		            if(currentSelectedAddress != null) {
 	 		            	tvAddressBis.setText(currentSelectedAddress.substring(0, 20) + "...");
 	 		            }
 	 		            else {
 	 		            	tvAddressBis.setVisibility(View.GONE);
 	 		            }
-			        	
+
 			        	if(edAddress.getText().toString().length() > 15) {
 				        	tvAddress.setText(edAddress.getText().toString().substring(0, 15) + "...");
 			        	}
@@ -1057,7 +1056,7 @@ public class SendFragment extends Fragment   {
 		    @Override
 		    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 		        if(actionId == EditorInfo.IME_ACTION_NEXT) {
-		        	
+
 		        	if(isMagic) {
 		        		removeMagicList();
 		        	}
@@ -1234,9 +1233,19 @@ public class SendFragment extends Fragment   {
 
         Log.d("BlockchainWallet", "onResume");
 
-		removeMagicList();
+        IntentFilter filter = new IntentFilter(ACTION_INTENT);
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiver, filter);
+
+        removeMagicList();
     	displayMagicList();
 
+    }
+
+    @Override
+    public void onPause() {
+    	super.onPause();
+
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(receiver);
     }
 
 	@Override
@@ -1248,7 +1257,7 @@ public class SendFragment extends Fragment   {
 
 		getActivity().unbindService(serviceConnection);
 	}
-	
+
 	@Override
 	public void onDestroy()
 	{
@@ -1261,11 +1270,11 @@ public class SendFragment extends Fragment   {
 		MyRemoteWallet remoteWallet = application.getRemoteWallet();
 
 		remoteWallet.setTemporySecondPassword(null);
-		
+
 	    LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(receiver);
-	      
+
 	}
-	
+
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
@@ -1274,7 +1283,7 @@ public class SendFragment extends Fragment   {
 
 			String address = data.getStringExtra(ZBarConstants.SCAN_RESULT);
 //        	Log.d("Scan result", strResult);
-			
+
 			doScanInput(address);
 
         }
@@ -1299,10 +1308,10 @@ public class SendFragment extends Fragment   {
 		                while(cur.moveToNext())
 		                {
 		                	strEmail = strNumber = null;
-		                	
+
 		                    String id = cur.getString(cur.getColumnIndex(Contacts._ID));
 		                    String strName = cur.getString(cur.getColumnIndex(Contacts.DISPLAY_NAME));
-		                    
+
 //		                    strImageURI = cur.getString(cur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.PHOTO_URI));
 
 		                    Cursor ce = getActivity().getContentResolver().query(CommonDataKinds.Email.CONTENT_URI, null, CommonDataKinds.Email.CONTACT_ID +" = ?", new String[]{id}, null);
@@ -1324,7 +1333,7 @@ public class SendFragment extends Fragment   {
 		                        }
 		                    }
 		                    cn.close();
-		                    
+
 		                    if(strEmail != null && strEmail.equals("null"))	{
 		                    	strEmail = null;
 		                    }
@@ -1340,23 +1349,23 @@ public class SendFragment extends Fragment   {
 		                    		//
 		                    		// choose send method here
 		                    		//
-		                    		
+
 		                    		final String em = strEmail;
 		                    		final String sms = strNumber;
 		                    		final String name = strName;
-		                    		
+
 		                			new AlertDialog.Builder(getActivity())
 		                            .setIcon(R.drawable.ic_launcher).setTitle("Send Bitcoins to a Friend")
 		                            .setMessage("Send Bitcoins to " + strName + " via which method?")
 		                            .setPositiveButton(em, new DialogInterface.OnClickListener() {
 //		                              @Override
 		                              public void onClick(DialogInterface dialog, int which) {
-		                            	  
+
 				                    		edAddress.setText(name);
 				                    		emailOrNumber = em;
 				                        	sendViaEmail = true;
 				                        	sentViaSMS = false;
-				                        	
+
 				                    		// go out via email here
 				                    		Toast.makeText(getActivity(), em, Toast.LENGTH_SHORT).show();
 		                              }
@@ -1364,18 +1373,18 @@ public class SendFragment extends Fragment   {
 		                            .setNegativeButton(sms, new DialogInterface.OnClickListener() {
 //		                              @Override
 		                              public void onClick(DialogInterface dialog, int which) {
-		                            	  
+
 				                    		edAddress.setText(name);
 				                        	sendViaEmail = false;
 				                        	sentViaSMS = true;
-				                        	
+
 				                    		emailOrNumber = sms;	
 				                        	if (sms.substring(0, 2).equals("00") || sms.charAt(0) == '+') {
 					                    		Log.d("emailOrNumber", "setSMSNumber: " + emailOrNumber);
 				                        	} else {
 				                    			doSelectInternationalPrefix();				                        		
 				                        	}
-				                        					                    		
+
 				                    		// go out via sms here
 				                    		Toast.makeText(getActivity(), sms, Toast.LENGTH_SHORT).show();
 		                              }
@@ -1388,7 +1397,7 @@ public class SendFragment extends Fragment   {
 		                    		// send via email here
 		                    		//
 		                    		Toast.makeText(getActivity(), strEmail, Toast.LENGTH_SHORT).show();
-		                    		
+
 		                    		edAddress.setText(strName);
 		                    		emailOrNumber = strEmail;
 		                        	sendViaEmail = true;
@@ -1400,7 +1409,7 @@ public class SendFragment extends Fragment   {
 		                    		// send via sms here
 		                    		//
 		                    		Toast.makeText(getActivity(), strNumber, Toast.LENGTH_SHORT).show();
-		                    		
+
 		                    		edAddress.setText(strName);
 		                    		emailOrNumber = strNumber;
 		                        	if (strNumber.substring(0, 2).equals("00") || strNumber.charAt(0) == '+') {
@@ -1411,7 +1420,7 @@ public class SendFragment extends Fragment   {
 		                        	sendViaEmail = false;
 		                        	sentViaSMS = true;
 		                    		//go out via sms here
-		                    		
+
 			                    }
 		                    	else
 		                    	{
@@ -1437,7 +1446,7 @@ public class SendFragment extends Fragment   {
 		    	    {
 		    	        cur.close();
 		    	    }
-		        
+
 		        }
 		    }
 
@@ -1478,9 +1487,9 @@ public class SendFragment extends Fragment   {
 		else {
 			;
 		}
-		
+
 	}
-	
+
     private Bitmap generateQRCode(String uri) {
 
         Bitmap bitmap = null;
@@ -1535,12 +1544,12 @@ public class SendFragment extends Fragment   {
 		public long getItemId(int position) {
 			return position;
 		}
-		
+
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 
 			View view;
-	        
+
 	        if (convertView == null) {
 	            view = inflater.inflate(R.layout.magic_entry, parent, false);
 	        } else {
@@ -1563,10 +1572,10 @@ public class SendFragment extends Fragment   {
 	        else {
 		        ((TextView)view.findViewById(R.id.p1)).setTextColor(0xFF616161);
 	        }
-	        
+
 	        String labelOrAddress = BlockchainUtil.formatAddress(row.get("labelOrAddress"), 15) ;
 	        ((TextView)view.findViewById(R.id.p1)).setText(labelOrAddress);
-	        
+
 	        if (contactsOn) {
 		        String address = BlockchainUtil.formatAddress(row.get("address"), 15) ;
 		        ((TextView)view.findViewById(R.id.p2)).setText(address);
@@ -1598,7 +1607,7 @@ public class SendFragment extends Fragment   {
 		    	amount = BlockchainUtil.formatBitcoin(finalBalance);
 
 		        HashMap<String,String> row = new HashMap<String,String>();
-		        
+
 		        String label = labels.get(address);
 		        String labelOrAddress;
 		        if (label != null) {
@@ -1612,7 +1621,7 @@ public class SendFragment extends Fragment   {
 		        row.put("labelOrAddress", labelOrAddress);
 
 				magicData.add(row);    
-						
+
 	        	filteredDisplayList.add(row);
         }
 
@@ -1647,13 +1656,18 @@ public class SendFragment extends Fragment   {
      }
 
     private void displayMagicList() {
+    	
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        strCurrentFiatCode = prefs.getString("ccurrency", "USD");
+        strCurrentFiatSymbol = prefs.getString(strCurrentFiatCode + "-SYM", "$");
+
     	LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
     	isMagic = true;
-		
+
 		final int colorOn = 0xFF9d9d9d;
 		final int colorOff = 0xFFb6b6b6;
-		
+
 		//
 		//
 		//
@@ -1775,7 +1789,7 @@ public class SendFragment extends Fragment   {
 //	    parent.addView(child, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 	    parent.addView(childIcons);
 	    children++;
-	    
+
     	LinearLayout divider1 = (LinearLayout)childIcons.findViewById(R.id.divider1);
     	divider1.setBackgroundColor(BlockchainUtil.BLOCKCHAIN_RED);
 
@@ -2308,7 +2322,7 @@ public class SendFragment extends Fragment   {
 		viewCancel.setText(state != MyRemoteWallet.State.SENT ? R.string.button_cancel : R.string.send_coins_fragment_button_back);
 		*/
 	}
-	
+
     private void doSelectInternationalPrefix()	{
 		Intent intent = new Intent(getActivity(), InternationalPrefixActivity.class);
     	startActivityForResult(intent, SELECT_INTL_PREFIX);

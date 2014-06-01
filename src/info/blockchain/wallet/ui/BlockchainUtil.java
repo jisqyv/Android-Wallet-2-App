@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.text.DecimalFormat;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import com.google.bitcoin.core.Utils;
@@ -19,7 +20,7 @@ public class BlockchainUtil {
     
     public static String ZEROBLOCK_PACKAGE = "com.phlint.android.zeroblock";
     
-    private static double BTC_RATE = 452.0;
+    private static double BTC_RATE = 635.0;
 
 	private BlockchainUtil() { ; }
 
@@ -29,7 +30,10 @@ public class BlockchainUtil {
 			instance = new BlockchainUtil();
 		}
 		
-		BTC_RATE = ExchangeRateUtil.getInstance(ctx).getUSD();
+//		BTC_RATE = ExchangeRateUtil.getInstance(ctx).getUSD();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+        String strCurrencyCode = prefs.getString("ccurrency", "USD");
+		BTC_RATE = CurrencyExchange.getInstance(ctx).getCurrencyPrice(strCurrencyCode);
 
 		return instance;
 	}
@@ -68,6 +72,10 @@ public class BlockchainUtil {
 
 	public static double Fiat2BTC(double fiat)	{
 		return fiat / BTC_RATE;
+	}
+	
+	public static void setFiatRate(Context ctx, String currency)	{
+		BTC_RATE = CurrencyExchange.getInstance(ctx).getCurrencyPrice(currency);
 	}
 	
 	public static String formatBitcoin(BigInteger value) {
