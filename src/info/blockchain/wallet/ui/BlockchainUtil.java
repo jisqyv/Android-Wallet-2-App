@@ -30,7 +30,6 @@ public class BlockchainUtil {
 			instance = new BlockchainUtil();
 		}
 		
-//		BTC_RATE = ExchangeRateUtil.getInstance(ctx).getUSD();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
         String strCurrencyCode = prefs.getString("ccurrency", "USD");
 		BTC_RATE = CurrencyExchange.getInstance(ctx).getCurrencyPrice(strCurrencyCode);

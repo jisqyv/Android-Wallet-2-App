@@ -40,6 +40,7 @@ import android.widget.Toast;
 import android.util.Log;
 
 import info.blockchain.wallet.ui.R;
+import info.blockchain.api.ExchangeRates;
 
 import net.sourceforge.zbar.Symbol;
 
@@ -605,7 +606,10 @@ public class PinEntryActivity extends FragmentActivity {
             }
         });
 		
-        BlockchainUtil.getInstance(PinEntryActivity.this);
+		Log.d("fxRates", "Call from PinEntryActivity");
+		ExchangeRates fxRates = new ExchangeRates();
+        DownloadFXRatesTask task = new DownloadFXRatesTask(context, fxRates);
+        task.execute(new String[] { fxRates.getUrl() });
 
 		final WalletApplication application = (WalletApplication)PinEntryActivity.this.getApplication();
 		if (application.getGUID() == null) {

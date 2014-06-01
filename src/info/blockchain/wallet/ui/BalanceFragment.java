@@ -423,7 +423,7 @@ public class BalanceFragment extends Fragment   {
             strCurrentFiatCode = prefs.getString("ccurrency", "USD");
             strCurrentFiatSymbol = prefs.getString(strCurrentFiatCode + "-SYM", "$");
 
-            BlockchainUtil.getInstance(getActivity());
+//            BlockchainUtil.getInstance(getActivity());
 
         }
         else {

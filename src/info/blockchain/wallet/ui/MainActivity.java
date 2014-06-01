@@ -138,6 +138,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         }
         
         viewPager.setCurrentItem(1);
+        
+        BlockchainUtil.getInstance(this);
 
 	}
 
