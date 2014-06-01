@@ -13,7 +13,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
-import android.util.Log;
+//import android.util.Log;
 
 import info.blockchain.api.ExchangeRates;
 
@@ -75,8 +75,6 @@ public class DownloadFXRatesTask extends AsyncTask<String, Void, String> {
     	for(int i = 0; i < currencies.length; i++)	 {
 	    	if(prices.containsKey(currencies[i]) && prices.get(currencies[i]) != 0.0)	{
                 editor.putLong(currencies[i], Double.doubleToRawLongBits(prices.get(currencies[i])));
-        		Log.d(currencies[i], "" + Double.doubleToRawLongBits(prices.get(currencies[i])));
-        		Log.d(currencies[i], symbols.get(currencies[i]));
                 
 		    	if(symbols.get(currencies[i]).endsWith("$"))	 {
 	                editor.putString(currencies[i] + "-SYM", "$");

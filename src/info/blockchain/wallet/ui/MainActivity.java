@@ -127,6 +127,16 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 @Override
                 public void onPageSelected(int position) {
                     actionBar.setSelectedNavigationItem(position);
+                    
+                    if(position == 1) {
+                    	/*
+        				Intent intent = new Intent("info.blockchain.wallet.ui.BalanceFragment.REFRESH");
+        			    LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(intent);
+        			    */
+                    }
+                    else {
+                    	;
+                    }
                 }
      
                 @Override
