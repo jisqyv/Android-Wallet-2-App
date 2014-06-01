@@ -34,8 +34,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.os.Bundle;
 import android.graphics.Color;
 import android.graphics.Bitmap;
 import android.support.v4.app.Fragment;
@@ -193,6 +193,7 @@ public class BalanceFragment extends Fragment   {
 		addressAmounts = new String[addressLabels.length];
 
    		if(!isNoRefreshOnReturn) {
+   			
 			addressLabelTxsDisplayed = new boolean[addressLabels.length];
 
 			if(sentTx != null) {
@@ -249,6 +250,17 @@ public class BalanceFragment extends Fragment   {
 	        tViewAmount2.setText(Character.toString((char)TypefaceUtil.getInstance(getActivity()).getBTCSymbol()) + BlockchainUtil.formatBitcoin(balance));
 		}
 
+        if(isBTC) {
+            tViewCurrencySymbol.setText(Character.toString((char)TypefaceUtil.getInstance(getActivity()).getBTCSymbol()));
+            tViewAmount1.setText(BlockchainUtil.formatBitcoin(balance));
+            tViewAmount2.setText(strCurrentFiatSymbol + BlockchainUtil.BTC2Fiat(WalletUtils.formatValue(balance)));
+        }
+        else {
+            tViewCurrencySymbol.setText(strCurrentFiatSymbol);
+            tViewAmount1.setText(BlockchainUtil.BTC2Fiat(WalletUtils.formatValue(balance)));
+            tViewAmount2.setText(Character.toString((char)TypefaceUtil.getInstance(getActivity()).getBTCSymbol()) + BlockchainUtil.formatBitcoin(balance));
+        }
+        
         if (adapter != null) {
         	adapter.notifyDataSetChanged();
         }
@@ -409,7 +421,11 @@ public class BalanceFragment extends Fragment   {
 
         if(isVisibleToUser) {
         	System.gc();
-        	
+
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            strCurrentFiatCode = prefs.getString("ccurrency", "USD");
+            strCurrentFiatSymbol = prefs.getString(strCurrentFiatCode + "-SYM", "$");
+
             new Thread()
             {
                 public void run() {
@@ -428,7 +444,7 @@ public class BalanceFragment extends Fragment   {
     	super.onResume();
 
 		setAdapterContent();
-
+		
     	System.gc();
 
     }

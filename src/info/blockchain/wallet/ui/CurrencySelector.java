@@ -46,7 +46,7 @@ public class CurrencySelector extends Activity	{
             	if(sel != 0) {
             		editor.putString("ccurrency", currencies[sel].substring(currencies[sel].length() - 3));
             		editor.commit();
-            		BlockchainUtil.setFiatRate(CurrencySelector.this, currencies[sel].substring(currencies[sel].length() - 3));
+            		BlockchainUtil.updateRate(CurrencySelector.this, currencies[sel].substring(currencies[sel].length() - 3));
                 	finish();
             	}
             }

@@ -17,8 +17,10 @@ import java.util.Map;
 import piuk.MyRemoteWallet;
 import piuk.blockchain.android.R;
 import piuk.blockchain.android.WalletApplication;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -28,6 +30,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -102,7 +105,6 @@ public class ReceiveFragment extends Fragment   {
 	private List<Map<String, Object>> addressBookMapList;
 
 	private boolean isReturnFromOutsideApp = false;
-
 	private boolean isBTC = true;
 
     @Override

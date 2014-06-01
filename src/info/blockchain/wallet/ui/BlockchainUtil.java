@@ -6,7 +6,7 @@ import java.text.DecimalFormat;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-
+import android.content.SharedPreferences;
 import com.google.bitcoin.core.Utils;
 
 import piuk.blockchain.android.util.WalletUtils;
@@ -33,7 +33,9 @@ public class BlockchainUtil {
 //		BTC_RATE = ExchangeRateUtil.getInstance(ctx).getUSD();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
         String strCurrencyCode = prefs.getString("ccurrency", "USD");
-		BTC_RATE = CurrencyExchange.getInstance(ctx).getCurrencyPrice(strCurrencyCode);
+        String ccode = prefs.getString("ccurrency", "USD");
+//        strCurrentFiatSymbol = prefs.getString(strCurrentFiatCode + "-SYM", "$");
+		BTC_RATE = CurrencyExchange.getInstance(ctx).getCurrencyPrice(ccode);
 
 		return instance;
 	}
@@ -73,11 +75,11 @@ public class BlockchainUtil {
 	public static double Fiat2BTC(double fiat)	{
 		return fiat / BTC_RATE;
 	}
-	
-	public static void setFiatRate(Context ctx, String currency)	{
-		BTC_RATE = CurrencyExchange.getInstance(ctx).getCurrencyPrice(currency);
+
+	public static void updateRate(Context context, String currency) {
+		BTC_RATE = CurrencyExchange.getInstance(context).getCurrencyPrice(currency);
 	}
-	
+
 	public static String formatBitcoin(BigInteger value) {
         DecimalFormat df = new DecimalFormat("####0.0000");
 		return df.format(Double.parseDouble(WalletUtils.formatValue(value)));
@@ -90,7 +92,6 @@ public class BlockchainUtil {
 			return address;
 	}
 
-	
 	public static BigInteger bitcoinAmountStringToBigInteger(String amount) {
 		if (isValidAmount(amount))
 			return Utils.toNanoCoins(amount);
