@@ -35,6 +35,10 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.support.v4.content.LocalBroadcastManager;
 import android.widget.TextView;
+//import android.location.Location;
+//import android.location.LocationListener;
+import android.location.LocationManager;
+import android.provider.Settings;
 import android.widget.Toast;
 
 //import android.util.Log;
@@ -135,13 +139,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         
         viewPager.setCurrentItem(1);
 
-        new Thread()
-        {
-            public void run() {
-                BlockchainUtil.getInstance(MainActivity.this);
-            }
-        }.start();
-
 	}
 
 	@Override
@@ -165,12 +162,9 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     	case R.id.select_fiat:
     		doSelectFiat();
     		return true;
-    	/*	
     	case R.id.nearby_merchants:
-			Intent intent3 = new Intent(MainActivity.this, MapActivity.class);
-			startActivity(intent3);
+    		doMerchantDirectory();
     		return true;
-    	*/
     	case R.id.action_about:
     		doAbout();
     		return true;
@@ -253,6 +247,15 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     private void doSelectFiat()	{
     	Intent intent = new Intent(MainActivity.this, CurrencySelector.class);
 		startActivityForResult(intent, SELECT_FIAT);
+    }
+
+    private void doMerchantDirectory()	{
+    	LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
+    	boolean geoEnabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+    	if (!geoEnabled) {
+    		EnableGeo.displayGPSPrompt(this);
+    	} 
     }
 
     private void doSend2Friends()	{

@@ -33,9 +33,7 @@ public class BlockchainUtil {
 //		BTC_RATE = ExchangeRateUtil.getInstance(ctx).getUSD();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
         String strCurrencyCode = prefs.getString("ccurrency", "USD");
-        String ccode = prefs.getString("ccurrency", "USD");
-//        strCurrentFiatSymbol = prefs.getString(strCurrentFiatCode + "-SYM", "$");
-		BTC_RATE = CurrencyExchange.getInstance(ctx).getCurrencyPrice(ccode);
+		BTC_RATE = CurrencyExchange.getInstance(ctx).getCurrencyPrice(strCurrencyCode);
 
 		return instance;
 	}

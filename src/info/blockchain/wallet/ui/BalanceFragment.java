@@ -24,6 +24,7 @@ import com.google.bitcoin.core.ScriptException;
 import com.google.bitcoin.core.Transaction;
 import com.google.bitcoin.core.TransactionInput;
 import com.google.bitcoin.core.TransactionOutput;
+import com.google.bitcoin.core.Wallet;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.android.Contents;
@@ -237,30 +238,21 @@ public class BalanceFragment extends Fragment   {
 
 		totalInputsValue = remoteWallet.getTotal_received();
 		totalOutputsValue = remoteWallet.getTotal_sent();
-
-		BigInteger balance = remoteWallet.getBalance();
-		if(isBTC) {
-	        tViewCurrencySymbol.setText(Character.toString((char)TypefaceUtil.getInstance(getActivity()).getBTCSymbol()));
-	        tViewAmount1.setText(BlockchainUtil.formatBitcoin(balance));
-	        tViewAmount2.setText(strCurrentFiatSymbol + BlockchainUtil.BTC2Fiat(WalletUtils.formatValue(balance)));
+		
+		if(remoteWallet != null) {
+			BigInteger balance = remoteWallet.getBalance();
+			if(isBTC) {
+		        tViewCurrencySymbol.setText(Character.toString((char)TypefaceUtil.getInstance(getActivity()).getBTCSymbol()));
+		        tViewAmount1.setText(BlockchainUtil.formatBitcoin(balance));
+		        tViewAmount2.setText(strCurrentFiatSymbol + BlockchainUtil.BTC2Fiat(WalletUtils.formatValue(balance)));
+			}
+			else {
+		        tViewCurrencySymbol.setText(strCurrentFiatSymbol);
+		        tViewAmount1.setText(BlockchainUtil.BTC2Fiat(WalletUtils.formatValue(balance)));
+		        tViewAmount2.setText(Character.toString((char)TypefaceUtil.getInstance(getActivity()).getBTCSymbol()) + BlockchainUtil.formatBitcoin(balance));
+			}
 		}
-		else {
-	        tViewCurrencySymbol.setText(strCurrentFiatSymbol);
-	        tViewAmount1.setText(BlockchainUtil.BTC2Fiat(WalletUtils.formatValue(balance)));
-	        tViewAmount2.setText(Character.toString((char)TypefaceUtil.getInstance(getActivity()).getBTCSymbol()) + BlockchainUtil.formatBitcoin(balance));
-		}
 
-        if(isBTC) {
-            tViewCurrencySymbol.setText(Character.toString((char)TypefaceUtil.getInstance(getActivity()).getBTCSymbol()));
-            tViewAmount1.setText(BlockchainUtil.formatBitcoin(balance));
-            tViewAmount2.setText(strCurrentFiatSymbol + BlockchainUtil.BTC2Fiat(WalletUtils.formatValue(balance)));
-        }
-        else {
-            tViewCurrencySymbol.setText(strCurrentFiatSymbol);
-            tViewAmount1.setText(BlockchainUtil.BTC2Fiat(WalletUtils.formatValue(balance)));
-            tViewAmount2.setText(Character.toString((char)TypefaceUtil.getInstance(getActivity()).getBTCSymbol()) + BlockchainUtil.formatBitcoin(balance));
-        }
-        
         if (adapter != null) {
         	adapter.notifyDataSetChanged();
         }
@@ -306,12 +298,17 @@ public class BalanceFragment extends Fragment   {
         });
 
         tViewAmount1 = (TextView)rootView.findViewById(R.id.amount1);
-        tViewAmount1.setTypeface(TypefaceUtil.getInstance(getActivity()).getGravityBoldTypeface());
-        tViewAmount1.setText("0");
-
-        tViewAmount2 = (TextView)rootView.findViewById(R.id.amount2);
         tViewAmount1.setTypeface(TypefaceUtil.getInstance(getActivity()).getRobotoLightTypeface());
-        tViewAmount2.setText(strCurrentFiatSymbol + BlockchainUtil.BTC2Fiat("0"));
+        tViewAmount2 = (TextView)rootView.findViewById(R.id.amount2);
+		MyRemoteWallet remoteWallet = application.getRemoteWallet();
+		if(remoteWallet != null) {
+	        tViewAmount1.setText(BlockchainUtil.formatBitcoin(remoteWallet.getBalance()));
+	        tViewAmount2.setText(strCurrentFiatSymbol + BlockchainUtil.BTC2Fiat(BlockchainUtil.formatBitcoin(remoteWallet.getBalance())));
+		}
+		else {
+	        tViewAmount1.setText("0");
+	        tViewAmount2.setText(strCurrentFiatSymbol + BlockchainUtil.BTC2Fiat("0"));
+		}
 
         txList = (ListView)rootView.findViewById(R.id.txList);
 
@@ -411,7 +408,7 @@ public class BalanceFragment extends Fragment   {
         balance_extLayout.setVisibility(View.GONE);
 
 		EventListeners.addEventListener(eventListener);
-
+		
         return rootView;
     }
 
@@ -426,12 +423,7 @@ public class BalanceFragment extends Fragment   {
             strCurrentFiatCode = prefs.getString("ccurrency", "USD");
             strCurrentFiatSymbol = prefs.getString(strCurrentFiatCode + "-SYM", "$");
 
-            new Thread()
-            {
-                public void run() {
-                    BlockchainUtil.getInstance(getActivity());
-                }
-            }.start();
+            BlockchainUtil.getInstance(getActivity());
 
         }
         else {
@@ -442,6 +434,12 @@ public class BalanceFragment extends Fragment   {
     @Override
     public void onResume() {
     	super.onResume();
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        strCurrentFiatCode = prefs.getString("ccurrency", "USD");
+        strCurrentFiatSymbol = prefs.getString(strCurrentFiatCode + "-SYM", "$");
+
+        BlockchainUtil.getInstance(getActivity());
 
 		setAdapterContent();
 		

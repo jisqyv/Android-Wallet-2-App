@@ -108,12 +108,6 @@ public class PinEntryActivity extends FragmentActivity {
             }
             else	{
             	validating = true;
-            	new Thread()
-                {
-                    public void run() {
-                        BlockchainUtil.getInstance(PinEntryActivity.this);
-                    }
-                }.start();
             }
         }
 
@@ -611,16 +605,14 @@ public class PinEntryActivity extends FragmentActivity {
             }
         });
 		
+        BlockchainUtil.getInstance(PinEntryActivity.this);
+
 		final WalletApplication application = (WalletApplication)PinEntryActivity.this.getApplication();
-		//if (application.getRemoteWallet() == null) {
 		if (application.getGUID() == null) {
-			Toast.makeText(this, "Wallet not found", Toast.LENGTH_LONG).show();
-			
         	Intent intent = new Intent(PinEntryActivity.this, SetupActivity.class);
 			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
     		startActivity(intent);
 		}
-
 
 	}
 

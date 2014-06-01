@@ -27,9 +27,8 @@ public class CurrencyExchange	{
 		
 		context = ctx;
 
-		fxRates = new ExchangeRates();
-
 		if (instance == null) {
+			fxRates = new ExchangeRates();
 		    prices = new HashMap<String,Double>();
 		    symbols = new HashMap<String,String>();
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -38,6 +37,8 @@ public class CurrencyExchange	{
 		    	prices.put(currencies[i], Double.longBitsToDouble(prefs.getLong(currencies[i], Double.doubleToLongBits(0.0))));
 		    	symbols.put(currencies[i], prefs.getString(currencies[i] + "-SYM", null));
 	    	}
+
+    		getExchangeRates();
 
 	    	instance = new CurrencyExchange();
 		}
@@ -70,9 +71,9 @@ public class CurrencyExchange	{
     }
 
 	private static void getExchangeRates() {
+		ts = System.currentTimeMillis();
         DownloadFXRatesTask task = new DownloadFXRatesTask(context, fxRates);
         task.execute(new String[] { fxRates.getUrl() });
-		ts = System.currentTimeMillis();
 	}
 
 }
