@@ -38,8 +38,6 @@ public class CurrencyExchange	{
 		    	symbols.put(currencies[i], prefs.getString(currencies[i] + "-SYM", null));
 	    	}
 
-    		getExchangeRates();
-
 	    	instance = new CurrencyExchange();
 		}
 
