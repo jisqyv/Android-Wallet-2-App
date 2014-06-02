@@ -783,26 +783,46 @@ public class MyRemoteWallet extends MyWallet {
 	public void simpleSendCoinsAsync(final String toAddress, final BigInteger amount, final FeePolicy feePolicy, final BigInteger fee, final SendProgress progress) {
 		HashMap<String, BigInteger> receivingAddresses = new HashMap<String, BigInteger>();
 		receivingAddresses.put(toAddress, amount);
+
+		final String[] from = getNotWatchOnlyActiveAddresses();
+		HashMap<String, BigInteger> sendingAddresses = new HashMap<String, BigInteger>();
+		for(int i = 0; i < from.length; i++)
+			sendingAddresses.put(from[i], null);
 		
-        sendCoinsAsync(true, getNotWatchOnlyActiveAddresses(), receivingAddresses, feePolicy, fee, null, progress);
+        sendCoinsAsync(true, sendingAddresses, receivingAddresses, feePolicy, fee, null, progress);
 	}
 
 	public void sendCoinsAsync(final String[] from, final String toAddress, final BigInteger amount, final FeePolicy feePolicy, final BigInteger fee, final String changeAddress, final SendProgress progress) {
 		HashMap<String, BigInteger> receivingAddresses = new HashMap<String, BigInteger>();
 		receivingAddresses.put(toAddress, amount);
-		sendCoinsAsync(false, from, receivingAddresses, feePolicy, fee, changeAddress, progress);
+
+		HashMap<String, BigInteger> sendingAddresses = new HashMap<String, BigInteger>();
+		for(int i = 0; i < from.length; i++)
+			sendingAddresses.put(from[i], null);
+
+		sendCoinsAsync(false, sendingAddresses, receivingAddresses, feePolicy, fee, changeAddress, progress);
 	}
 	
 	public void sendCoinsAsync(final HashMap<String, BigInteger> sendingAddresses, final String toAddress, final BigInteger amount, final FeePolicy feePolicy, final BigInteger fee, final String changeAddress, final SendProgress progress) {
+		BigInteger sum = BigInteger.ZERO;
+		for (Iterator<Entry<String, BigInteger>> iterator = sendingAddresses.entrySet().iterator(); iterator.hasNext();) {
+			Entry<String, BigInteger> entry = iterator.next();
+			sum = sum.add(entry.getValue());			
+		}
+		Log.d("sendCoinsAsync", "sendCoinsAsync: sum " + sum);
+		Log.d("sendCoinsAsync", "sendCoinsAsync: amount " + amount);
+
 		HashMap<String, BigInteger> receivingAddresses = new HashMap<String, BigInteger>();
 		receivingAddresses.put(toAddress, amount);
 		
 		List<String> from = new ArrayList<String>(sendingAddresses.keySet());
 
-		sendCoinsAsync(false, from.toArray(new String[from.size()]), receivingAddresses, feePolicy, fee, changeAddress, progress);
+		//sendCoinsAsync(false, from.toArray(new String[from.size()]), receivingAddresses, feePolicy, fee, changeAddress, progress);
+		sendCoinsAsync(false, sendingAddresses, receivingAddresses, feePolicy, fee, changeAddress, progress);
+
 	}
 	
-	private void sendCoinsAsync(final boolean isSimpleSend, final String[] from, final HashMap<String, BigInteger> receivingAddresses, final FeePolicy feePolicy, final BigInteger fee, final String changeAddress, final SendProgress progress) {
+	private void sendCoinsAsync(final boolean isSimpleSend, final HashMap<String, BigInteger> sendingAddresses, final HashMap<String, BigInteger> receivingAddresses, final FeePolicy feePolicy, final BigInteger fee, final String changeAddress, final SendProgress progress) {
 
 		new Thread() {
 			@Override
@@ -814,7 +834,8 @@ public class MyRemoteWallet extends MyWallet {
 					//Construct a new transaction
 					progress.onProgress("Getting Unspent Outputs");
 
-					List<MyTransactionOutPoint> allUnspent = getUnspentOutputPoints(from);
+					List<String> from = new ArrayList<String>(sendingAddresses.keySet());
+					List<MyTransactionOutPoint> allUnspent = getUnspentOutputPoints(from.toArray(new String[from.size()]));
 
 					Pair<Transaction, Long> pair = null;
 
@@ -823,8 +844,12 @@ public class MyRemoteWallet extends MyWallet {
 					try {
 						//Try without asking for watch only addresses
 						List<MyTransactionOutPoint> unspent = filter(allUnspent, tempKeys, false, progress);
-
-						pair = makeTransaction(isSimpleSend, unspent, receivingAddresses, fee, changeAddress);
+						
+						if (isSimpleSend) {
+							pair = makeTransaction(isSimpleSend, unspent, receivingAddresses, fee, changeAddress);							
+						} else {
+							pair = makeTransactionCustom(sendingAddresses, unspent, receivingAddresses, fee, changeAddress);
+						}
 
 						//Transaction cancelled
 						if (pair == null)
@@ -834,8 +859,12 @@ public class MyRemoteWallet extends MyWallet {
 						//Try with asking for watch only
 						List<MyTransactionOutPoint> unspent = filter(allUnspent, tempKeys, true, progress);
 
-						pair = makeTransaction(isSimpleSend, unspent, receivingAddresses, fee, changeAddress);
-
+						if (isSimpleSend) {
+							pair = makeTransaction(isSimpleSend, unspent, receivingAddresses, fee, changeAddress);							
+						} else {
+							pair = makeTransactionCustom(sendingAddresses, unspent, receivingAddresses, fee, changeAddress);
+						}
+						
 						//Transaction cancelled
 						if (pair == null)
 							return;
@@ -1013,7 +1042,7 @@ public class MyRemoteWallet extends MyWallet {
 	}
 
 	//You must sign the inputs
-	public Pair<Transaction, Long> makeTransactionCustom(List<MyTransactionOutPoint> unspent, HashMap<String, BigInteger> receivingAddresses, BigInteger fee, final String changeAddress) throws Exception {
+	public Pair<Transaction, Long> makeTransactionCustom(final HashMap<String, BigInteger> sendingAddresses, List<MyTransactionOutPoint> unspent, HashMap<String, BigInteger> receivingAddresses, BigInteger fee, final String changeAddress) throws Exception {
 
 		long priority = 0;
 
@@ -1041,7 +1070,7 @@ public class MyRemoteWallet extends MyWallet {
 			BitcoinScript toOutputScript = BitcoinScript.createSimpleOutBitoinScript(new BitcoinAddress(toAddress));
 
 			TransactionOutput output = new TransactionOutput(params, null, amount, toOutputScript.getProgram());
-
+			
 			tx.addOutput(output);
 		}
 		
@@ -1052,6 +1081,8 @@ public class MyRemoteWallet extends MyWallet {
 
 		MyTransactionOutPoint changeOutPoint = null;
 
+		Map<String, BigInteger> addressTotalUnspentValues = new HashMap<String, BigInteger>();
+		
 		for (MyTransactionOutPoint outPoint : unspent) {
 
 			BitcoinScript script = new BitcoinScript(outPoint.getScriptBytes());
@@ -1061,7 +1092,24 @@ public class MyRemoteWallet extends MyWallet {
 
 			BitcoinScript inputScript = new BitcoinScript(outPoint.getConnectedPubKeyScript());
 			String address = inputScript.getAddress().toString();
-				
+			
+			BigInteger addressSendAmount = sendingAddresses.get(address);
+			if (addressSendAmount == null) {
+				throw new Exception("Invalid transaction address send amount is null");
+			}
+			
+			final BigInteger addressTotalUnspentValue;
+			if (changeAddress == null) {
+				addressTotalUnspentValue = addressTotalUnspentValues.get(address);
+			} else {
+				addressTotalUnspentValue = addressTotalUnspentValues.get(changeAddress);				
+			}
+			if (addressTotalUnspentValue == null) {
+				addressTotalUnspentValues.put(address, BigInteger.ZERO);
+			} else {
+				addressTotalUnspentValues.put(address, addressTotalUnspentValue.add(outPoint.value));
+			}
+			
 			MyTransactionInput input = new MyTransactionInput(params, null, new byte[0], outPoint);
 
 			input.outpoint = outPoint;
@@ -1080,29 +1128,48 @@ public class MyRemoteWallet extends MyWallet {
 				break;
 		}
 
+		//decide change
+		if (changeAddress == null) {
+	        for (Iterator<Entry<String, BigInteger>> iterator = addressTotalUnspentValues.entrySet().iterator(); iterator.hasNext();) {
+	        	final Entry<String, BigInteger> entry = iterator.next();
+	        	final String address = entry.getKey();
+	        	final BigInteger addressTotalUnspentValue = entry.getValue();
+	        	final BigInteger addressSendAmount = sendingAddresses.get(address);
+	        	final BigInteger addressChangeAmount = addressTotalUnspentValue.subtract(addressSendAmount);
+	        	
+	        	if (addressChangeAmount.compareTo(BigInteger.ZERO) > 0) {
+	    			//Add the output
+	    			BitcoinScript toOutputScript = BitcoinScript.createSimpleOutBitoinScript(new BitcoinAddress(address));
+
+	    			TransactionOutput output = new TransactionOutput(params, null, addressChangeAmount, toOutputScript.getProgram());
+	    			
+	    			tx.addOutput(output);        		
+	        	}
+	        }
+		} else {
+			BigInteger addressChangeAmountSum = BigInteger.ZERO;
+			for (Iterator<Entry<String, BigInteger>> iterator = addressTotalUnspentValues.entrySet().iterator(); iterator.hasNext();) {
+				final Entry<String, BigInteger> entry = iterator.next();
+	        	final String address = entry.getKey();
+	        	final BigInteger addressTotalUnspentValue = entry.getValue();
+	        	final BigInteger addressSendAmount = sendingAddresses.get(address);
+	        	final BigInteger addressChangeAmount = addressTotalUnspentValue.subtract(addressSendAmount);
+	        	addressChangeAmountSum = addressChangeAmountSum.add(addressChangeAmount);
+	        }
+			
+        	if (addressChangeAmountSum.compareTo(BigInteger.ZERO) > 0) {
+    			//Add the output
+    			BitcoinScript toOutputScript = BitcoinScript.createSimpleOutBitoinScript(new BitcoinAddress(changeAddress));
+
+    			TransactionOutput output = new TransactionOutput(params, null, addressChangeAmountSum, toOutputScript.getProgram());
+    			tx.addOutput(output);        		
+        	}
+		}
+
+		
 		//Check the amount we have selected is greater than the amount we need
 		if (valueSelected.compareTo(valueNeeded) < 0) {
 			throw new InsufficientFundsException("Insufficient Funds");
-		}
-
-		BigInteger change = valueSelected.subtract(outputValueSum).subtract(fee);
-
-		//Now add the change if there is any
-		if (change.compareTo(BigInteger.ZERO) > 0) {
-			BitcoinScript change_script;
-			if (changeAddress != null) {
-				change_script = BitcoinScript.createSimpleOutBitoinScript(new BitcoinAddress(changeAddress));
-			} else if (changeOutPoint != null) {
-				BitcoinScript inputScript = new BitcoinScript(changeOutPoint.getConnectedPubKeyScript());
-				
-				//Return change to the first address
-				change_script = BitcoinScript.createSimpleOutBitoinScript(inputScript.getAddress());
-			} else {
-				throw new Exception("Invalid transaction attempt");
-			}
-			TransactionOutput change_output = new TransactionOutput(params, null, change, change_script.getProgram());
-
-			tx.addOutput(change_output);				
 		}
 
 		long estimatedSize = tx.bitcoinSerialize().length + (114 * tx.getInputs().size());
