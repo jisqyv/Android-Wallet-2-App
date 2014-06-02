@@ -11,25 +11,22 @@ import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.app.ActionBar.Tab;
 import android.app.FragmentTransaction;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.provider.ContactsContract;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
-import android.text.InputType;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Gravity;
+import android.widget.LinearLayout;
 import android.view.View.OnTouchListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
@@ -38,7 +35,6 @@ import android.widget.TextView;
 //import android.location.Location;
 //import android.location.LocationListener;
 import android.location.LocationManager;
-import android.provider.Settings;
 import android.widget.Toast;
 
 //import android.util.Log;
@@ -87,35 +83,62 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         // masthead logo placement
         //
 //        actionBar.setTitle("");
-        actionBar.setDisplayOptions(actionBar.getDisplayOptions() ^ ActionBar.DISPLAY_SHOW_TITLE);
-        actionBar.setLogo(R.drawable.masthead);
-        actionBar.setHomeButtonEnabled(false);
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-        actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#FF1B8AC7")));
-        //
-        // QR code logo placement (righthand side)
-        //
         actionBar.setDisplayOptions(actionBar.getDisplayOptions() | ActionBar.DISPLAY_SHOW_CUSTOM);
-        ImageView qr_icon = new ImageView(actionBar.getThemedContext());
-        qr_icon.setImageResource(R.drawable.top_camera_icon);
-        qr_icon.setScaleType(ImageView.ScaleType.FIT_XY);
+        
+        LinearLayout layout_icons = new LinearLayout(actionBar.getThemedContext());
         ActionBar.LayoutParams layoutParams = new ActionBar.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.WRAP_CONTENT, Gravity.RIGHT | Gravity.CENTER_VERTICAL);
         layoutParams.height = 72;
-        layoutParams.width = 72;
+        layoutParams.width = 72 * 2 + 5;
         layoutParams.rightMargin = 5;
-        qr_icon.setLayoutParams(layoutParams);
+        layout_icons.setLayoutParams(layoutParams);
+        layout_icons.setOrientation(LinearLayout.HORIZONTAL);
+
+        ActionBar.LayoutParams imgParams = new ActionBar.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.WRAP_CONTENT, Gravity.CENTER_VERTICAL);
+        imgParams.height = 72;
+        imgParams.width = 72;
+        imgParams.rightMargin = 5;
+
+        final ImageView qr_icon = new ImageView(actionBar.getThemedContext());
+        qr_icon.setImageResource(R.drawable.top_camera_icon);
+        qr_icon.setScaleType(ImageView.ScaleType.FIT_XY);
+        qr_icon.setLayoutParams(imgParams);
         qr_icon.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
             	
         		Intent intent = new Intent(MainActivity.this, ZBarScannerActivity.class);
-        		intent.putExtra(ZBarConstants.SCAN_MODES, new int[]{ Symbol.QRCODE } );
+        		intent.putExtra(ZBarConstants.SCAN_MODES, new int[] { Symbol.QRCODE } );
         		startActivityForResult(intent, ZBAR_SCANNER_REQUEST);
 
         		return false;
             }
         });
-        actionBar.setCustomView(qr_icon);
+
+        final ImageView refresh_icon = new ImageView(actionBar.getThemedContext());
+        refresh_icon.setImageResource(R.drawable.refresh_icon);
+        refresh_icon.setScaleType(ImageView.ScaleType.FIT_XY);
+        refresh_icon.setLayoutParams(imgParams);
+        refresh_icon.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+            	
+				Intent intent = new Intent("info.blockchain.wallet.ui.BalanceFragment.REFRESH");
+			    LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(intent);
+
+        		return false;
+            }
+        });
+        
+        layout_icons.addView(refresh_icon);
+        layout_icons.addView(qr_icon);
+
+        actionBar.setDisplayOptions(actionBar.getDisplayOptions() ^ ActionBar.DISPLAY_SHOW_TITLE);
+        actionBar.setLogo(R.drawable.masthead);
+        actionBar.setHomeButtonEnabled(false);
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#FF1B8AC7")));
+
+        actionBar.setCustomView(layout_icons);
         //
         actionBar.show();
                 
@@ -129,13 +152,10 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                     actionBar.setSelectedNavigationItem(position);
                     
                     if(position == 1) {
-                    	/*
-        				Intent intent = new Intent("info.blockchain.wallet.ui.BalanceFragment.REFRESH");
-        			    LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(intent);
-        			    */
+                        refresh_icon.setVisibility(View.VISIBLE);
                     }
                     else {
-                    	;
+                        refresh_icon.setVisibility(View.INVISIBLE);
                     }
                 }
      

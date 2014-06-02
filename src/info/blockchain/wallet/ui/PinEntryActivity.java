@@ -606,7 +606,6 @@ public class PinEntryActivity extends FragmentActivity {
             }
         });
 		
-		Log.d("fxRates", "Call from PinEntryActivity");
 		ExchangeRates fxRates = new ExchangeRates();
         DownloadFXRatesTask task = new DownloadFXRatesTask(context, fxRates);
         task.execute(new String[] { fxRates.getUrl() });
