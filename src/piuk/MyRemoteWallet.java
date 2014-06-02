@@ -778,6 +778,7 @@ public class MyRemoteWallet extends MyWallet {
         }
         return notWatchOnlyActiveAddresses.toArray(new String[notWatchOnlyActiveAddresses.size()]);
 	}
+
 	
 	public void simpleSendCoinsAsync(final String toAddress, final BigInteger amount, final FeePolicy feePolicy, final BigInteger fee, final SendProgress progress) {
 		HashMap<String, BigInteger> receivingAddresses = new HashMap<String, BigInteger>();
@@ -786,6 +787,12 @@ public class MyRemoteWallet extends MyWallet {
         sendCoinsAsync(true, getNotWatchOnlyActiveAddresses(), receivingAddresses, feePolicy, fee, null, progress);
 	}
 
+	public void sendCoinsAsync(final String[] from, final String toAddress, final BigInteger amount, final FeePolicy feePolicy, final BigInteger fee, final String changeAddress, final SendProgress progress) {
+		HashMap<String, BigInteger> receivingAddresses = new HashMap<String, BigInteger>();
+		receivingAddresses.put(toAddress, amount);
+		sendCoinsAsync(false, from, receivingAddresses, feePolicy, fee, changeAddress, progress);
+	}
+	
 	public void sendCoinsAsync(final HashMap<String, BigInteger> sendingAddresses, final String toAddress, final BigInteger amount, final FeePolicy feePolicy, final BigInteger fee, final String changeAddress, final SendProgress progress) {
 		HashMap<String, BigInteger> receivingAddresses = new HashMap<String, BigInteger>();
 		receivingAddresses.put(toAddress, amount);
@@ -1005,6 +1012,106 @@ public class MyRemoteWallet extends MyWallet {
 		return new Pair<Transaction, Long>(tx, priority);
 	}
 
+	//You must sign the inputs
+	public Pair<Transaction, Long> makeTransactionCustom(List<MyTransactionOutPoint> unspent, HashMap<String, BigInteger> receivingAddresses, BigInteger fee, final String changeAddress) throws Exception {
+
+		long priority = 0;
+
+		if (unspent == null || unspent.size() == 0)
+			throw new InsufficientFundsException("No free outputs to spend.");
+
+		if (fee == null)
+			fee = BigInteger.ZERO;
+
+		//Construct a new transaction
+		Transaction tx = new Transaction(params);
+
+		BigInteger outputValueSum = BigInteger.ZERO;
+
+		for (Iterator<Entry<String, BigInteger>> iterator = receivingAddresses.entrySet().iterator(); iterator.hasNext();) {
+			Map.Entry<String, BigInteger> mapEntry = iterator.next();
+			String toAddress = mapEntry.getKey();
+			BigInteger amount = mapEntry.getValue();
+
+			if (amount == null || amount.compareTo(BigInteger.ZERO) <= 0)
+				throw new Exception("You must provide an amount");
+
+			outputValueSum = outputValueSum.add(amount);
+			//Add the output
+			BitcoinScript toOutputScript = BitcoinScript.createSimpleOutBitoinScript(new BitcoinAddress(toAddress));
+
+			TransactionOutput output = new TransactionOutput(params, null, amount, toOutputScript.getProgram());
+
+			tx.addOutput(output);
+		}
+		
+		//Now select the appropriate inputs
+		BigInteger valueSelected = BigInteger.ZERO;
+		BigInteger valueNeeded =  outputValueSum.add(fee);
+		BigInteger minFreeOutputSize = BigInteger.valueOf(1000000);
+
+		MyTransactionOutPoint changeOutPoint = null;
+
+		for (MyTransactionOutPoint outPoint : unspent) {
+
+			BitcoinScript script = new BitcoinScript(outPoint.getScriptBytes());
+
+			if (script.getOutType() == BitcoinScript.ScriptOutTypeStrange)
+				continue;
+
+			BitcoinScript inputScript = new BitcoinScript(outPoint.getConnectedPubKeyScript());
+			String address = inputScript.getAddress().toString();
+				
+			MyTransactionInput input = new MyTransactionInput(params, null, new byte[0], outPoint);
+
+			input.outpoint = outPoint;
+
+			tx.addInput(input);
+
+			valueSelected = valueSelected.add(outPoint.value);
+
+			priority += outPoint.value.longValue() * outPoint.confirmations;
+
+			if (changeAddress == null && changeOutPoint == null) {
+				changeOutPoint = outPoint;
+			}
+
+			if (valueSelected.compareTo(valueNeeded) == 0 || valueSelected.compareTo(valueNeeded.add(minFreeOutputSize)) >= 0)
+				break;
+		}
+
+		//Check the amount we have selected is greater than the amount we need
+		if (valueSelected.compareTo(valueNeeded) < 0) {
+			throw new InsufficientFundsException("Insufficient Funds");
+		}
+
+		BigInteger change = valueSelected.subtract(outputValueSum).subtract(fee);
+
+		//Now add the change if there is any
+		if (change.compareTo(BigInteger.ZERO) > 0) {
+			BitcoinScript change_script;
+			if (changeAddress != null) {
+				change_script = BitcoinScript.createSimpleOutBitoinScript(new BitcoinAddress(changeAddress));
+			} else if (changeOutPoint != null) {
+				BitcoinScript inputScript = new BitcoinScript(changeOutPoint.getConnectedPubKeyScript());
+				
+				//Return change to the first address
+				change_script = BitcoinScript.createSimpleOutBitoinScript(inputScript.getAddress());
+			} else {
+				throw new Exception("Invalid transaction attempt");
+			}
+			TransactionOutput change_output = new TransactionOutput(params, null, change, change_script.getProgram());
+
+			tx.addOutput(change_output);				
+		}
+
+		long estimatedSize = tx.bitcoinSerialize().length + (114 * tx.getInputs().size());
+
+		priority /= estimatedSize;
+
+		return new Pair<Transaction, Long>(tx, priority);
+	}
+	
 	public static List<MyTransactionOutPoint> getUnspentOutputPoints(String[] from) throws Exception {
 
 		StringBuffer buffer =  new StringBuffer(WebROOT + "unspent?active=");
