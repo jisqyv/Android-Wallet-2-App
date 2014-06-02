@@ -1,5 +1,7 @@
 package info.blockchain.wallet.ui;
 
+import info.blockchain.api.ExchangeRates;
+
 import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.util.AbstractMap;
@@ -96,11 +98,16 @@ public class BalanceFragment extends Fragment   {
 	private List<String> activeAddresses;
 
 	public static final String ACTION_INTENT = "info.blockchain.wallet.ui.BalanceFragment.REFRESH";
-
+	
     protected BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if(ACTION_INTENT.equals(intent.getAction())) {
+
+        		ExchangeRates fxRates = new ExchangeRates();
+                DownloadFXRatesTask task = new DownloadFXRatesTask(context, fxRates);
+                task.execute(new String[] { fxRates.getUrl() });
+
         		setAdapterContent();
         		adapter.notifyDataSetChanged();
             }
@@ -275,6 +282,10 @@ public class BalanceFragment extends Fragment   {
 	
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    	
+        IntentFilter filter = new IntentFilter(ACTION_INTENT);
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiver, filter);
+
 		final Activity activity = getActivity();
 		application = (WalletApplication) activity.getApplication();
 
@@ -451,7 +462,7 @@ public class BalanceFragment extends Fragment   {
     	super.onResume();
 
         IntentFilter filter = new IntentFilter(ACTION_INTENT);
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiver, filter);
+//        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiver, filter);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         strCurrentFiatCode = prefs.getString("ccurrency", "USD");
@@ -469,7 +480,7 @@ public class BalanceFragment extends Fragment   {
     public void onPause() {
     	super.onPause();
 
-        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(receiver);
+//        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(receiver);
     }
 
 	@Override

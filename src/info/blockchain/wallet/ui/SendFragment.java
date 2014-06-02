@@ -183,7 +183,9 @@ public class SendFragment extends Fragment   {
             if(ACTION_INTENT.equals(intent.getAction())) {
 
                 String address = intent.getStringExtra("BTC_ADDRESS");
-                
+
+//        		Toast.makeText(getActivity(), "In SendFragment:" + address, Toast.LENGTH_SHORT).show();
+
                 /*
                 if(BitcoinAddressCheck.isValidAddress(address)) {
             		Toast.makeText(getActivity(), "is valid address", Toast.LENGTH_SHORT).show();
@@ -252,10 +254,8 @@ public class SendFragment extends Fragment   {
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-    	/*
         IntentFilter filter = new IntentFilter(ACTION_INTENT);
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiver, filter);
-        */
 
 		final MainActivity activity = (MainActivity) getActivity();
 		application = (WalletApplication) activity.getApplication();
@@ -1232,8 +1232,8 @@ public class SendFragment extends Fragment   {
 
         Log.d("BlockchainWallet", "onResume");
 
-        IntentFilter filter = new IntentFilter(ACTION_INTENT);
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiver, filter);
+//        IntentFilter filter = new IntentFilter(ACTION_INTENT);
+//        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiver, filter);
 
         removeMagicList();
     	displayMagicList();
@@ -1244,7 +1244,7 @@ public class SendFragment extends Fragment   {
     public void onPause() {
     	super.onPause();
 
-        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(receiver);
+ //       LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(receiver);
     }
 
 	@Override
