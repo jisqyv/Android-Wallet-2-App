@@ -24,6 +24,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 
 import info.blockchain.api.LatestBlock;
 import info.blockchain.api.Transaction;
+import info.blockchain.api.Transaction.xPut;
 
 import piuk.blockchain.android.R;
 
@@ -41,6 +42,8 @@ public class TxActivity extends Activity	{
 	private TextView tvTS = null;
 	private TextView tvFrom = null;
 	private TextView tvTo = null;
+	private TextView tvFromAddress = null;
+	private TextView tvToAddress = null;
 	
 	private String strTxHash = null;
 	private boolean isSending = false;
@@ -80,6 +83,8 @@ public class TxActivity extends Activity	{
         tvTS = (TextView)findViewById(R.id.ts);
         tvFrom = (TextView)findViewById(R.id.from);
         tvTo = (TextView)findViewById(R.id.to);
+        tvFromAddress = (TextView)findViewById(R.id.from_address);
+        tvToAddress = (TextView)findViewById(R.id.to_address);
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssz");
         tvTS.setText(sdf.format(new Date(ts * 1000)));
@@ -181,7 +186,10 @@ public class TxActivity extends Activity	{
         	Log.d("TxActivity", "Height:" + height);
 
         	tvValueFee.setText(BlockchainUtil.formatBitcoin(BigInteger.valueOf(transaction.getFee())) + " BTC");
-
+        	
+        	tvFromAddress.setText(transaction.getInputs().get(0).addr);
+        	tvToAddress.setText(transaction.getOutputs().get(0).addr);
+        	
         	latestBlock.setData(results[1]);
         	latestBlock.parse();
         	latest_block = latestBlock.getLatestBlock();

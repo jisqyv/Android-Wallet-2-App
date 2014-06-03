@@ -199,6 +199,8 @@ public class BalanceFragment extends Fragment   {
         strCurrentFiatCode = prefs.getString("ccurrency", "USD");
         strCurrentFiatSymbol = prefs.getString(strCurrentFiatCode + "-SYM", "$");
 
+		application = (WalletApplication)getActivity().getApplication();
+
 		if (application == null) {
 			return;
 		}
@@ -212,6 +214,7 @@ public class BalanceFragment extends Fragment   {
 		if (addressLabels == null) {
 			return;
 		}
+		
 	    activeAddresses = Arrays.asList(addressLabels);
 		addressAmounts = new String[addressLabels.length];
 

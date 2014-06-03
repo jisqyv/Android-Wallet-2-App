@@ -17,9 +17,9 @@ public class Transaction extends BlockchainAPI {
     private static final String TAG = "Transaction";
 
     public class xPut {
-    	long value;
-    	String addr;
-    	String addr_tag;
+    	public long value;
+    	public String addr;
+    	public String addr_tag;
     }
 
 	private long height = -1L;
@@ -68,6 +68,14 @@ public class Transaction extends BlockchainAPI {
 
     public String getRelayedBy() {
     	return relayed_by;
+    }
+
+    public ArrayList<xPut> getInputs() {
+    	return inputs;
+    }
+
+    public ArrayList<xPut> getOutputs() {
+    	return outputs;
     }
 
     /**

@@ -88,8 +88,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         LinearLayout layout_icons = new LinearLayout(actionBar.getThemedContext());
         ActionBar.LayoutParams layoutParams = new ActionBar.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.WRAP_CONTENT, Gravity.RIGHT | Gravity.CENTER_VERTICAL);
         layoutParams.height = 72;
-        layoutParams.width = 72 * 2 + 5;
-        layoutParams.rightMargin = 5;
+        layoutParams.width = (72 * 2) + 5 + 30;
         layout_icons.setLayoutParams(layoutParams);
         layout_icons.setOrientation(LinearLayout.HORIZONTAL);
 
@@ -129,7 +128,14 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
             }
         });
         
+        LinearLayout filler_layout = new LinearLayout(actionBar.getThemedContext());
+        ActionBar.LayoutParams fillerParams = new ActionBar.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.WRAP_CONTENT, Gravity.RIGHT | Gravity.CENTER_VERTICAL);
+        fillerParams.height = 72;
+        fillerParams.width = 30;
+        filler_layout.setLayoutParams(fillerParams);
+        
         layout_icons.addView(refresh_icon);
+        layout_icons.addView(filler_layout);
         layout_icons.addView(qr_icon);
 
         actionBar.setDisplayOptions(actionBar.getDisplayOptions() ^ ActionBar.DISPLAY_SHOW_TITLE);
@@ -347,179 +353,4 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 		toast.show();
 	}
 
-/*
-	public void validatePIN(final WalletApplication application, final String PIN) {
-
-		final Handler handler = new Handler();
-
-		final Activity activity = this;
-
-		new Thread(new Runnable() {
-			public void run() {
-
-				String pin_lookup_key = PreferenceManager.getDefaultSharedPreferences(application).getString("pin_kookup_key", null);
-				String encrypted_password = PreferenceManager.getDefaultSharedPreferences(application).getString("encrypted_password", null);
-
-				try {
-					final JSONObject response = PinEntryActivity.apiGetValue(pin_lookup_key, PIN);
-
-					String decryptionKey = (String) response.get("success");
-					if (decryptionKey != null) {	
-						application.didEncounterFatalPINServerError = false;
-
-						String password = MyWallet.decrypt(encrypted_password, decryptionKey, PinEntryActivity.PBKDF2Iterations);
-
-						application.checkIfWalletHasUpdatedAndFetchTransactions(password, new SuccessCallback() {
-							@Override
-							public void onSuccess() {
-								handler.post(new Runnable() {
-									public void run() {															
-										Toast.makeText(application, "PIN Verified", Toast.LENGTH_SHORT).show();	
-
-//										disableKeyPad(false);
-
-										if (application.needsWalletRekey()) {
-											RekeyWalletDialog.show(getSupportFragmentManager(), application, new SuccessCallback() {
-												@Override
-												public void onSuccess() {													
-//													finish();
-												}
-
-												@Override
-												public void onFail() {													
-//													finish();
-												}
-											});
-										} else {
-//											finish();
-										}
-									}
-								});
-							}
-
-							@Override
-							public void onFail() {
-								handler.post(new Runnable() {
-									public void run() {
-//										disableKeyPad(false);
-
-										Toast.makeText(application, R.string.toast_wallet_decryption_failed, Toast.LENGTH_LONG).show();	
-
-										try {
-//											clearPrefValues(application);
-											
-											Editor editor = PreferenceManager.getDefaultSharedPreferences(application).edit();
-
-											editor.remove("pin_kookup_key");
-											editor.remove("encrypted_password");
-
-											if (!editor.commit()) {
-												throw new Exception("Error Saving Preferences");
-											}
-
-										} catch (Exception e) {
-											e.printStackTrace();
-										}
-
-//										begin();
-									}
-								});
-							}
-						});
-					} else if (response.get("error") != null) {
-
-						//Even though we received an error it is a valid response
-						//So no fatal
-						application.didEncounterFatalPINServerError = false;
-
-						//"code" == 2 means the PIN is incorrect
-						if (!response.containsKey("code") || ((Number)response.get("code")).intValue() != 2) {
-//							clearPrefValues(application);
-							
-							Editor editor = PreferenceManager.getDefaultSharedPreferences(application).edit();
-
-							editor.remove("pin_kookup_key");
-							editor.remove("encrypted_password");
-
-							if (!editor.commit()) {
-								throw new Exception("Error Saving Preferences");
-							}
-
-						}
-
-						handler.post(new Runnable() {
-							public void run() {
-//								disableKeyPad(false);
-
-								Toast.makeText(application, (String)response.get("error"), Toast.LENGTH_SHORT).show();	
-
-//								begin();
-							}
-						});
-					} else {
-						throw new Exception("Unknown Error");
-					}
-				} catch (final Exception e) {
-					e.printStackTrace();
-
-					application.didEncounterFatalPINServerError = true;
-
-					handler.post(new Runnable() {
-						public void run() {
-							try {
-//								disableKeyPad(false);
-
-								AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-
-								builder.setCancelable(false);
-
-								builder.setMessage(R.string.pin_server_error_description);
-
-								builder.setTitle(R.string.pin_server_error);
-
-								builder.setPositiveButton(R.string.try_again, new DialogInterface.OnClickListener() {
-									public void onClick(DialogInterface dialog, int id) {
-										validatePIN(application, PIN);
-
-										dialog.dismiss();
-
-//										begin();
-									}
-								});
-								builder.setNegativeButton(R.string.pin_server_error_enter_password_manually, new DialogInterface.OnClickListener() {
-									public void onClick(DialogInterface dialog, int id) {
-										dialog.dismiss();
-
-										RequestPasswordDialog.show(
-												getSupportFragmentManager(),
-												new SuccessCallback() {  
-													public void onSuccess() {
-														finish();
-													}
-													public void onFail() {	
-														Toast.makeText(application, R.string.password_incorrect, Toast.LENGTH_LONG).show();
-
-//														begin();
-													}
-												}, RequestPasswordDialog.PasswordTypeMain);
-
-									}
-								});
-
-								AlertDialog dialog = builder.create();
-
-								dialog.show();
-
-//								begin();
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
-						}
-					});
-				}
-			}
-		}).start();
-
-	}
-*/
 }
