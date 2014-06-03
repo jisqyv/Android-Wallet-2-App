@@ -1105,7 +1105,7 @@ public class MyRemoteWallet extends MyWallet {
 				addressTotalUnspentValue = addressTotalUnspentValues.get(changeAddress);				
 			}
 			if (addressTotalUnspentValue == null) {
-				addressTotalUnspentValues.put(address, BigInteger.ZERO);
+				addressTotalUnspentValues.put(address, outPoint.value);
 			} else {
 				addressTotalUnspentValues.put(address, addressTotalUnspentValue.add(outPoint.value));
 			}
