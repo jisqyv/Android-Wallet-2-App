@@ -1115,23 +1115,24 @@ public class MyRemoteWallet extends MyWallet {
 
 			tx.addInput(input);
 
-			valueSelected = valueSelected.add(addressSendAmount);
+			Log.d("sendCoinsAsync", "sendCoinsAsync: input: " + outPoint.value + " unspentAddress: " + address);	    			
+			valueSelected = valueSelected.add(outPoint.value);
 
 			priority += outPoint.value.longValue() * outPoint.confirmations;
 
-			if (valueSelected.compareTo(valueNeeded) == 0 || valueSelected.compareTo(valueNeeded.add(minFreeOutputSize)) >= 0)
-				break;
+			//if (valueSelected.compareTo(valueNeeded) == 0 || valueSelected.compareTo(valueNeeded.add(minFreeOutputSize)) >= 0)
+			//	break;
 		}
 
 		//Check the amount we have selected is greater than the amount we need
 		if (valueSelected.compareTo(valueNeeded) < 0) {
 			throw new InsufficientFundsException("Insufficient Funds");
 		}
-		
+
 		//decide change
 		if (changeAddress == null) {
 			BigInteger feeAmountLeftToAccountedFor = fee;
-			
+
 	        for (Iterator<Entry<String, BigInteger>> iterator = addressTotalUnspentValues.entrySet().iterator(); iterator.hasNext();) {
 	        	final Entry<String, BigInteger> entry = iterator.next();
 	        	final String address = entry.getKey();
