@@ -872,11 +872,13 @@ public class MyRemoteWallet extends MyWallet {
 					Transaction tx = pair.first;
 					Long priority = pair.second; 
 
-					//If returns false user cancelled
-					//Probably because they want to recreate the transaction with different fees
-					if (!progress.onReady(tx, fee, feePolicy, priority))
-						return;
-
+					if (isSimpleSend) {
+						//If returns false user cancelled
+						//Probably because they want to recreate the transaction with different fees
+						if (!progress.onReady(tx, fee, feePolicy, priority))
+							return;
+					}
+					
 					progress.onProgress("Signing Inputs");
 
 					Wallet wallet = new Wallet(NetworkParameters.prodNet());
