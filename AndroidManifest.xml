@@ -235,7 +235,7 @@
 
         <activity android:name="info.blockchain.wallet.ui.SettingsActivity"
 			android:label="@string/app_name"
-			android:theme="@android:style/Theme.Light"
+			android:theme="@android:style/Theme.Holo.Light"
 			>
 			<intent-filter /> 
         </activity>
