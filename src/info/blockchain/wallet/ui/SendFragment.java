@@ -1168,7 +1168,7 @@ public class SendFragment extends Fragment   {
             	layoutCustomSend.setBackgroundColor(color_spend_selected);
 //            	layoutSharedSend.setBackgroundColor(color_spend_unselected);
             	
-//    			doCustomSend();
+    			doCustomSend();
 
                 return false;
             }
