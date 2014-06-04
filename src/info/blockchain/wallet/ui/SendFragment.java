@@ -1152,7 +1152,7 @@ public class SendFragment extends Fragment   {
 
             	doSimpleSend();
 
-                return true;
+                return false;
             }
         });
 
@@ -1170,7 +1170,7 @@ public class SendFragment extends Fragment   {
             	
 //    			doCustomSend();
 
-                return true;
+                return false;
             }
         });
 
@@ -2342,7 +2342,7 @@ public class SendFragment extends Fragment   {
     				}
     			};
 
-//				application.getRemoteWallet().sendCoinsAsync(cs.getSendingAddresses(), edAddress.getText().toString(), total_amount, feePolicy, fee, cs.getChangeAddress(), csProgress);
+				application.getRemoteWallet().sendCoinsAsync(cs.getSendingAddresses(), edAddress.getText().toString(), total_amount, feePolicy, fee, cs.getChangeAddress(), csProgress);
 
             }
         });
