@@ -809,9 +809,11 @@ public class MyRemoteWallet extends MyWallet {
 			Entry<String, BigInteger> entry = iterator.next();
 			sum = sum.add(entry.getValue());			
 		}
-		Log.d("sendCoinsAsync", "sendCoinsAsync: sum " + sum);
-		Log.d("sendCoinsAsync", "sendCoinsAsync: amount " + amount);
-
+		if (sum.compareTo(amount) != 0) {
+			progress.onError("Internal error input amounts not validating correctly");
+			return;
+		}
+		
 		HashMap<String, BigInteger> receivingAddresses = new HashMap<String, BigInteger>();
 		receivingAddresses.put(toAddress, amount);
 		
@@ -1070,7 +1072,6 @@ public class MyRemoteWallet extends MyWallet {
 			BitcoinScript toOutputScript = BitcoinScript.createSimpleOutBitoinScript(new BitcoinAddress(toAddress));
 
 			TransactionOutput output = new TransactionOutput(params, null, amount, toOutputScript.getProgram());
-			
 			tx.addOutput(output);
 		}
 		
@@ -1098,7 +1099,7 @@ public class MyRemoteWallet extends MyWallet {
 				throw new Exception("Invalid transaction address send amount is null");
 			}
 			
-			final BigInteger addressTotalUnspentValue;
+			BigInteger addressTotalUnspentValue = null;
 			if (changeAddress == null) {
 				addressTotalUnspentValue = addressTotalUnspentValues.get(address);
 			} else {
@@ -1116,26 +1117,42 @@ public class MyRemoteWallet extends MyWallet {
 
 			tx.addInput(input);
 
-			valueSelected = valueSelected.add(outPoint.value);
+			valueSelected = valueSelected.add(addressSendAmount);
 
 			priority += outPoint.value.longValue() * outPoint.confirmations;
-
-			if (changeAddress == null && changeOutPoint == null) {
-				changeOutPoint = outPoint;
-			}
 
 			if (valueSelected.compareTo(valueNeeded) == 0 || valueSelected.compareTo(valueNeeded.add(minFreeOutputSize)) >= 0)
 				break;
 		}
 
+		//Check the amount we have selected is greater than the amount we need
+		if (valueSelected.compareTo(valueNeeded) < 0) {
+			throw new InsufficientFundsException("Insufficient Funds");
+		}
+		
 		//decide change
 		if (changeAddress == null) {
+			BigInteger feeAmountLeftToAccountedFor = fee;
+			
 	        for (Iterator<Entry<String, BigInteger>> iterator = addressTotalUnspentValues.entrySet().iterator(); iterator.hasNext();) {
 	        	final Entry<String, BigInteger> entry = iterator.next();
 	        	final String address = entry.getKey();
 	        	final BigInteger addressTotalUnspentValue = entry.getValue();
 	        	final BigInteger addressSendAmount = sendingAddresses.get(address);
-	        	final BigInteger addressChangeAmount = addressTotalUnspentValue.subtract(addressSendAmount);
+	        	BigInteger addressChangeAmount = addressTotalUnspentValue.subtract(addressSendAmount);
+
+	        	if (feeAmountLeftToAccountedFor.compareTo(BigInteger.ZERO) > 0) {
+	        		
+	        		if (addressChangeAmount.compareTo(feeAmountLeftToAccountedFor) >= 0) {
+		        		//have enough to fill fee
+	        			addressChangeAmount = addressChangeAmount.subtract(feeAmountLeftToAccountedFor);
+	        			feeAmountLeftToAccountedFor = BigInteger.ZERO;
+	        		} else {
+		        		// do not have enough to fill fee
+	        			addressChangeAmount = BigInteger.ZERO;
+	        			feeAmountLeftToAccountedFor = feeAmountLeftToAccountedFor.subtract(addressChangeAmount);
+	        		}
+	        	}
 	        	
 	        	if (addressChangeAmount.compareTo(BigInteger.ZERO) > 0) {
 	    			//Add the output
@@ -1161,17 +1178,14 @@ public class MyRemoteWallet extends MyWallet {
     			//Add the output
     			BitcoinScript toOutputScript = BitcoinScript.createSimpleOutBitoinScript(new BitcoinAddress(changeAddress));
 
-    			TransactionOutput output = new TransactionOutput(params, null, addressChangeAmountSum, toOutputScript.getProgram());
+    			TransactionOutput output = new TransactionOutput(params, null, addressChangeAmountSum.subtract(fee), toOutputScript.getProgram());
     			tx.addOutput(output);        		
         	}
 		}
 
 		
-		//Check the amount we have selected is greater than the amount we need
-		if (valueSelected.compareTo(valueNeeded) < 0) {
-			throw new InsufficientFundsException("Insufficient Funds");
-		}
-
+		
+		
 		long estimatedSize = tx.bitcoinSerialize().length + (114 * tx.getInputs().size());
 
 		priority /= estimatedSize;
