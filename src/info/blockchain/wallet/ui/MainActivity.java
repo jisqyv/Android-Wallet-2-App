@@ -50,6 +50,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     private static int PICK_CONTACT 		= 4;
     private static int NEARBY_MERCHANTS 	= 5;
     private static int SELECT_FIAT		 	= 6;
+    private static int SETTINGS_ACTIVITY	= 7;
 
 	private ViewPager viewPager;
     private TabsPagerAdapter mAdapter;
@@ -191,15 +192,20 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 	    // Handle item selection
 	    switch (item.getItemId()) {
     	case R.id.action_settings:
+    		/*
         	Intent intent = new Intent(MainActivity.this, SetupActivity.class);
     		startActivityForResult(intent, SETUP_ACTIVITY);
+    		*/
+    		doSettings();
     		return true;
     	case R.id.exchange_rates:
     		doExchangeRates();
     		return true;
+    	/*
     	case R.id.select_fiat:
     		doSelectFiat();
     		return true;
+    	*/
     	case R.id.nearby_merchants:
     		doMerchantDirectory();
     		return true;
@@ -285,6 +291,11 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     private void doSelectFiat()	{
     	Intent intent = new Intent(MainActivity.this, CurrencySelector.class);
 		startActivityForResult(intent, SELECT_FIAT);
+    }
+
+    private void doSettings()	{
+    	Intent intent = new Intent(MainActivity.this, info.blockchain.wallet.ui.SettingsActivity.class);
+		startActivityForResult(intent, SETTINGS_ACTIVITY);
     }
 
     private void doMerchantDirectory()	{
