@@ -198,9 +198,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     		*/
     		doSettings();
     		return true;
-    	case R.id.exchange_rates:
-    		doExchangeRates();
-    		return true;
     	/*
     	case R.id.select_fiat:
     		doSelectFiat();
@@ -286,11 +283,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     private void doAbout()	{
     	Intent intent = new Intent(MainActivity.this, AboutActivity.class);
 		startActivityForResult(intent, ABOUT_ACTIVITY);
-    }
-
-    private void doSelectFiat()	{
-    	Intent intent = new Intent(MainActivity.this, CurrencySelector.class);
-		startActivityForResult(intent, SELECT_FIAT);
     }
 
     private void doSettings()	{

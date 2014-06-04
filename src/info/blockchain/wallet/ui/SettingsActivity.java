@@ -25,7 +25,7 @@ public class SettingsActivity extends PreferenceActivity {
             super.onCreate(savedInstanceState);
             setTitle(R.string.app_name);
         	addPreferencesFromResource(info.blockchain.wallet.ui.R.xml.settings);
-        	
+
         	final String guid = WalletUtil.getInstance(this, this).getRemoteWallet().getGUID();
 
         	Preference guidPref = (Preference) findPreference("guid");
