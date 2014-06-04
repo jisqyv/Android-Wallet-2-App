@@ -8,6 +8,7 @@ import android.view.View.OnTouchListener;
 import android.widget.TextView;
 import android.widget.LinearLayout;
 import android.os.AsyncTask;
+import android.widget.ImageView;
 import android.widget.Toast;
 import android.util.Log;
 
@@ -46,6 +47,9 @@ public class TxActivity extends Activity	{
 	private TextView tvFromAddress = null;
 	private TextView tvToAddress = null;
 	
+	private ImageView ivFromAddress = null;
+	private ImageView ivToAddress = null;
+	
 	private String strTxHash = null;
 	private boolean isSending = false;
 	private String strResult = null;
@@ -75,6 +79,11 @@ public class TxActivity extends Activity	{
 
         latestBlock = new LatestBlock();
         transaction = new Transaction(strTxHash);
+
+        ivFromAddress = (ImageView)findViewById(R.id.add_address_from);
+        ivFromAddress.setVisibility(View.INVISIBLE);
+        ivToAddress = (ImageView)findViewById(R.id.add_address_to);
+        ivToAddress.setVisibility(View.INVISIBLE);
 
         tvLabelConfirmations = (TextView)findViewById(R.id.confirm_label);
         tvLabelAmount = (TextView)findViewById(R.id.amount_label);
@@ -196,9 +205,19 @@ public class TxActivity extends Activity	{
         	String to = null;
         	if(labels.get(transaction.getInputs().get(0).addr) != null) {
         		from = labels.get(transaction.getInputs().get(0).addr);
+                ivFromAddress.setVisibility(View.GONE);
         	}
         	else {
         		from = transaction.getInputs().get(0).addr;
+        		ivFromAddress.setVisibility(View.VISIBLE);
+                ivFromAddress.setOnTouchListener(new OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+             			Toast.makeText(TxActivity.this, "Add to address book", Toast.LENGTH_LONG).show();
+                        return true;
+                    }
+                });
+
         	}
         	if(from.length() > 25) {
         		from = from.substring(0, 25) + "...";
@@ -206,9 +225,19 @@ public class TxActivity extends Activity	{
 
         	if(labels.get(transaction.getOutputs().get(0).addr) != null) {
         		to = labels.get(transaction.getOutputs().get(0).addr);
+        		ivToAddress.setVisibility(View.GONE);
         	}
         	else {
         		to = transaction.getOutputs().get(0).addr;
+        		ivToAddress.setVisibility(View.VISIBLE);
+                ivToAddress.setOnTouchListener(new OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+             			Toast.makeText(TxActivity.this, "Add to address book", Toast.LENGTH_LONG).show();
+                        return false;
+                    }
+                });
+
         	}
         	if(to.length() > 25) {
         		to = to.substring(0, 25) + "...";
