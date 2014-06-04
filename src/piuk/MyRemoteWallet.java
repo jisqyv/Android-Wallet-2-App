@@ -809,6 +809,7 @@ public class MyRemoteWallet extends MyWallet {
 			Entry<String, BigInteger> entry = iterator.next();
 			sum = sum.add(entry.getValue());			
 		}
+		
 		if (sum.compareTo(amount) != 0) {
 			progress.onError("Internal error input amounts not validating correctly");
 			return;
@@ -1072,6 +1073,7 @@ public class MyRemoteWallet extends MyWallet {
 			BitcoinScript toOutputScript = BitcoinScript.createSimpleOutBitoinScript(new BitcoinAddress(toAddress));
 
 			TransactionOutput output = new TransactionOutput(params, null, amount, toOutputScript.getProgram());
+			Log.d("sendCoinsAsync", "sendCoinsAsync: output: " + amount + " toAddress: " + toAddress);	    			
 			tx.addOutput(output);
 		}
 		
@@ -1083,7 +1085,7 @@ public class MyRemoteWallet extends MyWallet {
 		MyTransactionOutPoint changeOutPoint = null;
 
 		Map<String, BigInteger> addressTotalUnspentValues = new HashMap<String, BigInteger>();
-		
+
 		for (MyTransactionOutPoint outPoint : unspent) {
 
 			BitcoinScript script = new BitcoinScript(outPoint.getScriptBytes());
@@ -1099,12 +1101,8 @@ public class MyRemoteWallet extends MyWallet {
 				throw new Exception("Invalid transaction address send amount is null");
 			}
 			
-			BigInteger addressTotalUnspentValue = null;
-			if (changeAddress == null) {
-				addressTotalUnspentValue = addressTotalUnspentValues.get(address);
-			} else {
-				addressTotalUnspentValue = addressTotalUnspentValues.get(changeAddress);				
-			}
+			final BigInteger addressTotalUnspentValue = addressTotalUnspentValues.get(address);
+			
 			if (addressTotalUnspentValue == null) {
 				addressTotalUnspentValues.put(address, outPoint.value);
 			} else {
@@ -1159,7 +1157,8 @@ public class MyRemoteWallet extends MyWallet {
 	    			BitcoinScript toOutputScript = BitcoinScript.createSimpleOutBitoinScript(new BitcoinAddress(address));
 
 	    			TransactionOutput output = new TransactionOutput(params, null, addressChangeAmount, toOutputScript.getProgram());
-	    			
+
+	    			Log.d("sendCoinsAsync", "sendCoinsAsync: change: " + addressChangeAmount + " address: " + address);	    			
 	    			tx.addOutput(output);        		
 	        	}
 	        }
@@ -1179,12 +1178,13 @@ public class MyRemoteWallet extends MyWallet {
     			BitcoinScript toOutputScript = BitcoinScript.createSimpleOutBitoinScript(new BitcoinAddress(changeAddress));
 
     			TransactionOutput output = new TransactionOutput(params, null, addressChangeAmountSum.subtract(fee), toOutputScript.getProgram());
+    			Log.d("sendCoinsAsync", "sendCoinsAsync: change: " + addressChangeAmountSum.subtract(fee) + " address: " + changeAddress);	    			
     			tx.addOutput(output);        		
         	}
 		}
-
+	
 		
-		
+		Log.d("sendCoinsAsync", "sendCoinsAsync: fee: " + fee);	    			
 		
 		long estimatedSize = tx.bitcoinSerialize().length + (114 * tx.getInputs().size());
 
