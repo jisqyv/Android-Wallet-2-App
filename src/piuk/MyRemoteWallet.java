@@ -818,11 +818,7 @@ public class MyRemoteWallet extends MyWallet {
 		HashMap<String, BigInteger> receivingAddresses = new HashMap<String, BigInteger>();
 		receivingAddresses.put(toAddress, amount);
 		
-		List<String> from = new ArrayList<String>(sendingAddresses.keySet());
-
-		//sendCoinsAsync(false, from.toArray(new String[from.size()]), receivingAddresses, feePolicy, fee, changeAddress, progress);
 		sendCoinsAsync(false, sendingAddresses, receivingAddresses, feePolicy, fee, changeAddress, progress);
-
 	}
 	
 	private void sendCoinsAsync(final boolean isSimpleSend, final HashMap<String, BigInteger> sendingAddresses, final HashMap<String, BigInteger> receivingAddresses, final FeePolicy feePolicy, final BigInteger fee, final String changeAddress, final SendProgress progress) {
@@ -1080,9 +1076,6 @@ public class MyRemoteWallet extends MyWallet {
 		//Now select the appropriate inputs
 		BigInteger valueSelected = BigInteger.ZERO;
 		BigInteger valueNeeded =  outputValueSum.add(fee);
-		BigInteger minFreeOutputSize = BigInteger.valueOf(1000000);
-
-		MyTransactionOutPoint changeOutPoint = null;
 
 		Map<String, BigInteger> addressTotalUnspentValues = new HashMap<String, BigInteger>();
 
