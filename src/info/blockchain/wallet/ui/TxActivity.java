@@ -13,6 +13,7 @@ import android.util.Log;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -55,6 +56,8 @@ public class TxActivity extends Activity	{
 	private LatestBlock latestBlock = null;
 	private Transaction transaction = null;
 
+	private Map<String,String> labels = null;
+
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -67,7 +70,9 @@ public class TxActivity extends Activity	{
         	strResult = extras.getString("RESULT");
         	ts = extras.getLong("TS");
         }
-        
+
+		labels = WalletUtil.getInstance(this,  this).getRemoteWallet().getLabelMap();
+
         latestBlock = new LatestBlock();
         transaction = new Transaction(strTxHash);
 
@@ -187,8 +192,54 @@ public class TxActivity extends Activity	{
 
         	tvValueFee.setText(BlockchainUtil.formatBitcoin(BigInteger.valueOf(transaction.getFee())) + " BTC");
         	
-        	tvFromAddress.setText(transaction.getInputs().get(0).addr);
-        	tvToAddress.setText(transaction.getOutputs().get(0).addr);
+        	String from = null;
+        	String to = null;
+        	if(labels.get(transaction.getInputs().get(0).addr) != null) {
+        		from = labels.get(transaction.getInputs().get(0).addr);
+        	}
+        	else {
+        		from = transaction.getInputs().get(0).addr;
+        	}
+        	if(from.length() > 25) {
+        		from = from.substring(0, 25) + "...";
+        	}
+
+        	if(labels.get(transaction.getOutputs().get(0).addr) != null) {
+        		to = labels.get(transaction.getOutputs().get(0).addr);
+        	}
+        	else {
+        		to = transaction.getOutputs().get(0).addr;
+        	}
+        	if(to.length() > 25) {
+        		to = to.substring(0, 25) + "...";
+        	}
+
+        	tvFromAddress.setText(from);
+        	tvFromAddress.setOnTouchListener(new OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                	
+          			android.content.ClipboardManager clipboard = (android.content.ClipboardManager)TxActivity.this.getSystemService(android.content.Context.CLIPBOARD_SERVICE);
+          		    android.content.ClipData clip = android.content.ClipData.newPlainText("Address", transaction.getInputs().get(0).addr);
+          		    clipboard.setPrimaryClip(clip);
+         			Toast.makeText(TxActivity.this, "Address copied to clipboard", Toast.LENGTH_LONG).show();
+
+                    return false;
+                }
+            });
+        	tvToAddress.setText(to);
+        	tvToAddress.setOnTouchListener(new OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                	
+          			android.content.ClipboardManager clipboard = (android.content.ClipboardManager)TxActivity.this.getSystemService(android.content.Context.CLIPBOARD_SERVICE);
+          		    android.content.ClipData clip = android.content.ClipData.newPlainText("Address", transaction.getOutputs().get(0).addr);
+          		    clipboard.setPrimaryClip(clip);
+         			Toast.makeText(TxActivity.this, "Address copied to clipboard", Toast.LENGTH_LONG).show();
+
+                    return false;
+                }
+            });
         	
         	latestBlock.setData(results[1]);
         	latestBlock.parse();
