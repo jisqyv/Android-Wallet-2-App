@@ -2174,8 +2174,6 @@ public class SendFragment extends Fragment   {
 				if (application.getRemoteWallet() == null)
 					return;
 
-        		Toast.makeText(getActivity(), "application.getRemoteWallet() not null", Toast.LENGTH_SHORT).show();
-        		
     			csProgress = new SendProgress() {
     				public void onSend(final Transaction tx, final String message) {
     					handler.post(new Runnable() {
@@ -2341,6 +2339,10 @@ public class SendFragment extends Fragment   {
     					return SendCoinsActivity.temporaryPrivateKeys.get(address);
     				}
     			};
+
+        		Toast.makeText(getActivity(), "application.getRemoteWallet() not null", Toast.LENGTH_SHORT).show();
+
+        		Toast.makeText(getActivity(), "Total amount:" + total_amount, Toast.LENGTH_SHORT).show();
 
 				application.getRemoteWallet().sendCoinsAsync(cs.getSendingAddresses(), edAddress.getText().toString(), total_amount, feePolicy, fee, cs.getChangeAddress(), csProgress);
 

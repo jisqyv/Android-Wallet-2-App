@@ -104,6 +104,7 @@ public class BalanceFragment extends Fragment   {
         public void onReceive(Context context, Intent intent) {
             if(ACTION_INTENT.equals(intent.getAction())) {
 
+            	/*
             	application = (WalletApplication)getActivity().getApplication();
         		MyRemoteWallet remoteWallet = application.getRemoteWallet();
         		try {
@@ -112,6 +113,7 @@ public class BalanceFragment extends Fragment   {
         		catch(Exception e) {
             		Toast.makeText(getActivity(), e.toString(), Toast.LENGTH_SHORT).show();
         		}
+        		*/
 
         		ExchangeRates fxRates = new ExchangeRates();
                 DownloadFXRatesTask task = new DownloadFXRatesTask(context, fxRates);
