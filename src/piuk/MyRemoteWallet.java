@@ -1148,8 +1148,8 @@ public class MyRemoteWallet extends MyWallet {
 	        			feeAmountLeftToAccountedFor = BigInteger.ZERO;
 	        		} else {
 		        		// do not have enough to fill fee
-	        			addressChangeAmount = BigInteger.ZERO;
 	        			feeAmountLeftToAccountedFor = feeAmountLeftToAccountedFor.subtract(addressChangeAmount);
+	        			addressChangeAmount = BigInteger.ZERO;
 	        		}
 	        	}
 	        	
