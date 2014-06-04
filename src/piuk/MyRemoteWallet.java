@@ -826,6 +826,12 @@ public class MyRemoteWallet extends MyWallet {
 		new Thread() {
 			@Override
 			public void run() {
+				final  BigInteger feeAmount;
+				if (fee == null)
+					feeAmount = BigInteger.ZERO;
+				else
+					feeAmount = fee;
+
 				final List<ECKey> tempKeys = new ArrayList<ECKey>();
 
 				try {
@@ -845,9 +851,9 @@ public class MyRemoteWallet extends MyWallet {
 						List<MyTransactionOutPoint> unspent = filter(allUnspent, tempKeys, false, progress);
 						
 						if (isSimpleSend) {
-							pair = makeTransaction(isSimpleSend, unspent, receivingAddresses, fee, changeAddress);							
+							pair = makeTransaction(isSimpleSend, unspent, receivingAddresses, feeAmount, changeAddress);							
 						} else {
-							pair = makeTransactionCustom(sendingAddresses, unspent, receivingAddresses, fee, changeAddress);
+							pair = makeTransactionCustom(sendingAddresses, unspent, receivingAddresses, feeAmount, changeAddress);
 						}
 
 						//Transaction cancelled
@@ -859,9 +865,9 @@ public class MyRemoteWallet extends MyWallet {
 						List<MyTransactionOutPoint> unspent = filter(allUnspent, tempKeys, true, progress);
 
 						if (isSimpleSend) {
-							pair = makeTransaction(isSimpleSend, unspent, receivingAddresses, fee, changeAddress);							
+							pair = makeTransaction(isSimpleSend, unspent, receivingAddresses, feeAmount, changeAddress);							
 						} else {
-							pair = makeTransactionCustom(sendingAddresses, unspent, receivingAddresses, fee, changeAddress);
+							pair = makeTransactionCustom(sendingAddresses, unspent, receivingAddresses, feeAmount, changeAddress);
 						}
 						
 						//Transaction cancelled
@@ -875,7 +881,7 @@ public class MyRemoteWallet extends MyWallet {
 					if (isSimpleSend) {
 						//If returns false user cancelled
 						//Probably because they want to recreate the transaction with different fees
-						if (!progress.onReady(tx, fee, feePolicy, priority))
+						if (!progress.onReady(tx, feeAmount, feePolicy, priority))
 							return;
 					}
 					
