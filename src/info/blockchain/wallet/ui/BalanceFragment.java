@@ -206,13 +206,15 @@ public class BalanceFragment extends Fragment   {
         strCurrentFiatCode = prefs.getString("ccurrency", "USD");
         strCurrentFiatSymbol = prefs.getString(strCurrentFiatCode + "-SYM", "$");
 
-		application = (WalletApplication)getActivity().getApplication();
+//		application = (WalletApplication)getActivity().getApplication();
+		application = WalletUtil.getInstance(getActivity(),  getActivity()).getWalletApplication();
 
 		if (application == null) {
 			return;
 		}
 
-		MyRemoteWallet remoteWallet = application.getRemoteWallet();
+//		MyRemoteWallet remoteWallet = application.getRemoteWallet();
+		MyRemoteWallet remoteWallet = WalletUtil.getInstance(getActivity(), getActivity()).getRemoteWallet();
 		if (remoteWallet == null) {
 			return;
 		}
@@ -297,7 +299,7 @@ public class BalanceFragment extends Fragment   {
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiver, filter);
 
 		final Activity activity = getActivity();
-		application = (WalletApplication) activity.getApplication();
+//		application = (WalletApplication) activity.getApplication();
 
         rootView = inflater.inflate(info.blockchain.wallet.ui.R.layout.fragment_balance, container, false);
 
@@ -336,7 +338,7 @@ public class BalanceFragment extends Fragment   {
         tViewAmount1 = (TextView)rootView.findViewById(R.id.amount1);
         tViewAmount1.setTypeface(TypefaceUtil.getInstance(getActivity()).getRobotoLightTypeface());
         tViewAmount2 = (TextView)rootView.findViewById(R.id.amount2);
-		MyRemoteWallet remoteWallet = application.getRemoteWallet();
+		MyRemoteWallet remoteWallet = WalletUtil.getInstance(getActivity(), getActivity()).getRemoteWallet();
 		if(remoteWallet != null) {
 	        tViewAmount1.setText(BlockchainUtil.formatBitcoin(remoteWallet.getBalance()));
 	        tViewAmount2.setText(strCurrentFiatSymbol + BlockchainUtil.BTC2Fiat(BlockchainUtil.formatBitcoin(remoteWallet.getBalance())));
@@ -629,7 +631,8 @@ public class BalanceFragment extends Fragment   {
 
     	final LinearLayout balance_extLayout = (LinearLayout)view.findViewById(R.id.balance_ext);
 
-    	MyRemoteWallet remoteWallet = application.getRemoteWallet();
+//    	MyRemoteWallet remoteWallet = application.getRemoteWallet();
+    	MyRemoteWallet remoteWallet = WalletUtil.getInstance(getActivity(), getActivity()).getRemoteWallet();
 		if (remoteWallet == null) {
 			return;
 		}

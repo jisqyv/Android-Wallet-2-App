@@ -76,6 +76,7 @@ import android.provider.ContactsContract.CommonDataKinds;
 import android.provider.ContactsContract.Contacts;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.content.BroadcastReceiver;
+import android.content.pm.PackageManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.ContextThemeWrapper;
 import android.util.Log;
@@ -672,7 +673,7 @@ public class SendFragment extends Fragment   {
 				if (application.getRemoteWallet() == null)
 					return;
 
-				final BigInteger amount = getBTCEnteredOutputValue(edAmount1);
+				final BigInteger amount = getBTCEnteredOutputValue(edAmount1.getText().toString());
 				final WalletApplication application = (WalletApplication) getActivity().getApplication();
 				if (application.isInP2PFallbackMode()) {
 
@@ -686,7 +687,7 @@ public class SendFragment extends Fragment   {
 					}
 
 					// create spend
-					final SendRequest sendRequest = SendRequest.to(receivingAddress, getBTCEnteredOutputValue(edAmount1));
+					final SendRequest sendRequest = SendRequest.to(receivingAddress, getBTCEnteredOutputValue(edAmount1.getText().toString()));
 					sendRequest.fee = fee;
 
 					new Thread(new Runnable()
@@ -763,7 +764,7 @@ public class SendFragment extends Fragment   {
 					from = new String[] {selected.first.toString()};
 				}
 				*/
-				final BigInteger amount = getBTCEnteredOutputValue(edAmount1);
+				final BigInteger amount = getBTCEnteredOutputValue(edAmount1.getText().toString());
 				final WalletApplication application = (WalletApplication) getActivity().getApplication();
 
 				application.getRemoteWallet().sendCoinsAsync(cs.getSendingAddresses(), receivingAddress.toString(), amount, feePolicy, fee, cs.getChangeAddress(), progress);
@@ -787,7 +788,7 @@ public class SendFragment extends Fragment   {
 				}
 				String[] from = application.getRemoteWallet().getActiveAddresses();
 
-				BigDecimal amountDecimal = BigDecimal.valueOf(getBTCEnteredOutputValue(edAmount1).doubleValue());
+				BigDecimal amountDecimal = BigDecimal.valueOf(getBTCEnteredOutputValue(edAmount1.getText().toString()).doubleValue());
 				//Add the fee
 				final BigInteger amount = amountDecimal.add(amountDecimal.divide(BigDecimal.valueOf(100)).multiply(BigDecimal.valueOf(application.getRemoteWallet().getSharedFee()))).toBigInteger();
 
@@ -821,7 +822,7 @@ public class SendFragment extends Fragment   {
 							if(sendViaEmail && emailOrNumber != null && emailOrNumber.contains("@")) {	
 
 				            	try {
-									remoteWallet.sendCoinsEmail(emailOrNumber, getBTCEnteredOutputValue(edAmount1), progressEmailSMS);
+									remoteWallet.sendCoinsEmail(emailOrNumber, getBTCEnteredOutputValue(edAmount1.getText().toString()), progressEmailSMS);
 								} catch (Exception e) {
 									e.printStackTrace();
 								}
@@ -830,7 +831,7 @@ public class SendFragment extends Fragment   {
 									String numberFormated = emailOrNumber.replaceAll("\\D+","");	
 									numberFormated = "+"+numberFormated;
 									Log.d("sendCoinsSMS", "numberFormated: "+ numberFormated);
-									remoteWallet.sendCoinsSMS(numberFormated, getBTCEnteredOutputValue(edAmount1), progressEmailSMS);										
+									remoteWallet.sendCoinsSMS(numberFormated, getBTCEnteredOutputValue(edAmount1.getText().toString()), progressEmailSMS);										
 								} catch (Exception e) {
 									e.printStackTrace();
 								}								
@@ -846,7 +847,7 @@ public class SendFragment extends Fragment   {
 				} else {
 					if(sendViaEmail && emailOrNumber != null && emailOrNumber.contains("@")) {	
 						try {
-							remoteWallet.sendCoinsEmail(emailOrNumber, getBTCEnteredOutputValue(edAmount1), progressEmailSMS);
+							remoteWallet.sendCoinsEmail(emailOrNumber, getBTCEnteredOutputValue(edAmount1.getText().toString()), progressEmailSMS);
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
@@ -855,7 +856,7 @@ public class SendFragment extends Fragment   {
 							String numberFormated = emailOrNumber.replaceAll("\\D+","");	
 							numberFormated = "+"+numberFormated;
 							Log.d("sendCoinsSMS", "numberFormated: "+ numberFormated);
-							remoteWallet.sendCoinsSMS(numberFormated, getBTCEnteredOutputValue(edAmount1), progressEmailSMS);										
+							remoteWallet.sendCoinsSMS(numberFormated, getBTCEnteredOutputValue(edAmount1.getText().toString()), progressEmailSMS);										
 						} catch (Exception e) {
 							e.printStackTrace();
 						}								
@@ -1197,9 +1198,20 @@ public class SendFragment extends Fragment   {
         return rootView;
     }
 
+    /*
     public BigInteger getBTCEnteredOutputValue(EditText edAmount) {
 		String amountString = edAmount.getText().toString().trim();
     	if(! isBTC) {
+    		return BlockchainUtil.bitcoinAmountStringToBigInteger(BlockchainUtil.Fiat2BTC(amountString));
+    	} else {
+    		return BlockchainUtil.bitcoinAmountStringToBigInteger(amountString);
+    	}
+    }
+    */   
+    
+    public BigInteger getBTCEnteredOutputValue(String edAmount) {
+		String amountString = edAmount.trim();
+    	if(!isBTC) {
     		return BlockchainUtil.bitcoinAmountStringToBigInteger(BlockchainUtil.Fiat2BTC(amountString));
     	} else {
     		return BlockchainUtil.bitcoinAmountStringToBigInteger(amountString);
@@ -1976,7 +1988,7 @@ public class SendFragment extends Fragment   {
 
     	final EditText edAmount = new EditText(new ContextThemeWrapper(getActivity(), android.R.style.Theme_Holo_InputMethod));
         edAmount.setId(ViewIdGenerator.generateViewId());
-        edAmount.setHint("0.0000");
+        edAmount.setText("0.0000");
         edAmount.setTextSize(16);
         edAmount.setTextColor(Color.BLACK);
         edAmount.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
@@ -1985,6 +1997,28 @@ public class SendFragment extends Fragment   {
         edAmount.setLayoutParams(layout_params);
     	((LinearLayout)layout_from.findViewById(R.id.p3)).setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
     	((LinearLayout)layout_from.findViewById(R.id.p3)).addView(edAmount);
+
+        spAddress.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+            	if(layout_froms.getChildCount() == 1 && edAmount1.getText().toString().length() > 0 && edAmount.getText().toString().equals("0.0000")) {
+                	edAmount.setText(BlockchainUtil.formatBitcoin(getBTCEnteredOutputValue(edAmount1.getText().toString())));
+            	}
+
+            	return false;
+            }
+        });
+
+        edAmount.setOnFocusChangeListener(new OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus) {
+                	if(layout_froms.getChildCount() == 1 && edAmount1.getText().toString().length() > 0 && edAmount.getText().toString().equals("0.0000")) {
+                    	edAmount.setText(BlockchainUtil.formatBitcoin(getBTCEnteredOutputValue(edAmount1.getText().toString())));
+                	}
+                }
+            }
+        });
     	
     	/*
     	ImageButton ibPlus = new ImageButton(getActivity());
@@ -2028,7 +2062,7 @@ public class SendFragment extends Fragment   {
     	((LinearLayout)layout_fee.findViewById(R.id.p2)).setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
     	final EditText edFee = new EditText(new ContextThemeWrapper(getActivity(), android.R.style.Theme_Holo_InputMethod));
         edFee.setId(ViewIdGenerator.generateViewId());
-        edFee.setHint("0.0001");
+        edFee.setText("0.0001");
         edFee.setTextSize(16);
         edFee.setTextColor(Color.BLACK);
         edFee.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
@@ -2113,7 +2147,7 @@ public class SendFragment extends Fragment   {
             	if(spAddress.getSelectedItemPosition() != 0 &&
             			edAmount.getText().toString() != null && edAmount.getText().toString().length() > 0 &&
             			Double.parseDouble(edAmount.getText().toString()) > 0.0) {
-            		cs.addSendingAddress(addresses.get(spAddress.getSelectedItemPosition()), getBTCEnteredOutputValue(edAmount));
+            		cs.addSendingAddress(addresses.get(spAddress.getSelectedItemPosition()), getBTCEnteredOutputValue(edAmount.getText().toString()));
             	}
 
                 LinearLayout sending_layout = null;
@@ -2130,14 +2164,16 @@ public class SendFragment extends Fragment   {
                 	if(selected_address.getSelectedItemPosition() != 0 &&
                 			amount.getText().toString() != null && amount.getText().toString().length() > 0 &&
                 			Double.parseDouble(amount.getText().toString()) > 0.0) {
-                		cs.addSendingAddress(addresses.get(selected_address.getSelectedItemPosition()), getBTCEnteredOutputValue(amount));
+                		cs.addSendingAddress(addresses.get(selected_address.getSelectedItemPosition()), getBTCEnteredOutputValue(amount.getText().toString()));
                 	}
 
             	}
 
-            	if(edFee.getText().toString() != null && edFee.getText().toString().length() > 0 &&
-            			Double.parseDouble(edFee.getText().toString()) > 0.0) {
-            		cs.setFee(getBTCEnteredOutputValue(edFee));
+            	if(edFee.getText().toString() != null && edFee.getText().toString().length() > 0) {
+            		cs.setFee(getBTCEnteredOutputValue(edFee.getText().toString()));
+            	}
+            	else {
+            		cs.setFee(getBTCEnteredOutputValue("0.00"));
             	}
 
             	if(spChangeAddress.getSelectedItemPosition() != 0) {
@@ -2147,16 +2183,18 @@ public class SendFragment extends Fragment   {
             	//
             	//
             	//
-        		Toast.makeText(getActivity(), "Sending addresses:" + cs.getSendingAddresses().size(), Toast.LENGTH_SHORT).show();
+//        		Toast.makeText(getActivity(), "Sending addresses:" + cs.getSendingAddresses().size(), Toast.LENGTH_SHORT).show();
 
-        		HashMap<String, BigInteger> addresses = cs.getSendingAddresses();
+            	BigInteger total_amount = BigInteger.ZERO;
+            	HashMap<String, BigInteger> addresses = cs.getSendingAddresses();
             	Set<String> keys = addresses.keySet();
             	for (Iterator iterator = keys.iterator(); iterator.hasNext();) {
                     String s = (String)iterator.next();
-            		Toast.makeText(getActivity(), "Address:" + s + ", amount:" + addresses.get(s), Toast.LENGTH_SHORT).show();
+                    total_amount = total_amount.add(addresses.get(s));
+//            		Toast.makeText(getActivity(), "Address:" + s + ", amount:" + addresses.get(s), Toast.LENGTH_SHORT).show();
                 }
-        		Toast.makeText(getActivity(), "Fee:" + cs.getFee(), Toast.LENGTH_SHORT).show();
-        		Toast.makeText(getActivity(), "Change:" + cs.getChangeAddress(), Toast.LENGTH_SHORT).show();
+//        		Toast.makeText(getActivity(), "Fee:" + cs.getFee(), Toast.LENGTH_SHORT).show();
+//        		Toast.makeText(getActivity(), "Change:" + cs.getChangeAddress(), Toast.LENGTH_SHORT).show();
         		//
         		//
         		//
@@ -2165,7 +2203,7 @@ public class SendFragment extends Fragment   {
             	// take 'cs' here and initiate custom send
             	//
 
-				final BigInteger total_amount = getBTCEnteredOutputValue(edAmount1);
+				final BigInteger entered_amount = getBTCEnteredOutputValue(edAmount1.getText().toString());
 				final WalletApplication application = (WalletApplication) getActivity().getApplication();
 				
 				MyRemoteWallet.FeePolicy feePolicy = MyRemoteWallet.FeePolicy.FeeOnlyIfNeeded;
@@ -2339,12 +2377,40 @@ public class SendFragment extends Fragment   {
     					return SendCoinsActivity.temporaryPrivateKeys.get(address);
     				}
     			};
+    			
+    			//
+    			//
+    			//
+    			if(total_amount.compareTo(entered_amount) != 0) {
+            		Toast.makeText(getActivity(), "The sum of the amounts for all sending addresses must be equal to the amount specified on the top of the screen.", Toast.LENGTH_LONG).show();
+    			}
+    			else if(cs.getFee().compareTo(BigInteger.ZERO) == 0) {
 
-        		Toast.makeText(getActivity(), "Total amount:" + total_amount, Toast.LENGTH_SHORT).show();
+    				final MyRemoteWallet.FeePolicy fee_policy = feePolicy;
+    				final BigInteger fee_amount = fee;
+    				
+        			new AlertDialog.Builder(getActivity())
+                    .setIcon(R.drawable.ic_launcher).setTitle("Custom spend")
+                    .setMessage("This transaction will include a fee of 0.00 BTC. Are you sure you want to initiate this spend with a zero fee?")
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+//                      @Override
+                      public void onClick(DialogInterface dialog, int which) {
+                    	  application.getRemoteWallet().sendCoinsAsync(cs.getSendingAddresses(), currentSelectedAddress, entered_amount, fee_policy, fee_amount, cs.getChangeAddress(), csProgress);
+                      }
+                   })
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+//                      @Override
+                      public void onClick(DialogInterface dialog, int which) {
+                    	  ;
+                      }
+                    }
+                    ).show();
 
-//				application.getRemoteWallet().sendCoinsAsync(cs.getSendingAddresses(), edAddress.getText().toString(), total_amount, feePolicy, fee, cs.getChangeAddress(), csProgress);
-				application.getRemoteWallet().sendCoinsAsync(cs.getSendingAddresses(), currentSelectedAddress, total_amount, feePolicy, fee, cs.getChangeAddress(), csProgress);
-				
+    			}
+    			else {
+    				application.getRemoteWallet().sendCoinsAsync(cs.getSendingAddresses(), currentSelectedAddress, entered_amount, feePolicy, fee, cs.getChangeAddress(), csProgress);
+    			}
+
             }
         });
 //    	((LinearLayout)layout_custom_spend.findViewById(R.id.custom_spend)).addView(btConfirm);
@@ -2354,7 +2420,44 @@ public class SendFragment extends Fragment   {
     	btNewAddress.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
         btNewAddress.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
-            	addSendingAddress(displayAddresses);
+
+            	BigInteger subtotal_amount = BigInteger.ZERO;
+                LinearLayout sending_layout = null;
+                LinearLayout p_layout = null;
+                EditText amount = null;
+
+            	for(int i = 0; i < layout_froms.getChildCount(); i++) {
+            		sending_layout = (LinearLayout)layout_froms.getChildAt(i);
+                	p_layout = (LinearLayout)sending_layout.findViewById(R.id.p3);
+                	amount = ((EditText)p_layout.getChildAt(0));
+
+                	if(amount.getText().toString() != null && amount.getText().toString().length() > 0 &&
+                			Double.parseDouble(amount.getText().toString()) > 0.0) {
+                		
+                		subtotal_amount = subtotal_amount.add(getBTCEnteredOutputValue(amount.getText().toString()));
+
+                	}
+
+            	}
+            	
+            	String enteredAmount = null;
+            	if(edAmount1.getText().toString().length() > 0) {
+            		enteredAmount = edAmount1.getText().toString();
+            	}
+            	else {
+            		enteredAmount = "0";
+            	}
+				BigInteger entered_amount = getBTCEnteredOutputValue(enteredAmount);
+            	BigInteger remaining_amount = entered_amount.subtract(subtotal_amount);
+            	String remainder = null;
+            	if(remaining_amount.compareTo(entered_amount) != -1) {
+            		remainder = "0.0000";
+            	}
+            	else {
+            		remainder = BlockchainUtil.formatBitcoin(remaining_amount);
+            	}
+
+            	addSendingAddress(displayAddresses, remainder);
             }
         });
 //    	((LinearLayout)layout_custom_spend.findViewById(R.id.custom_spend)).addView(btNewAddress);
@@ -2369,11 +2472,8 @@ public class SendFragment extends Fragment   {
 
     }
 
-    private void addSendingAddress(final List<String> displayAddresses) {
+    private void addSendingAddress(final List<String> displayAddresses, String remainder) {
     	
-    	if(lastSendingAddress != null) {
-//        	((LinearLayout)lastSendingAddress.findViewById(R.id.plus)).getChildAt(0).setVisibility(View.INVISIBLE);
-    	}
 
     	final LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
@@ -2407,7 +2507,7 @@ public class SendFragment extends Fragment   {
 
     	final EditText edAmount = new EditText(new ContextThemeWrapper(getActivity(), android.R.style.Theme_Holo_InputMethod));
         edAmount.setId(ViewIdGenerator.generateViewId());
-        edAmount.setHint("0.0000");
+        edAmount.setText(remainder);
         edAmount.setTextSize(16);
         edAmount.setTextColor(Color.BLACK);
         edAmount.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
