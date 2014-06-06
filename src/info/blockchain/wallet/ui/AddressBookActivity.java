@@ -1,30 +1,65 @@
 package info.blockchain.wallet.ui;
+ 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import android.app.ListActivity;
+import piuk.MyRemoteWallet;
+ 
+import android.app.Activity;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
+import android.widget.SimpleAdapter;
+ 
+public class AddressBookActivity extends Activity {
 
-public class AddressBookActivity extends ListActivity {
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.addressbook);
 
-	  public void onCreate(Bundle icicle) {
+		MyRemoteWallet remoteWallet = WalletUtil.getInstance(this, this).getRemoteWallet();
+		String[] addresses = remoteWallet.getActiveAddresses();
+//	    List<String> activeAddresses = Arrays.asList(addressLabels);
+		Map<String, String> labelMap = remoteWallet.getLabelMap();
+		String label = null;
+        String address = null;
 
-		  super.onCreate(icicle);
+        List<HashMap<String,String>> addressList = new ArrayList<HashMap<String,String>>();
+ 
+        for(int i = 0; i < addresses.length; i++){
+            HashMap<String, String> hm = new HashMap<String,String>();
+            
+    	    label = labelMap.get(addresses[i]);
+    	    if (label == null) {
+    	    	label = addresses[i].substring(0, 15) + "...";	
+    	    }
+    	    else {
+    	    	address = addresses[i];
+    	    }
 
-		  String[] values = new String[] { "Android", "iPhone", "WindowsMobile",
-		  	"Blackberry", "WebOS", "Ubuntu", "Windows7", "Max OS X",
-		    "Linux", "OS/2" };
+            hm.put("txt1", label);
+            hm.put("txt2", address);
+            hm.put("type", Integer.toString(R.drawable.ic_launcher));
+            addressList.add(hm);
+        }
 
-//		  ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.address_list, R.id.label, values);
-//		  setListAdapter(adapter);
-	  }
-
-	  @Override
-	  protected void onListItemClick(ListView l, View v, int position, long id) {
-		  String item = (String) getListAdapter().getItem(position);
-		  Toast.makeText(this, item + " selected", Toast.LENGTH_LONG).show();
-	  }
-
-} 
+        // Keys used in Hashmap
+        String[] from = { "type","txt1","txt2" };
+ 
+        // Ids of views in listview_layout
+        int[] to = { R.id.type, R.id.txt1, R.id.txt2 };
+ 
+        // Instantiating an adapter to store each items
+        // R.layout.listview_layout defines the layout of each item
+        SimpleAdapter adapter = new SimpleAdapter(getBaseContext(), addressList, R.layout.address_list, from, to);
+ 
+        // Getting a reference to listview of main.xml layout file
+        ListView listView = (ListView)findViewById(R.id.listview);
+ 
+        // Setting the adapter to the listView
+        listView.setAdapter(adapter);
+    }
+}

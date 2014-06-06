@@ -51,6 +51,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     private static int NEARBY_MERCHANTS 	= 5;
     private static int SELECT_FIAT		 	= 6;
     private static int SETTINGS_ACTIVITY	= 7;
+    private static int ADDRESSBOOK_ACTIVITY	= 8;
 
 	private ViewPager viewPager;
     private TabsPagerAdapter mAdapter;
@@ -198,11 +199,9 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     		*/
     		doSettings();
     		return true;
-    	/*
-    	case R.id.select_fiat:
-    		doSelectFiat();
+    	case R.id.address_book:
+    		doAddressBook();
     		return true;
-    	*/
     	case R.id.nearby_merchants:
     		doMerchantDirectory();
     		return true;
@@ -288,6 +287,11 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     private void doSettings()	{
     	Intent intent = new Intent(MainActivity.this, info.blockchain.wallet.ui.SettingsActivity.class);
 		startActivityForResult(intent, SETTINGS_ACTIVITY);
+    }
+
+    private void doAddressBook()	{
+    	Intent intent = new Intent(MainActivity.this, info.blockchain.wallet.ui.AddressBookActivity.class);
+		startActivityForResult(intent, ADDRESSBOOK_ACTIVITY);
     }
 
     private void doMerchantDirectory()	{
