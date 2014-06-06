@@ -240,6 +240,32 @@ public class SendFragment extends Fragment   {
         }
     };
 
+	private EventListeners.EventListener eventListener = new EventListeners.EventListener() {
+		@Override
+		public String getDescription() {
+			return "Send Fragment Listener";
+		}
+
+		@Override
+		public void onCoinsSent(final Transaction tx, final long result) {
+		};
+
+		@Override
+		public void onCoinsReceived(final Transaction tx, final long result) {
+		};
+
+		@Override
+		public void onTransactionsChanged() {
+		};
+		
+		@Override
+		public void onWalletDidChange() {
+		}
+		
+		@Override
+		public void onCurrencyChanged() {
+		};
+	};
 	private final ServiceConnection serviceConnection = new ServiceConnection()
 	{
 		public void onServiceConnected(final ComponentName name, final IBinder binder)
@@ -1195,6 +1221,8 @@ public class SendFragment extends Fragment   {
         });
         */
 
+		EventListeners.addEventListener(eventListener);
+		
         return rootView;
     }
 
@@ -1285,6 +1313,7 @@ public class SendFragment extends Fragment   {
 
 	    LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(receiver);
 
+	    EventListeners.removeEventListener(eventListener);
 	}
 
 	@Override
