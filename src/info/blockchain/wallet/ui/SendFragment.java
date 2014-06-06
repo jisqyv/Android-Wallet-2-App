@@ -248,6 +248,11 @@ public class SendFragment extends Fragment   {
 
 		@Override
 		public void onCoinsSent(final Transaction tx, final long result) {
+			btSend.setVisibility(View.GONE);
+	        summary3.setVisibility(View.VISIBLE);
+	        tvSentPrompt.setVisibility(View.VISIBLE);
+	        
+	        clearSendView();
 		};
 
 		@Override
@@ -765,9 +770,11 @@ public class SendFragment extends Fragment   {
 					//
 					//
 					//
+					/*
 					btSend.setVisibility(View.GONE);
 			        summary3.setVisibility(View.VISIBLE);
 			        tvSentPrompt.setVisibility(View.VISIBLE);
+			        */
 
 				}
 			}
@@ -798,9 +805,11 @@ public class SendFragment extends Fragment   {
 				//
 				//
 				//
+				/*
 				btSend.setVisibility(View.GONE);
 		        summary3.setVisibility(View.VISIBLE);
 		        tvSentPrompt.setVisibility(View.VISIBLE);
+		        */
 
 			}
 
@@ -823,9 +832,11 @@ public class SendFragment extends Fragment   {
 				//
 				//
 				//
+				/*
 				btSend.setVisibility(View.GONE);
 		        summary3.setVisibility(View.VISIBLE);
 		        tvSentPrompt.setVisibility(View.VISIBLE);
+		        */
 			}
 
             public void onClick(View v) {
@@ -1102,46 +1113,8 @@ public class SendFragment extends Fragment   {
         clear_input.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-            	edAddress.setText("");
-              	edAmount1.setText("");
-              	if(isBTC) {
-                  	edAmount1.setHint("0.0000");
-              	}
-              	else {
-                  	edAmount1.setHint("0.00");
-              	}
-            	tvAmount2.setText("0.0000");
-            	isBTC = true;
             	
-                summary2.setVisibility(View.INVISIBLE);
-                tvAmount.setText("");
-                tvAmount.setVisibility(View.INVISIBLE);
-                tvAmountBis.setText("");
-                tvAmountBis.setVisibility(View.INVISIBLE);
-                tvArrow.setText("");
-                tvArrow.setVisibility(View.INVISIBLE);
-                tvAddress.setText("");
-                tvAddress.setVisibility(View.INVISIBLE);
-                tvAddressBis.setText("");
-                tvAddressBis.setVisibility(View.INVISIBLE);
-
-                btSend.setText("Send money");
-                btSend.setVisibility(View.INVISIBLE);
-
-                summary3.setVisibility(View.GONE);
-                tvSentPrompt.setVisibility(View.GONE);
-                
-            	LinearLayout layout_custom_spend = (LinearLayout)rootView.findViewById(R.id.custom_spend);
-            	// all 'sending address' entries go here:
-            	LinearLayout layout_froms = (LinearLayout)layout_custom_spend.findViewById(R.id.froms);
-            	layout_froms.removeAllViews();
-            	layout_custom_spend.removeViews(1, layout_custom_spend.getChildCount() - 1);
-
-            	if(!isMagic) {
-                	displayMagicList();
-            	}
-
-                clear_input.setVisibility(View.INVISIBLE);
+            	clearSendView();
 
                 return false;
             }
@@ -2598,35 +2571,6 @@ public class SendFragment extends Fragment   {
     	startActivityForResult(intent, PICK_CONTACT);    	
     }
 
-    private void clearSent()	{
-//        summary.setVisibility(View.INVISIBLE);
-        summary2.setVisibility(View.INVISIBLE);
-        summary3.setVisibility(View.GONE);
-      	edAmount1.setText("");
-      	if(isBTC) {
-          	edAmount1.setHint("0.0000");
-      	}
-      	else {
-          	edAmount1.setHint("0.00");
-      	}
-        tvAmount.setText("");
-        tvAmount.setVisibility(View.INVISIBLE);
-        tvAmountBis.setText("");
-        tvAmountBis.setVisibility(View.INVISIBLE);
-        tvArrow.setText("");
-        tvArrow.setVisibility(View.INVISIBLE);
-        tvAddress.setText("");
-        tvAddress.setVisibility(View.INVISIBLE);
-        tvAddressBis.setText("");
-        tvAddressBis.setVisibility(View.INVISIBLE);
-
-        btSend.setText("Send");
-        btSend.setVisibility(View.INVISIBLE);
-
-//        ivCheck.setVisibility(View.GONE);
-        tvSentPrompt.setVisibility(View.GONE);
-    }
-
 	private void updateView()
 	{
 		/*
@@ -2710,5 +2654,50 @@ public class SendFragment extends Fragment   {
     		Toast.makeText(getActivity(), "not processed", Toast.LENGTH_SHORT).show();
         }
     }
+
+    private void clearSendView()	{
+    	edAddress.setText("");
+      	edAmount1.setText("");
+      	if(isBTC) {
+          	edAmount1.setHint("0.0000");
+      	}
+      	else {
+          	edAmount1.setHint("0.00");
+      	}
+    	tvAmount2.setText("0.0000");
+    	isBTC = true;
+    	
+        summary2.setVisibility(View.INVISIBLE);
+        tvAmount.setText("");
+        tvAmount.setVisibility(View.INVISIBLE);
+        tvAmountBis.setText("");
+        tvAmountBis.setVisibility(View.INVISIBLE);
+        tvArrow.setText("");
+        tvArrow.setVisibility(View.INVISIBLE);
+        tvAddress.setText("");
+        tvAddress.setVisibility(View.INVISIBLE);
+        tvAddressBis.setText("");
+        tvAddressBis.setVisibility(View.INVISIBLE);
+
+        btSend.setText("Send money");
+        btSend.setVisibility(View.INVISIBLE);
+
+        summary3.setVisibility(View.GONE);
+        tvSentPrompt.setVisibility(View.GONE);
+        
+    	LinearLayout layout_custom_spend = (LinearLayout)rootView.findViewById(R.id.custom_spend);
+    	// all 'sending address' entries go here:
+    	LinearLayout layout_froms = (LinearLayout)layout_custom_spend.findViewById(R.id.froms);
+    	layout_froms.removeAllViews();
+    	layout_custom_spend.removeViews(1, layout_custom_spend.getChildCount() - 1);
+
+    	if(!isMagic) {
+        	displayMagicList();
+    	}
+
+        final ImageView clear_input = (ImageView)rootView.findViewById(R.id.clear);
+        clear_input.setVisibility(View.INVISIBLE);
+    }
+    
 
 }
