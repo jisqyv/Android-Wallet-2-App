@@ -25,6 +25,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -67,6 +68,9 @@ public class MyRemoteWallet extends MyWallet {
 	private static final String WebROOT = "https://"+Constants.BLOCKCHAIN_DOMAIN+"/";
 	private static final String ApiCode = "25a6ad13-1633-4dfb-b6ee-9b91cdf0b5c3";
 
+    public static final String NotificationsTypeEmail = "1";
+    public static final String NotificationsTypeSMS = "32";
+    
 	private String _checksum;
 	private boolean _isNew = false;
 	private MyBlock latestBlock;
@@ -81,7 +85,12 @@ public class MyRemoteWallet extends MyWallet {
 	private boolean sync_pubkeys = true;
 	private double localCurrencyConversion;
 	private double btcCurrencyConversion;
-
+	private long serverTimeOffset = 0;
+	private HashSet<String> notificationsTypeSet = new HashSet<String>();
+	private String smsNumber = null;
+	private String email = null;
+	
+	
 	private Map<String, JSONObject> multiAddrBalancesRoot;
 	private JSONObject multiAddrRoot;
 
@@ -1296,6 +1305,141 @@ public class MyRemoteWallet extends MyWallet {
 		return (JSONObject) new JSONParser().parse(response);
 	}
 
+	public String getEmail() {    
+		return email;
+	}
+
+	public String getSMSNumber() {    
+		return smsNumber;
+	}
+
+	public boolean getisEmailNotificationEnabled() {    
+		return notificationsTypeSet.contains(NotificationsTypeEmail);
+	}
+	
+	public boolean getisSMSNotificationEnabled() {    
+		return notificationsTypeSet.contains(NotificationsTypeSMS);
+	}
+	
+	//must call this method to on app start to fill account information
+	public void getAccountInformation() throws Exception {    
+		Map<Object, Object> params = new HashMap<Object, Object>();
+		params.put("method", "get-info");
+		params.put("format", "json");
+		
+		String response = securePost(WebROOT + "wallet", params);
+		JSONObject obj  = (JSONObject) new JSONParser().parse(response);
+		email = (String)obj.get("email");
+		smsNumber = (String)obj.get("sms_number");
+
+		List<Long> notificationsType = (List<Long>) obj.get("notifications_type"); 
+		notificationsTypeSet = new HashSet<String>();
+		for (Long value : notificationsType)
+			notificationsTypeSet.add(value.toString());
+	}
+	
+	public String updateEmail(String email) throws Exception {    	
+		if (email == null) {
+			throw new Exception("Email cannot be null");
+		}
+		
+		Map<Object, Object> params = new HashMap<Object, Object>();
+		String length =  Integer.toString(email.length());
+		
+		params.put("length", length);
+		params.put("payload", email);
+		params.put("method", "update-email");
+		
+		String response = securePost(WebROOT + "wallet", params);
+		return response;
+	}
+
+	public String updateSMS(String smsNumber) throws Exception {    	
+		if (smsNumber == null) {
+			throw new Exception("smsNumber cannot be null");
+		}
+		
+		Map<Object, Object> params = new HashMap<Object, Object>();
+		String length =  Integer.toString(smsNumber.length());
+		
+		params.put("length", length);
+		params.put("payload", smsNumber);
+		params.put("method", "update-sms");
+		
+		String response = securePost(WebROOT + "wallet", params);
+		return response;
+	}
+
+	public JSONObject enableEmailNotification(boolean enable) throws Exception {    		
+		if (enable)
+			notificationsTypeSet.add(NotificationsTypeEmail);
+		else
+			notificationsTypeSet.remove(NotificationsTypeEmail);
+		
+		List<String> list = new ArrayList<String>(notificationsTypeSet);
+
+		return updateNotificationsType(list.toArray(new String[list.size()]));
+	}
+	
+	public JSONObject enableSMSNotification(boolean enable) throws Exception {
+		if (enable)
+			notificationsTypeSet.add(NotificationsTypeSMS);
+		else
+			notificationsTypeSet.remove(NotificationsTypeSMS);
+		
+		List<String> list = new ArrayList<String>(notificationsTypeSet);
+
+		return updateNotificationsType(list.toArray(new String[list.size()]));
+	}
+	
+	public JSONObject updateNotificationsType(String[] values) throws Exception {    		
+
+		String payload = StringUtils.join(values, "|");
+		String length =  Integer.toString(payload.length());
+		
+		Map<Object, Object> params = new HashMap<Object, Object>();
+		params.put("length", length);
+		params.put("payload", payload);
+		params.put("method", "update-notifications-type");
+		
+		String response = securePost(WebROOT + "wallet", params);
+		return (JSONObject) new JSONParser().parse(response);
+	}
+
+	public String securePost(String url, Map<Object, Object> data) throws Exception {  
+		Map<Object, Object> params = new HashMap<Object, Object>(data);
+
+		if (! data.containsKey("sharedKey")) {
+			serverTimeOffset = 500; //TODO dont hard code serverTimeOffset
+
+			String sharedKey = getSharedKey().toLowerCase();
+			long now = new Date().getTime();
+	
+			long timestamp = (now - serverTimeOffset) / 10000;
+			
+			String text = sharedKey + Long.toString(timestamp);
+			String SKHashHex = new String(Hex.encode(MessageDigest.getInstance("SHA-256").digest(text.getBytes("UTF-8"))));
+			int i = 0;
+			String tSKUID = SKHashHex.substring(i, i+=8)+"-"+SKHashHex.substring(i, i+=4)+"-"+SKHashHex.substring(i, i+=4)+"-"+SKHashHex.substring(i, i+=4)+"-"+SKHashHex.substring(i, i+=12);
+			
+			params.put("sharedKey", tSKUID);
+			params.put("sKTimestamp", Long.toString(timestamp));
+			params.put("sKDebugHexHash", SKHashHex);
+			params.put("sKDebugTimeOffset", Long.toString(serverTimeOffset));
+			params.put("sKDebugOriginalClientTime", Long.toString(now));
+			params.put("sKDebugOriginalSharedKey", sharedKey);
+			
+			if (! params.containsKey("guid"))
+				params.put("guid", this.getGUID());
+			
+			if (! params.containsKey("format"))
+				params.put("format", "plain");	
+		}
+	
+		String response = WalletUtils.postURLWithParams(url, params);
+		return response;
+	}
+	
 	public boolean updateRemoteLocalCurrency(String currency_code) throws Exception {    
 		if (_isNew) return false;
 

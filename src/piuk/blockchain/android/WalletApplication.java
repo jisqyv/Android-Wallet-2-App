@@ -1050,6 +1050,58 @@ public class WalletApplication extends Application {
 		}).start();
 	}
 
+	public void getAccountInformation(final boolean notifications, final SuccessCallback callback) {
+		final MyRemoteWallet blockchainWallet = this.blockchainWallet;
+
+		if (blockchainWallet == null) {
+			if (callback != null)
+				callback.onFail();
+			
+			return;
+		}
+
+		new Thread(new Runnable() {
+			public void run() {
+				try {
+					try {
+						blockchainWallet.getAccountInformation();
+					} catch (Exception e) {
+						e.printStackTrace(); 
+
+						try {
+							//Sleep for a bit and retry
+							Thread.sleep(5000);
+						} catch (InterruptedException e1) {
+							e1.printStackTrace();
+						}
+
+						try {
+							blockchainWallet.getAccountInformation();
+						} catch (Exception e1) {
+							e1.printStackTrace(); 
+
+							if (callback != null)
+								callback.onFail();
+
+							return;
+						}
+					}
+
+					if (callback != null)
+						callback.onSuccess();
+
+					handler.post(new Runnable() {
+						public void run() {
+
+						}
+					});
+				} finally {
+
+				}
+			}
+		}).start();
+	}
+	
 	public static interface AddAddressCallback {
 		public void onSavedAddress(String address);
 
