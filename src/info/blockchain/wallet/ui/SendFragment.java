@@ -1138,7 +1138,7 @@ public class SendFragment extends Fragment   {
     	layoutCustomSend.setBackgroundColor(color_spend_unselected);
 //    	layoutSharedSend.setBackgroundColor(color_spend_unselected);
 
-        imgSimpleSend.setOnTouchListener(new OnTouchListener() {
+        layoutSimpleSend.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
             	sendType = SendTypeQuickSend;
@@ -1156,7 +1156,7 @@ public class SendFragment extends Fragment   {
             }
         });
 
-        imgCustomSend.setOnTouchListener(new OnTouchListener() {
+        layoutCustomSend.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
             	sendType = SendTypeCustomSend;
