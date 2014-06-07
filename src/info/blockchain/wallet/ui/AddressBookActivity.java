@@ -7,21 +7,30 @@ import java.util.Map;
 
 import piuk.MyRemoteWallet;
 import piuk.blockchain.android.R;
+import piuk.blockchain.android.WalletApplication;
  
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.ContextMenu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnTouchListener;
+import android.view.View.OnCreateContextMenuListener;
+import android.view.MenuInflater;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.Toast;
 import android.util.Log;
  
@@ -54,12 +63,22 @@ public class AddressBookActivity extends Activity {
         //
 
         ListView listView = (ListView)findViewById(R.id.listview);
+        listView.setLongClickable(true);
         adapter = new AddressAdapter();
         listView.setAdapter(adapter);
+        /*
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
 				Toast.makeText(AddressBookActivity.this, allAddresses.get(position), Toast.LENGTH_LONG).show();
+            }
+        });
+        */
+        listView.setOnCreateContextMenuListener(new OnCreateContextMenuListener() {
+            @Override 
+            public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+                MenuInflater inflater = getMenuInflater();
+                inflater.inflate(R.menu.address_list, menu);
             }
         });
         
@@ -129,6 +148,58 @@ public class AddressBookActivity extends Activity {
         });
 
     }
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(info.blockchain.wallet.ui.R.menu.addressbook, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    switch (item.getItemId()) {
+	    	case R.id.new_address:
+	    		Toast.makeText(AddressBookActivity.this, "generate new address", Toast.LENGTH_LONG).show();
+	    		return true;
+	    	default:
+	    		return super.onOptionsItemSelected(item);
+	    }
+	}
+
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+	    AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
+		Toast.makeText(AddressBookActivity.this, "" + info.position, Toast.LENGTH_LONG).show();
+	    menu.removeItem(R.id.edit_label);
+	}
+	
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+	    AdapterContextMenuInfo menuInfo = (AdapterContextMenuInfo)item.getMenuInfo(); 
+
+	    switch (item.getItemId()) {
+	    	case R.id.edit_label:
+	    		Toast.makeText(AddressBookActivity.this, "edit label", Toast.LENGTH_LONG).show();
+	    		return true;
+	    	case R.id.archive_address:
+	    		Toast.makeText(AddressBookActivity.this, "archive address", Toast.LENGTH_LONG).show();
+	    		return true;
+	    	case R.id.unarchive_address:
+	    		Toast.makeText(AddressBookActivity.this, "unarchive address", Toast.LENGTH_LONG).show();
+	    		return true;
+	    	case R.id.remove_address:
+	    		Toast.makeText(AddressBookActivity.this, "remove address", Toast.LENGTH_LONG).show();
+	    		return true;
+	    	case R.id.qr_code:
+	    		Toast.makeText(AddressBookActivity.this, "qr code address", Toast.LENGTH_LONG).show();
+	    		return true;
+	    	case R.id.default_address:
+	    		Toast.makeText(AddressBookActivity.this, "default address", Toast.LENGTH_LONG).show();
+	    		return true;
+	    	default:
+	    		return super.onContextItemSelected(item);
+	    }
+	}
 
     private void initArchivedList() {
 		MyRemoteWallet remoteWallet = WalletUtil.getInstance(this, this).getRemoteWallet();
