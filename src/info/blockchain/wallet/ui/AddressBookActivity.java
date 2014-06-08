@@ -5,13 +5,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.google.bitcoin.core.Transaction;
+
+import piuk.EventListeners;
 import piuk.MyRemoteWallet;
 import piuk.blockchain.android.R;
 import piuk.blockchain.android.WalletApplication;
- 
+import piuk.blockchain.android.WalletApplication.AddAddressCallback;
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -40,7 +42,60 @@ public class AddressBookActivity extends Activity {
 	private Map<String, String> labelMap = null;
 	private AddressAdapter adapter = null;
     private List<Map<String, Object>> addressBookMapList = null;
+    private AddressManager addressManager = null;
+    private WalletApplication application = null;
+    
+    private static enum DisplayedAddresses {
+		SendingAddresses,
+		ActiveAddresses,
+		ArchivedAddresses
+	}
+	
+    private DisplayedAddresses displayedAddresses = null;
+    
+	private EventListeners.EventListener eventListener = new EventListeners.EventListener() {
+		@Override
+		public String getDescription() {
+			return "AddressBookActivity Listener";
+		}
 
+		@Override
+		public void onCoinsSent(final Transaction tx, final long result) {
+			setAdapterContent();
+		};
+
+		@Override
+		public void onCoinsReceived(final Transaction tx, final long result) {
+			setAdapterContent();
+		};
+
+		@Override
+		public void onTransactionsChanged() {
+			setAdapterContent();
+		};
+		
+		@Override
+		public void onWalletDidChange() {
+			setAdapterContent();
+		}
+		
+		@Override
+		public void onCurrencyChanged() {
+			setAdapterContent();
+		};
+	};
+	
+	public  void setAdapterContent() {
+		if (displayedAddresses == DisplayedAddresses.ActiveAddresses) {
+			initActiveList();	
+		} else if (displayedAddresses == DisplayedAddresses.ArchivedAddresses) {
+			initArchivedList();	
+
+		} else if (displayedAddresses == DisplayedAddresses.SendingAddresses) {
+			initSendingList();	
+		} 
+	}
+	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,7 +111,9 @@ public class AddressBookActivity extends Activity {
         for(int i = 0; i < activeAddresses.length; i++)	{
         	allAddresses.add("A" + activeAddresses[i]);
         }
-
+        
+        displayedAddresses = DisplayedAddresses.ActiveAddresses;
+        
 		labelMap = remoteWallet.getLabelMap();
         //
         //
@@ -147,6 +204,10 @@ public class AddressBookActivity extends Activity {
             }
         });
 
+		final AddressBookActivity activity = this;
+		application = (WalletApplication) this.getApplication();    	
+        addressManager = new AddressManager(remoteWallet, application, activity);        
+		EventListeners.addEventListener(eventListener);
     }
 
 	@Override
@@ -159,6 +220,18 @@ public class AddressBookActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    switch (item.getItemId()) {
 	    	case R.id.new_address:
+	    		addressManager.newAddress(new AddAddressCallback() {
+
+	    			public void onSavedAddress(String address) {
+	    				Toast.makeText(AddressBookActivity.this, getString(R.string.toast_generated_address, address), Toast.LENGTH_LONG).show();
+	    			}
+
+	    			public void onError(String reason) {
+	    				Toast.makeText(AddressBookActivity.this, reason, Toast.LENGTH_LONG).show();
+
+	    			}
+	    		});
+	    		
 	    		Toast.makeText(AddressBookActivity.this, "generate new address", Toast.LENGTH_LONG).show();
 	    		return true;
 	    	default:
@@ -166,6 +239,12 @@ public class AddressBookActivity extends Activity {
 	    }
 	}
 
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+	    EventListeners.removeEventListener(eventListener);
+	}
+	
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 	    AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
@@ -176,15 +255,18 @@ public class AddressBookActivity extends Activity {
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
 	    AdapterContextMenuInfo menuInfo = (AdapterContextMenuInfo)item.getMenuInfo(); 
-
+	    String address = allAddresses.get(menuInfo.position).substring(1);
+		
 	    switch (item.getItemId()) {
 	    	case R.id.edit_label:
 	    		Toast.makeText(AddressBookActivity.this, "edit label", Toast.LENGTH_LONG).show();
 	    		return true;
 	    	case R.id.archive_address:
+	    		addressManager.archiveAddress(address);
 	    		Toast.makeText(AddressBookActivity.this, "archive address", Toast.LENGTH_LONG).show();
 	    		return true;
 	    	case R.id.unarchive_address:
+	    		addressManager.unArchiveAddress(address);
 	    		Toast.makeText(AddressBookActivity.this, "unarchive address", Toast.LENGTH_LONG).show();
 	    		return true;
 	    	case R.id.remove_address:
@@ -195,6 +277,7 @@ public class AddressBookActivity extends Activity {
 	    		return true;
 	    	case R.id.default_address:
 	    		Toast.makeText(AddressBookActivity.this, "default address", Toast.LENGTH_LONG).show();
+	    		addressManager.setDefaultAddress(address);
 	    		return true;
 	    	default:
 	    		return super.onContextItemSelected(item);
@@ -202,7 +285,9 @@ public class AddressBookActivity extends Activity {
 	}
 
     private void initArchivedList() {
-		MyRemoteWallet remoteWallet = WalletUtil.getInstance(this, this).getRemoteWallet();
+        displayedAddresses = DisplayedAddresses.ArchivedAddresses;
+
+        MyRemoteWallet remoteWallet = WalletUtil.getInstance(this, this).getRemoteWallet();
 		String[] archivedAddresses = remoteWallet.getArchivedAddresses();
 
 		allAddresses = new ArrayList<String>();
@@ -215,6 +300,8 @@ public class AddressBookActivity extends Activity {
     }
 
     private void initActiveList() {
+        displayedAddresses = DisplayedAddresses.ActiveAddresses;
+
 		MyRemoteWallet remoteWallet = WalletUtil.getInstance(this, this).getRemoteWallet();
 		String[] activeAddresses = remoteWallet.getActiveAddresses();
 
@@ -228,7 +315,9 @@ public class AddressBookActivity extends Activity {
     }
 
     private void initSendingList() {
-		MyRemoteWallet remoteWallet = WalletUtil.getInstance(this, this).getRemoteWallet();
+        displayedAddresses = DisplayedAddresses.SendingAddresses;
+
+        MyRemoteWallet remoteWallet = WalletUtil.getInstance(this, this).getRemoteWallet();
         addressBookMapList = remoteWallet.getAddressBookMap();
 
 		allAddresses = new ArrayList<String>();

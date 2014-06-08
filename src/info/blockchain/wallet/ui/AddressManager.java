@@ -159,7 +159,7 @@ public class AddressManager {
 			if (blockchainWallet == null)
 				return true;
 
-			blockchainWallet.setTag(address, 0);
+			blockchainWallet.setTag(address, tag);
 
 			application.saveWallet(new SuccessCallback() {
 				@Override
