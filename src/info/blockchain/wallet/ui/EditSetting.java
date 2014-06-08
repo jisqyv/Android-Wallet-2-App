@@ -1,0 +1,63 @@
+package info.blockchain.wallet.ui;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.text.method.NumberKeyListener;
+import android.text.InputType;
+
+public class EditSetting extends Activity {
+	
+    private EditText etValue = null;
+    private TextView tvPrompt = null;
+
+    /**
+     * Called when the activity is first created.
+     */
+    @Override
+    public void onCreate(Bundle icicle) {
+        super.onCreate(icicle);
+        setContentView(R.layout.editsetting);
+        setTheme(android.R.style.Theme_Dialog);
+
+        etValue = (EditText)findViewById(R.id.value);
+        tvPrompt = (TextView)findViewById(R.id.prompt);
+
+        Bundle extras = getIntent().getExtras();
+        if(extras != null)	{
+            setTitle(extras.getString("prompt"));
+        	tvPrompt.setText(extras.getString("prompt") + ": ");
+        	etValue.setText(extras.getString("value"));
+
+        }
+
+        Button button = (Button) findViewById(R.id.ok);
+        button.setOnClickListener(new Button.OnClickListener() {
+            public void onClick(View v) {
+            	String res = etValue.getText().toString();
+            	
+            	if(res == null) {
+            		return;
+            	}
+            	if(res.length() < 1) {
+            		return;
+            	}
+
+            	setResult(RESULT_OK,(new Intent()).setAction(res));
+            	finish();
+            }
+       });
+
+       Button button2 = (Button) findViewById(R.id.cancel);
+       button2.setOnClickListener(new Button.OnClickListener() {
+            public void onClick(View v) {
+                setResult(RESULT_CANCELED);
+            	finish();
+            }
+       });
+    }
+}

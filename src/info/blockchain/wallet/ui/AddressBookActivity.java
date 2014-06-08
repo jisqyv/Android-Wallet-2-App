@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.dm.zbar.android.scanner.ZBarConstants;
 import com.google.bitcoin.core.Transaction;
 
 import piuk.EventListeners;
@@ -35,6 +36,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.Toast;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
  
 public class AddressBookActivity extends Activity {
@@ -47,6 +49,7 @@ public class AddressBookActivity extends Activity {
     private int curSelection = -1;
     
     private static int QR_GENERATION = 1;
+    private static int EDIT_LABEL = 2;
     
     private static enum DisplayedAddresses {
 		SendingAddresses,
@@ -268,6 +271,28 @@ public class AddressBookActivity extends Activity {
 	}
 
 	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+
+		if(resultCode == Activity.RESULT_OK && requestCode == EDIT_LABEL)	{
+			
+			if(data != null && data.getAction() != null)	{
+				String label = data.getAction();
+				
+	    		Toast.makeText(AddressBookActivity.this, label, Toast.LENGTH_LONG).show();
+				
+				
+				
+			}
+
+        }
+		else {
+			;
+		}
+		
+	}
+
+	@Override
 	public void onDestroy() {
 		super.onDestroy();
 	    EventListeners.removeEventListener(eventListener);
@@ -289,7 +314,13 @@ public class AddressBookActivity extends Activity {
 		
 	    switch (item.getItemId()) {
 	    	case R.id.edit_label:
-	    		Toast.makeText(AddressBookActivity.this, "edit label", Toast.LENGTH_LONG).show();
+//	    		Toast.makeText(AddressBookActivity.this, "edit label", Toast.LENGTH_LONG).show();
+	    		
+	        	Intent intent = new Intent(AddressBookActivity.this, info.blockchain.wallet.ui.EditSetting.class);
+	        	intent.putExtra("prompt", "Label");
+	        	intent.putExtra("value", labelMap.get(address));
+	    		startActivityForResult(intent, EDIT_LABEL);
+
 	    		return true;
 	    	case R.id.archive_address:
 	    		addressManager.archiveAddress(address);
