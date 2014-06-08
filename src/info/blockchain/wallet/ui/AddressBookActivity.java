@@ -43,7 +43,6 @@ public class AddressBookActivity extends Activity {
 	private AddressAdapter adapter = null;
     private List<Map<String, Object>> addressBookMapList = null;
     private AddressManager addressManager = null;
-    private WalletApplication application = null;
     
     private static enum DisplayedAddresses {
 		SendingAddresses,
@@ -204,9 +203,8 @@ public class AddressBookActivity extends Activity {
             }
         });
 
-		final AddressBookActivity activity = this;
-		application = (WalletApplication) this.getApplication();    	
-        addressManager = new AddressManager(remoteWallet, application, activity);        
+		WalletApplication application = WalletUtil.getInstance(this, this).getWalletApplication();
+        addressManager = new AddressManager(remoteWallet, application, this);        
 		EventListeners.addEventListener(eventListener);
     }
 
