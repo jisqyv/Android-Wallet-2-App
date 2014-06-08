@@ -43,6 +43,7 @@ public class AddressBookActivity extends Activity {
 	private AddressAdapter adapter = null;
     private List<Map<String, Object>> addressBookMapList = null;
     private AddressManager addressManager = null;
+    private int curSelection = -1;
     
     private static enum DisplayedAddresses {
 		SendingAddresses,
@@ -122,19 +123,41 @@ public class AddressBookActivity extends Activity {
         listView.setLongClickable(true);
         adapter = new AddressAdapter();
         listView.setAdapter(adapter);
-        /*
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
 				Toast.makeText(AddressBookActivity.this, allAddresses.get(position), Toast.LENGTH_LONG).show();
+				curSelection = position;
             }
         });
-        */
+
         listView.setOnCreateContextMenuListener(new OnCreateContextMenuListener() {
             @Override 
             public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+        	    AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
+//        		Toast.makeText(AddressBookActivity.this, "" + info.position, Toast.LENGTH_LONG).show();
                 MenuInflater inflater = getMenuInflater();
                 inflater.inflate(R.menu.address_list, menu);
+                
+    	        String type = allAddresses.get(info.position).substring(0, 1);
+        	    if(type.equals("A")) {
+            	    menu.removeItem(R.id.unarchive_address);
+            	    menu.removeItem(R.id.remove_address);
+        	    }
+        	    else if(type.equals("S")) {
+            	    menu.removeItem(R.id.archive_address);
+            	    menu.removeItem(R.id.unarchive_address);
+            	    menu.removeItem(R.id.default_address);
+        	    }
+        	    else {
+            	    menu.removeItem(R.id.edit_label);
+            	    menu.removeItem(R.id.archive_address);
+            	    menu.removeItem(R.id.remove_address);
+            	    menu.removeItem(R.id.qr_code);
+            	    menu.removeItem(R.id.default_address);
+        	    }
+
             }
         });
         
@@ -242,14 +265,16 @@ public class AddressBookActivity extends Activity {
 		super.onDestroy();
 	    EventListeners.removeEventListener(eventListener);
 	}
-	
+/*	
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 	    AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
-		Toast.makeText(AddressBookActivity.this, "" + info.position, Toast.LENGTH_LONG).show();
+		
+		Toast.makeText(AddressBookActivity.this, "" + curSelection, Toast.LENGTH_LONG).show();
+
 	    menu.removeItem(R.id.edit_label);
 	}
-	
+*/	
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
 	    AdapterContextMenuInfo menuInfo = (AdapterContextMenuInfo)item.getMenuInfo(); 
