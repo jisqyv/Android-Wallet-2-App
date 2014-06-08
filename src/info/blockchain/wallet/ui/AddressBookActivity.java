@@ -234,6 +234,8 @@ public class AddressBookActivity extends Activity {
 		WalletApplication application = WalletUtil.getInstance(this, this).getWalletApplication();
         addressManager = new AddressManager(remoteWallet, application, this);        
 		EventListeners.addEventListener(eventListener);
+		
+		application.checkIfWalletHasUpdatedAndFetchTransactions(application.getRemoteWallet().getTemporyPassword());
     }
 
 	@Override

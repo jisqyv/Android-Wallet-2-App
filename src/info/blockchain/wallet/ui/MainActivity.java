@@ -4,14 +4,20 @@ import net.sourceforge.zbar.Symbol;
 
 import com.dm.zbar.android.scanner.ZBarConstants;
 import com.dm.zbar.android.scanner.ZBarScannerActivity;
+import com.google.android.gcm.GCMRegistrar;
 
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.pm.ActivityInfo;
 import android.app.ActionBar.Tab;
 import android.app.FragmentTransaction;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.provider.ContactsContract;
@@ -21,6 +27,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -39,10 +46,14 @@ import android.widget.Toast;
 
 //import android.util.Log;
 
+import piuk.blockchain.android.Constants;
 import piuk.blockchain.android.R;
+import piuk.blockchain.android.WalletApplication;
+import piuk.blockchain.android.ui.AbstractWalletActivity;
+import piuk.blockchain.android.ui.SuccessCallback;
 
 @SuppressLint("NewApi")
-public class MainActivity extends FragmentActivity implements ActionBar.TabListener {
+public class MainActivity extends AbstractWalletActivity implements ActionBar.TabListener {
 
     private static int PIN_ENTRY_ACTIVITY 	= 1;
     private static int SETUP_ACTIVITY	 	= 2;
@@ -61,6 +72,42 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
 	private static int ZBAR_SCANNER_REQUEST = 2026;
 
+	long lastMesssageTime = 0;
+
+	private final BroadcastReceiver mHandleMessageReceiver =
+			new BroadcastReceiver() { 
+		@Override
+		public void onReceive(Context context, Intent intent) {
+
+			//Throttle messages to once every 30 seconds 
+			if (lastMesssageTime > System.currentTimeMillis()-30000) {
+				return;
+			}
+
+			lastMesssageTime = System.currentTimeMillis();
+
+			String body = intent.getExtras().getString(Constants.BODY);
+			String title = intent.getExtras().getString(Constants.TITLE);
+
+			AlertDialog.Builder builder = new AlertDialog.Builder(context);
+			builder.setTitle(title)
+			.setMessage(body)
+			.setCancelable(false)
+			.setIcon(R.drawable.app_icon)
+			.setNegativeButton(R.string.button_dismiss, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+					dialog.cancel();
+				}
+			});
+
+			builder.create().show();		// create and show the alert dialog
+
+			if (application.getRemoteWallet() != null) {
+				application.checkIfWalletHasUpdatedAndFetchTransactions(application.getRemoteWallet().getTemporyPassword());
+			}
+		}
+	};
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -122,10 +169,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         refresh_icon.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-            	
-				Intent intent = new Intent("info.blockchain.wallet.ui.BalanceFragment.REFRESH");
-			    LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(intent);
-
+        		application.checkIfWalletHasUpdatedAndFetchTransactions(application.getRemoteWallet().getTemporyPassword());
         		return false;
             }
         });
@@ -178,9 +222,19 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         viewPager.setCurrentItem(1);
         
         BlockchainUtil.getInstance(this);
+		registerReceiver(mHandleMessageReceiver, new IntentFilter(Constants.DISPLAY_MESSAGE_ACTION));
 
+		if (application.getRemoteWallet() != null) {
+			application.checkIfWalletHasUpdatedAndFetchTransactions(application.getRemoteWallet().getTemporyPassword());
+		}
 	}
 
+	@Override
+	protected void onDestroy() {
+		unregisterReceiver(mHandleMessageReceiver);
+		super.onDestroy();
+	}
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -309,55 +363,4 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 //    	intent.setType(ContactsContract.CommonDataKinds.Email.CONTENT_TYPE);
     	startActivityForResult(intent, PICK_CONTACT);
     }
-    
-	public final void toast(final String text, final Object... formatArgs) {
-		toast(text, 0, Toast.LENGTH_SHORT, formatArgs);
-	}
-
-	public final void longToast(final String text, final Object... formatArgs) {
-		toast(text, 0, Toast.LENGTH_LONG, formatArgs);
-	}
-	
-	public final void toast(final String text, final int imageResId,
-			final int duration, final Object... formatArgs) {
-
-		if (text == null)
-			return;
-
-		final View view = getLayoutInflater().inflate(
-				R.layout.transient_notification, null);
-		TextView tv = (TextView) view
-				.findViewById(R.id.transient_notification_text);
-		tv.setText(String.format(text, formatArgs));
-		tv.setCompoundDrawablesWithIntrinsicBounds(imageResId, 0, 0, 0);
-
-		final Toast toast = new Toast(this);
-		toast.setView(view);
-		toast.setDuration(duration);
-		toast.show();
-	}
-	
-	public final void toast(final int textResId, final Object... formatArgs) {
-		toast(textResId, 0, Toast.LENGTH_SHORT, formatArgs);
-	}
-
-	public final void longToast(final int textResId, final Object... formatArgs) {
-		toast(textResId, 0, Toast.LENGTH_LONG, formatArgs);
-	}
-	
-	public final void toast(final int textResId, final int imageResId,
-			final int duration, final Object... formatArgs) {
-		final View view = getLayoutInflater().inflate(
-				R.layout.transient_notification, null);
-		TextView tv = (TextView) view
-				.findViewById(R.id.transient_notification_text);
-		tv.setText(getString(textResId, formatArgs));
-		tv.setCompoundDrawablesWithIntrinsicBounds(imageResId, 0, 0, 0);
-
-		final Toast toast = new Toast(this);
-		toast.setView(view);
-		toast.setDuration(duration);
-		toast.show();
-	}
-
 }
