@@ -148,6 +148,21 @@ public class MyWallet {
 	public List<Map<String, Object>> getAddressBookMap() {
 		return (List<Map<String, Object>>) root.get("address_book");
 	}
+	
+	@SuppressWarnings("unchecked")
+	public boolean deleteAddressBook(String address) {
+		List<Map<String, Object>> addressBook = (List<Map<String, Object>>) root.get("address_book");
+		boolean success = false;
+		for (ListIterator<Map<String, Object>> iter = addressBook.listIterator(); iter.hasNext(); ) {
+			Map<String, Object> map = iter.next();
+			if (map.get("addr").equals(address)) {
+				addressBook.remove(map);
+				success = true;
+			}
+		}
+		
+		return success;
+	}
 
 	@SuppressWarnings("unchecked")
 	public Map<String, String> getTxNotes() {

@@ -270,6 +270,7 @@ public class AddressBookActivity extends Activity {
 	    		Toast.makeText(AddressBookActivity.this, "unarchive address", Toast.LENGTH_LONG).show();
 	    		return true;
 	    	case R.id.remove_address:
+	    		addressManager.deleteAddressBook(address);
 	    		Toast.makeText(AddressBookActivity.this, "remove address", Toast.LENGTH_LONG).show();
 	    		return true;
 	    	case R.id.qr_code:

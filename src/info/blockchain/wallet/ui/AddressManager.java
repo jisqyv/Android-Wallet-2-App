@@ -146,6 +146,31 @@ public class AddressManager {
 	}
 	
 	
+	public boolean deleteAddressBook(final String address) {
+		try {
+			if (blockchainWallet == null)
+				return true;
+
+			blockchainWallet.deleteAddressBook(address);
+			
+			application.saveWallet(new SuccessCallback() {
+				@Override
+				public void onSuccess() {
+					EventListeners.invokeWalletDidChange();
+				}
+
+				@Override
+				public void onFail() {
+				}
+			});
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return false;
+	}
+	
 	public boolean archiveAddress(final String address) {
 		return setAddressTag(address, 2);
 	}
