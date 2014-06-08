@@ -263,21 +263,17 @@ public class AddressBookActivity extends Activity {
 	    		return true;
 	    	case R.id.archive_address:
 	    		addressManager.archiveAddress(address);
-	    		Toast.makeText(AddressBookActivity.this, "archive address", Toast.LENGTH_LONG).show();
 	    		return true;
 	    	case R.id.unarchive_address:
 	    		addressManager.unArchiveAddress(address);
-	    		Toast.makeText(AddressBookActivity.this, "unarchive address", Toast.LENGTH_LONG).show();
 	    		return true;
 	    	case R.id.remove_address:
 	    		addressManager.deleteAddressBook(address);
-	    		Toast.makeText(AddressBookActivity.this, "remove address", Toast.LENGTH_LONG).show();
 	    		return true;
 	    	case R.id.qr_code:
 	    		Toast.makeText(AddressBookActivity.this, "qr code address", Toast.LENGTH_LONG).show();
 	    		return true;
 	    	case R.id.default_address:
-	    		Toast.makeText(AddressBookActivity.this, "default address", Toast.LENGTH_LONG).show();
 	    		addressManager.setDefaultAddress(address);
 	    		return true;
 	    	default:
