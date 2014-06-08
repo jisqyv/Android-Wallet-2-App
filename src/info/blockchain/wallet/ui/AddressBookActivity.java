@@ -14,6 +14,7 @@ import piuk.blockchain.android.WalletApplication;
 import piuk.blockchain.android.WalletApplication.AddAddressCallback;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -44,6 +45,8 @@ public class AddressBookActivity extends Activity {
     private List<Map<String, Object>> addressBookMapList = null;
     private AddressManager addressManager = null;
     private int curSelection = -1;
+    
+    private static int QR_GENERATION = 1;
     
     private static enum DisplayedAddresses {
 		SendingAddresses,
@@ -139,7 +142,9 @@ public class AddressBookActivity extends Activity {
 //        		Toast.makeText(AddressBookActivity.this, "" + info.position, Toast.LENGTH_LONG).show();
                 MenuInflater inflater = getMenuInflater();
                 inflater.inflate(R.menu.address_list, menu);
-                
+
+				curSelection = info.position;
+
     	        String type = allAddresses.get(info.position).substring(0, 1);
         	    if(type.equals("A")) {
             	    menu.removeItem(R.id.unarchive_address);
@@ -294,7 +299,8 @@ public class AddressBookActivity extends Activity {
 	    		addressManager.deleteAddressBook(address);
 	    		return true;
 	    	case R.id.qr_code:
-	    		Toast.makeText(AddressBookActivity.this, "qr code address", Toast.LENGTH_LONG).show();
+//	    		Toast.makeText(AddressBookActivity.this, "qr code address", Toast.LENGTH_LONG).show();
+	    		doQRActivity();
 	    		return true;
 	    	case R.id.default_address:
 	    		addressManager.setDefaultAddress(address);
@@ -408,6 +414,19 @@ public class AddressBookActivity extends Activity {
 	        return view;
 		}
 
+    }
+    
+    private void doQRActivity() {
+    	
+		android.content.ClipboardManager clipboard = (android.content.ClipboardManager)this.getSystemService(android.content.Context.CLIPBOARD_SERVICE);
+  		android.content.ClipData clip = android.content.ClipData.newPlainText("Address", allAddresses.get(curSelection).substring(1));
+  		clipboard.setPrimaryClip(clip);
+ 		Toast.makeText(this, "Address copied to clipboard", Toast.LENGTH_LONG).show();
+
+        Intent intent;
+    	intent = new Intent(this, QRActivity.class);
+    	intent.putExtra("BTC_ADDRESS", allAddresses.get(curSelection).substring(1));
+    	startActivityForResult(intent, QR_GENERATION);
     }
 
 }
