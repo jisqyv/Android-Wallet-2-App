@@ -90,7 +90,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         LinearLayout layout_icons = new LinearLayout(actionBar.getThemedContext());
         ActionBar.LayoutParams layoutParams = new ActionBar.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.WRAP_CONTENT, Gravity.RIGHT | Gravity.CENTER_VERTICAL);
         layoutParams.height = 72;
-        layoutParams.width = (72 * 2) + 5 + 30;
+        layoutParams.width = (72 * 2) + 5 + 60;
         layout_icons.setLayoutParams(layoutParams);
         layout_icons.setOrientation(LinearLayout.HORIZONTAL);
 
@@ -133,7 +133,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         LinearLayout filler_layout = new LinearLayout(actionBar.getThemedContext());
         ActionBar.LayoutParams fillerParams = new ActionBar.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.WRAP_CONTENT, Gravity.RIGHT | Gravity.CENTER_VERTICAL);
         fillerParams.height = 72;
-        fillerParams.width = 30;
+        fillerParams.width = 60;
         filler_layout.setLayoutParams(fillerParams);
         
         layout_icons.addView(refresh_icon);
