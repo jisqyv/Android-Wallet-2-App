@@ -63,6 +63,7 @@ public class MainActivity extends AbstractWalletActivity implements ActionBar.Ta
     private static int SELECT_FIAT		 	= 6;
     private static int SETTINGS_ACTIVITY	= 7;
     private static int ADDRESSBOOK_ACTIVITY	= 8;
+    private static int TOS_ACTIVITY			= 9;
 
 	private ViewPager viewPager;
     private TabsPagerAdapter mAdapter;
@@ -262,6 +263,9 @@ public class MainActivity extends AbstractWalletActivity implements ActionBar.Ta
     	case R.id.action_about:
     		doAbout();
     		return true;
+    	case R.id.action_tos:
+    		doTOS();
+    		return true;
     	case R.id.action_prev_wallet:
 			Intent intent2 = new Intent(MainActivity.this, piuk.blockchain.android.ui.WalletActivity.class);
 			intent2.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -346,6 +350,11 @@ public class MainActivity extends AbstractWalletActivity implements ActionBar.Ta
     private void doAddressBook()	{
     	Intent intent = new Intent(MainActivity.this, info.blockchain.wallet.ui.AddressBookActivity.class);
 		startActivityForResult(intent, ADDRESSBOOK_ACTIVITY);
+    }
+
+    private void doTOS()	{
+    	Intent intent = new Intent(MainActivity.this, info.blockchain.wallet.ui.TOSActivity.class);
+		startActivityForResult(intent, TOS_ACTIVITY);
     }
 
     private void doMerchantDirectory()	{
