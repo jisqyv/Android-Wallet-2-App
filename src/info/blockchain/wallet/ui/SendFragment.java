@@ -1650,7 +1650,7 @@ public class SendFragment extends Fragment   {
         addressBookMapList = wallet.getAddressBookMap();
         filteredDisplayList = new ArrayList<HashMap<String,String>>();
 
-        if (addressBookMapList != null) {
+        if (addressBookMapList != null && addressBookMapList.size() > 0) {
   		    for (Iterator<Map<String, Object>> iti = addressBookMapList.iterator(); iti.hasNext();) {
  		    	Map<String, Object> addressBookMap = iti.next();
  		    	Object address = addressBookMap.get("addr");
@@ -1665,6 +1665,15 @@ public class SendFragment extends Fragment   {
 	         	filteredDisplayList.add(row);
  		    }
 
+        }
+        else {
+		    HashMap<String,String> row = new HashMap<String,String>();
+		    row.put("label", "Blockchain.info");
+		    row.put("address", "1JArS6jzE3AJ9sZ3aFij1BmTcpFGgN86hA");
+	        row.put("labelOrAddress", "Blockchain.info");
+
+			magicData.add(row);
+         	filteredDisplayList.add(row);
         }
         
      }

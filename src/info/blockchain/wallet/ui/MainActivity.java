@@ -216,10 +216,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 	    // Handle item selection
 	    switch (item.getItemId()) {
     	case R.id.action_settings:
-    		/*
-        	Intent intent = new Intent(MainActivity.this, SetupActivity.class);
-    		startActivityForResult(intent, SETUP_ACTIVITY);
-    		*/
     		doSettings();
     		return true;
     	case R.id.address_book:
@@ -340,9 +336,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 //    	intent.setType(ContactsContract.CommonDataKinds.Email.CONTENT_TYPE);
     	startActivityForResult(intent, PICK_CONTACT);
     }
-    
-    
-        
+
 	public final void toast(final String text, final Object... formatArgs) {
 		toast(text, 0, Toast.LENGTH_SHORT, formatArgs);
 	}
