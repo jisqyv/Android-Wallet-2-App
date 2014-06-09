@@ -1,6 +1,9 @@
 package info.blockchain.wallet.ui;
 
 import java.security.SecureRandom;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.json.simple.JSONObject;
@@ -19,6 +22,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.MotionEvent;
 import android.view.View;
@@ -37,6 +41,7 @@ import android.text.method.KeyListener;
 //import android.util.Log;
 
 import piuk.EventListeners;
+import piuk.MyRemoteWallet;
 import piuk.MyWallet;
 import piuk.blockchain.android.Constants;
 import piuk.blockchain.android.R;
@@ -49,6 +54,8 @@ public class Setup2Activity extends Activity	{
 
 	private Pattern emailPattern = Patterns.EMAIL_ADDRESS;
 	public static final int PBKDF2Iterations = 2000;
+
+    private AddressManager addressManager = null;
 
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -143,6 +150,14 @@ public class Setup2Activity extends Activity	{
     	((EditText)findViewById(R.id.password1)).setVisibility(View.GONE);
     	((EditText)findViewById(R.id.password2)).setVisibility(View.GONE);
 
+
+		WalletApplication application = (WalletApplication)this.getApplication();
+		MyRemoteWallet remoteWallet = application.getRemoteWallet();
+    	List<String> activeAddresses = Arrays.asList(remoteWallet.getActiveAddresses());		
+    	final String firstAddress = activeAddresses.get(0);
+        addressManager = new AddressManager(remoteWallet, application, this);        
+
+        
         Button confirm = ((Button)findViewById(R.id.confirm));
         confirm.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
@@ -195,9 +210,23 @@ public class Setup2Activity extends Activity	{
 				// 
 				//
             	
-            	
-            	
+				if (firstLabel != null && firstLabel.length() > 0) {
+		    		addressManager.setAddressLabel(firstAddress, firstLabel, new Runnable() {
+						public void run() {
+							Log.d("setAddressLabel", "setAddressLabel " + R.string.toast_error_syncing_wallet);								
+						}
+					}, new Runnable() {
+						public void run() {
+							Log.d("setAddressLabel", "setAddressLabel " + R.string.error_setting_label);								
+						}
+					}, new Runnable() {
+						public void run() {
+							Log.d("setAddressLabel", "setAddressLabel " + R.string.toast_error_syncing_wallet);								
+						}
+					});
+				}
 
+			
 				// upon success:
             	// save "verified" = true to prefs
             	
