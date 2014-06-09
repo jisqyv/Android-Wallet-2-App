@@ -1,5 +1,6 @@
 package info.blockchain.wallet.ui;
 
+import piuk.blockchain.android.WalletApplication;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.net.Uri;
@@ -26,7 +27,9 @@ public class SettingsActivity extends PreferenceActivity {
             setTitle(R.string.app_name);
         	addPreferencesFromResource(info.blockchain.wallet.ui.R.xml.settings);
 
-        	final String guid = WalletUtil.getInstance(this, this).getRemoteWallet().getGUID();
+//        	final String guid = WalletUtil.getInstance(this, this).getRemoteWallet().getGUID();
+        	WalletApplication application = (WalletApplication)getApplication();
+        	final String guid = application.getRemoteWallet().getGUID();
 
         	Preference guidPref = (Preference) findPreference("guid");
         	guidPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {

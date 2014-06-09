@@ -647,7 +647,6 @@ public class BalanceFragment extends Fragment   {
     }
 
     public void doDisplaySubList(final View view, int position) {
-    	
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         strCurrentFiatCode = prefs.getString("ccurrency", "USD");
 
@@ -725,7 +724,6 @@ public class BalanceFragment extends Fragment   {
 		    List<Map.Entry<String, String>> addressValueEntryList = new ArrayList<Map.Entry<String, String>>();
 
 	    	boolean isAddressPartofTransaction = false;			    
-	    	//for (TransactionOutput transactionOutput : transactionOutputs) {
 			for (Iterator<TransactionOutput> ito = transactionOutputs.iterator(); ito.hasNext();) {
 				TransactionOutput transactionOutput = ito.next();
 	        	try {

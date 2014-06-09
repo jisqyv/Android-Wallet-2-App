@@ -4,7 +4,7 @@ import java.util.regex.Pattern;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences.Editor;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.Toast;
 import android.os.Looper;
 import android.preference.PreferenceManager;
+import android.content.SharedPreferences.Editor;
 //import android.util.Log;
 
 import com.dm.zbar.android.scanner.ZBarConstants;
@@ -56,7 +57,7 @@ public class SetupActivity extends Activity		{
         imgCreate.setTypeface(TypefaceUtil.getInstance(this).getRobotoLightTypeface());
         imgCreate.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
-    			Intent intent = new Intent(SetupActivity.this, Setup2Activity.class);
+    			Intent intent = new Intent(SetupActivity.this, TOSActivity.class);
     			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
     			startActivity(intent);
             }
@@ -179,6 +180,11 @@ public class SetupActivity extends Activity		{
 											} catch (Exception e) {
 												e.printStackTrace();
 											}
+
+									        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SetupActivity.this);
+											Editor edit = PreferenceManager.getDefaultSharedPreferences(SetupActivity.this).edit();
+											edit.putBoolean("validated", true);
+											edit.commit();
 
 								        	Intent intent = new Intent(SetupActivity.this, PinEntryActivity.class);
 								        	intent.putExtra("S", "1");

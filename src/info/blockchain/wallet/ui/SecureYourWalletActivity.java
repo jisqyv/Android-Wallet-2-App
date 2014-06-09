@@ -33,30 +33,35 @@ public class SecureYourWalletActivity extends Activity	{
 	    this.setContentView(R.layout.activity_secure);
 
 	    boolean firstTime = false;
+	    boolean isSecured = false;
         Bundle extras = getIntent().getExtras();
         if(extras != null)	{
         	firstTime = extras.getBoolean("first");
+        	isSecured = extras.getBoolean("secured");
         }
 
         TextView tvHeader = (TextView)findViewById(R.id.header);
         TextView tvText = (TextView)findViewById(R.id.text);
     	tvHeader.setTypeface(TypefaceUtil.getInstance(this).getGravityLightTypeface());
-        if(firstTime)	{
+        if(firstTime && !isSecured)	{
         	tvHeader.setBackgroundColor(0xFFF8E586);
         	tvHeader.setText("Your Blockchain Wallet is Ready");
         	tvText.setText("You can instantly and immediately start sending and receiving Bitcoins using this wallet. However, we highly recommend securing your wallet by tapping the blue button below. Securing your wallet is quick, easy and provides a bunch of benefits.\n\n-Automatic backups of your Bitcoin balance\n-Secure your wallet with a custom PIN code\n-Access your wallet and funds from any device, anytime");
         }
-        else	{
+        else if(!firstTime && !isSecured)	{
         	tvHeader.setBackgroundColor(0xFFFB5B59);
         	tvHeader.setText("Your Funds Are At Risk!");
         	tvText.setText("If you lose your phone your funds will also be lost forever. Please secure your wallet right now to enable automatic backups.");
+        }
+        else	{
+        	;
         }
 
         bSecure = (Button)findViewById(R.id.secure);
         bSecure.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
-    			Intent intent = new Intent(SecureYourWalletActivity.this, SecureYourWalletActivity.class);
-    			intent.putExtra("first", false);
+    			Intent intent = new Intent(SecureYourWalletActivity.this, Setup2Activity.class);
+    			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
     			startActivity(intent);
             }
         });

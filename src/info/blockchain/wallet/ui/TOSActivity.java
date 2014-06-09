@@ -73,15 +73,175 @@ public class TOSActivity extends Activity	{
         Button btOK = ((Button)findViewById(R.id.ok));
         btOK.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
-            	/*
-    			Intent intent = new Intent(TOSActivity.this, Setup2Activity.class);
-    			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-    			startActivity(intent);
-    			*/
 
-    			Intent intent = new Intent(TOSActivity.this, SecureYourWalletActivity.class);
-    			intent.putExtra("first", true);
-    			startActivity(intent);
+				final ProgressDialog progressDialog = ProgressDialog.show(TOSActivity.this, "", getString(R.string.creating_account), true);
+				progressDialog.show();
+
+				final Handler handler = new Handler();
+
+				new Thread() {
+					@Override
+					public void run() {
+						
+						final WalletApplication application = WalletUtil.getInstance(TOSActivity.this, TOSActivity.this).getWalletApplication();
+						try {
+							try {
+
+								application.generateNewWallet();
+
+							} catch (Exception e1) {
+
+								throw new Exception("Error Generating Wallet");
+
+							}
+
+							final String guid = application.getRemoteWallet().getGUID();
+							final String sharedKey = application.getRemoteWallet().getSharedKey();
+							final String password = "123456789abc";
+							final String pinCode = "1234";
+//							final String email = em;
+
+							application.getRemoteWallet().setTemporyPassword(password);
+
+							if (!application.getRemoteWallet().remoteSave("")) {
+								throw new Exception("Unknown Error Inserting wallet");
+							}
+
+							EventListeners.invokeWalletDidChange();
+
+							handler.post(new Runnable() {
+								public void run() {
+
+									try {
+										progressDialog.dismiss();
+
+//										dismiss();
+
+//										final AbstractWalletActivity activity = (AbstractWalletActivity) getActivity();
+										Toast.makeText(TOSActivity.this.getApplication(), R.string.new_account_success, Toast.LENGTH_SHORT).show();
+
+//										PinEntryActivity.clearPrefValues(application);
+
+										final Editor edit = PreferenceManager.getDefaultSharedPreferences(application.getApplicationContext()).edit();
+										edit.putString("guid", guid);
+										edit.putString("sharedKey", sharedKey);
+
+										if (edit.commit()) {
+											handler.post(new Runnable() {
+
+												@Override
+												public void run() {
+
+													new Thread(new Runnable(){
+													    @Override
+													    public void run() {
+													    	
+															Looper.prepare();
+
+															//
+															// Save PIN
+															//
+													        try {
+																byte[] bytes = new byte[16];
+																SecureRandom random = new SecureRandom();
+																random.nextBytes(bytes);
+																final String key = new String(Hex.encode(bytes), "UTF-8");
+																random.nextBytes(bytes);
+																final String value = new String(Hex.encode(bytes), "UTF-8");
+																final JSONObject response = piuk.blockchain.android.ui.PinEntryActivity.apiStoreKey(key, value, pinCode);
+																if (response.get("success") != null) {
+																	
+																	edit.putString("pin_kookup_key", key);
+																	edit.putString("encrypted_password", MyWallet.encrypt(application.getRemoteWallet().getTemporyPassword(), value, PBKDF2Iterations));
+
+																	if (!edit.commit()) {
+																		throw new Exception("Error Saving Preferences");
+																	}
+																	else {
+//																		Toast.makeText(application, R.string.toast_pin_saved, Toast.LENGTH_SHORT).show();
+															        	Intent intent = new Intent(TOSActivity.this, MainActivity.class);
+															        	intent.putExtra("first", true);
+															        	intent.putExtra("secured", false);
+																		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+															    		startActivity(intent);
+																	}
+
+																}
+																else {
+																	Toast.makeText(application, response.toString(), Toast.LENGTH_SHORT).show();
+																}
+													        } catch (Exception e) {
+																Toast.makeText(application, e.getStackTrace().toString(), Toast.LENGTH_SHORT).show();
+													            e.printStackTrace();
+													        }
+															//
+															//
+															//
+													        
+															Looper.loop();
+
+													    }
+													}).start();
+
+													//
+													//
+													//
+													application.checkIfWalletHasUpdated(password, guid, sharedKey, true, new SuccessCallback(){
+
+														@Override
+														public void onSuccess() {	
+//															activity.registerNotifications();
+															
+															try {
+																final String regId = GCMRegistrar.getRegistrationId(TOSActivity.this);
+
+																if (regId == null || regId.equals("")) {
+																	GCMRegistrar.register(TOSActivity.this, Constants.SENDER_ID);
+																} else {
+																	application.registerForNotificationsIfNeeded(regId);
+																}
+
+															} catch (Exception e) {
+																e.printStackTrace();
+															}
+
+														}
+
+														@Override
+														public void onFail() {
+															Toast.makeText(application, R.string.toast_error_syncing_wallet, Toast.LENGTH_SHORT).show();
+														}
+													});
+												}
+											});
+										} else {
+											throw new Exception("Error saving preferences");
+										}
+									} catch (Exception e) {
+										e.printStackTrace();
+
+										application.clearWallet();
+
+										Toast.makeText(TOSActivity.this.getApplication(), e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+									}
+								}
+							});
+						} catch (final Exception e) {
+							e.printStackTrace();
+
+							application.clearWallet();
+
+							handler.post(new Runnable() {
+								public void run() {
+									progressDialog.dismiss();
+
+									Toast.makeText(TOSActivity.this.getApplication(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+								}
+							});
+						}
+
+					}
+				}.start();
 
             }
         });

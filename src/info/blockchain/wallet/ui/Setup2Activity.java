@@ -184,215 +184,28 @@ public class Setup2Activity extends Activity	{
 					Toast.makeText(Setup2Activity.this, "PIN codes do not match", Toast.LENGTH_LONG).show();
 					return;
 				}
+            	
+				if(pinCode1.equals("0000")) {
+					Toast.makeText(Setup2Activity.this, "0000 is not a valid PIN code", Toast.LENGTH_LONG).show();
+					return;
+				}
+				
+				
+				//
+				//
+				//
+            	
+            	
+            	
+            	
+            	// save "verified" = true to prefs
+            	
+            	
+            	
 
-				final ProgressDialog progressDialog = ProgressDialog.show(Setup2Activity.this, "", getString(R.string.creating_account), true);
-				progressDialog.show();
-
-				final Handler handler = new Handler();
-
-				new Thread() {
-					@Override
-					public void run() {
-						
-						final WalletApplication application = (WalletApplication)Setup2Activity.this.getApplication();
-						try {
-							try {
-
-								application.generateNewWallet();
-
-							} catch (Exception e1) {
-
-								throw new Exception("Error Generating Wallet");
-
-							}
-
-							final String guid = application.getRemoteWallet().getGUID();
-							final String sharedKey = application.getRemoteWallet().getSharedKey();
-							final String password = pw1;
-							final String email = em;
-
-							application.getRemoteWallet().setTemporyPassword(password);
-
-							if (!application.getRemoteWallet().remoteSave(email)) {
-								throw new Exception("Unknown Error Inserting wallet");
-							}
-
-							EventListeners.invokeWalletDidChange();
-
-							handler.post(new Runnable() {
-								public void run() {
-
-									try {
-										progressDialog.dismiss();
-
-//										dismiss();
-
-//										final AbstractWalletActivity activity = (AbstractWalletActivity) getActivity();
-//										Toast.makeText(activity.getApplication(), R.string.new_account_success, Toast.LENGTH_LONG).show();
-										Toast.makeText(Setup2Activity.this, R.string.new_account_success, Toast.LENGTH_LONG).show();
-
-//										PinEntryActivity.clearPrefValues(application);
-
-										final Editor edit = PreferenceManager.getDefaultSharedPreferences(application.getApplicationContext()).edit();
-
-										Toast.makeText(application, guid, Toast.LENGTH_LONG).show();
-										edit.putString("guid", guid);
-										edit.putString("sharedKey", sharedKey);
-
-										if (edit.commit()) {
-											handler.post(new Runnable() {
-
-												@Override
-												public void run() {
-
-//													Toast.makeText(application, "Saving PIN:" + pinCode1, Toast.LENGTH_SHORT).show();
-													
-													new Thread(new Runnable(){
-													    @Override
-													    public void run() {
-													    	
-															Looper.prepare();
-
-															//
-															// Save PIN
-															//
-													        try {
-																byte[] bytes = new byte[16];
-																SecureRandom random = new SecureRandom();
-																random.nextBytes(bytes);
-																final String key = new String(Hex.encode(bytes), "UTF-8");
-																random.nextBytes(bytes);
-																final String value = new String(Hex.encode(bytes), "UTF-8");
-																final JSONObject response = PinEntryActivity.apiStoreKey(key, value, pinCode1);
-																if (response.get("success") != null) {
-																	
-																	edit.putString("pin_kookup_key", key);
-																	edit.putString("encrypted_password", MyWallet.encrypt(application.getRemoteWallet().getTemporyPassword(), value, PBKDF2Iterations));
-
-																	if (!edit.commit()) {
-																		throw new Exception("Error Saving Preferences");
-																	}
-																	else {
-																		Toast.makeText(application, R.string.toast_pin_saved, Toast.LENGTH_SHORT).show();	
-															        	Intent intent = new Intent(Setup2Activity.this, MainActivity.class);
-																		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-															    		startActivity(intent);
-																	}
-
-																}
-																else {
-																	Toast.makeText(application, response.toString(), Toast.LENGTH_LONG).show();
-																}
-													        } catch (Exception e) {
-																Toast.makeText(application, e.toString(), Toast.LENGTH_LONG).show();
-													            e.printStackTrace();
-													        }
-															//
-															//
-															//
-													        
-															Looper.loop();
-
-													    }
-													}).start();
-
-													//
-													//
-													//
-													application.checkIfWalletHasUpdated(password, guid, sharedKey, true, new SuccessCallback(){
-
-														@Override
-														public void onSuccess() {	
-//															activity.registerNotifications();
-															
-															try {
-																final String regId = GCMRegistrar.getRegistrationId(Setup2Activity.this);
-
-																if (regId == null || regId.equals("")) {
-																	GCMRegistrar.register(Setup2Activity.this, Constants.SENDER_ID);
-																} else {
-																	application.registerForNotificationsIfNeeded(regId);
-																}
-
-															} catch (Exception e) {
-																e.printStackTrace();
-															}
-
-														}
-
-														@Override
-														public void onFail() {
-															Toast.makeText(application, R.string.toast_error_syncing_wallet, Toast.LENGTH_LONG).show();
-														}
-													});
-												}
-											});
-										} else {
-											throw new Exception("Error saving preferences");
-										}
-									} catch (Exception e) {
-										e.printStackTrace();
-
-										application.clearWallet();
-
-										Toast.makeText(Setup2Activity.this.getApplication(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-									}
-								}
-							});
-						} catch (final Exception e) {
-							e.printStackTrace();
-
-							application.clearWallet();
-
-							handler.post(new Runnable() {
-								public void run() {
-									progressDialog.dismiss();
-
-									Toast.makeText(Setup2Activity.this.getApplication(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-								}
-							});
-						}
-						
-
-					}
-				}.start();
 
             }
         });
-
-        //
-        // prompt user with temporary password
-        //
-        final String generatedPassword = RandomPasswordGenerator.getInstance().getPassword();
-
-		new AlertDialog.Builder(Setup2Activity.this)
-			.setIcon(R.drawable.ic_launcher).setTitle(Setup2Activity.this.getString(R.string.app_name))
-			.setMessage(
-					"A password has been generated for you. The password is:\n\n" + generatedPassword + "\n\n" +
-					"Take note of this password immediately. We cannot recover your password for you in the event of loss" + "\n\n" +
-					"We advise you to change this password to one of your choosing, minimum 11 characters." + "\n\n" +
-					"Do you want to create a new password?"
-					)
-			.setCancelable(false)
-			.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				((EditText)findViewById(R.id.password1)).setVisibility(View.VISIBLE);
-				((EditText)findViewById(R.id.password2)).setVisibility(View.VISIBLE);
-				((EditText)findViewById(R.id.password1)).requestFocus();
-			}
-			})
-			.setNegativeButton("No", new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				((EditText)findViewById(R.id.password1)).setVisibility(View.VISIBLE);
-				((EditText)findViewById(R.id.password2)).setVisibility(View.VISIBLE);
-				password1.setText(generatedPassword);
-				password2.setText(generatedPassword);
-				((EditText)findViewById(R.id.pin1)).requestFocus();
-			}
-			}
-		).show();
 
     }
 }

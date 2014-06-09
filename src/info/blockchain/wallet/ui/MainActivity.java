@@ -10,6 +10,7 @@ import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.SharedPreferences.Editor;
 import android.content.pm.ActivityInfo;
 import android.app.ActionBar.Tab;
 import android.app.FragmentTransaction;
@@ -18,8 +19,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -83,6 +86,41 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 	    setContentView(info.blockchain.wallet.ui.R.layout.activity_main);
 
 	    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+	    
+        boolean isFirst = false;
+        boolean isSecured = false;
+        Bundle extras = getIntent().getExtras();
+        if(extras != null)	{
+        	isFirst = extras.getBoolean("first");
+        	isSecured = extras.getBoolean("secured");
+        }
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean isValidated = false;
+        isValidated = prefs.getBoolean("validated", false);
+        
+        if(isValidated) {
+        	;
+        }
+        else if(!isSecured && isFirst) {
+			Editor edit = PreferenceManager.getDefaultSharedPreferences(this).edit();
+			edit.putBoolean("first", false);
+			edit.commit();
+
+			Intent intent = new Intent(this, SecureYourWalletActivity.class);
+			intent.putExtra("first", true);
+			startActivity(intent);
+        }
+        else if(!isSecured && !isFirst) {
+			Intent intent = new Intent(this, SecureYourWalletActivity.class);
+			intent.putExtra("first", false);
+			startActivity(intent);
+        }
+        else {
+			Intent intent = new Intent(this, SetupActivity.class);
+			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+			startActivity(intent);
+        }
 
 	    tabs = new String[3];
 	    tabs[0] = "Send";

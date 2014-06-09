@@ -729,9 +729,14 @@ public class PinEntryActivity extends FragmentActivity {
 										} else {
 //											finish();
 										}
+										
+										Editor edit = PreferenceManager.getDefaultSharedPreferences(PinEntryActivity.this).edit();
+										edit.putBoolean("verified", true);
+										edit.commit();
 
 							        	Intent intent = new Intent(PinEntryActivity.this, MainActivity.class);
 										intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+							        	intent.putExtra("verified", true);
 							    		startActivity(intent);
 
 									}
