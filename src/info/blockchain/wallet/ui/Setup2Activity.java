@@ -192,12 +192,13 @@ public class Setup2Activity extends Activity	{
 				
 				
 				//
+				// 
 				//
-				//
             	
             	
             	
-            	
+
+				// upon success:
             	// save "verified" = true to prefs
             	
             	

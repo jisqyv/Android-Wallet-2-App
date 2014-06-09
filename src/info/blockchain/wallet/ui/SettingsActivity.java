@@ -8,10 +8,12 @@ import android.os.Bundle;
 import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageManager;
 import android.preference.Preference;
 import android.preference.CheckBoxPreference;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceManager;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.view.KeyEvent;
@@ -49,6 +51,21 @@ public class SettingsActivity extends PreferenceActivity {
         		public boolean onPreferenceClick(Preference preference) {
         	    	Intent intent = new Intent(SettingsActivity.this, CurrencySelector.class);
         			startActivity(intent);
+        			return true;
+        		}
+        	});
+        	
+        	Preference unpairPref = (Preference) findPreference("unpair");
+        	unpairPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+        		public boolean onPreferenceClick(Preference preference) {
+
+					Editor edit = PreferenceManager.getDefaultSharedPreferences(SettingsActivity.this).edit();
+					edit.clear();
+					edit.commit();
+
+		        	Intent intent = new Intent(SettingsActivity.this, SetupActivity.class);
+					intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+		    		startActivity(intent);
         			return true;
         		}
         	});
