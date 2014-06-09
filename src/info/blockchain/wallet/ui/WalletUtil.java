@@ -32,6 +32,19 @@ public class WalletUtil {
 		return instance;
 	}
 
+	public static WalletUtil getRefreshedInstance(Context ctx, Activity act) {
+		
+		context = ctx;
+		activity = act;
+		
+		application = (WalletApplication)activity.getApplication();
+		remoteWallet = application.getRemoteWallet();
+
+		instance = new WalletUtil();
+		
+		return instance;
+	}
+
 	public WalletApplication getWalletApplication() {
 		return application;
 	}
