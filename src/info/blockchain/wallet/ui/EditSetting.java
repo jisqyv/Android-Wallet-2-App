@@ -1,8 +1,12 @@
 package info.blockchain.wallet.ui;
 
+import piuk.blockchain.android.R;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Rect;
 import android.os.Bundle;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -30,7 +34,7 @@ public class EditSetting extends Activity {
         Bundle extras = getIntent().getExtras();
         if(extras != null)	{
             setTitle(extras.getString("prompt"));
-        	tvPrompt.setText(extras.getString("prompt") + ": ");
+        	tvPrompt.setText(extras.getString("existing") + ": ");
         	etValue.setText(extras.getString("value"));
 
         }
@@ -60,4 +64,30 @@ public class EditSetting extends Activity {
             }
        });
     }
+    
+	@Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) { 
+        if(keyCode == KeyEvent.KEYCODE_BACK) {
+            return true;
+        }
+        else	{
+        	;
+        }
+
+        return false;
+    }
+
+	@Override
+	public boolean dispatchTouchEvent(MotionEvent event) {
+	    Rect dialogBounds = new Rect();
+	    getWindow().getDecorView().getHitRect(dialogBounds);
+
+	    if(!dialogBounds.contains((int) event.getX(), (int) event.getY()) && event.getAction() == MotionEvent.ACTION_DOWN) {
+	    	return false;
+	    }
+	    else {
+		    return super.dispatchTouchEvent(event);
+	    }
+	}
+
 }

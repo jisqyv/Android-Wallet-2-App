@@ -336,7 +336,8 @@ public class AddressBookActivity extends Activity {
 //	    		Toast.makeText(AddressBookActivity.this, "edit label", Toast.LENGTH_LONG).show();
 	    		
 	        	Intent intent = new Intent(AddressBookActivity.this, info.blockchain.wallet.ui.EditSetting.class);
-	        	intent.putExtra("prompt", "Label");
+	        	intent.putExtra("prompt", "Edit label");
+	        	intent.putExtra("existing", address);
 	        	intent.putExtra("value", labelMap.get(address));
 	        	editLabelAddress = address;
 
