@@ -1657,9 +1657,18 @@ public class SendFragment extends Fragment   {
  		    	Object label = addressBookMap.get("label");
 
  		        HashMap<String,String> row = new HashMap<String,String>();
- 		        row.put("label", label.toString());
- 		        row.put("address", address.toString());
-		        row.put("labelOrAddress", label.toString());
+ 		        if (label != null) {
+ 	 		        row.put("label", label.toString()); 		        	
+ 			        row.put("labelOrAddress", label.toString());
+ 		        } else {
+ 	 		        row.put("label", "null"); 		        	
+ 			        row.put("labelOrAddress", "null");
+ 		        }
+ 		        if (address != null) {
+ 	 		        row.put("address", address.toString());
+ 		        } else {
+ 	 		        row.put("address", "null");
+ 		        }
 
     			magicData.add(row);
 	         	filteredDisplayList.add(row);
