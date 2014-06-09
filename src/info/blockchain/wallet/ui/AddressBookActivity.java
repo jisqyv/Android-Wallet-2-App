@@ -13,6 +13,7 @@ import piuk.MyRemoteWallet;
 import piuk.blockchain.android.R;
 import piuk.blockchain.android.WalletApplication;
 import piuk.blockchain.android.WalletApplication.AddAddressCallback;
+import piuk.blockchain.android.ui.SuccessCallback;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;

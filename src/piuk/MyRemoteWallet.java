@@ -34,20 +34,18 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.json.simple.parser.JSONParser;
 import org.spongycastle.util.encoders.Hex;
-
 import piuk.blockchain.android.Constants;
 import piuk.blockchain.android.ui.SuccessCallback;
 import piuk.blockchain.android.util.WalletUtils;
+import android.annotation.SuppressLint;
 import android.util.Log;
 import android.util.Pair;
-
 import com.google.bitcoin.core.Address;
 import com.google.bitcoin.core.AddressFormatException;
 import com.google.bitcoin.core.Base58;
@@ -63,6 +61,7 @@ import com.google.bitcoin.core.Utils;
 import com.google.bitcoin.core.Wallet;
 
 
+@SuppressLint("DefaultLocale")
 @SuppressWarnings("unchecked")
 public class MyRemoteWallet extends MyWallet {
 	private static final String WebROOT = "https://"+Constants.BLOCKCHAIN_DOMAIN+"/";
@@ -1305,22 +1304,30 @@ public class MyRemoteWallet extends MyWallet {
 		return (JSONObject) new JSONParser().parse(response);
 	}
 
-	public String getEmail() {    
-		return email;
-	}
-
-	public String getSMSNumber() {    
-		return smsNumber;
-	}
-
-	public boolean getisEmailNotificationEnabled() {    
+	public boolean getIsEmailNotificationEnabled() {    
 		return notificationsTypeSet.contains(NotificationsTypeEmail);
 	}
 	
-	public boolean getisSMSNotificationEnabled() {    
+	public boolean getIsSMSNotificationEnabled() {    
 		return notificationsTypeSet.contains(NotificationsTypeSMS);
 	}
 	
+	public String getSmsNumber() {
+		return smsNumber;
+	}
+
+	public void setSmsNumber(String smsNumber) {
+		this.smsNumber = smsNumber;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
 	//must call this method to on app start to fill account information
 	public void getAccountInformation() throws Exception {    
 		Map<Object, Object> params = new HashMap<Object, Object>();
@@ -1329,11 +1336,12 @@ public class MyRemoteWallet extends MyWallet {
 		
 		String response = securePost(WebROOT + "wallet", params);
 		JSONObject obj  = (JSONObject) new JSONParser().parse(response);
-		email = (String)obj.get("email");
-		smsNumber = (String)obj.get("sms_number");
+		setEmail((String)obj.get("email"));
+		setSmsNumber((String)obj.get("sms_number"));
 
 		List<Long> notificationsType = (List<Long>) obj.get("notifications_type"); 
 		notificationsTypeSet = new HashSet<String>();
+
 		for (Long value : notificationsType)
 			notificationsTypeSet.add(value.toString());
 	}
@@ -1370,7 +1378,7 @@ public class MyRemoteWallet extends MyWallet {
 		return response;
 	}
 
-	public JSONObject enableEmailNotification(boolean enable) throws Exception {    		
+	public String enableEmailNotification(boolean enable) throws Exception {    		
 		if (enable)
 			notificationsTypeSet.add(NotificationsTypeEmail);
 		else
@@ -1381,7 +1389,7 @@ public class MyRemoteWallet extends MyWallet {
 		return updateNotificationsType(list.toArray(new String[list.size()]));
 	}
 	
-	public JSONObject enableSMSNotification(boolean enable) throws Exception {
+	public String enableSMSNotification(boolean enable) throws Exception {
 		if (enable)
 			notificationsTypeSet.add(NotificationsTypeSMS);
 		else
@@ -1391,8 +1399,31 @@ public class MyRemoteWallet extends MyWallet {
 
 		return updateNotificationsType(list.toArray(new String[list.size()]));
 	}
+
+	public boolean isEnableEmailNotification() {    		
+		return notificationsTypeSet.contains(NotificationsTypeEmail);
+	}
 	
-	public JSONObject updateNotificationsType(String[] values) throws Exception {    		
+	public boolean isEnableSMSNotification() {    		
+		return notificationsTypeSet.contains(NotificationsTypeSMS);
+	}
+	
+	public String updateNotificationsType(boolean enableEmailNotification, boolean enableSMSNotification) throws Exception {    		
+		if (enableSMSNotification)
+			notificationsTypeSet.add(NotificationsTypeSMS);
+		else
+			notificationsTypeSet.remove(NotificationsTypeSMS);
+
+		if (enableEmailNotification)
+			notificationsTypeSet.add(NotificationsTypeEmail);
+		else
+			notificationsTypeSet.remove(NotificationsTypeEmail);
+		
+		List<String> list = new ArrayList<String>(notificationsTypeSet);
+		return updateNotificationsType(list.toArray(new String[list.size()]));
+	}
+	
+	private String updateNotificationsType(String[] values) throws Exception {    		
 
 		String payload = StringUtils.join(values, "|");
 		String length =  Integer.toString(payload.length());
@@ -1403,7 +1434,7 @@ public class MyRemoteWallet extends MyWallet {
 		params.put("method", "update-notifications-type");
 		
 		String response = securePost(WebROOT + "wallet", params);
-		return (JSONObject) new JSONParser().parse(response);
+		return response;
 	}
 
 	public String securePost(String url, Map<Object, Object> data) throws Exception {  
@@ -1717,5 +1748,4 @@ public class MyRemoteWallet extends MyWallet {
 
 		return null;
 	}
-
 }

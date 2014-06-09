@@ -30,8 +30,10 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.ConnectivityManager;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.util.Pair;
 import android.widget.Toast;
+
 import com.google.bitcoin.core.*;
 import com.google.bitcoin.core.Wallet.AutosaveEventListener;
 import com.google.bitcoin.store.WalletExtensionSerializer;
@@ -56,6 +58,7 @@ import piuk.blockchain.android.ui.dialogs.RekeyWalletDialog;
 import piuk.blockchain.android.util.ErrorReporter;
 import piuk.blockchain.android.util.RandomOrgGenerator;
 import piuk.blockchain.android.util.WalletUtils;
+import info.blockchain.wallet.ui.WalletUtil;
 
 import java.io.File;
 import java.io.FileInputStream; 
@@ -1290,7 +1293,171 @@ public class WalletApplication extends Application {
 
 
 	}
+	
+	public void updateEmail(final String email, final SuccessCallback callback) {
+		final MyRemoteWallet blockchainWallet = this.blockchainWallet;
 
+		if (blockchainWallet == null) {
+			if (callback != null)
+				callback.onFail();
+
+			return;
+		}
+
+		new Thread(new Runnable() {
+			public void run() {
+				try {
+
+					try {
+						blockchainWallet.updateEmail(email);
+						blockchainWallet.setEmail(email);
+					} catch (Exception e) {
+						e.printStackTrace(); 
+
+						try {
+							//Sleep for a bit and retry
+							Thread.sleep(5000);
+						} catch (InterruptedException e1) {
+							e1.printStackTrace();
+						}
+
+						try {
+							blockchainWallet.updateEmail(email);
+							blockchainWallet.setEmail(email);
+						} catch (Exception e1) {
+							e1.printStackTrace(); 
+
+							EventListeners.invokeOnMultiAddrError();
+
+							if (callback != null)
+								callback.onFail();
+
+							return;
+						}
+					}
+
+					if (callback != null)
+						callback.onSuccess();
+
+					handler.post(new Runnable() {
+						public void run() {
+						}
+					});
+				} finally {
+				}
+			}
+		}).start();
+	}
+	
+	
+	public void updateSMS(final String smsNumber, final SuccessCallback callback) {
+		final MyRemoteWallet blockchainWallet = this.blockchainWallet;
+
+		if (blockchainWallet == null) {
+			if (callback != null)
+				callback.onFail();
+
+			return;
+		}
+
+		new Thread(new Runnable() {
+			public void run() {
+				try {
+
+					try {
+						blockchainWallet.updateSMS(smsNumber);
+						blockchainWallet.setSmsNumber(smsNumber);
+					} catch (Exception e) {
+						e.printStackTrace(); 
+
+						try {
+							//Sleep for a bit and retry
+							Thread.sleep(5000);
+						} catch (InterruptedException e1) {
+							e1.printStackTrace();
+						}
+
+						try {
+							blockchainWallet.updateSMS(smsNumber);
+							blockchainWallet.setSmsNumber(smsNumber);
+						} catch (Exception e1) {
+							e1.printStackTrace(); 
+
+							EventListeners.invokeOnMultiAddrError();
+
+							if (callback != null)
+								callback.onFail();
+
+							return;
+						}
+					}
+
+					if (callback != null)
+						callback.onSuccess();
+
+					handler.post(new Runnable() {
+						public void run() {
+						}
+					});
+				} finally {
+				}
+			}
+		}).start();
+	}
+	
+	public void updateNotificationsType(final boolean enableEmailNotification, final boolean enableSMSNotification, final SuccessCallback callback) {
+		final MyRemoteWallet blockchainWallet = this.blockchainWallet;
+
+		if (blockchainWallet == null) {
+			if (callback != null)
+				callback.onFail();
+
+			return;
+		}
+
+		new Thread(new Runnable() {
+			public void run() {
+				try {
+
+					try {
+						blockchainWallet.updateNotificationsType(enableEmailNotification, enableSMSNotification);
+					} catch (Exception e) {
+						e.printStackTrace(); 
+
+						try {
+							//Sleep for a bit and retry
+							Thread.sleep(5000);
+						} catch (InterruptedException e1) {
+							e1.printStackTrace();
+						}
+
+						try {
+							blockchainWallet.updateNotificationsType(enableEmailNotification, enableSMSNotification);
+						} catch (Exception e1) {
+							e1.printStackTrace(); 
+
+							EventListeners.invokeOnMultiAddrError();
+
+							if (callback != null)
+								callback.onFail();
+
+							return;
+						}
+					}
+
+					if (callback != null)
+						callback.onSuccess();
+
+					handler.post(new Runnable() {
+						public void run() {
+						}
+					});
+				} finally {
+				}
+			}
+		}).start();
+	}
+	
 	public boolean setCurrency(String currency) { 
 		return PreferenceManager.getDefaultSharedPreferences(this).edit().putString(Constants.PREFS_KEY_EXCHANGE_CURRENCY, currency).commit();
 	}
