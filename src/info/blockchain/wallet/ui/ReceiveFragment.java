@@ -357,6 +357,7 @@ public class ReceiveFragment extends Fragment   {
         });
 
         edAddress = ((EditText)rootView.findViewById(R.id.address));
+        edAddress.setHint("Enter Bitcoin address here");
         edAddress.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
             	
@@ -438,31 +439,9 @@ public class ReceiveFragment extends Fragment   {
         clear_input.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-            	edAddress.setText("");
-              	edAmount1.setText("");
-              	if(isBTC) {
-                  	edAmount1.setHint("0.0000");
-              	}
-              	else {
-                  	edAmount1.setHint("0.00");
-              	}
-            	edAmount1.setText("0.0000");
-            	tvAmount2.setText("0.0000");
-            	isBTC = true;
-
-                tvAddress.setText("");
-                tvAddress.setVisibility(View.INVISIBLE);
-                tvAddressBis.setText("");
-                tvAddressBis.setVisibility(View.INVISIBLE);
-                
-                ivReceivingQR.setVisibility(View.INVISIBLE);
-
-            	if(!isMagic) {
-                	displayMagicList();
-            	}
-
-                clear_input.setVisibility(View.INVISIBLE);
-
+            	
+            	clearReceive();
+            	
                 return false;
             }
         });
@@ -836,7 +815,8 @@ public class ReceiveFragment extends Fragment   {
 
 
     private void clearReceive()	{
-
+    	edAddress.setText("");
+        edAddress.setHint("Enter Bitcoin address here");
       	edAmount1.setText("");
       	if(isBTC) {
           	edAmount1.setHint("0.0000");
@@ -844,11 +824,23 @@ public class ReceiveFragment extends Fragment   {
       	else {
           	edAmount1.setHint("0.00");
       	}
+    	edAmount1.setText("0.0000");
+    	tvAmount2.setText("0.0000");
+    	isBTC = true;
+
         tvAddress.setText("");
         tvAddress.setVisibility(View.INVISIBLE);
         tvAddressBis.setText("");
         tvAddressBis.setVisibility(View.INVISIBLE);
+        
         ivReceivingQR.setVisibility(View.INVISIBLE);
+
+    	if(!isMagic) {
+        	displayMagicList();
+    	}
+
+        final ImageView clear_input = (ImageView)rootView.findViewById(R.id.clear);
+        clear_input.setVisibility(View.INVISIBLE);
     }
 
 }
