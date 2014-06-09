@@ -19,6 +19,7 @@ import piuk.MyTransaction;
 import piuk.MyTransactionInput;
 import piuk.blockchain.android.R;
 import piuk.blockchain.android.WalletApplication;
+import piuk.blockchain.android.ui.SuccessCallback;
 import piuk.blockchain.android.util.WalletUtils;
 
 import com.google.bitcoin.core.Address;
@@ -86,6 +87,7 @@ public class BalanceFragment extends Fragment   {
 	private BigInteger totalOutputsValue = BigInteger.ZERO;
 	private String strCurrentFiatSymbol = "$";
 	private String strCurrentFiatCode = "USD";
+	private boolean isAccountInformationIntialized = false;
 
 	private WalletApplication application;
 	private Map<String, String> labelMap;
@@ -289,6 +291,26 @@ public class BalanceFragment extends Fragment   {
 
         if (adapter != null) {
         	adapter.notifyDataSetChanged();
+        }
+        
+        
+        if (isAccountInformationIntialized == false) {
+        	isAccountInformationIntialized = true;
+
+    		application.getAccountInformation(false, new SuccessCallback() {
+    			@Override
+    			public void onSuccess() {
+    	    		Log.d("getAccountInformation", "getAccountInformation isEnableEmailNotification " + application.getRemoteWallet().isEnableEmailNotification());
+    	    		Log.d("getAccountInformation", "getAccountInformation isEnableSMSNotification " + application.getRemoteWallet().isEnableSMSNotification());
+    	    		Log.d("getAccountInformation", "getAccountInformation getEmail " + application.getRemoteWallet().getEmail());
+    	    		Log.d("getAccountInformation", "getAccountInformation getSMSNumber " + application.getRemoteWallet().getSmsNumber());			    		
+    			}
+    			
+    			@Override
+    			public void onFail() {
+    	    		Log.d("getAccountInformation", "getAccountInformation fail");	
+    			}
+    		});   
         }
     }
 	

@@ -106,21 +106,6 @@ public class MainActivity extends AbstractWalletActivity implements ActionBar.Ta
 			if (application.getRemoteWallet() != null) {
 				application.checkIfWalletHasUpdatedAndFetchTransactions(application.getRemoteWallet().getTemporyPassword());
 			}
-			
-			application.getAccountInformation(false, new SuccessCallback() {
-				@Override
-				public void onSuccess() {
-		    		Log.d("getAccountInformation", "getAccountInformation isEnableEmailNotification" + application.getRemoteWallet().isEnableEmailNotification());
-		    		Log.d("getAccountInformation", "getAccountInformation isEnableSMSNotification" + application.getRemoteWallet().isEnableSMSNotification());
-		    		Log.d("getAccountInformation", "getAccountInformation getEmail" + application.getRemoteWallet().getEmail());
-		    		Log.d("getAccountInformation", "getAccountInformation getSMSNumber" + application.getRemoteWallet().getSmsNumber());			    		
-				}
-				
-				@Override
-				public void onFail() {
-		    		Log.d("getAccountInformation", "getAccountInformation fail");	
-				}
-			});
 		}
 	};
 	
