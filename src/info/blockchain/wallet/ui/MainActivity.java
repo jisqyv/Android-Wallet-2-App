@@ -53,7 +53,7 @@ import piuk.blockchain.android.ui.AbstractWalletActivity;
 import piuk.blockchain.android.ui.SuccessCallback;
 
 @SuppressLint("NewApi")
-public class MainActivity extends AbstractWalletActivity implements ActionBar.TabListener {
+public class MainActivity extends FragmentActivity implements ActionBar.TabListener {
 
     private static int PIN_ENTRY_ACTIVITY 	= 1;
     private static int SETUP_ACTIVITY	 	= 2;
@@ -75,40 +75,8 @@ public class MainActivity extends AbstractWalletActivity implements ActionBar.Ta
 
 	long lastMesssageTime = 0;
 
-	private final BroadcastReceiver mHandleMessageReceiver =
-			new BroadcastReceiver() { 
-		@Override
-		public void onReceive(Context context, Intent intent) {
+	private WalletApplication application;
 
-			//Throttle messages to once every 30 seconds 
-			if (lastMesssageTime > System.currentTimeMillis()-30000) {
-				return;
-			}
-
-			lastMesssageTime = System.currentTimeMillis();
-
-			String body = intent.getExtras().getString(Constants.BODY);
-			String title = intent.getExtras().getString(Constants.TITLE);
-
-			AlertDialog.Builder builder = new AlertDialog.Builder(context);
-			builder.setTitle(title)
-			.setMessage(body)
-			.setCancelable(false)
-			.setIcon(R.drawable.app_icon)
-			.setNegativeButton(R.string.button_dismiss, new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int id) {
-					dialog.cancel();
-				}
-			});
-
-			builder.create().show();		// create and show the alert dialog
-
-			if (application.getRemoteWallet() != null) {
-				application.checkIfWalletHasUpdatedAndFetchTransactions(application.getRemoteWallet().getTemporyPassword());
-			}
-		}
-	};
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -163,6 +131,8 @@ public class MainActivity extends AbstractWalletActivity implements ActionBar.Ta
             }
         });
 
+        application = WalletUtil.getInstance(this, this).getWalletApplication();
+        
         final ImageView refresh_icon = new ImageView(actionBar.getThemedContext());
         refresh_icon.setImageResource(R.drawable.refresh_icon);
         refresh_icon.setScaleType(ImageView.ScaleType.FIT_XY);
@@ -223,7 +193,6 @@ public class MainActivity extends AbstractWalletActivity implements ActionBar.Ta
         viewPager.setCurrentItem(1);
         
         BlockchainUtil.getInstance(this);
-		registerReceiver(mHandleMessageReceiver, new IntentFilter(Constants.DISPLAY_MESSAGE_ACTION));
 
 		if (application.getRemoteWallet() != null) {
 			application.checkIfWalletHasUpdatedAndFetchTransactions(application.getRemoteWallet().getTemporyPassword());
@@ -232,7 +201,6 @@ public class MainActivity extends AbstractWalletActivity implements ActionBar.Ta
 
 	@Override
 	protected void onDestroy() {
-		unregisterReceiver(mHandleMessageReceiver);
 		super.onDestroy();
 	}
 	
@@ -372,4 +340,56 @@ public class MainActivity extends AbstractWalletActivity implements ActionBar.Ta
 //    	intent.setType(ContactsContract.CommonDataKinds.Email.CONTENT_TYPE);
     	startActivityForResult(intent, PICK_CONTACT);
     }
+    
+    
+        
+	public final void toast(final String text, final Object... formatArgs) {
+		toast(text, 0, Toast.LENGTH_SHORT, formatArgs);
+	}
+
+	public final void longToast(final String text, final Object... formatArgs) {
+		toast(text, 0, Toast.LENGTH_LONG, formatArgs);
+	}
+	
+	public final void toast(final String text, final int imageResId,
+			final int duration, final Object... formatArgs) {
+
+		if (text == null)
+			return;
+
+		final View view = getLayoutInflater().inflate(
+				R.layout.transient_notification, null);
+		TextView tv = (TextView) view
+				.findViewById(R.id.transient_notification_text);
+		tv.setText(String.format(text, formatArgs));
+		tv.setCompoundDrawablesWithIntrinsicBounds(imageResId, 0, 0, 0);
+
+		final Toast toast = new Toast(this);
+		toast.setView(view);
+		toast.setDuration(duration);
+		toast.show();
+	}
+	
+	public final void toast(final int textResId, final Object... formatArgs) {
+		toast(textResId, 0, Toast.LENGTH_SHORT, formatArgs);
+	}
+
+	public final void longToast(final int textResId, final Object... formatArgs) {
+		toast(textResId, 0, Toast.LENGTH_LONG, formatArgs);
+	}
+	
+	public final void toast(final int textResId, final int imageResId,
+			final int duration, final Object... formatArgs) {
+		final View view = getLayoutInflater().inflate(
+				R.layout.transient_notification, null);
+		TextView tv = (TextView) view
+				.findViewById(R.id.transient_notification_text);
+		tv.setText(getString(textResId, formatArgs));
+		tv.setCompoundDrawablesWithIntrinsicBounds(imageResId, 0, 0, 0);
+
+		final Toast toast = new Toast(this);
+		toast.setView(view);
+		toast.setDuration(duration);
+		toast.show();
+	}
 }
