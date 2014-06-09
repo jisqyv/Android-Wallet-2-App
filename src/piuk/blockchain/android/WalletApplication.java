@@ -29,6 +29,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.ConnectivityManager;
 import android.os.Handler;
+import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.Pair;
@@ -58,6 +59,7 @@ import piuk.blockchain.android.ui.dialogs.RekeyWalletDialog;
 import piuk.blockchain.android.util.ErrorReporter;
 import piuk.blockchain.android.util.RandomOrgGenerator;
 import piuk.blockchain.android.util.WalletUtils;
+import info.blockchain.wallet.ui.MainActivity;
 import info.blockchain.wallet.ui.WalletUtil;
 
 import java.io.File;
@@ -69,6 +71,7 @@ import java.lang.reflect.Method;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.security.MessageDigest;
+import java.security.SecureRandom;
 import java.security.Security;
 import java.text.SimpleDateFormat;
 import java.util.Map.Entry;
@@ -1455,6 +1458,65 @@ public class WalletApplication extends Application {
 				} finally {
 				}
 			}
+		}).start();
+	}
+	
+	public void apiStoreKey(final String pin, final SuccessCallback callback) {
+		final MyRemoteWallet blockchainWallet = this.blockchainWallet;
+
+		if (blockchainWallet == null) {
+			if (callback != null)
+				callback.onFail();
+
+			return;
+		}
+
+		final WalletApplication application = this;
+		
+		new Thread(new Runnable(){
+		    @Override
+		    public void run() {
+				Looper.prepare();
+
+				Editor edit = PreferenceManager.getDefaultSharedPreferences(WalletApplication.this).edit();
+
+				//
+				// Save PIN
+				//
+		        try {
+					byte[] bytes = new byte[16];
+					SecureRandom random = new SecureRandom();
+					random.nextBytes(bytes);
+					final String key = new String(Hex.encode(bytes), "UTF-8");
+					random.nextBytes(bytes);
+					final String value = new String(Hex.encode(bytes), "UTF-8");
+					final JSONObject response = piuk.blockchain.android.ui.PinEntryActivity.apiStoreKey(key, value, pin);
+					if (response.get("success") != null) {
+//*
+						edit.putString("pin_kookup_key", key);
+						edit.putString("encrypted_password", MyWallet.encrypt(application.getRemoteWallet().getTemporyPassword(), value, piuk.blockchain.android.ui.PinEntryActivity.PBKDF2Iterations));
+
+						if (!edit.commit()) {
+							throw new Exception("Error Saving Preferences");
+						}
+						else {
+						}
+//*/
+					}
+					else {
+						Toast.makeText(application, response.toString(), Toast.LENGTH_LONG).show();
+					}
+		        } catch (Exception e) {
+					Toast.makeText(application, e.toString(), Toast.LENGTH_LONG).show();
+		            e.printStackTrace();
+		        }
+				//
+				//
+				//
+		        
+				Looper.loop();
+
+		    }
 		}).start();
 	}
 	

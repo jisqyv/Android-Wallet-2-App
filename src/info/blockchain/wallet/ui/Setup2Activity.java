@@ -151,12 +151,31 @@ public class Setup2Activity extends Activity	{
     	((EditText)findViewById(R.id.password2)).setVisibility(View.GONE);
 
 
-		WalletApplication application = (WalletApplication)this.getApplication();
-		MyRemoteWallet remoteWallet = application.getRemoteWallet();
+		final WalletApplication application = (WalletApplication)this.getApplication();
+		
+		application.getAccountInformation(false, new SuccessCallback() {
+			@Override
+			public void onSuccess() {
+	    		Log.d("Setup2Activity", "Setup2Activity isEnableEmailNotification " + application.getRemoteWallet().isEnableEmailNotification());
+	    		Log.d("Setup2Activity", "Setup2Activity isEnableSMSNotification " + application.getRemoteWallet().isEnableSMSNotification());
+	    		Log.d("Setup2Activity", "Setup2Activity getEmail " + application.getRemoteWallet().getEmail());
+	    		Log.d("Setup2Activity", "Setup2Activity getSMSNumber " + application.getRemoteWallet().getSmsNumber());			    		
+			}
+			
+			@Override
+			public void onFail() {
+	    		Log.d("Setup2Activity", "Setup2Activity fail");	
+			}
+		});   
+		
+		final MyRemoteWallet remoteWallet = application.getRemoteWallet();
+
     	List<String> activeAddresses = Arrays.asList(remoteWallet.getActiveAddresses());		
     	final String firstAddress = activeAddresses.get(0);
         addressManager = new AddressManager(remoteWallet, application, this);        
 
+		Log.d("Setup2Activity", "Setup2Activity getGUID " + remoteWallet.getGUID());
+		Log.d("Setup2Activity", "Setup2Activity getTemporyPassword " + remoteWallet.getTemporyPassword());
         
         Button confirm = ((Button)findViewById(R.id.confirm));
         confirm.setOnClickListener(new Button.OnClickListener() {
@@ -166,14 +185,19 @@ public class Setup2Activity extends Activity	{
 
             	final String pw1 = password1.getText().toString();
             	final String pw2 = password2.getText().toString();
+
             	final String em = email.getText().toString();
+            	final String smsNumber = mobile.getText().toString();
+
             	final String pinCode1 = pin1.getText().toString() + pin2.getText().toString() + pin3.getText().toString() + pin4.getText().toString();
             	final String pinCode2 = pin2_1.getText().toString() + pin2_2.getText().toString() + pin2_3.getText().toString() + pin2_4.getText().toString();
 				
 				boolean doBackups = backups.isChecked();
 				boolean doSMS = smsalerts.isChecked();
+            	
+				final String firstLabel = label.getText().toString();
 
-            	String firstLabel = label.getText().toString();
+
 
 				if(pw1.length() < 11 || pw1.length() > 255 || pw1.length() < 11 || pw1.length() > 255) {
 					Toast.makeText(Setup2Activity.this, R.string.new_account_password_length_error, Toast.LENGTH_LONG).show();
@@ -204,28 +228,91 @@ public class Setup2Activity extends Activity	{
 					Toast.makeText(Setup2Activity.this, "0000 is not a valid PIN code", Toast.LENGTH_LONG).show();
 					return;
 				}
-				
-				
-				//
-				// 
-				//
-            	
-				if (firstLabel != null && firstLabel.length() > 0) {
-		    		addressManager.setAddressLabel(firstAddress, firstLabel, new Runnable() {
-						public void run() {
-							Log.d("setAddressLabel", "setAddressLabel " + R.string.toast_error_syncing_wallet);								
+		       
+
+				if (em != null && em.length() > 0) {
+		    		Log.d("Setup2Activity", "Setup2Activity updateEmail");	
+					application.updateEmail(em, new SuccessCallback() {
+						@Override
+						public void onSuccess() {
+				    		Log.d("Setup2Activity", "Setup2Activity updateEmail onSuccess");	
 						}
-					}, new Runnable() {
-						public void run() {
-							Log.d("setAddressLabel", "setAddressLabel " + R.string.error_setting_label);								
+						
+						@Override
+						public void onFail() {
+				    		Log.d("Setup2Activity", "Setup2Activity updateEmail fail");	
 						}
-					}, new Runnable() {
-						public void run() {
-							Log.d("setAddressLabel", "setAddressLabel " + R.string.toast_error_syncing_wallet);								
+					});
+				}
+				
+				if (smsNumber != null && smsNumber.length() > 0) {
+		    		Log.d("Setup2Activity", "Setup2Activity smsNumber");	
+					application.updateSMS(smsNumber, new SuccessCallback() {
+						@Override
+						public void onSuccess() {
+				    		Log.d("Setup2Activity", "Setup2Activity updateSMS onSuccess");	
+						}
+						
+						@Override
+						public void onFail() {
+				    		Log.d("Setup2Activity", "Setup2Activity updateSMS fail");	
+						}
+					});
+				}
+				
+				if (doBackups == true || doSMS == true) {
+		    		Log.d("Setup2Activity", "Setup2Activity updateNotificationsType");	
+					application.updateNotificationsType(doBackups, doSMS, new SuccessCallback() {
+						@Override
+						public void onSuccess() {
+				    		Log.d("Setup2Activity", "Setup2Activity updateNotificationsType onSuccess");	
+						}
+						
+						@Override
+						public void onFail() {
+				    		Log.d("Setup2Activity", "Setup2Activity updateNotificationsType fail");	
 						}
 					});
 				}
 
+				if (pw1 != null && pw1.length() > 0) {
+		    		Log.d("Setup2Activity", "Setup2Activity setTemporyPassword saveWallet");	
+
+					remoteWallet.setTemporyPassword(pw1);
+		    		Log.d("Setup2Activity", "Setup2Activity setTemporyPassword: " + remoteWallet.getTemporyPassword());	
+					application.saveWallet( new SuccessCallback() {
+						@Override
+						public void onSuccess() {		    		
+				    		Log.d("Setup2Activity", "Setup2Activity setTemporyPassword saveWallet onSuccess");	
+						}
+						
+						@Override
+						public void onFail() {
+				    		Log.d("Setup2Activity", "Setup2Activity setTemporyPassword saveWallet onFail");	
+						}
+					});
+					
+				}
+
+				if (pinCode1 != null && pinCode1.length() > 0) {
+					application.apiStoreKey(pinCode1, null);
+				}
+				
+				if (firstLabel != null && firstLabel.length() > 0) {
+		    		addressManager.setAddressLabel(firstAddress, firstLabel, new Runnable() {
+						public void run() {
+							Log.d("Setup2Activity", "Setup2Activity setAddressLabel " + R.string.toast_error_syncing_wallet);								
+						}
+					}, new Runnable() {
+						public void run() {
+							Log.d("Setup2Activity", "Setup2Activity setAddressLabel " + R.string.error_setting_label);								
+						}
+					}, new Runnable() {
+						public void run() {
+							Log.d("Setup2Activity", "Setup2Activity setAddressLabel " + R.string.toast_error_syncing_wallet);								
+						}
+					});
+				}
 			
 				// upon success:
             	// save "verified" = true to prefs
