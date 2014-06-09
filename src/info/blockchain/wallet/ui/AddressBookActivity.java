@@ -50,7 +50,8 @@ public class AddressBookActivity extends Activity {
     
     private static int QR_GENERATION = 1;
     private static int EDIT_LABEL = 2;
-    
+	private String editLabelAddress = null;
+
     private static enum DisplayedAddresses {
 		SendingAddresses,
 		ActiveAddresses,
@@ -280,9 +281,26 @@ public class AddressBookActivity extends Activity {
 				String label = data.getAction();
 				
 	    		Toast.makeText(AddressBookActivity.this, label, Toast.LENGTH_LONG).show();
-				
-				
-				
+
+	    		addressManager.setAddressLabel(editLabelAddress, label, new Runnable() {
+					public void run() {
+						Toast.makeText(AddressBookActivity.this,
+								R.string.toast_error_syncing_wallet,
+								Toast.LENGTH_LONG).show();
+					}
+				}, new Runnable() {
+					public void run() {
+						Toast.makeText(AddressBookActivity.this,
+								R.string.error_setting_label,
+								Toast.LENGTH_LONG).show();
+					}
+				}, new Runnable() {
+					public void run() {
+						Toast.makeText(AddressBookActivity.this,
+								R.string.toast_error_syncing_wallet,
+								Toast.LENGTH_LONG).show();
+					}
+				});
 			}
 
         }
@@ -319,7 +337,9 @@ public class AddressBookActivity extends Activity {
 	        	Intent intent = new Intent(AddressBookActivity.this, info.blockchain.wallet.ui.EditSetting.class);
 	        	intent.putExtra("prompt", "Label");
 	        	intent.putExtra("value", labelMap.get(address));
-	    		startActivityForResult(intent, EDIT_LABEL);
+	        	editLabelAddress = address;
+
+	        	startActivityForResult(intent, EDIT_LABEL);
 
 	    		return true;
 	    	case R.id.archive_address:
