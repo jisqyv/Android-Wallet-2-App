@@ -383,7 +383,6 @@ public class BalanceFragment extends Fragment   {
     	    	final LinearLayout balance_extHiddenLayout = (LinearLayout)view.findViewById(R.id.balance_ext_hidden);
 
     	    	if(balance_extHiddenLayout.getVisibility() == View.VISIBLE) {
-    	    		
     	    		addressLabelTxsDisplayed[position] = false;
 
     	    		if(balance_extHiddenLayout.getChildCount() > 1) {
@@ -716,7 +715,6 @@ public class BalanceFragment extends Fragment   {
         } 
 
         final List<MyTransaction> transactionsList = remoteWallet.getTransactions();
-
 		for (Iterator<MyTransaction> it = transactionsList.iterator(); it.hasNext();) {
 			MyTransaction transaction = it.next();
 //		    Log.d("transactionHash: ", transaction.getHashAsString());
@@ -837,9 +835,9 @@ public class BalanceFragment extends Fragment   {
         	if (addressValueEntryList.size() > 0) {
             	balance_extHiddenLayout.setVisibility(View.VISIBLE);
         	}
-    	    balance_extLayout.setVisibility(View.VISIBLE);
-//    	    balance_extLayout.startAnimation(slideDown);
 	    }
+	    balance_extLayout.setVisibility(View.VISIBLE);
+//	    balance_extLayout.startAnimation(slideDown);
     }
     
     private View getTxChildView(final View view, List<Map.Entry<String, String>> addressValueEntryList, final BigInteger result, final MyTransaction transaction, final boolean isSending) {

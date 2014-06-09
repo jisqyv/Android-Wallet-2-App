@@ -178,6 +178,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         refresh_icon.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+				Toast.makeText(MainActivity.this, "Refreshing...", Toast.LENGTH_LONG).show();
         		application.checkIfWalletHasUpdatedAndFetchTransactions(application.getRemoteWallet().getTemporyPassword());
         		return false;
             }
