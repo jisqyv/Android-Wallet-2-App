@@ -832,9 +832,9 @@ public class BalanceFragment extends Fragment   {
 	    		balance_extHiddenLayout.addView(child);	    	
         	}	   
 
-        	if (addressValueEntryList.size() > 0) {
+//        	if (addressValueEntryList.size() > 0) {
             	balance_extHiddenLayout.setVisibility(View.VISIBLE);
-        	}
+//        	}
 	    }
 	    balance_extLayout.setVisibility(View.VISIBLE);
 //	    balance_extLayout.startAnimation(slideDown);
