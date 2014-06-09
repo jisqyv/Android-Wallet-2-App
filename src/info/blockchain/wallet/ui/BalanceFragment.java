@@ -209,13 +209,15 @@ public class BalanceFragment extends Fragment   {
         strCurrentFiatSymbol = prefs.getString(strCurrentFiatCode + "-SYM", "$");
 
 //		application = (WalletApplication)getActivity().getApplication();
-		application = WalletUtil.getInstance(getActivity(),  getActivity()).getWalletApplication();
+//		application = WalletUtil.getInstance(getActivity(),  getActivity()).getWalletApplication();
+		application = WalletUtil.getRefreshedInstance(getActivity(),  getActivity()).getWalletApplication();
 
 		if (application == null) {
 			return;
 		}
 
 //		MyRemoteWallet remoteWallet = application.getRemoteWallet();
+//		MyRemoteWallet remoteWallet = WalletUtil.getInstance(getActivity(), getActivity()).getRemoteWallet();
 		MyRemoteWallet remoteWallet = WalletUtil.getInstance(getActivity(), getActivity()).getRemoteWallet();
 		if (remoteWallet == null) {
 			return;
@@ -832,7 +834,9 @@ public class BalanceFragment extends Fragment   {
 	    		balance_extHiddenLayout.addView(child);	    	
         	}	   
 
-        	balance_extHiddenLayout.setVisibility(View.VISIBLE);
+        	if (addressValueEntryList.size() > 0) {
+            	balance_extHiddenLayout.setVisibility(View.VISIBLE);
+        	}
     	    balance_extLayout.setVisibility(View.VISIBLE);
 //    	    balance_extLayout.startAnimation(slideDown);
 	    }
