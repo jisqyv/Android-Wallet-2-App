@@ -1472,13 +1472,13 @@ public class WalletApplication extends Application {
 		}
 
 		final WalletApplication application = this;
-		
+
 		new Thread(new Runnable(){
 		    @Override
 		    public void run() {
 				Looper.prepare();
 
-				Editor edit = PreferenceManager.getDefaultSharedPreferences(WalletApplication.this).edit();
+				Editor edit = PreferenceManager.getDefaultSharedPreferences(application).edit();
 
 				//
 				// Save PIN
