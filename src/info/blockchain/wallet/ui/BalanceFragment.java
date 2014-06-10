@@ -836,7 +836,8 @@ public class BalanceFragment extends Fragment   {
             	balance_extHiddenLayout.setVisibility(View.VISIBLE);
 //        	}
 	    }
-	    balance_extLayout.setVisibility(View.VISIBLE);
+
+		balance_extLayout.setVisibility(View.VISIBLE);
 //	    balance_extLayout.startAnimation(slideDown);
     }
     
