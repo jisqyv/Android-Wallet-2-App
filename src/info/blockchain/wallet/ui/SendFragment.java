@@ -2022,6 +2022,16 @@ public class SendFragment extends Fragment   {
         edAmount.setLayoutParams(layout_params);
     	((LinearLayout)layout_from.findViewById(R.id.p3)).setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
     	((LinearLayout)layout_from.findViewById(R.id.p3)).addView(edAmount);
+    	
+        TextView tvCurrency = new TextView(getActivity());
+        tvCurrency.setText("BTC");
+        tvCurrency.setTextSize(12);
+        tvCurrency.setPadding(5, 5, 5, 5);
+        tvCurrency.setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
+        layout_params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+        tvCurrency.setLayoutParams(layout_params);
+    	((LinearLayout)layout_from.findViewById(R.id.p4)).setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL);
+    	((LinearLayout)layout_from.findViewById(R.id.p4)).addView(tvCurrency);
 
         spAddress.setOnTouchListener(new OnTouchListener() {
             @Override
@@ -2122,8 +2132,19 @@ public class SendFragment extends Fragment   {
         edFee.setLayoutParams(layout_params);
     	((LinearLayout)layout_fee.findViewById(R.id.p3)).setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
     	((LinearLayout)layout_fee.findViewById(R.id.p3)).addView(edFee);
+        tvCurrency = new TextView(getActivity());
+        tvCurrency.setText("BTC");
+        tvCurrency.setTextSize(12);
+        tvCurrency.setPadding(5, 5, 5, 5);
+        tvCurrency.setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
+        layout_params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+        tvCurrency.setLayoutParams(layout_params);
+    	((LinearLayout)layout_fee.findViewById(R.id.p4)).setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL);
+    	((LinearLayout)layout_fee.findViewById(R.id.p4)).addView(tvCurrency);
+
     	layout_fee.setPadding(0, 10, 0, 0);
     	((LinearLayout)layout_custom_spend.findViewById(R.id.custom_spend)).addView(layout_fee);
+
 
     	spFeeType.setOnItemSelectedListener(new OnItemSelectedListener()	{
 	    	public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3)	{
@@ -2568,6 +2589,16 @@ public class SendFragment extends Fragment   {
         edAmount.setLayoutParams(layout_params);
     	((LinearLayout)layout_from2.findViewById(R.id.p3)).setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
     	((LinearLayout)layout_from2.findViewById(R.id.p3)).addView(edAmount);
+
+        tvCurrency = new TextView(getActivity());
+        tvCurrency.setText("BTC");
+        tvCurrency.setTextSize(12);
+        tvCurrency.setPadding(5, 5, 5, 5);
+        tvCurrency.setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
+        layout_params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+        tvCurrency.setLayoutParams(layout_params);
+    	((LinearLayout)layout_from2.findViewById(R.id.p4)).setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL);
+    	((LinearLayout)layout_from2.findViewById(R.id.p4)).addView(tvCurrency);
 
     	/*
     	ImageButton ibPlus = new ImageButton(getActivity());
