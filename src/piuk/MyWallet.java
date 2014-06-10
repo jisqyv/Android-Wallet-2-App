@@ -110,7 +110,7 @@ public class MyWallet {
 
 		ECKey key = generateECKey();
 		
-		addKey(key, key.toAddress(NetworkParameters.prodNet()).toString(), "New");
+		addKey(key, key.toAddress(NetworkParameters.prodNet()).toString(), "My 1st Address");
 	}
 
 	@SuppressWarnings("unchecked")
