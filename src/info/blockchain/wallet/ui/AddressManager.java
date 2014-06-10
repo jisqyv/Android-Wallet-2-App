@@ -79,6 +79,84 @@ public class AddressManager {
 		return false;
 	}
 	
+	public void handleScanPrivateKey(final String data) throws Exception {
+		handler.postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					final String format = WalletUtils.detectPrivateKeyFormat(data);
+
+		    		Log.d("AddressManager", "AddressManager format " + format);			    		
+
+					handleScanPrivateKeyPair(WalletUtils.parsePrivateKey(format, data, null));
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}, 100);
+
+	}
+	
+	private void handleScanPrivateKeyPair(final Pair<ECKey, Boolean> pair) throws Exception {
+		final ECKey key = pair.first;
+		final Boolean compressed = pair.second;
+
+		new Thread() {
+			public void run() {
+				try {
+					final String address;
+					if (compressed) {
+						address = key.toAddressCompressed(NetworkParameters.prodNet()).toString();
+					} else {
+						address = key.toAddress(NetworkParameters.prodNet()).toString();
+					}
+
+		    		Log.d("AddressManager", "AddressManager onError Address " + address);			    		
+
+					BigInteger balance = MyRemoteWallet.getAddressBalance(address);
+
+					final BigInteger finalBalance = balance;
+		    		Log.d("AddressManager", "AddressManager onError finalBalance " + finalBalance);			    		
+
+					application.addKeyToWallet(key, key.toAddress(NetworkParameters.prodNet()).toString(), null, 0,
+							new AddAddressCallback() {
+
+						public void onSavedAddress(String address) {
+				    		Log.d("AddressManager", "AddressManager addKeyToWallet onSavedAddress ");			    		
+				    		application.checkIfWalletHasUpdatedAndFetchTransactions(blockchainWallet.getTemporyPassword(), new SuccessCallback() {
+				    			@Override
+				    			public void onSuccess() {
+						    		Log.d("AddressManager", "AddressManager checkIfWalletHasUpdatedAndFetchTransactions onSuccess");			    		
+
+				    			}
+				    			
+				    			public void onFail() {
+						    		Log.d("AddressManager", "AddressManager checkIfWalletHasUpdatedAndFetchTransactions onFail");			    		
+
+				    			}
+				    		});
+				    						    			
+						}
+
+						public void onError(String reason) {
+				    		Log.d("AddressManager", "AddressManager addKeyToWallet onError ");			    		
+						}
+					});
+				} catch (final Exception e) {
+					e.printStackTrace();
+
+					handler.post(new Runnable() {
+						public void run() {
+
+						}
+					});
+				}				
+				
+			}
+		}.start();					
+	}
+	
 	public void setAddressLabel(final String address, final String label,
 			final Runnable checkIfWalletHasUpdatedAndFetchTransactionsFail,
 			final Runnable settingLabelFail,
