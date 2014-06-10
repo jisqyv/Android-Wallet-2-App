@@ -652,6 +652,7 @@ public class BalanceFragment extends Fragment   {
         strCurrentFiatCode = prefs.getString("ccurrency", "USD");
 
     	final LinearLayout balance_extLayout = (LinearLayout)view.findViewById(R.id.balance_ext);
+    	final LinearLayout balance_extHiddenLayout = (LinearLayout)view.findViewById(R.id.balance_ext_hidden);
 
 //    	MyRemoteWallet remoteWallet = application.getRemoteWallet();
     	MyRemoteWallet remoteWallet = WalletUtil.getInstance(getActivity(), getActivity()).getRemoteWallet();
@@ -707,14 +708,21 @@ public class BalanceFragment extends Fragment   {
         ((TextView)progression_received.findViewById(R.id.amount)).setText(BlockchainUtil.formatBitcoin(totalReceived) + " BTC");
         ((ProgressBar)progression_received.findViewById(R.id.bar)).setMax(100);
 
-        if (totalSent.doubleValue() > 0 || totalReceived.doubleValue() > 0) {        	
+//        if (totalSent.doubleValue() > 0 || totalReceived.doubleValue() > 0) {        	
             ((ProgressBar)progression_sent.findViewById(R.id.bar)).setProgress((int)((totalSent.doubleValue() / (totalSent.doubleValue() + totalReceived.doubleValue())) * 100));
             ((ProgressBar)progression_sent.findViewById(R.id.bar)).setProgressDrawable(getResources().getDrawable(R.drawable.progress_red2));
             ((ProgressBar)progression_received.findViewById(R.id.bar)).setProgress((int)((totalReceived.doubleValue() / (totalSent.doubleValue() + totalReceived.doubleValue())) * 100));
             ((ProgressBar)progression_received.findViewById(R.id.bar)).setProgressDrawable(getResources().getDrawable(R.drawable.progress_green2));
-        } 
+//        } 
 
         final List<MyTransaction> transactionsList = remoteWallet.getTransactions();
+
+        if(transactionsList.size() == 0) {
+            balance_extHiddenLayout.setVisibility(View.VISIBLE);
+            balance_extLayout.setVisibility(View.VISIBLE);
+            return;
+		}
+		
 		for (Iterator<MyTransaction> it = transactionsList.iterator(); it.hasNext();) {
 			MyTransaction transaction = it.next();
 //		    Log.d("transactionHash: ", transaction.getHashAsString());
@@ -771,7 +779,6 @@ public class BalanceFragment extends Fragment   {
 		    	}				
 			}	    		
 	    	
-        	final LinearLayout balance_extHiddenLayout = (LinearLayout)view.findViewById(R.id.balance_ext_hidden);
         	if (addressValueEntryList.size() > 0) {
         		View child = getTxChildView(view, addressValueEntryList, result, transaction, false);	        		
 	    		balance_extHiddenLayout.addView(child);	    	
@@ -833,10 +840,13 @@ public class BalanceFragment extends Fragment   {
         	}	   
 
 //        	if (addressValueEntryList.size() > 0) {
-            	balance_extHiddenLayout.setVisibility(View.VISIBLE);
+//            	balance_extHiddenLayout.setVisibility(View.VISIBLE);
 //        	}
+        	
+            balance_extHiddenLayout.setVisibility(View.VISIBLE);
 	    }
-	    balance_extLayout.setVisibility(View.VISIBLE);
+
+		balance_extLayout.setVisibility(View.VISIBLE);
 //	    balance_extLayout.startAnimation(slideDown);
     }
     
