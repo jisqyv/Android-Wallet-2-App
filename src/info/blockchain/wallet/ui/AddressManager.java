@@ -1,29 +1,83 @@
 package info.blockchain.wallet.ui;
 
+import java.math.BigInteger;
+
 import android.app.Activity;
 import android.content.SharedPreferences;
+import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.util.Log;
+import android.util.Pair;
+import android.widget.Toast;
 
+import com.google.bitcoin.core.Address;
 import com.google.bitcoin.core.ECKey;
 import com.google.bitcoin.core.NetworkParameters;
+import com.google.bitcoin.uri.BitcoinURI;
 
 import piuk.EventListeners;
 import piuk.MyRemoteWallet;
 import piuk.blockchain.android.Constants;
+import piuk.blockchain.android.R;
 import piuk.blockchain.android.WalletApplication;
 import piuk.blockchain.android.WalletApplication.AddAddressCallback;
 import piuk.blockchain.android.ui.SuccessCallback;
+import piuk.blockchain.android.util.WalletUtils;
 
 public class AddressManager {
 	private MyRemoteWallet blockchainWallet = null;
 	private WalletApplication application = null;
 	private Activity activity = null;
+	private static AddressManager instance = null;
+	protected Handler handler;
+
+	public static AddressManager getInstance(MyRemoteWallet remoteWallet, WalletApplication application, Activity activity) {
+				
+		if(instance == null) {
+			instance = new AddressManager(remoteWallet, application, activity);
+		}
+		
+		return instance;
+	}
 
 	public AddressManager(MyRemoteWallet remoteWallet, WalletApplication application, Activity activity) {
 		this.blockchainWallet = remoteWallet;
 		this.application = application;
 		this.activity = activity;
+		this.handler = new Handler();
 	}	
+		
+	public boolean handleAddAddressBookEntry(final String address, final String label) {
+		try {
+			if (blockchainWallet == null)
+				return true;
+
+			if (! BitcoinAddressCheck.isValidAddress(address)) {
+        		Toast.makeText(activity, "Invalid bitcoin address", Toast.LENGTH_LONG).show();
+				return false;
+			}
+				
+			blockchainWallet.addAddressBookEntry(address, label);
+
+			application.saveWallet(new SuccessCallback() {
+				@Override
+				public void onSuccess() {
+		    		Log.d("AddressManager", "AddressManager saveWallet onSuccess");			    		
+					EventListeners.invokeWalletDidChange();
+				}
+
+				@Override
+				public void onFail() {
+		    		Log.d("AddressManager", "AddressManager saveWallet onFail");			    		
+				}
+			});
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return false;
+	}
 	
 	public void setAddressLabel(final String address, final String label,
 			final Runnable checkIfWalletHasUpdatedAndFetchTransactionsFail,

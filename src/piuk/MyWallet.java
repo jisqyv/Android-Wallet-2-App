@@ -164,6 +164,27 @@ public class MyWallet {
 		return success;
 	}
 
+	public void addAddressBookEntry(final String address, final String label) {
+		Map<String, Object> entry = findAddressBookEntry(address);
+		if (entry != null) {
+			entry.put("label", label);
+		} else {
+			List<Map<String, Object>> addressBook = this.getAddressBookMap();
+
+			if (addressBook == null) {
+				addressBook = new ArrayList<Map<String, Object>>();
+				root.put("address_book", addressBook);
+			}
+
+			HashMap<String, Object> map = new HashMap<String, Object>();
+			map.put("addr", address);
+			map.put("label", label);
+
+			addressBook.add(map);
+		}		
+	}
+
+	
 	@SuppressWarnings("unchecked")
 	public Map<String, String> getTxNotes() {
 		Map<String, String> tx_notes = (Map<String, String>) root.get("tx_notes");
