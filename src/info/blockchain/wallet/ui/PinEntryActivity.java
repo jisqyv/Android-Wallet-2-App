@@ -117,31 +117,8 @@ public class PinEntryActivity extends FragmentActivity {
 		buttonForgot = (Button) findViewById(R.id.buttonForgot);
 		buttonForgot.setOnClickListener(new View.OnClickListener() {
 		    public void onClick(View v) {
-
-		    	/*
-				RequestPasswordDialog.show(
-						getSupportFragmentManager(),
-						new SuccessCallback() {  
-							public void onSuccess() {
-
-								Intent intent = new Intent(PinEntryActivity.this, MainActivity.class);
-								intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-					    		startActivity(intent);
-
-//								finish();
-							
-							}
-							public void onFail() {	
-
-								Intent intent = new Intent(PinEntryActivity.this, PinEntryActivity.class);
-								intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-					    		startActivity(intent);
-
-//								begin();
-							}
-				}, RequestPasswordDialog.PasswordTypeMain);
-				*/
-
+		    	
+		    	;
 
 		    }
 		});
@@ -195,24 +172,7 @@ public class PinEntryActivity extends FragmentActivity {
 		    		pinBoxArray[userEntered.length() - 1].setText("8");
 		    		
 		    		if(userEntered.length() == PIN_LENGTH)	{
-		    			/*
-		    			//Check if entered PIN is correct
-			    		if(userEntered.equals(userPin))	{
-			    			statusView.setTextColor(Color.GREEN);
-			    			statusView.setText("Correct");
-			    			Log.v("PinView", "Correct PIN");
-			    			finish();
-			    		}
-			   			else	{
-		    				statusView.setTextColor(Color.RED);
-		    				statusView.setText("Incorrect PIN. Try again.");
-		    				keyPadLockedFlag = true;
-		    				Log.v("PinView", "Wrong PIN");
-		    				
-		    				new LockKeyPadOperation().execute("");
-		    			}
-		    			*/
-		    			
+
 		    			if(validating)	{
 				    		validatePIN(userEntered);
 		    			}
@@ -310,8 +270,6 @@ public class PinEntryActivity extends FragmentActivity {
 		    		pinBoxArray[userEntered.length() - 1].setText("8");
 		    		
 		    		validatePIN(userEntered);
-		    		
-
 
 		    	}
 		    }

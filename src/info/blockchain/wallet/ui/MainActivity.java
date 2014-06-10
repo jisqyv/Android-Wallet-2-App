@@ -99,7 +99,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         boolean isValidated = false;
         isValidated = prefs.getBoolean("validated", false);
         
-        if(isValidated) {
+        if(isValidated || isSecured) {
         	;
         }
         else if(!isSecured && isFirst) {
