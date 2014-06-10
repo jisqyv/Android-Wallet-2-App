@@ -625,6 +625,7 @@ public class ReceiveFragment extends Fragment   {
     }
 
     private void initAddressBookList() {
+    	/*
  		final WalletApplication application = (WalletApplication)getActivity().getApplication();
  		MyRemoteWallet wallet = application.getRemoteWallet();
  		
@@ -648,6 +649,49 @@ public class ReceiveFragment extends Fragment   {
 	         	filteredDisplayList.add(row);
  		    }
 
+        }
+        */
+ 		final WalletApplication application = (WalletApplication)getActivity().getApplication();
+ 		MyRemoteWallet wallet = application.getRemoteWallet();
+ 		
+        magicData =  new ArrayList<HashMap<String,String>>();
+
+        addressBookMapList = wallet.getAddressBookMap();
+        filteredDisplayList = new ArrayList<HashMap<String,String>>();
+
+        if (addressBookMapList != null && addressBookMapList.size() > 0) {
+  		    for (Iterator<Map<String, Object>> iti = addressBookMapList.iterator(); iti.hasNext();) {
+ 		    	Map<String, Object> addressBookMap = iti.next();
+ 		    	Object address = addressBookMap.get("addr");
+ 		    	Object label = addressBookMap.get("label");
+
+ 		        HashMap<String,String> row = new HashMap<String,String>();
+ 		        if (label != null) {
+ 	 		        row.put("label", label.toString()); 		        	
+ 			        row.put("labelOrAddress", label.toString());
+ 		        } else {
+ 	 		        row.put("label", "null"); 		        	
+ 			        row.put("labelOrAddress", "null");
+ 		        }
+ 		        if (address != null) {
+ 	 		        row.put("address", address.toString());
+ 		        } else {
+ 	 		        row.put("address", "null");
+ 		        }
+
+    			magicData.add(row);
+	         	filteredDisplayList.add(row);
+ 		    }
+
+        }
+        else {
+		    HashMap<String,String> row = new HashMap<String,String>();
+		    row.put("label", "Blockchain.info");
+		    row.put("address", "1JArS6jzE3AJ9sZ3aFij1BmTcpFGgN86hA");
+	        row.put("labelOrAddress", "Blockchain.info");
+
+			magicData.add(row);
+         	filteredDisplayList.add(row);
         }
         
      }
