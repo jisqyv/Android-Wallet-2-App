@@ -5,7 +5,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import net.sourceforge.zbar.Symbol;
+
 import com.dm.zbar.android.scanner.ZBarConstants;
+import com.dm.zbar.android.scanner.ZBarScannerActivity;
 import com.google.bitcoin.core.Transaction;
 
 import piuk.EventListeners;
@@ -51,6 +54,9 @@ public class AddressBookActivity extends Activity {
     
     private static int QR_GENERATION = 1;
     private static int EDIT_LABEL = 2;
+    private static int SCAN_WATCH_ONLY = 3;
+    private static int SCAN_SENDING_ADDRESS = 4;
+    private static int SCAN_PRIVATE_KEY = 5;
 	private String editLabelAddress = null;
 
     private static enum DisplayedAddresses {
@@ -249,8 +255,11 @@ public class AddressBookActivity extends Activity {
 		return true;
 	}
 
+	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		Intent intent = new Intent(AddressBookActivity.this, ZBarScannerActivity.class);
+		intent.putExtra(ZBarConstants.SCAN_MODES, new int[] { Symbol.QRCODE } );
 	    switch (item.getItemId()) {
 	    	case R.id.new_address:
 	    		addressManager.newAddress(new AddAddressCallback() {
@@ -267,6 +276,15 @@ public class AddressBookActivity extends Activity {
 	    		
 	    		Toast.makeText(AddressBookActivity.this, "generate new address", Toast.LENGTH_LONG).show();
 	    		return true;
+	    	case R.id.scan_watch_only:
+        		startActivityForResult(intent, SCAN_WATCH_ONLY);
+	    		return true;
+	    	case R.id.scan_sending_address:
+        		startActivityForResult(intent, SCAN_SENDING_ADDRESS);	    		
+	    		return true;
+	    	case R.id.scan_private_key:
+        		startActivityForResult(intent, SCAN_PRIVATE_KEY);	    		
+	    		return true;
 	    	default:
 	    		return super.onOptionsItemSelected(item);
 	    }
@@ -276,7 +294,27 @@ public class AddressBookActivity extends Activity {
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 
-		if(resultCode == Activity.RESULT_OK && requestCode == EDIT_LABEL)	{
+		String scanData = data.getStringExtra(ZBarConstants.SCAN_RESULT);
+		
+		if(resultCode == Activity.RESULT_OK && requestCode == SCAN_WATCH_ONLY) {
+			try {
+				addressManager.handleAddWatchOnly(scanData);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} else if(resultCode == Activity.RESULT_OK && requestCode == SCAN_SENDING_ADDRESS) {
+			if (addressManager.canAddAddressBookEntry(scanData, "")) {
+				addressManager.handleAddAddressBookEntry(scanData, "");
+			} else {
+	    		Toast.makeText(AddressBookActivity.this, "Address already exist", Toast.LENGTH_LONG).show();
+			}			
+		} else if(resultCode == Activity.RESULT_OK && requestCode == SCAN_PRIVATE_KEY) {
+			try {
+				addressManager.handleScanPrivateKey(scanData);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} else if(resultCode == Activity.RESULT_OK && requestCode == EDIT_LABEL)	{
 			
 			if(data != null && data.getAction() != null)	{
 				String label = data.getAction();

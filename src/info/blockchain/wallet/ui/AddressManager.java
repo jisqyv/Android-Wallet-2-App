@@ -47,6 +47,13 @@ public class AddressManager {
 		this.handler = new Handler();
 	}	
 		
+	public boolean canAddAddressBookEntry(final String address, final String label) {
+		if (blockchainWallet.findKey(address) == null)
+			return true;
+		else
+			return false;
+	}
+	
 	public boolean handleAddAddressBookEntry(final String address, final String label) {
 		try {
 			if (blockchainWallet == null)
