@@ -79,6 +79,54 @@ public class AddressManager {
 		return false;
 	}
 	
+	public void handleAddWatchOnly(String data) throws Exception {
+
+		String address;
+		try {
+			address = new Address(Constants.NETWORK_PARAMETERS, data).toString();
+		} catch (Exception e) {
+			try {
+				BitcoinURI uri = new BitcoinURI(data);
+
+				address = uri.getAddress().toString();
+			} catch (Exception e1) {
+        		Toast.makeText(activity, R.string.send_coins_fragment_receiving_address_error, Toast.LENGTH_LONG).show();
+				return;
+			}
+		}
+
+		final String finalAddress = address;
+
+		try {
+			application.getRemoteWallet().addWatchOnly(finalAddress, "android_watch_only");
+			
+			application.saveWallet(new SuccessCallback() {
+				@Override
+				public void onSuccess() {
+		    		Log.d("AddressManager", "AddressManager onSavedAddress onSuccess");			    		
+		    		application.checkIfWalletHasUpdatedAndFetchTransactions(blockchainWallet.getTemporyPassword(), new SuccessCallback() {
+		    			@Override
+		    			public void onSuccess() {
+				    		Log.d("AddressManager", "AddressManager checkIfWalletHasUpdatedAndFetchTransactions onSuccess");			    		
+
+		    			}
+		    			
+		    			public void onFail() {
+				    		Log.d("AddressManager", "AddressManager checkIfWalletHasUpdatedAndFetchTransactions onFail");			    		
+		    			}
+		    		});
+				}
+
+				@Override
+				public void onFail() {
+		    		Log.d("AddressManager", "AddressManager onSavedAddress onFail");			    		
+				}
+			});
+		} catch (Exception e) {					
+    		Toast.makeText(activity, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+		}
+	}
+	
 	public void handleScanPrivateKey(final String data) throws Exception {
 		handler.postDelayed(new Runnable() {
 			@Override
