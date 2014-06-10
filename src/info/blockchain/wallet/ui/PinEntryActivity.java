@@ -303,7 +303,7 @@ public class PinEntryActivity extends FragmentActivity {
 		    		
 		    		statusView.setText("");
 		    		
-		    		userEntered = userEntered + pressedButton.getText();
+		    		userEntered = userEntered + pressedButton.getText().toString().substring(0, 1);
 		    		Log.v("PinView", "User entered=" + userEntered);
 		    		
 		    		//Update pin boxes
