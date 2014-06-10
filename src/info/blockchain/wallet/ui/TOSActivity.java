@@ -3,6 +3,8 @@ package info.blockchain.wallet.ui;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.security.SecureRandom;
+import java.util.Arrays;
+import java.util.List;
 
 import org.json.simple.JSONObject;
 import org.spongycastle.util.encoders.Hex;
@@ -150,7 +152,7 @@ public class TOSActivity extends Activity	{
 																final String value = new String(Hex.encode(bytes), "UTF-8");
 																final JSONObject response = piuk.blockchain.android.ui.PinEntryActivity.apiStoreKey(key, value, pinCode);
 																if (response.get("success") != null) {
-																	
+
 																	edit.putString("pin_kookup_key", key);
 																	edit.putString("encrypted_password", MyWallet.encrypt(application.getRemoteWallet().getTemporyPassword(), value, PBKDF2Iterations));
 

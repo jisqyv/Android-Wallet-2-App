@@ -266,6 +266,10 @@ public class ReceiveFragment extends Fragment   {
 		        	else {
 			        	tvAddress.setText(edAddress.getText().toString());
 		        	}
+		        	
+ 		            if(BitcoinAddressCheck.isValidAddress(edAddress.getText().toString())) {
+ 		            	tvAddressBis.setVisibility(View.GONE);
+ 		            }
 
 		        	String amount1 = edAmount1.getText().toString();
 		        	if(amount1 == null || amount1.length() < 1) {
@@ -625,32 +629,7 @@ public class ReceiveFragment extends Fragment   {
     }
 
     private void initAddressBookList() {
-    	/*
- 		final WalletApplication application = (WalletApplication)getActivity().getApplication();
- 		MyRemoteWallet wallet = application.getRemoteWallet();
- 		
-        magicData =  new ArrayList<HashMap<String,String>>();
 
-        addressBookMapList = wallet.getAddressBookMap();
-        filteredDisplayList = new ArrayList<HashMap<String,String>>();
-
-        if (addressBookMapList != null) {
-  		    for (Iterator<Map<String, Object>> iti = addressBookMapList.iterator(); iti.hasNext();) {
- 		    	Map<String, Object> addressBookMap = iti.next();
- 		    	Object address = addressBookMap.get("addr");
- 		    	Object label = addressBookMap.get("label");
-
- 		        HashMap<String,String> row = new HashMap<String,String>();
- 		        row.put("label", label.toString());
- 		        row.put("address", address.toString());
-		        row.put("labelOrAddress", label.toString());
-
-    			magicData.add(row);
-	         	filteredDisplayList.add(row);
- 		    }
-
-        }
-        */
  		final WalletApplication application = (WalletApplication)getActivity().getApplication();
  		MyRemoteWallet wallet = application.getRemoteWallet();
  		

@@ -1,5 +1,8 @@
 package info.blockchain.wallet.ui;
 
+import java.util.Arrays;
+import java.util.List;
+
 import net.sourceforge.zbar.Symbol;
 
 import com.dm.zbar.android.scanner.ZBarConstants;
