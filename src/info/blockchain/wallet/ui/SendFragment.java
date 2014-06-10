@@ -935,19 +935,23 @@ public class SendFragment extends Fragment   {
 			        	tvAmount.setVisibility(View.VISIBLE);
 			        	tvAmountBis.setVisibility(View.VISIBLE);
 
-	 		            if(currentSelectedAddress != null) {
-	 		            	tvAddressBis.setText(currentSelectedAddress.substring(0, 20) + "...");
-	 		            }
-	 		            else {
-	 		            	tvAddressBis.setVisibility(View.GONE);
-	 		            }
-
 			        	if(edAddress.getText().toString().length() > 15) {
 				        	tvAddress.setText(edAddress.getText().toString().substring(0, 15) + "...");
 			        	}
 			        	else {
 				        	tvAddress.setText(edAddress.getText().toString());
 			        	}
+
+	 		            if(currentSelectedAddress != null) {
+	 		            	tvAddressBis.setText(currentSelectedAddress.substring(0, 20) + "...");
+	 		            }
+	 		            else {
+	 		            	tvAddressBis.setVisibility(View.GONE);
+	 		            }
+	 		            
+	 		            if(BitcoinAddressCheck.isValidAddress(edAddress.getText().toString())) {
+	 		            	tvAddressBis.setVisibility(View.GONE);
+	 		            }
 
 			        	tvArrow.setText(Character.toString((char)0x2192));
 
