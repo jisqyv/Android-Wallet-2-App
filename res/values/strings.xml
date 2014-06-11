@@ -306,6 +306,10 @@
     <string name="success_rekeying_wallet">Your wallet was successfully Re-keyed. Please make a new backup.</string>
     <string name="rekeying_wallet_balance_too_small">Your wallet balance is too low to sweep.</string>
 
+    <string name="request_payment_hint">Receive Into...</string>
+    <string name="send_payment_hint">Send To...</string>
+    
+    
     <string-array name="send_types_array">
         <item>Quick Send</item>
         <item>Custom Send</item>

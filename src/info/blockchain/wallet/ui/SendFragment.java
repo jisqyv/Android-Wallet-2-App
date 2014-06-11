@@ -1039,7 +1039,7 @@ public class SendFragment extends Fragment   {
         });
 
         edAddress = ((EditText)rootView.findViewById(R.id.address));
-        edAddress.setHint("Enter Bitcoin address here");
+        edAddress.setHint(R.string.send_payment_hint);
         edAddress.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
             	
@@ -2711,7 +2711,7 @@ public class SendFragment extends Fragment   {
 
     private void clearSendView()	{
     	edAddress.setText("");
-        edAddress.setHint("Enter Bitcoin address here");
+        edAddress.setHint(R.string.send_payment_hint);
       	edAmount1.setText("");
       	if(isBTC) {
           	edAmount1.setHint("0.0000");
