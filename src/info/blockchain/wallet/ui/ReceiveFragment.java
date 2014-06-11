@@ -593,7 +593,7 @@ public class ReceiveFragment extends Fragment   {
 		        String address = BlockchainUtil.formatAddress(row.get("address"), 15) ;
 		        ((TextView)view.findViewById(R.id.p2)).setText(address);
 	        } else {
-		        ((TextView)view.findViewById(R.id.p2)).setText(row.get("amount"));	        	
+		        ((TextView)view.findViewById(R.id.p2)).setText(row.get("amount") + " BTC");	        	
 	        }
 
 	        return view;
