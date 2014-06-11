@@ -460,6 +460,13 @@ public class ReceiveFragment extends Fragment   {
         
         Log.d("BlockchainWallet", "setUserVisible");
 
+        if(isVisibleToUser) {
+            if(edAddress.getText().length() < 1 && edAmount1.getText().length() < 1) {
+                ImageView clear_input = (ImageView)rootView.findViewById(R.id.clear);
+                clear_input.setVisibility(View.INVISIBLE);
+            }
+        }
+
         /*
         if(isVisibleToUser) {
         	if(isMagic) {
@@ -480,6 +487,11 @@ public class ReceiveFragment extends Fragment   {
     	super.onResume();
 
         Log.d("BlockchainWallet", "onResume");
+        
+        if(edAddress.getText().length() < 1 && edAmount1.getText().length() < 1) {
+            ImageView clear_input = (ImageView)rootView.findViewById(R.id.clear);
+            clear_input.setVisibility(View.INVISIBLE);
+        }
         
         if(!isReturnFromOutsideApp) {
             removeMagicList();
