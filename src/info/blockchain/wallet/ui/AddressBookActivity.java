@@ -1,5 +1,6 @@
 package info.blockchain.wallet.ui;
  
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -503,7 +504,19 @@ public class AddressBookActivity extends Activity {
     	    }
 	        ((TextView)view.findViewById(R.id.txt1)).setText(label);
 	        ((TextView)view.findViewById(R.id.txt2)).setText(addr);
-
+	       
+	        if (displayedAddresses == DisplayedAddresses.ActiveAddresses ||
+	        		displayedAddresses == DisplayedAddresses.ArchivedAddresses) {
+            	String amount = "0.000";
+    	    	BigInteger balance = addressManager.getBalance(addr);
+    		    if (balance != null) {
+    		    	amount = BlockchainUtil.formatBitcoin(balance);
+        		    ((TextView)view.findViewById(R.id.txt3)).setText(amount);
+    		    }
+	        } else {
+    		    ((TextView)view.findViewById(R.id.txt3)).setText("");
+	        }
+	        
 	        return view;
 		}
 
