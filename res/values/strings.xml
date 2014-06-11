@@ -67,6 +67,8 @@
     <string name="continue_without_fee">Continue Without Fee</string>
     <string name="add_fee">Add Fee</string>
     <string name="cancel">Cancel</string>
+    <string name="yes">Yes</string>
+    <string name="ask_you_sure">Ask you sure?</string>
     <string name="error_setting_label">Error setting address label</string>
     <string name="new_account_title">New account</string>
     <string name="password">Password:</string>

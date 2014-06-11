@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.Writer;
 import java.util.Date;
 
+import piuk.MyRemoteWallet;
 import piuk.blockchain.android.Constants;
 import piuk.blockchain.android.R;
 import piuk.blockchain.android.WalletApplication;
@@ -75,17 +76,38 @@ public class SettingsActivity extends PreferenceActivity {
         		}
         	});
         	
+        	final Activity setupActivity = this;
+        	
         	Preference unpairPref = (Preference) findPreference("unpair");
         	unpairPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
         		public boolean onPreferenceClick(Preference preference) {
+					AlertDialog.Builder builder = new AlertDialog.Builder(setupActivity);
+					builder.setMessage(R.string.ask_you_sure)
+					.setCancelable(false);
 
-					Editor edit = PreferenceManager.getDefaultSharedPreferences(SettingsActivity.this).edit();
-					edit.clear();
-					edit.commit();
+					AlertDialog alert = builder.create();
 
-		        	Intent intent = new Intent(SettingsActivity.this, SetupActivity.class);
-					intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-		    		startActivity(intent);
+					alert.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.yes), new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int id) {
+							Editor edit = PreferenceManager.getDefaultSharedPreferences(SettingsActivity.this).edit();
+							edit.clear();
+							edit.commit();
+
+				        	Intent intent = new Intent(SettingsActivity.this, SetupActivity.class);
+							intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+				    		startActivity(intent);
+
+							dialog.dismiss();
+						}}); 
+
+					alert.setButton(AlertDialog.BUTTON_NEGATIVE, getString(R.string.cancel), new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int id) {
+							
+							dialog.dismiss();
+						}});
+
+					alert.show();
+        			
         			return true;
         		}
         	});
