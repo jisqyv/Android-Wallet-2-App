@@ -13,7 +13,7 @@
         android:layout_marginRight="@dimen/list_entry_padding_horizontal"
         android:layout_marginTop="@dimen/list_entry_padding_vertical"
         android:text="@string/export_keys_dialog_message"
-        android:textColor="@color/insignificant"
+        android:textColor="@color/significant"
         android:textSize="@dimen/font_size_normal" />
 
 </LinearLayout>
