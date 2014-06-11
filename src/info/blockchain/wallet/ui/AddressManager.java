@@ -51,6 +51,14 @@ public class AddressManager {
 		return this.blockchainWallet.getBalance(address);
 	}
 	
+	public boolean isWatchOnly(String address) {
+		try {
+			return this.blockchainWallet.isWatchOnly(address);
+		} catch (Exception e) {
+			return false;
+		}
+	}
+	
 	public boolean canAddAddressBookEntry(final String address, final String label) {
 		if (blockchainWallet.findKey(address) == null)
 			return true;

@@ -513,8 +513,15 @@ public class AddressBookActivity extends Activity {
     		    	amount = BlockchainUtil.formatBitcoin(balance);
         		    ((TextView)view.findViewById(R.id.txt3)).setText(amount);
     		    }
+    		    
+    		    if (addressManager.isWatchOnly(addr)) {
+    		        ((TextView)view.findViewById(R.id.txt4)).setText("Watch only");
+    		    } else {
+    		        ((TextView)view.findViewById(R.id.txt4)).setText("");    		    	
+    		    }
 	        } else {
     		    ((TextView)view.findViewById(R.id.txt3)).setText("");
+		        ((TextView)view.findViewById(R.id.txt4)).setText("");    		    	
 	        }
 	        
 	        return view;
