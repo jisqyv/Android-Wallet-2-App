@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.HashMap;
 
 import org.json.simple.JSONObject;
 
@@ -708,145 +709,182 @@ public class BalanceFragment extends Fragment   {
         ((TextView)progression_received.findViewById(R.id.amount)).setText(BlockchainUtil.formatBitcoin(totalReceived) + " BTC");
         ((ProgressBar)progression_received.findViewById(R.id.bar)).setMax(100);
 
-//        if (totalSent.doubleValue() > 0 || totalReceived.doubleValue() > 0) {        	
-            ((ProgressBar)progression_sent.findViewById(R.id.bar)).setProgress((int)((totalSent.doubleValue() / (totalSent.doubleValue() + totalReceived.doubleValue())) * 100));
-            ((ProgressBar)progression_sent.findViewById(R.id.bar)).setProgressDrawable(getResources().getDrawable(R.drawable.progress_red2));
-            ((ProgressBar)progression_received.findViewById(R.id.bar)).setProgress((int)((totalReceived.doubleValue() / (totalSent.doubleValue() + totalReceived.doubleValue())) * 100));
-            ((ProgressBar)progression_received.findViewById(R.id.bar)).setProgressDrawable(getResources().getDrawable(R.drawable.progress_green2));
-//        } 
+        ((ProgressBar)progression_sent.findViewById(R.id.bar)).setProgress((int)((totalSent.doubleValue() / (totalSent.doubleValue() + totalReceived.doubleValue())) * 100));
+        ((ProgressBar)progression_sent.findViewById(R.id.bar)).setProgressDrawable(getResources().getDrawable(R.drawable.progress_red2));
+        ((ProgressBar)progression_received.findViewById(R.id.bar)).setProgress((int)((totalReceived.doubleValue() / (totalSent.doubleValue() + totalReceived.doubleValue())) * 100));
+        ((ProgressBar)progression_received.findViewById(R.id.bar)).setProgressDrawable(getResources().getDrawable(R.drawable.progress_green2));
 
         final List<MyTransaction> transactionsList = remoteWallet.getTransactions();
+        final List<MyTransaction> filteredTxList = new ArrayList<MyTransaction>();
 
-        if(transactionsList.size() == 0) {
-            balance_extHiddenLayout.setVisibility(View.VISIBLE);
-            balance_extLayout.setVisibility(View.VISIBLE);
-            return;
-		}
-		
+        HashMap<String,BigInteger> txAmounts = new HashMap<String,BigInteger>();
+        HashMap<String,BigInteger> txAmounts2 = new HashMap<String,BigInteger>();
+        boolean isPartOfTx = false;
+
+        //
+        // check for txs that include selected address
+        //
 		for (Iterator<MyTransaction> it = transactionsList.iterator(); it.hasNext();) {
 			MyTransaction transaction = it.next();
-//		    Log.d("transactionHash: ", transaction.getHashAsString());
-		    BigInteger result = BigInteger.ZERO;
 	    	List<TransactionOutput> transactionOutputs = transaction.getOutputs();
-	    	List<TransactionInput> transactionInputs = transaction.getInputs();	 
-		    List<Map.Entry<String, String>> addressValueEntryList = new ArrayList<Map.Entry<String, String>>();
+	    	List<TransactionInput> transactionInputs = transaction.getInputs();
+	        isPartOfTx = false;
 
-	    	boolean isAddressPartofTransaction = false;			    
+			for (Iterator<TransactionInput> iti = transactionInputs.iterator(); iti.hasNext();) {
+				TransactionInput transactionInput = iti.next();
+	        	try {
+	        		String addr = transactionInput.getFromAddress().toString();
+	        		if(addr != null && addr.equals(address)) {
+	        			filteredTxList.add(transaction);
+	        			isPartOfTx = true;
+	    				Log.d("TxBitmapPrep", transaction.getHashAsString() + " contains:" + addr);
+	        			break;
+	        		}
+	            } catch (ScriptException e) {
+	                e.printStackTrace();
+	            } catch (Exception e) {
+	                e.printStackTrace();
+	            }			    		
+			}
+
+			if(isPartOfTx) {
+				continue;
+			}
+
 			for (Iterator<TransactionOutput> ito = transactionOutputs.iterator(); ito.hasNext();) {
 				TransactionOutput transactionOutput = ito.next();
 	        	try {
 	        		com.google.bitcoin.core.Script script = transactionOutput.getScriptPubKey();
 	        		String addr = null;
-	        		if (script != null)
+	        		if (script != null) {
 	        			addr = script.getToAddress().toString();
-
-	        		if (addr != null && addr.equals(address)) {
-	        			isAddressPartofTransaction = true;
-	        			result = result.add(transactionOutput.getValue());
-	        			break;
+		        		if (addr != null && addr.equals(address)) {
+		        			filteredTxList.add(transaction);
+		    				Log.d("TxBitmapPrep", transaction.getHashAsString() + " contains:" + addr);
+		        			break;
+		        		}
 	        		}
 	            } catch (ScriptException e) {
 	                e.printStackTrace();
 	            } catch (Exception e) {
 	                e.printStackTrace();
 	            }			    		
-	    	}
-	    	
-	    	if (transactionInputs != null && isAddressPartofTransaction) {
-		    	for (Iterator<TransactionInput> iti = transactionInputs.iterator(); iti.hasNext();) {
-		    		TransactionInput transactionInput = iti.next();
-		        	try {
-		        		Address addr = transactionInput.getFromAddress();
-		        		//second condition is required so that inputs are not displayed if it is also an output 
-		        		if (addr != null && ! addr.toString().equals(address)) {
-//		        		    Log.d("transactionInput: ", addr.toString());
-			        		MyTransactionInput ti = (MyTransactionInput)transactionInput;
-		        			String value = BlockchainUtil.formatBitcoin(ti.getValue()) + " BTC";
-		        			String label = labelMap.get(addr.toString());
-		        			if (label != null) {
-			        			Map.Entry<String, String> entry = new AbstractMap.SimpleEntry<String, String>(label, value);
-			        			addressValueEntryList.add(entry);			        				
-		        			} else {
-			        			Map.Entry<String, String> entry = new AbstractMap.SimpleEntry<String, String>(addr.toString(), value);
-			        			addressValueEntryList.add(entry);			        				
-		        			}
-		        		}
-		            } catch (ScriptException e) {
-		                e.printStackTrace();
-		            } catch (Exception e) {
-		                e.printStackTrace();
-		            }
-		    	}				
-			}	    		
-	    	
-        	if (addressValueEntryList.size() > 0) {
-        		View child = getTxChildView(view, addressValueEntryList, result, transaction, false);	        		
-	    		balance_extHiddenLayout.addView(child);	    	
-        	}
-
-        	addressValueEntryList.clear();
-	    	isAddressPartofTransaction = false;
-		    for (Iterator<TransactionInput> iti = transactionInputs.iterator(); iti.hasNext();) {
-	    		TransactionInput transactionInput = iti.next();
-	        	try {
-	        		Address addr = transactionInput.getFromAddress();
-
-	        		if (addr != null && addr.toString().equals(address)) {
-	        			isAddressPartofTransaction = true;
-		        		MyTransactionInput ti = (MyTransactionInput)transactionInput;
-		        		result = result.subtract(ti.getValue());
-	        			break;
-	        		}
-	            } catch (ScriptException e) {
-	                e.printStackTrace();
-	            } catch (Exception e) {
-	                e.printStackTrace();
-	            }			    		
-	    	}
-	    	
-			if (transactionOutputs != null && isAddressPartofTransaction) {
-				for (Iterator<TransactionOutput> ito = transactionOutputs.iterator(); ito.hasNext();) {
-		    		TransactionOutput transactionOutput = ito.next();
-		        	try {
-		        		com.google.bitcoin.core.Script script = transactionOutput.getScriptPubKey();
-		        		Address addr = null;
-		        		if (script != null)
-		        			addr = script.getToAddress();
-		        		
-		        		//second condition is required so that outputs are not displayed if it is also an input 
-		        		if (addr != null && ! addr.toString().equals(address)) {			        		
-//		        		    Log.d("transactionOutput: ", addr.toString());
-		        			String value = BlockchainUtil.formatBitcoin(transactionOutput.getValue()) + " BTC";
-		        			String label = labelMap.get(addr.toString());
-		        			if (label != null) {
-			        			Map.Entry<String, String> entry = new AbstractMap.SimpleEntry<String, String>(label, value);
-			        			addressValueEntryList.add(entry);			        				
-		        			} else {
-			        			Map.Entry<String, String> entry = new AbstractMap.SimpleEntry<String, String>(addr.toString(), value);
-			        			addressValueEntryList.add(entry);			        				
-		        			}
-		        		}
-		            } catch (ScriptException e) {
-		                e.printStackTrace();
-		            } catch (Exception e) {
-		                e.printStackTrace();
-		            }
-		    	}
 			}
 
-        	if (addressValueEntryList.size() > 0) {
-        		View child = getTxChildView(view, addressValueEntryList, result, transaction, true);
-	    		balance_extHiddenLayout.addView(child);	    	
-        	}	   
-
-//        	if (addressValueEntryList.size() > 0) {
-//            	balance_extHiddenLayout.setVisibility(View.VISIBLE);
-//        	}
-        	
-            balance_extHiddenLayout.setVisibility(View.VISIBLE);
 	    }
 
-		balance_extLayout.setVisibility(View.VISIBLE);
+        //
+        // build map of addresses <-> amounts for retained txs
+        //
+		List<String> myAddresses = Arrays.asList(activeAddresses);
+ 		final WalletApplication application = (WalletApplication)getActivity().getApplication();
+ 		MyRemoteWallet wallet = application.getRemoteWallet();
+		Map<String,String> labels = wallet.getLabelMap();
+
+		for (Iterator<MyTransaction> it = filteredTxList.iterator(); it.hasNext();) {
+
+			MyTransaction transaction = it.next();
+
+			BigInteger result = BigInteger.ZERO;
+    		txAmounts.clear();
+    	    List<Map.Entry<String, String>> addressValueEntryList = new ArrayList<Map.Entry<String, String>>();
+
+    	    List<TransactionInput> transactionInputs = transaction.getInputs();
+
+			for (Iterator<TransactionInput> iti = transactionInputs.iterator(); iti.hasNext();) {
+				TransactionInput transactionInput = iti.next();
+	        	try {
+	        		String addr = transactionInput.getFromAddress().toString();
+	        		if (addr != null) {
+		        		MyTransactionInput ti = (MyTransactionInput)transactionInput;
+		        		if(addr.equals(address)) {
+		        			result = result.subtract(ti.getValue());
+//		    				Log.d("TxBitmapPrep", transaction.getHashAsString() + ":" + address + ", -" + ti.getValue());
+		        		}
+	        			if(txAmounts.get(addr) != null) {
+		        			txAmounts.put(addr, txAmounts.get(addr).subtract(ti.getValue()));
+		    				Log.d("TxBitmapPrep", transaction.getHashAsString() + "/" + addr + ":" + "subtract " + ti.getValue());
+	        			}
+	        			else {
+		        			txAmounts.put(addr, BigInteger.ZERO.subtract(ti.getValue()));
+		    				Log.d("TxBitmapPrep", transaction.getHashAsString() + "/" + addr + ":" + "subtract " + ti.getValue());
+	        			}
+	        		}
+	            } catch (ScriptException e) {
+	                e.printStackTrace();
+	            } catch (Exception e) {
+	                e.printStackTrace();
+	            }			    		
+	    	}
+
+	    	List<TransactionOutput> transactionOutputs = transaction.getOutputs();
+
+			for (Iterator<TransactionOutput> ito = transactionOutputs.iterator(); ito.hasNext();) {
+				TransactionOutput transactionOutput = ito.next();
+	        	try {
+	        		com.google.bitcoin.core.Script script = transactionOutput.getScriptPubKey();
+	        		String addr = null;
+	        		if (script != null) {
+	        			addr = script.getToAddress().toString();
+		        		if (addr != null) {
+			        		if(addr.equals(address)) {
+			        			result = result.add(transactionOutput.getValue());
+//			    				Log.d("TxBitmapPrep", transaction.getHashAsString() + ":" + address + ", -" + transactionOutput.getValue());
+			        		}
+		        			if(txAmounts.get(addr) != null) {
+			        			txAmounts.put(addr, txAmounts.get(addr).add(transactionOutput.getValue()));
+			    				Log.d("TxBitmapPrep", transaction.getHashAsString() + "/" + addr + ":" + "add " + transactionOutput.getValue());
+		        			}
+		        			else {
+			        			txAmounts.put(addr, transactionOutput.getValue());
+			    				Log.d("TxBitmapPrep", transaction.getHashAsString() + "/" + addr + ":" + "add " + transactionOutput.getValue());
+		        			}
+		        		}
+	        		}
+	            } catch (ScriptException e) {
+	                e.printStackTrace();
+	            } catch (Exception e) {
+	                e.printStackTrace();
+	            }			    		
+	    	}
+
+			boolean isSending = true;
+			if(result.compareTo(BigInteger.ZERO) == 1) {
+				isSending = false;
+			}
+			else {
+				isSending = true;
+			}
+
+//			Log.d("TxBitmapPrep", "Result:" + result.toString());
+//			Log.d("TxBitmapPrep", "isSending:" + isSending);
+			
+			addressValueEntryList.clear();
+			Map.Entry<String, String> addressValueEntry = null;
+			for (String key : txAmounts.keySet()) {
+				if(key.equals(address)) {
+					continue;
+				}
+				
+				if(labels.get(key) != null) {
+					addressValueEntry = new AbstractMap.SimpleEntry<String, String>(labels.get(key), BlockchainUtil.formatBitcoin(txAmounts.get(key)) + " BTC");
+				}
+				else {
+					addressValueEntry = new AbstractMap.SimpleEntry<String, String>(key, BlockchainUtil.formatBitcoin(txAmounts.get(key)) + " BTC");
+				}
+
+				addressValueEntryList.add(addressValueEntry);
+			}
+
+	    	if (addressValueEntryList.size() > 0) {
+	    		View child = getTxChildView(view, addressValueEntryList, result, transaction, isSending);
+	    		balance_extHiddenLayout.addView(child);	    	
+	    	}
+
+	    }
+
+        balance_extHiddenLayout.setVisibility(View.VISIBLE);
+        balance_extLayout.setVisibility(View.VISIBLE);
 //	    balance_extLayout.startAnimation(slideDown);
     }
     
