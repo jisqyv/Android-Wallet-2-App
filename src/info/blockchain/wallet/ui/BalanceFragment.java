@@ -402,7 +402,10 @@ public class BalanceFragment extends Fragment   {
         		        balance_extHiddenLayout.removeViews(1, balance_extHiddenLayout.getChildCount() - 1);
     	    		}
 
-    	            ((ImageView)view.findViewById(R.id.address_type)).setImageResource(R.drawable.address_inactive);
+			        if (isWatchOnlys[position])
+				        ((ImageView)view.findViewById(R.id.address_type)).setImageResource(R.drawable.address_watch_inactive);
+			        else
+				        ((ImageView)view.findViewById(R.id.address_type)).setImageResource(R.drawable.address_inactive);
 
 //    		        balance_extLayout.startAnimation(slideUp);
     		        balance_extLayout.setVisibility(View.GONE);
@@ -412,7 +415,10 @@ public class BalanceFragment extends Fragment   {
     	    	else {
     	    		addressLabelTxsDisplayed[position] = true;
     	    		
-    	            ((ImageView)view.findViewById(R.id.address_type)).setImageResource(R.drawable.address_active);
+			        if (isWatchOnlys[position])
+				        ((ImageView)view.findViewById(R.id.address_type)).setImageResource(R.drawable.address_watch);
+			        else
+				        ((ImageView)view.findViewById(R.id.address_type)).setImageResource(R.drawable.address_active);
 
     	        	System.gc();
     	    		doDisplaySubList(view, position);
@@ -636,11 +642,13 @@ public class BalanceFragment extends Fragment   {
 	        ((TextView)view.findViewById(R.id.amount)).setTypeface(TypefaceUtil.getInstance(getActivity()).getRobotoBoldTypeface());
 	        ((TextView)view.findViewById(R.id.amount)).setText(amount);
 	        ((TextView)view.findViewById(R.id.currency_code)).setText(isBTC ? "BTC" : strCurrentFiatCode);
-	        
+
+	        /*
 	        if (isWatchOnlys[position])
 		        ((TextView)view.findViewById(R.id.is_watch_only)).setText("watch\nonly");
 	        else
 		        ((TextView)view.findViewById(R.id.is_watch_only)).setText("");
+		    */
 	        	
 	        if(addressLabelTxsDisplayed[position]) {
 				Log.d("List refresh sub", "" + position);
@@ -654,10 +662,16 @@ public class BalanceFragment extends Fragment   {
 	        }
 
 	        if(addressLabelTxsDisplayed[position]) {
-	            ((ImageView)view.findViewById(R.id.address_type)).setImageResource(R.drawable.address_active);
+		        if (isWatchOnlys[position])
+			        ((ImageView)view.findViewById(R.id.address_type)).setImageResource(R.drawable.address_watch);
+		        else
+			        ((ImageView)view.findViewById(R.id.address_type)).setImageResource(R.drawable.address_active);
 	        }
 	        else {
-	            ((ImageView)view.findViewById(R.id.address_type)).setImageResource(R.drawable.address_inactive);
+		        if (isWatchOnlys[position])
+			        ((ImageView)view.findViewById(R.id.address_type)).setImageResource(R.drawable.address_watch_inactive);
+		        else
+			        ((ImageView)view.findViewById(R.id.address_type)).setImageResource(R.drawable.address_inactive);
 	        }
 
 	        return view;
