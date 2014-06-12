@@ -385,6 +385,14 @@ public class ReceiveFragment extends Fragment   {
 
         	public void afterTextChanged(Editable s) {
         		if((edAddress.getText().toString() != null && edAddress.getText().toString().length() > 0) || (edAmount1.getText().toString() != null && edAmount1.getText().toString().length() > 0)) {
+        			String addr = edAddress.getText().toString();
+        			if (BitcoinAddressCheck.isValidAddress(addr)) {
+        				ivReceivingQR.setVisibility(View.VISIBLE);
+        				ivReceivingQR.setImageBitmap(generateQRCode(BitcoinURI.convertToBitcoinURI(addr, null, "", "")));		        		
+        			} else {
+           				ivReceivingQR.setVisibility(View.INVISIBLE);       				
+        			}
+        			
         			clear_input.setVisibility(View.VISIBLE);
         		}
         		else {
@@ -794,6 +802,8 @@ public class ReceiveFragment extends Fragment   {
             	edAddress.setText(labelOrAddress);            	                	               
             	currentSelectedAddress = map.get("address");
             	
+				ivReceivingQR.setVisibility(View.VISIBLE);
+				ivReceivingQR.setImageBitmap(generateQRCode(BitcoinURI.convertToBitcoinURI(currentSelectedAddress, null, "", "")));		        		
                 removeMagicList();
                 edAmount1.requestFocus();
                 edAmount1.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
