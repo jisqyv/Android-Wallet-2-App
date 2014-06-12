@@ -19,6 +19,7 @@ import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences.Editor;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.preference.Preference;
 import android.preference.CheckBoxPreference;
@@ -42,11 +43,13 @@ public class SettingsActivity extends PreferenceActivity {
             setTitle(R.string.app_name);
         	addPreferencesFromResource(info.blockchain.wallet.ui.R.xml.settings);
 
+        	SharedPreferences sp = getPreferenceScreen().getSharedPreferences();
 //        	final String guid = WalletUtil.getInstance(this, this).getRemoteWallet().getGUID();
         	WalletApplication application = (WalletApplication)getApplication();
         	final String guid = application.getRemoteWallet().getGUID();
 
         	Preference guidPref = (Preference) findPreference("guid");
+            guidPref.setSummary(guid);
         	guidPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
         		public boolean onPreferenceClick(Preference preference) {
 
@@ -82,7 +85,7 @@ public class SettingsActivity extends PreferenceActivity {
         	unpairPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
         		public boolean onPreferenceClick(Preference preference) {
 					AlertDialog.Builder builder = new AlertDialog.Builder(setupActivity);
-					builder.setMessage(R.string.ask_you_sure)
+					builder.setMessage(R.string.ask_you_sure_unpair)
 					.setCancelable(false);
 
 					AlertDialog alert = builder.create();
