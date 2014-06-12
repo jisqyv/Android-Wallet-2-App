@@ -69,6 +69,7 @@
     <string name="cancel">Cancel</string>
     <string name="yes">Yes</string>
     <string name="ask_you_sure_unpair">Are you sure you want to unpair your device?</string>
+    <string name="ask_you_sure_exit">Are you sure you want to exit Blockchain Wallet?</string>
     <string name="error_setting_label">Error setting address label</string>
     <string name="new_account_title">New account</string>
     <string name="password">Password:</string>
