@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.sourceforge.zbar.Symbol;
 import piuk.EventListeners;
 import piuk.MyRemoteWallet;
 import piuk.MyRemoteWallet.SendProgress;
@@ -20,6 +21,7 @@ import piuk.blockchain.android.service.BlockchainServiceImpl;
 import piuk.blockchain.android.ui.SendCoinsActivity;
 import piuk.blockchain.android.ui.SuccessCallback;
 import piuk.blockchain.android.ui.dialogs.RequestPasswordDialog;
+import piuk.blockchain.android.util.WalletUtils;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ComponentName;
@@ -81,8 +83,10 @@ import android.content.pm.PackageManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.ContextThemeWrapper;
 import android.util.Log;
+import android.util.Pair;
 
 import com.dm.zbar.android.scanner.ZBarConstants;
+import com.dm.zbar.android.scanner.ZBarScannerActivity;
 import com.google.bitcoin.core.Address;
 import com.google.bitcoin.core.ECKey;
 import com.google.bitcoin.core.Transaction;
@@ -106,6 +110,7 @@ public class SendFragment extends Fragment   {
 	private static int CUSTOM_SEND = 2;
 	private static int SHARED_SEND = 3;
 
+    private static int SCAN_PRIVATE_KEY_FOR_SENDING = 1;
 	private static int PICK_CONTACT = 10;
 	private static int SELECT_INTL_PREFIX = 11;
 	private static int ZBAR_SCANNER_REQUEST = 2026;
@@ -517,18 +522,11 @@ public class SendFragment extends Fragment   {
 							.setCancelable(false)
 							.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 								public void onClick(DialogInterface dialog, int id) {
-									//TODO:
-									/*
-									activity.scanPrivateKeyAddress = address;
+									SendCoinsActivity.scanPrivateKeyAddress = address;
 
-
-									activity.showQRReader(activity.new QrCodeDelagate() {
-										@Override
-										public void didReadQRCode(String data) throws Exception {
-											activity.handleScanPrivateKey(data);
-										}
-									});
-									*/
+									Intent intent = new Intent(getActivity(), ZBarScannerActivity.class);
+									intent.putExtra(ZBarConstants.SCAN_MODES, new int[] { Symbol.QRCODE } );
+					        		startActivityForResult(intent, SCAN_PRIVATE_KEY_FOR_SENDING);	    		
 								}
 							})
 							.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
@@ -1298,8 +1296,15 @@ public class SendFragment extends Fragment   {
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-
-		if(resultCode == Activity.RESULT_OK && requestCode == ZBAR_SCANNER_REQUEST)	{
+		if(resultCode == Activity.RESULT_OK && requestCode == SCAN_PRIVATE_KEY_FOR_SENDING)	{
+    		String scanData = data.getStringExtra(ZBarConstants.SCAN_RESULT);
+    		try {
+				this.handleScanPrivateKey(scanData);
+			} catch (Exception e) {
+	            Toast.makeText(application, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();				
+				e.printStackTrace();
+			}			
+		} else if(resultCode == Activity.RESULT_OK && requestCode == ZBAR_SCANNER_REQUEST)	{
 
 			String address = data.getStringExtra(ZBarConstants.SCAN_RESULT);
 //        	Log.d("Scan result", strResult);
@@ -2409,18 +2414,11 @@ public class SendFragment extends Fragment   {
     							.setCancelable(false)
     							.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
     								public void onClick(DialogInterface dialog, int id) {
-    									//TODO:
-    									/*
-    									activity.scanPrivateKeyAddress = address;
+    									SendCoinsActivity.scanPrivateKeyAddress = address;
 
-
-    									activity.showQRReader(activity.new QrCodeDelagate() {
-    										@Override
-    										public void didReadQRCode(String data) throws Exception {
-    											activity.handleScanPrivateKey(data);
-    										}
-    									});
-    									*/
+    									Intent intent = new Intent(getActivity(), ZBarScannerActivity.class);
+    									intent.putExtra(ZBarConstants.SCAN_MODES, new int[] { Symbol.QRCODE } );
+    					        		startActivityForResult(intent, SCAN_PRIVATE_KEY_FOR_SENDING);	    		
     								}
     							})
     							.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
@@ -2761,5 +2759,91 @@ public class SendFragment extends Fragment   {
         clear_input.setVisibility(View.INVISIBLE);
     }
     
+	public void handleScanPrivateKey(final String contents) throws Exception {
+		System.out.println("Scanned PK " + contents);
 
+		if (SendCoinsActivity.scanPrivateKeyAddress != null) {
+			final String format = WalletUtils.detectPrivateKeyFormat(contents);
+
+			System.out.println("Scanned Private Key Format " + format);
+
+			if (format.equals("bip38")) {
+				handler.postDelayed(new Runnable() {
+
+					@Override
+					public void run() {
+						RequestPasswordDialog.show(getFragmentManager(), new SuccessCallback() {
+
+							public void onSuccess() {
+								String password = RequestPasswordDialog.getPasswordResult();
+								
+								System.out.println("Password " + password);
+
+								try {
+									Pair<ECKey, Boolean> pair = WalletUtils.parsePrivateKey(format, contents, password);
+
+									ECKey key = pair.first;
+
+									if (!key.toAddressCompressed(Constants.NETWORK_PARAMETERS)
+											.toString().equals(SendCoinsActivity.scanPrivateKeyAddress) && 
+											!key.toAddress(Constants.NETWORK_PARAMETERS)
+											.toString().equals(SendCoinsActivity.scanPrivateKeyAddress)) {
+										String scannedPrivateAddress = key.toAddress(Constants.NETWORK_PARAMETERS)
+												.toString();
+										throw new Exception(getString(R.string.wrong_private_key, scannedPrivateAddress));
+									} else {
+										//Success
+										SendCoinsActivity.temporaryPrivateKeys.put(SendCoinsActivity.scanPrivateKeyAddress, key);
+										
+										synchronized (SendCoinsActivity.temporaryPrivateKeys) {
+											SendCoinsActivity.temporaryPrivateKeys.notify();
+										}
+
+										SendCoinsActivity.scanPrivateKeyAddress = null;
+									}
+								} catch (Exception e) {
+									e.printStackTrace();
+									
+									//longToast("Error Decrypting Private Key");
+									Toast.makeText(application, "Error Decrypting Private Key", Toast.LENGTH_LONG).show();
+									//updateSendCoinsFragment(contents, null);
+								}
+							}
+
+							public void onFail() {
+								//updateSendCoinsFragment(contents, null);
+								Toast.makeText(application, "Incorrect password", Toast.LENGTH_LONG).show();
+							}
+						}, RequestPasswordDialog.PasswordTypePrivateKey);
+					}
+				}, 100);
+			} else {
+				Pair<ECKey, Boolean> pair = WalletUtils.parsePrivateKey(format, contents, null);
+
+				ECKey key = pair.first;
+
+				if (!key.toAddressCompressed(Constants.NETWORK_PARAMETERS)
+						.toString().equals(SendCoinsActivity.scanPrivateKeyAddress) && 
+						!key.toAddress(Constants.NETWORK_PARAMETERS)
+						.toString().equals(SendCoinsActivity.scanPrivateKeyAddress)) {
+					String scannedPrivateAddress = key.toAddress(Constants.NETWORK_PARAMETERS)
+							.toString();
+					throw new Exception(getString(R.string.wrong_private_key, scannedPrivateAddress));
+				} else {
+					//Success
+					SendCoinsActivity.temporaryPrivateKeys.put(SendCoinsActivity.scanPrivateKeyAddress, key);
+					Toast.makeText(application, "Success. Private key temporary imported", Toast.LENGTH_LONG).show();
+				}
+
+				synchronized (SendCoinsActivity.temporaryPrivateKeys) {
+					SendCoinsActivity.temporaryPrivateKeys.notify();
+				}
+
+				SendCoinsActivity.scanPrivateKeyAddress = null;
+			}
+		} else {
+			//updateSendCoinsFragment(contents, null);
+			throw new Exception("scanPrivateKeyAddress not set");
+		}
+	}
 }

@@ -444,7 +444,7 @@ public final class SendCoinsFragment extends Fragment
 							.setCancelable(false)
 							.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 								public void onClick(DialogInterface dialog, int id) {
-									activity.scanPrivateKeyAddress = address;
+									SendCoinsActivity.scanPrivateKeyAddress = address;
 
 
 									activity.showQRReader(activity.new QrCodeDelagate() {

@@ -53,7 +53,7 @@ public final class SendCoinsActivity extends AbstractWalletActivity {
 	public static final String INTENT_EXTRA_ADDRESS = "address";
 	private static final String INTENT_EXTRA_QUERY = "query";
 	public static final Map<String, ECKey> temporaryPrivateKeys = new HashMap<String, ECKey>();
-	public String scanPrivateKeyAddress = null;
+	public static String scanPrivateKeyAddress = null;
 	private Spinner spinner;
 	private ArrayAdapter<CharSequence> adapter;
 	private OnChangedSendTypeListener listener;
