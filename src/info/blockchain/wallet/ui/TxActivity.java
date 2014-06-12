@@ -100,7 +100,7 @@ public class TxActivity extends Activity	{
         tvFromAddress = (TextView)findViewById(R.id.from_address);
         tvToAddress = (TextView)findViewById(R.id.to_address);
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssz");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         tvTS.setText(sdf.format(new Date(ts * 1000)));
         
         tvLabelConfirmations.setText("Confirmations");
@@ -189,15 +189,12 @@ public class TxActivity extends Activity	{
 
         @Override
         protected void onPostExecute(String result) {
-        	Log.d("TxActivity", result);
         	
         	String[] results = result.split("\\|");
 
         	transaction.setData(results[0]);
         	transaction.parse();
         	height = transaction.getHeight();
-        	Log.d("TxActivity", "Latest block:" + latest_block);
-        	Log.d("TxActivity", "Height:" + height);
 
         	tvValueFee.setText(BlockchainUtil.formatBitcoin(BigInteger.valueOf(transaction.getFee())) + " BTC");
         	
@@ -273,8 +270,6 @@ public class TxActivity extends Activity	{
         	latestBlock.setData(results[1]);
         	latestBlock.parse();
         	latest_block = latestBlock.getLatestBlock();
-        	Log.d("TxActivity", "Latest block:" + latest_block);
-        	Log.d("TxActivity", "Height:" + height);
 
         	if(height > 01L && latest_block > 0L) {
             	tvValueConfirmations.setText(Long.toString((latest_block - height) + 1));
