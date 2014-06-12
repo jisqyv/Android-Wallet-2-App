@@ -1,10 +1,13 @@
 package info.blockchain.wallet.ui;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.LinearLayout;
 import android.os.AsyncTask;
@@ -27,8 +30,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import info.blockchain.api.LatestBlock;
 import info.blockchain.api.Transaction;
 import info.blockchain.api.Transaction.xPut;
-
 import piuk.blockchain.android.R;
+import piuk.blockchain.android.WalletApplication;
 
 public class TxActivity extends Activity	{
 
@@ -62,6 +65,9 @@ public class TxActivity extends Activity	{
 
 	private Map<String,String> labels = null;
 
+	private AddressManager addressManager = null;
+	private boolean isDialogToAddToddressBookDisplayed = false;
+
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -77,6 +83,10 @@ public class TxActivity extends Activity	{
 
 		labels = WalletUtil.getInstance(this,  this).getRemoteWallet().getLabelMap();
 
+		WalletApplication application = WalletUtil.getInstance(this, this).getWalletApplication();
+        addressManager = new AddressManager(WalletUtil.getInstance(this, this).getRemoteWallet(), application, this);        
+
+		
         latestBlock = new LatestBlock();
         transaction = new Transaction(strTxHash);
 
@@ -187,6 +197,45 @@ public class TxActivity extends Activity	{
           return responseTx + "\\|" + responseBlock;
         }
 
+        private void promptDialogForAddToAddressBook(final String address) {
+        	if (isDialogToAddToddressBookDisplayed)
+        		return;
+           	
+        	AlertDialog.Builder alert = new AlertDialog.Builder(TxActivity.this);
+
+ 			alert.setTitle(R.string.add_to_address_book);
+ 			alert.setMessage(R.string.set_label_below);
+
+ 			// Set an EditText view to get user input 
+ 			final EditText input = new EditText(TxActivity.this);
+ 			alert.setView(input);
+
+ 			alert.setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
+ 			public void onClick(DialogInterface dialog, int whichButton) {
+ 	   			  String label = input.getText().toString();
+ 	 				if (addressManager.canAddAddressBookEntry(address, label)) {
+ 						addressManager.handleAddAddressBookEntry(address, label);
+ 	         			Toast.makeText(TxActivity.this, R.string.added_to_address_book, Toast.LENGTH_LONG).show();
+ 	 				} else {
+ 	 		    		Toast.makeText(TxActivity.this, R.string.address_already_exist, Toast.LENGTH_LONG).show();
+ 	 				}			
+
+ 	 				dialog.dismiss();
+ 	 				isDialogToAddToddressBookDisplayed = false;
+			  }
+ 			});
+
+ 			alert.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+ 	 			  public void onClick(DialogInterface dialog, int whichButton) {
+ 						dialog.dismiss();
+ 	 	 				isDialogToAddToddressBookDisplayed = false;
+ 	 			  }
+ 			});
+
+        	isDialogToAddToddressBookDisplayed = true;
+ 			alert.show();  
+        }
+        
         @Override
         protected void onPostExecute(String result) {
         	
@@ -198,7 +247,7 @@ public class TxActivity extends Activity	{
 
         	tvValueFee.setText(BlockchainUtil.formatBitcoin(BigInteger.valueOf(transaction.getFee())) + " BTC");
         	
-        	String from = null;
+        	String from;
         	String to = null;
         	if(labels.get(transaction.getInputs().get(0).addr) != null) {
         		from = labels.get(transaction.getInputs().get(0).addr);
@@ -206,11 +255,12 @@ public class TxActivity extends Activity	{
         	}
         	else {
         		from = transaction.getInputs().get(0).addr;
+        		final String address = from;
         		ivFromAddress.setVisibility(View.VISIBLE);
                 ivFromAddress.setOnTouchListener(new OnTouchListener() {
                     @Override
                     public boolean onTouch(View v, MotionEvent event) {
-             			Toast.makeText(TxActivity.this, "Add to address book", Toast.LENGTH_LONG).show();
+                    	promptDialogForAddToAddressBook(address);            			
                         return true;
                     }
                 });
@@ -226,11 +276,12 @@ public class TxActivity extends Activity	{
         	}
         	else {
         		to = transaction.getOutputs().get(0).addr;
+        		final String address = to;
         		ivToAddress.setVisibility(View.VISIBLE);
                 ivToAddress.setOnTouchListener(new OnTouchListener() {
                     @Override
                     public boolean onTouch(View v, MotionEvent event) {
-             			Toast.makeText(TxActivity.this, "Add to address book", Toast.LENGTH_LONG).show();
+                    	promptDialogForAddToAddressBook(address);            			
                         return false;
                     }
                 });
