@@ -309,6 +309,7 @@
 
     <string name="request_payment_hint">Receive Into...</string>
     <string name="send_payment_hint">Send To...</string>
+    <string name="copied_address_to_clipboard">Copied Address to Clipboard</string>
     
     
     <string-array name="send_types_array">
