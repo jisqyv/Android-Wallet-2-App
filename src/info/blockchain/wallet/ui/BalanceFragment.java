@@ -81,6 +81,8 @@ public class BalanceFragment extends Fragment   {
 	private boolean isSwipedDown = false;
     private String[] addressLabels = null;
     private boolean[] addressLabelTxsDisplayed = null;
+    
+    private boolean[] isWatchOnlys = null;
     private String[] addressAmounts = null;
 	private TransactionAdapter adapter = null;
 	private boolean isBTC = true;
@@ -231,7 +233,8 @@ public class BalanceFragment extends Fragment   {
 		
 	    activeAddresses = Arrays.asList(addressLabels);
 		addressAmounts = new String[addressLabels.length];
-
+		isWatchOnlys = new boolean[addressLabels.length];
+		
    		if(!isNoRefreshOnReturn) {
    			
 			addressLabelTxsDisplayed = new boolean[addressLabels.length];
@@ -273,6 +276,15 @@ public class BalanceFragment extends Fragment   {
 		    if (label != null) {
 		    	addressLabels[i] = label;	
 		    }  		   		    
+		    
+		    try {
+				if (remoteWallet.isWatchOnly(address))
+					isWatchOnlys[i] = true;
+				else
+					isWatchOnlys[i] = false;					
+		    } catch (Exception e) {
+				e.printStackTrace();
+			}	
 	    }
 
 		totalInputsValue = remoteWallet.getTotal_received();
@@ -625,6 +637,11 @@ public class BalanceFragment extends Fragment   {
 	        ((TextView)view.findViewById(R.id.amount)).setText(amount);
 	        ((TextView)view.findViewById(R.id.currency_code)).setText(isBTC ? "BTC" : strCurrentFiatCode);
 	        
+	        if (isWatchOnlys[position])
+		        ((TextView)view.findViewById(R.id.is_watch_only)).setText("(watch only)");
+	        else
+		        ((TextView)view.findViewById(R.id.is_watch_only)).setText("");
+	        	
 	        if(addressLabelTxsDisplayed[position]) {
 				Log.d("List refresh sub", "" + position);
 		    	System.gc();
