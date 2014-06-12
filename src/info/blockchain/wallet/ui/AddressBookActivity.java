@@ -510,7 +510,7 @@ public class AddressBookActivity extends Activity {
             	String amount = "0.000";
     	    	BigInteger balance = addressManager.getBalance(addr);
     		    if (balance != null) {
-    		    	amount = BlockchainUtil.formatBitcoin(balance);
+    		    	amount = BlockchainUtil.formatBitcoin(balance) + " BTC";
         		    ((TextView)view.findViewById(R.id.txt3)).setText(amount);
     		    }
     		    

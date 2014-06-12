@@ -34,6 +34,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -308,6 +309,39 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 		}
 		
 	}
+
+	@Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) { 
+        if(keyCode == KeyEvent.KEYCODE_BACK) {
+        	
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setMessage(R.string.ask_you_sure_exit).setCancelable(false);
+			AlertDialog alert = builder.create();
+
+			alert.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.yes), new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+					
+					finish();
+
+					dialog.dismiss();
+				}}); 
+
+			alert.setButton(AlertDialog.BUTTON_NEGATIVE, getString(R.string.cancel), new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+					
+					dialog.dismiss();
+				}});
+
+			alert.show();
+        	
+            return true;
+        }
+        else	{
+        	;
+        }
+
+        return false;
+    }
 
 	@Override
     public void onTabReselected(Tab tab, FragmentTransaction ft) { ; }
