@@ -33,6 +33,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -2677,6 +2678,9 @@ public class SendFragment extends Fragment   {
             edAmount1.requestFocus();
             edAmount1.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
             imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+
+            InputMethodManager inputMethodManager = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputMethodManager.showSoftInput(edAmount1, InputMethodManager.SHOW_IMPLICIT);
         }
         else if(BitcoinAddressCheck.isUri(address)) {
     		if(isMagic) {
@@ -2698,6 +2702,9 @@ public class SendFragment extends Fragment   {
             edAmount1.setText(Double.toString(Double.parseDouble(btc_amount) / 100000000.0));
             edAmount1.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
             imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+
+            InputMethodManager inputMethodManager = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputMethodManager.showSoftInput(edAmount1, InputMethodManager.SHOW_IMPLICIT);
 
             isBTC = true;
     	    tvCurrency.setTypeface(TypefaceUtil.getInstance(getActivity()).getBTCTypeface());
