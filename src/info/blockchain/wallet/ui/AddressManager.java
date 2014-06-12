@@ -60,7 +60,7 @@ public class AddressManager {
 	}
 	
 	public boolean canAddAddressBookEntry(final String address, final String label) {
-		if (blockchainWallet.findKey(address) == null)
+		if (blockchainWallet.findAddressBookEntry(address) == null)
 			return true;
 		else
 			return false;
