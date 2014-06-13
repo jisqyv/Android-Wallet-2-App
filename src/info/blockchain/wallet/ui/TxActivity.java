@@ -30,8 +30,11 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import info.blockchain.api.LatestBlock;
 import info.blockchain.api.Transaction;
 import info.blockchain.api.Transaction.xPut;
+import piuk.Hash;
+import piuk.MyRemoteWallet;
 import piuk.blockchain.android.R;
 import piuk.blockchain.android.WalletApplication;
+import piuk.blockchain.android.ui.SuccessCallback;
 
 public class TxActivity extends Activity	{
 
@@ -49,10 +52,14 @@ public class TxActivity extends Activity	{
 	private TextView tvTo = null;
 	private TextView tvFromAddress = null;
 	private TextView tvToAddress = null;
-	
+
+	private TextView tvNoteLabel = null;
+	private TextView tvValueNote = null;
+
 	private ImageView ivFromAddress = null;
 	private ImageView ivToAddress = null;
-	
+	private LinearLayout txNoteRowLayout = null;
+
 	private String strTxHash = null;
 	private boolean isSending = false;
 	private String strResult = null;
@@ -66,7 +73,9 @@ public class TxActivity extends Activity	{
 	private Map<String,String> labels = null;
 
 	private AddressManager addressManager = null;
-	private boolean isDialogToAddToddressBookDisplayed = false;
+	private MyRemoteWallet remoteWallet = null;
+	private WalletApplication application = null;
+	private boolean isDialogDisplayed = false;
 
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -83,8 +92,9 @@ public class TxActivity extends Activity	{
 
 		labels = WalletUtil.getInstance(this,  this).getRemoteWallet().getLabelMap();
 
-		WalletApplication application = WalletUtil.getInstance(this, this).getWalletApplication();
-        addressManager = new AddressManager(WalletUtil.getInstance(this, this).getRemoteWallet(), application, this);        
+		application = WalletUtil.getInstance(this, this).getWalletApplication();
+		remoteWallet =  WalletUtil.getInstance(this, this).getRemoteWallet();
+        addressManager = new AddressManager(remoteWallet, application, this);        
 
 		
         latestBlock = new LatestBlock();
@@ -110,6 +120,18 @@ public class TxActivity extends Activity	{
         tvFromAddress = (TextView)findViewById(R.id.from_address);
         tvToAddress = (TextView)findViewById(R.id.to_address);
 
+        tvNoteLabel = (TextView)findViewById(R.id.tx_note_label);
+        tvValueNote = (TextView)findViewById(R.id.tx_note_value);
+        tvNoteLabel.setText("Transaction Note");
+        tvValueNote.setText(remoteWallet.getTxNote(strTxHash));
+        txNoteRowLayout = (LinearLayout)findViewById(R.id.txNoteRowLayout);
+        txNoteRowLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            	promptDialogForAddNoteToTx();
+            }
+        });
+        
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         tvTS.setText(sdf.format(new Date(ts * 1000)));
         
@@ -163,6 +185,102 @@ public class TxActivity extends Activity	{
         task.execute(new String[] { transaction.getUrl(), latestBlock.getUrl() });
     }
     
+    private void promptDialogForAddNoteToTx() {
+       	if (isDialogDisplayed)
+    		return;
+       	
+    	AlertDialog.Builder alert = new AlertDialog.Builder(TxActivity.this);
+
+		alert.setTitle(R.string.edit_note);
+		alert.setMessage(R.string.enter_note_below);
+
+		final EditText input = new EditText(TxActivity.this);
+		input.setHint(remoteWallet.getTxNote(strTxHash));
+		alert.setView(input);
+
+		String txNote = remoteWallet.getTxNote(strTxHash);
+		String alertPositiveButtonText;
+		if (txNote == null) 
+			alertPositiveButtonText = getString(R.string.add);
+		else 
+			alertPositiveButtonText = getString(R.string.update);
+			
+		alert.setPositiveButton(alertPositiveButtonText, new DialogInterface.OnClickListener() {
+		public void onClick(DialogInterface dialog, int whichButton) {
+			final DialogInterface d = dialog;
+			final String note = input.getText().toString();
+   			try {
+   				if (remoteWallet.addTxNote(strTxHash, note)) {
+   					application.saveWallet(new SuccessCallback() {
+   						@Override
+   						public void onSuccess() {
+   	   	 	 	 	        tvValueNote.setText(note);
+   	 	 	 				d.dismiss();
+   	 	 	 				isDialogDisplayed = false;
+   	 	 	 				Toast.makeText(TxActivity.this.getApplication(),
+   									R.string.note_saved,
+   									Toast.LENGTH_SHORT).show();
+   						}
+
+   						@Override
+   						public void onFail() { 									
+   	   	 	 	 	        tvValueNote.setText(note);
+   	 	 	 				d.dismiss();
+   	 	 	 				isDialogDisplayed = false;
+   							Toast.makeText(TxActivity.this.getApplication(),
+   									R.string.toast_error_syncing_wallet,
+   									Toast.LENGTH_SHORT).show();
+   						}
+   					});
+   				} 						 	         			
+   			} catch (Exception e) {
+   	 			Toast.makeText(TxActivity.this, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+   				e.printStackTrace();
+   			} 	   			   
+		  }
+		});
+
+		alert.setNegativeButton(R.string.delete, new DialogInterface.OnClickListener() {
+ 			  public void onClick(DialogInterface dialog, int whichButton) {
+ 					final DialogInterface d = dialog;
+ 	   				if (remoteWallet.deleteTxNote(strTxHash)) {
+ 	   					application.saveWallet(new SuccessCallback() {
+ 	   						@Override
+ 	   						public void onSuccess() {
+ 	   	   	 	 	 	        tvValueNote.setText(null);
+ 	   	 	 	 				d.dismiss();
+ 	   	 	 	 				isDialogDisplayed = false;
+ 	   							Toast.makeText(TxActivity.this.getApplication(),
+ 	   									R.string.note_deleted,
+ 	   									Toast.LENGTH_SHORT).show();
+ 	   						}
+
+ 	   						@Override
+ 	   						public void onFail() { 									
+ 	   	   	 	 	 	        tvValueNote.setText(null);
+ 	   	 	 	 				d.dismiss();
+ 	   	 	 	 				isDialogDisplayed = false;
+ 	   							Toast.makeText(TxActivity.this.getApplication(),
+ 	   									R.string.toast_error_syncing_wallet,
+ 	   									Toast.LENGTH_SHORT).show();
+ 	   						}
+ 	   					});
+ 	   				} 	 				  
+ 			  }
+		});
+
+		alert.setOnCancelListener(new DialogInterface.OnCancelListener() {         
+		    @Override
+		    public void onCancel(DialogInterface dialog) {
+	 				isDialogDisplayed = false;
+		    }
+		});
+		
+    	isDialogDisplayed = true;
+		alert.show();  
+    }
+    
+    
     private class DownloadTask extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... urls) {
@@ -196,9 +314,9 @@ public class TxActivity extends Activity	{
 
           return responseTx + "\\|" + responseBlock;
         }
-
+        
         private void promptDialogForAddToAddressBook(final String address) {
-        	if (isDialogToAddToddressBookDisplayed)
+        	if (isDialogDisplayed)
         		return;
            	
         	AlertDialog.Builder alert = new AlertDialog.Builder(TxActivity.this);
@@ -221,18 +339,18 @@ public class TxActivity extends Activity	{
  	 				}			
 
  	 				dialog.dismiss();
- 	 				isDialogToAddToddressBookDisplayed = false;
+ 	 				isDialogDisplayed = false;
 			  }
  			});
 
  			alert.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
  	 			  public void onClick(DialogInterface dialog, int whichButton) {
  						dialog.dismiss();
- 	 	 				isDialogToAddToddressBookDisplayed = false;
+ 	 	 				isDialogDisplayed = false;
  	 			  }
  			});
 
-        	isDialogToAddToddressBookDisplayed = true;
+        	isDialogDisplayed = true;
  			alert.show();  
         }
         

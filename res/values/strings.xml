@@ -311,6 +311,9 @@
     <string name="send_payment_hint">Send To...</string>
     <string name="copied_address_to_clipboard">Copied Address to Clipboard</string>
     <string name="add">Add</string>
+    <string name="update">Update</string>
+    <string name="delete">delete</string>
+    <string name="note_deleted">Note deleted</string>
     <string name="add_to_address_book">Add to address book</string>
     <string name="set_label_below">Set Label Below</string>
     <string name="added_to_address_book">Added to address book</string>
