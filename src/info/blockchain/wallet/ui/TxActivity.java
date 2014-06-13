@@ -2,16 +2,23 @@ package info.blockchain.wallet.ui;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.LinearLayout;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.os.AsyncTask;
 import android.widget.ImageView;
+import android.graphics.Typeface;
 import android.widget.Toast;
 import android.util.Log;
 
@@ -52,6 +59,8 @@ public class TxActivity extends Activity	{
 	private TextView tvTo = null;
 	private TextView tvFromAddress = null;
 	private TextView tvToAddress = null;
+	private TextView tvFromAddress2 = null;
+	private TextView tvToAddress2 = null;
 
 	private TextView tvNoteLabel = null;
 	private TextView tvValueNote = null;
@@ -96,14 +105,8 @@ public class TxActivity extends Activity	{
 		remoteWallet =  WalletUtil.getInstance(this, this).getRemoteWallet();
         addressManager = new AddressManager(remoteWallet, application, this);        
 
-
         latestBlock = new LatestBlock();
         transaction = new Transaction(strTxHash);
-
-        ivFromAddress = (ImageView)findViewById(R.id.add_address_from);
-        ivFromAddress.setVisibility(View.INVISIBLE);
-        ivToAddress = (ImageView)findViewById(R.id.add_address_to);
-        ivToAddress.setVisibility(View.INVISIBLE);
 
         tvLabelConfirmations = (TextView)findViewById(R.id.confirm_label);
         tvLabelAmount = (TextView)findViewById(R.id.amount_label);
@@ -117,8 +120,10 @@ public class TxActivity extends Activity	{
         tvTS = (TextView)findViewById(R.id.ts);
         tvFrom = (TextView)findViewById(R.id.from);
         tvTo = (TextView)findViewById(R.id.to);
-        tvFromAddress = (TextView)findViewById(R.id.from_address);
+        ivToAddress = (ImageView)findViewById(R.id.add_address_to);
+        ivToAddress.setVisibility(View.INVISIBLE);
         tvToAddress = (TextView)findViewById(R.id.to_address);
+        tvToAddress2 = (TextView)findViewById(R.id.to_address2);
 
         tvNoteLabel = (TextView)findViewById(R.id.tx_note_label);
         tvValueNote = (TextView)findViewById(R.id.tx_note_value);
@@ -141,24 +146,14 @@ public class TxActivity extends Activity	{
             tvResult.setText("SENT " + strResult + " BTC");
             tvResult.setBackgroundResource(R.drawable.rounded_view_red);
             tvTS.setTextColor(getResources().getColor(R.color.blockchain_red));
-            tvFrom.setTextColor(getResources().getColor(R.color.blockchain_red));
             tvTo.setTextColor(getResources().getColor(R.color.blockchain_red));
-            ((LinearLayout)findViewById(R.id.div1)).setBackgroundResource(R.color.blockchain_red);
-            ((LinearLayout)findViewById(R.id.div2)).setBackgroundResource(R.color.blockchain_red);
-            ((LinearLayout)findViewById(R.id.div3)).setBackgroundResource(R.color.blockchain_red);
-            ((LinearLayout)findViewById(R.id.div4)).setBackgroundResource(R.color.blockchain_red);
         }
         else	{
             tvLabelAmount.setText("Amount received");
             tvResult.setText("RECEIVED " + strResult + " BTC");
             tvResult.setBackgroundResource(R.drawable.rounded_view_green);
-            tvFrom.setTextColor(getResources().getColor(R.color.blockchain_green));
             tvTo.setTextColor(getResources().getColor(R.color.blockchain_green));
             tvTS.setTextColor(getResources().getColor(R.color.blockchain_green));
-            ((LinearLayout)findViewById(R.id.div1)).setBackgroundResource(R.color.blockchain_green);
-            ((LinearLayout)findViewById(R.id.div2)).setBackgroundResource(R.color.blockchain_green);
-            ((LinearLayout)findViewById(R.id.div3)).setBackgroundResource(R.color.blockchain_green);
-            ((LinearLayout)findViewById(R.id.div4)).setBackgroundResource(R.color.blockchain_green);
         }
         tvLabelFee.setText("Transaction fee");
         tvLabelTx.setText("Transaction hash");
@@ -370,33 +365,117 @@ public class TxActivity extends Activity	{
         	height = transaction.getHeight();
 
         	tvValueFee.setText(BlockchainUtil.formatBitcoin(BigInteger.valueOf(transaction.getFee())) + " BTC");
-        	
-        	String from;
-        	String to = null;
-        	if(labels.get(transaction.getInputs().get(0).addr) != null) {
-        		from = labels.get(transaction.getInputs().get(0).addr);
-                ivFromAddress.setVisibility(View.GONE);
-        	}
-        	else {
-        		from = transaction.getInputs().get(0).addr;
-        		final String address = from;
-        		ivFromAddress.setVisibility(View.VISIBLE);
-                ivFromAddress.setOnTouchListener(new OnTouchListener() {
+
+        	if(transaction.getInputs().size() > 3) {
+        		/*
+            	tvValueAmount.setOnTouchListener(new OnTouchListener() {
                     @Override
                     public boolean onTouch(View v, MotionEvent event) {
-                    	promptDialogForAddToAddressBook(address);            			
-                        return true;
+                    	Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse("https://blockchain.info/tx/" + transaction.getHash())); 
+                    	startActivity(i);
+                        return false;
                     }
                 });
-
-        	}
-        	if(from.length() > 25) {
-        		from = from.substring(0, 25) + "...";
+                */
         	}
 
+	        LayoutInflater inflater = (LayoutInflater)TxActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            TableLayout froms = (TableLayout)findViewById(R.id.froms);
+
+        	String from = null;
+        	String to = null;
+	        for(int i = 0; i < transaction.getInputs().size(); i++)	{
+		        LinearLayout row = (LinearLayout)inflater.inflate(R.layout.layout_tx2, null, false);
+	            tvFrom = (TextView)row.findViewById(R.id.from);
+	            if(i > 0)	{
+	            	tvFrom.setText("");
+	            }
+	            ivFromAddress = (ImageView)row.findViewById(R.id.add_address_from);
+	            tvFromAddress = (TextView)row.findViewById(R.id.from_address);
+	            tvFromAddress2 = (TextView)row.findViewById(R.id.from_address2);
+	            
+	            if(isSending)	{
+	                tvFrom.setTextColor(getResources().getColor(R.color.blockchain_red));
+	                ((LinearLayout)findViewById(R.id.div1)).setBackgroundResource(R.color.blockchain_red);
+	                ((LinearLayout)row.findViewById(R.id.div2)).setBackgroundResource(R.color.blockchain_red);
+	                ((LinearLayout)findViewById(R.id.div3)).setBackgroundResource(R.color.blockchain_red);
+	                ((LinearLayout)findViewById(R.id.div4)).setBackgroundResource(R.color.blockchain_red);
+	            }
+	            else	{
+	                tvFrom.setTextColor(getResources().getColor(R.color.blockchain_green));
+	                ((LinearLayout)findViewById(R.id.div1)).setBackgroundResource(R.color.blockchain_green);
+	                ((LinearLayout)row.findViewById(R.id.div2)).setBackgroundResource(R.color.blockchain_green);
+	                ((LinearLayout)findViewById(R.id.div3)).setBackgroundResource(R.color.blockchain_green);
+	                ((LinearLayout)findViewById(R.id.div4)).setBackgroundResource(R.color.blockchain_green);
+	            }
+
+		        //
+		        // FROM
+		        //
+	        	if(labels.get(transaction.getInputs().get(i).addr) != null) {
+	        		from = labels.get(transaction.getInputs().get(i).addr);
+	                ivFromAddress.setVisibility(View.GONE);
+	        	}
+	        	else {
+	        		from = transaction.getInputs().get(i).addr;
+	        		final String address = from;
+	        		ivFromAddress.setVisibility(View.VISIBLE);
+	                ivFromAddress.setOnTouchListener(new OnTouchListener() {
+	                    @Override
+	                    public boolean onTouch(View v, MotionEvent event) {
+	                    	promptDialogForAddToAddressBook(address);            			
+	                        return true;
+ 	                    }
+	                });
+
+	        	}
+	        	if(from.length() > 15) {
+	        		from = from.substring(0, 15) + "...";
+	        	}
+	        	String shortAddress = transaction.getInputs().get(i).addr;
+	        	if(shortAddress.length() > 15) {
+	        		shortAddress = shortAddress.substring(0, 15) + "...";
+	        	}
+
+	        	if(labels.get(transaction.getInputs().get(i).addr) != null) {
+		        	tvFromAddress.setText(from);
+		        	tvFromAddress2.setText(shortAddress);
+	        	}
+	        	else {
+		        	tvFromAddress.setText(shortAddress);
+		        	tvFromAddress2.setVisibility(View.GONE);
+	        	}
+
+	        	tvFromAddress.setOnTouchListener(new OnTouchListener() {
+	                @Override
+	                public boolean onTouch(View v, MotionEvent event) {
+	                	
+	          			android.content.ClipboardManager clipboard = (android.content.ClipboardManager)TxActivity.this.getSystemService(android.content.Context.CLIPBOARD_SERVICE);
+	          		    android.content.ClipData clip = android.content.ClipData.newPlainText("Address", transaction.getInputs().get(0).addr);
+	          		    clipboard.setPrimaryClip(clip);
+	         			Toast.makeText(TxActivity.this, "Address copied to clipboard", Toast.LENGTH_LONG).show();
+
+	                    return false;
+	                }
+	            });
+
+	        	TableRow tablerow = new TableRow(TxActivity.this);
+	            tablerow.setOrientation(TableRow.HORIZONTAL);
+	            tablerow.addView(row);
+	            froms.addView(tablerow);
+	            
+	            if(i == 2) {
+	            	break;
+	            }
+
+	        }
+
+	        //
+	        // TO
+	        //
         	if(labels.get(transaction.getOutputs().get(0).addr) != null) {
         		to = labels.get(transaction.getOutputs().get(0).addr);
-        		ivToAddress.setVisibility(View.GONE);
+                ivToAddress.setVisibility(View.GONE);
         	}
         	else {
         		to = transaction.getOutputs().get(0).addr;
@@ -406,29 +485,28 @@ public class TxActivity extends Activity	{
                     @Override
                     public boolean onTouch(View v, MotionEvent event) {
                     	promptDialogForAddToAddressBook(address);            			
-                        return false;
-                    }
+                        return true;
+	                    }
                 });
 
         	}
-        	if(to.length() > 25) {
-        		to = to.substring(0, 25) + "...";
+        	if(to.length() > 15) {
+        		to = to.substring(0, 15) + "...";
+        	}
+        	String shortAddress = transaction.getOutputs().get(0).addr;
+        	if(shortAddress.length() > 15) {
+        		shortAddress = shortAddress.substring(0, 15) + "...";
         	}
 
-        	tvFromAddress.setText(from);
-        	tvFromAddress.setOnTouchListener(new OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                	
-          			android.content.ClipboardManager clipboard = (android.content.ClipboardManager)TxActivity.this.getSystemService(android.content.Context.CLIPBOARD_SERVICE);
-          		    android.content.ClipData clip = android.content.ClipData.newPlainText("Address", transaction.getInputs().get(0).addr);
-          		    clipboard.setPrimaryClip(clip);
-         			Toast.makeText(TxActivity.this, "Address copied to clipboard", Toast.LENGTH_LONG).show();
+        	if(labels.get(transaction.getOutputs().get(0).addr) != null) {
+	        	tvToAddress.setText(to);
+	        	tvToAddress2.setText(shortAddress);
+        	}
+        	else {
+	        	tvToAddress.setText(shortAddress);
+	        	tvToAddress2.setVisibility(View.GONE);
+        	}
 
-                    return false;
-                }
-            });
-        	tvToAddress.setText(to);
         	tvToAddress.setOnTouchListener(new OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
