@@ -16,10 +16,8 @@ import android.widget.Toast;
 import android.util.Log;
 
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
-import java.util.List;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -55,12 +53,11 @@ public class TxActivity extends Activity	{
 	private TextView tvFromAddress = null;
 	private TextView tvToAddress = null;
 
-	private ImageView ivFromAddress = null;
-	private ImageView ivToAddress = null;
-
 	private TextView tvNoteLabel = null;
 	private TextView tvValueNote = null;
 
+	private ImageView ivFromAddress = null;
+	private ImageView ivToAddress = null;
 	private LinearLayout txNoteRowLayout = null;
 
 	private String strTxHash = null;
@@ -76,14 +73,9 @@ public class TxActivity extends Activity	{
 	private Map<String,String> labels = null;
 
 	private AddressManager addressManager = null;
-
-	private boolean isDialogToAddToddressBookDisplayed = false;
-	private List<String> activeAddresses = null;
-
 	private MyRemoteWallet remoteWallet = null;
 	private WalletApplication application = null;
 	private boolean isDialogDisplayed = false;
-
 
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -100,10 +92,10 @@ public class TxActivity extends Activity	{
 
 		labels = WalletUtil.getInstance(this,  this).getRemoteWallet().getLabelMap();
 
-		WalletApplication application = WalletUtil.getInstance(this, this).getWalletApplication();
-		activeAddresses = Arrays.asList(WalletUtil.getInstance(this, this).getRemoteWallet().getActiveAddresses());
+		application = WalletUtil.getInstance(this, this).getWalletApplication();
 		remoteWallet =  WalletUtil.getInstance(this, this).getRemoteWallet();
         addressManager = new AddressManager(remoteWallet, application, this);        
+
 
         latestBlock = new LatestBlock();
         transaction = new Transaction(strTxHash);
@@ -212,7 +204,7 @@ public class TxActivity extends Activity	{
 			alertPositiveButtonText = getString(R.string.add);
 		else 
 			alertPositiveButtonText = getString(R.string.update);
-			
+
 		alert.setPositiveButton(alertPositiveButtonText, new DialogInterface.OnClickListener() {
 		public void onClick(DialogInterface dialog, int whichButton) {
 			final DialogInterface d = dialog;
@@ -283,7 +275,7 @@ public class TxActivity extends Activity	{
 	 				isDialogDisplayed = false;
 		    }
 		});
-		
+
     	isDialogDisplayed = true;
 		alert.show();  
     }
@@ -379,7 +371,7 @@ public class TxActivity extends Activity	{
 
         	tvValueFee.setText(BlockchainUtil.formatBitcoin(BigInteger.valueOf(transaction.getFee())) + " BTC");
         	
-        	String from = null;
+        	String from;
         	String to = null;
         	if(labels.get(transaction.getInputs().get(0).addr) != null) {
         		from = labels.get(transaction.getInputs().get(0).addr);
@@ -402,27 +394,25 @@ public class TxActivity extends Activity	{
         		from = from.substring(0, 25) + "...";
         	}
 
-        	for(int i = 0; i < transaction.getOutputs().size(); i++) {
-            	if(labels.get(transaction.getOutputs().get(i).addr) != null) {
-            		to = labels.get(transaction.getOutputs().get(i).addr);
-            		ivToAddress.setVisibility(View.GONE);
-            	}
-            	else {
-            		to = transaction.getOutputs().get(i).addr;
-            		final String address = to;
-            		ivToAddress.setVisibility(View.VISIBLE);
-                    ivToAddress.setOnTouchListener(new OnTouchListener() {
-                        @Override
-                        public boolean onTouch(View v, MotionEvent event) {
-                        	promptDialogForAddToAddressBook(address);            			
-                            return false;
-                        }
-                    });
+        	if(labels.get(transaction.getOutputs().get(0).addr) != null) {
+        		to = labels.get(transaction.getOutputs().get(0).addr);
+        		ivToAddress.setVisibility(View.GONE);
+        	}
+        	else {
+        		to = transaction.getOutputs().get(0).addr;
+        		final String address = to;
+        		ivToAddress.setVisibility(View.VISIBLE);
+                ivToAddress.setOnTouchListener(new OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                    	promptDialogForAddToAddressBook(address);            			
+                        return false;
+                    }
+                });
 
-            	}
-            	if(to.length() > 25) {
-            		to = to.substring(0, 25) + "...";
-            	}
+        	}
+        	if(to.length() > 25) {
+        		to = to.substring(0, 25) + "...";
         	}
 
         	tvFromAddress.setText(from);

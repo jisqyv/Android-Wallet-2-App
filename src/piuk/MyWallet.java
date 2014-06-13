@@ -109,7 +109,7 @@ public class MyWallet {
 		root.put("address_book", address_book);
 
 		ECKey key = generateECKey();
-		
+
 		addKey(key, key.toAddress(NetworkParameters.prodNet()).toString(), "My 1st Address");
 	}
 
@@ -148,7 +148,7 @@ public class MyWallet {
 	public List<Map<String, Object>> getAddressBookMap() {
 		return (List<Map<String, Object>>) root.get("address_book");
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public boolean deleteAddressBook(String address) {
 		List<Map<String, Object>> addressBook = (List<Map<String, Object>>) root.get("address_book");
@@ -160,7 +160,7 @@ public class MyWallet {
 				success = true;
 			}
 		}
-		
+
 		return success;
 	}
 
@@ -194,7 +194,7 @@ public class MyWallet {
 
 		return tx_notes.get(hash);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public Map<String, String> getTxNotes() {
 		Map<String, String> tx_notes = (Map<String, String>) root.get("tx_notes");
@@ -218,11 +218,11 @@ public class MyWallet {
 
 		return true;
 	}
-	
+
 	public boolean deleteTxNote(String hash) {
 		return getTxNotes().remove(hash) == null ? false : true;	
 	}
-	
+
 	public boolean addTxNote(Hash hash, String note) throws Exception {
 		//Disallow quotes and < >
 		if (StringUtils.containsAny(note, "\"'<>")) {
@@ -286,7 +286,7 @@ public class MyWallet {
 		if (rootContainer != null && rootContainer.containsKey("version")) {
 			version = Double.valueOf(rootContainer.get("version").toString());
 		}
-		
+
 		System.out.println("getEncryptionVersionUsed() " + version);
 
 		return version;
@@ -459,7 +459,7 @@ public class MyWallet {
 
 		return base58Priv == null ? true : false;
 	}
-	
+
 	protected void addKeysTobitoinJWallet(Wallet wallet, boolean enableTagFiler, int tagFilter) throws Exception {
 
 		wallet.keychain.clear();
@@ -536,7 +536,7 @@ public class MyWallet {
 
 		if (findKey(address) != null)
 			throw new Exception("Address Already Exists In Wallet");
-		
+
 		getKeysMap().add(map);
 
 		return true;
