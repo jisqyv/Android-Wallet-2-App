@@ -280,6 +280,51 @@ public class TxActivity extends Activity	{
 		alert.show();  
     }
     
+    private void promptDialogForAddToAddressBook(final String address) {
+    	if (isDialogDisplayed)
+    		return;
+       	
+    	AlertDialog.Builder alert = new AlertDialog.Builder(TxActivity.this);
+
+			alert.setTitle(R.string.add_to_address_book);
+			alert.setMessage(R.string.set_label_below);
+
+			// Set an EditText view to get user input 
+			final EditText input = new EditText(TxActivity.this);
+			alert.setView(input);
+
+			alert.setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int whichButton) {
+	   			  String label = input.getText().toString();
+	 				if (addressManager.canAddAddressBookEntry(address, label)) {
+						addressManager.handleAddAddressBookEntry(address, label);
+	         			Toast.makeText(TxActivity.this, R.string.added_to_address_book, Toast.LENGTH_LONG).show();
+	 				} else {
+	 		    		Toast.makeText(TxActivity.this, R.string.address_already_exist, Toast.LENGTH_LONG).show();
+	 				}			
+
+	 				dialog.dismiss();
+	 				isDialogDisplayed = false;
+		  }
+			});
+
+			alert.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+	 			  public void onClick(DialogInterface dialog, int whichButton) {
+						dialog.dismiss();
+	 	 				isDialogDisplayed = false;
+	 			  }
+			});
+
+		alert.setOnCancelListener(new DialogInterface.OnCancelListener() {         
+	    	@Override
+	    	public void onCancel(DialogInterface dialog) {
+ 				isDialogDisplayed = false;
+	    	}
+		});
+
+    	isDialogDisplayed = true;
+			alert.show();  
+    }
     
     private class DownloadTask extends AsyncTask<String, Void, String> {
         @Override
@@ -313,45 +358,6 @@ public class TxActivity extends Activity	{
           }
 
           return responseTx + "\\|" + responseBlock;
-        }
-        
-        private void promptDialogForAddToAddressBook(final String address) {
-        	if (isDialogDisplayed)
-        		return;
-           	
-        	AlertDialog.Builder alert = new AlertDialog.Builder(TxActivity.this);
-
- 			alert.setTitle(R.string.add_to_address_book);
- 			alert.setMessage(R.string.set_label_below);
-
- 			// Set an EditText view to get user input 
- 			final EditText input = new EditText(TxActivity.this);
- 			alert.setView(input);
-
- 			alert.setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
- 			public void onClick(DialogInterface dialog, int whichButton) {
- 	   			  String label = input.getText().toString();
- 	 				if (addressManager.canAddAddressBookEntry(address, label)) {
- 						addressManager.handleAddAddressBookEntry(address, label);
- 	         			Toast.makeText(TxActivity.this, R.string.added_to_address_book, Toast.LENGTH_LONG).show();
- 	 				} else {
- 	 		    		Toast.makeText(TxActivity.this, R.string.address_already_exist, Toast.LENGTH_LONG).show();
- 	 				}			
-
- 	 				dialog.dismiss();
- 	 				isDialogDisplayed = false;
-			  }
- 			});
-
- 			alert.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
- 	 			  public void onClick(DialogInterface dialog, int whichButton) {
- 						dialog.dismiss();
- 	 	 				isDialogDisplayed = false;
- 	 			  }
- 			});
-
-        	isDialogDisplayed = true;
- 			alert.show();  
         }
         
         @Override
