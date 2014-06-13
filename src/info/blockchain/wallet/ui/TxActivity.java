@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -20,6 +21,7 @@ import android.os.AsyncTask;
 import android.widget.ImageView;
 import android.graphics.Typeface;
 import android.widget.Toast;
+import android.widget.LinearLayout.LayoutParams;
 import android.util.Log;
 
 import java.text.SimpleDateFormat;
@@ -366,20 +368,14 @@ public class TxActivity extends Activity	{
 
         	tvValueFee.setText(BlockchainUtil.formatBitcoin(BigInteger.valueOf(transaction.getFee())) + " BTC");
 
+	        LayoutInflater inflater = (LayoutInflater)TxActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        	TableRow moreInfoRow = null;
         	if(transaction.getInputs().size() > 3) {
-        		/*
-            	tvValueAmount.setOnTouchListener(new OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                    	Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse("https://blockchain.info/tx/" + transaction.getHash())); 
-                    	startActivity(i);
-                        return false;
-                    }
-                });
-                */
+	        	moreInfoRow = new TableRow(TxActivity.this);
+	        	moreInfoRow.setOrientation(TableRow.HORIZONTAL);
         	}
 
-	        LayoutInflater inflater = (LayoutInflater)TxActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             TableLayout froms = (TableLayout)findViewById(R.id.froms);
 
         	String from = null;
@@ -408,6 +404,16 @@ public class TxActivity extends Activity	{
 	                ((LinearLayout)findViewById(R.id.div3)).setBackgroundResource(R.color.blockchain_green);
 	                ((LinearLayout)findViewById(R.id.div4)).setBackgroundResource(R.color.blockchain_green);
 	            }
+
+	        	if(transaction.getInputs().size() == 1) {
+	                ((TextView)row.findViewById(R.id.result2)).setVisibility(View.INVISIBLE);
+	        	}
+	        	else {
+	                TextView tvResult2 = (TextView)row.findViewById(R.id.result2);
+	                long value = transaction.getInputs().get(i).value;
+	                String strValue = BlockchainUtil.BTC2Fiat(BlockchainUtil.formatBitcoin(BigInteger.valueOf(value).abs()));
+	                tvResult2.setText(strValue + " BTC");
+	        	}
 
 		        //
 		        // FROM
@@ -469,10 +475,25 @@ public class TxActivity extends Activity	{
 	            }
 
 	        }
+	        
+	        if(moreInfoRow != null) {
+		        LinearLayout row = (LinearLayout)inflater.inflate(R.layout.link_blockchain, null, false);
+                ((TextView)row.findViewById(R.id.link)).setText("More info...");
+            	((TextView)row.findViewById(R.id.link)).setOnTouchListener(new OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                    	Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse("https://blockchain.info/tx/" + transaction.getHash())); 
+                    	startActivity(i);
+                        return false;
+                    }
+                });
+		        moreInfoRow.addView(row);
+	        }
 
 	        //
 	        // TO
 	        //
+            ivToAddress = (ImageView)findViewById(R.id.add_address_to);
         	if(labels.get(transaction.getOutputs().get(0).addr) != null) {
         		to = labels.get(transaction.getOutputs().get(0).addr);
                 ivToAddress.setVisibility(View.GONE);
