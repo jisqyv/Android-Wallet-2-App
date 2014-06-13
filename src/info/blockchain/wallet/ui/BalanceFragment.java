@@ -951,7 +951,7 @@ public class BalanceFragment extends Fragment   {
         		intent = new Intent(getActivity(), TxActivity.class);
         		intent.putExtra("TX", transactionHash);
         		intent.putExtra("TS", transaction.getTime().getTime() / 1000);
-        		intent.putExtra("RESULT", BlockchainUtil.formatBitcoin(result));
+        		intent.putExtra("RESULT", BlockchainUtil.formatBitcoin(result.abs()));
         		intent.putExtra("SENDING", isSending);
         		startActivityForResult(intent, TX_ACTIVITY);
             }

@@ -469,7 +469,7 @@ public class TxActivity extends Activity	{
 	            tablerow.setOrientation(TableRow.HORIZONTAL);
 	            tablerow.addView(row);
 	            froms.addView(tablerow);
-	            
+
 	            if(i == 2) {
 	            	break;
 	            }
