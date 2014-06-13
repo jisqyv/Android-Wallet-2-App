@@ -375,6 +375,18 @@ public class MyRemoteWallet extends MyWallet {
 		return this.transactions;
 	}
 
+	public MyTransaction getTransaction(String txHash) {
+		if (this.transactions == null)
+			return null;
+
+		for (Iterator<MyTransaction> iterator = this.transactions.iterator(); iterator.hasNext();) {
+			MyTransaction tx = iterator.next();
+			if (tx.getHashAsString().equals(txHash))
+				return tx;
+		}
+		return null;
+	}
+	
 	public void parseMultiAddr(String response, boolean notifications) throws Exception {
 
 		transactions.clear();

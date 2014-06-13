@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -35,15 +36,22 @@ import java.math.BigInteger;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
+import com.google.bitcoin.core.TransactionConfidence.ConfidenceType;
 
 import info.blockchain.api.LatestBlock;
 import info.blockchain.api.Transaction;
 import info.blockchain.api.Transaction.xPut;
 import piuk.Hash;
 import piuk.MyRemoteWallet;
+import piuk.MyTransaction;
+import piuk.blockchain.android.Constants;
 import piuk.blockchain.android.R;
 import piuk.blockchain.android.WalletApplication;
 import piuk.blockchain.android.ui.SuccessCallback;
+import piuk.blockchain.android.util.WalletUtils;
 
 public class TxActivity extends Activity	{
 
@@ -63,7 +71,11 @@ public class TxActivity extends Activity	{
 	private TextView tvToAddress = null;
 	private TextView tvFromAddress2 = null;
 	private TextView tvToAddress2 = null;
-
+	private TextView tvValueThenLabel = null;
+	private TextView tvValueNowLabel = null;
+	private TextView tvValueThenValue = null;
+	private TextView tvValueNowValue = null;
+    
 	private TextView tvNoteLabel = null;
 	private TextView tvValueNote = null;
 
@@ -100,7 +112,7 @@ public class TxActivity extends Activity	{
         	strResult = extras.getString("RESULT");
         	ts = extras.getLong("TS");
         }
-
+        
 		labels = WalletUtil.getInstance(this,  this).getRemoteWallet().getLabelMap();
 
 		application = WalletUtil.getInstance(this, this).getWalletApplication();
@@ -126,6 +138,14 @@ public class TxActivity extends Activity	{
         ivToAddress.setVisibility(View.INVISIBLE);
         tvToAddress = (TextView)findViewById(R.id.to_address);
         tvToAddress2 = (TextView)findViewById(R.id.to_address2);
+
+        tvValueThenLabel = (TextView)findViewById(R.id.value_then_label);
+        tvValueNowLabel = (TextView)findViewById(R.id.value_now_label);
+        tvValueThenValue = (TextView)findViewById(R.id.value_then_value);
+        tvValueNowValue = (TextView)findViewById(R.id.value_now_value);
+        tvValueThenLabel.setText("Value Then");
+        tvValueNowLabel.setText("Value Now");
+        setValueThenAndNow(remoteWallet, strTxHash);
 
         tvNoteLabel = (TextView)findViewById(R.id.tx_note_label);
         tvValueNote = (TextView)findViewById(R.id.tx_note_value);
@@ -555,4 +575,55 @@ public class TxActivity extends Activity	{
 
       }
 
+	public static JSONObject getTransactionSummary(long txIndex, String guid, long result) throws Exception {
+		final String WebROOT = "https://"+Constants.BLOCKCHAIN_DOMAIN+"/tx-summary";
+		String url = WebROOT + "/"+ txIndex + "?guid="+guid+"&result="+result+"&format=json";
+
+		String response = WalletUtils.getURL(url);	
+
+		return (JSONObject) new JSONParser().parse(response);
+	}
+
+    private void setValueThenAndNow(final MyRemoteWallet remoteWallet, final String txHash) {
+		
+    	MyTransaction tx = remoteWallet.getTransaction(txHash);
+    	if (tx == null)
+    		return;
+    	
+    	long realResult = tx.getResult().longValue();
+		final long finalResult = realResult;
+		
+		final long txIndex = tx.getTxIndex();
+
+		final Handler handler = new Handler();
+
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {							
+					final JSONObject obj = getTransactionSummary(txIndex, remoteWallet.getGUID(), finalResult);
+
+					handler.post(new Runnable() {
+						@Override
+						public void run() {
+							try {
+								
+								String result_local = (String) obj.get("result_local");
+								String result_local_historical = (String) obj.get("result_local_historical");
+
+						        tvValueThenValue.setText(result_local);
+						        tvValueNowValue.setText(result_local_historical);	
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+					});
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}).start();
+		//*/
+	}
+    
 }
