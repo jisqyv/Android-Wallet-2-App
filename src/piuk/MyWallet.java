@@ -184,6 +184,16 @@ public class MyWallet {
 		}		
 	}
 
+	@SuppressWarnings("unchecked")
+	public String getTxNote(String hash) {
+		Map<String, String> tx_notes = (Map<String, String>) root.get("tx_notes");
+
+		if (tx_notes == null) {
+			return null;
+		}
+
+		return tx_notes.get(hash);
+	}
 	
 	@SuppressWarnings("unchecked")
 	public Map<String, String> getTxNotes() {
@@ -198,6 +208,21 @@ public class MyWallet {
 		return tx_notes;
 	}
 
+	public boolean addTxNote(String hash, String note) throws Exception {
+		//Disallow quotes and < >
+		if (StringUtils.containsAny(note, "\"'<>")) {
+			throw new Exception("Note contains invalid characters");
+		}
+
+		getTxNotes().put(hash.toString(), note);	
+
+		return true;
+	}
+	
+	public boolean deleteTxNote(String hash) {
+		return getTxNotes().remove(hash) == null ? false : true;	
+	}
+	
 	public boolean addTxNote(Hash hash, String note) throws Exception {
 		//Disallow quotes and < >
 		if (StringUtils.containsAny(note, "\"'<>")) {
