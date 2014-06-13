@@ -2151,7 +2151,6 @@ public class SendFragment extends Fragment   {
     	layout_fee.setPadding(0, 10, 0, 0);
     	((LinearLayout)layout_custom_spend.findViewById(R.id.custom_spend)).addView(layout_fee);
 
-
     	spFeeType.setOnItemSelectedListener(new OnItemSelectedListener()	{
 	    	public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3)	{
 	    		if(arg2 != 0)	{
@@ -2199,16 +2198,6 @@ public class SendFragment extends Fragment   {
         spChangeAddress.setLayoutParams(layout_params);
     	((LinearLayout)layout_change.findViewById(R.id.p2)).setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
     	((LinearLayout)layout_change.findViewById(R.id.p2)).addView(spChangeAddress);
-    	/*
-        TextView tvChange3 = new TextView(getActivity());
-//        tvChange3.setText("1.965 BTC");
-        tvChange3.setTextSize(16);
-        tvChange3.setTextColor(BlockchainUtil.BLOCKCHAIN_GREEN);
-        tvChange3.setPadding(5, 5, 5, 5);
-        tvChange3.setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
-    	((LinearLayout)layout_change.findViewById(R.id.p3)).setGravity(Gravity.RIGHT|Gravity.CENTER_VERTICAL);
-    	((LinearLayout)layout_change.findViewById(R.id.p3)).addView(tvChange3);
-    	*/
     	layout_change.setPadding(0, 10, 0, 0);
     	((LinearLayout)layout_custom_spend.findViewById(R.id.custom_spend)).addView(layout_change);
     	

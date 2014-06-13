@@ -643,13 +643,6 @@ public class BalanceFragment extends Fragment   {
 	        ((TextView)view.findViewById(R.id.amount)).setText(amount);
 	        ((TextView)view.findViewById(R.id.currency_code)).setText(isBTC ? "BTC" : strCurrentFiatCode);
 
-	        /*
-	        if (isWatchOnlys[position])
-		        ((TextView)view.findViewById(R.id.is_watch_only)).setText("watch\nonly");
-	        else
-		        ((TextView)view.findViewById(R.id.is_watch_only)).setText("");
-		    */
-	        	
 	        if(addressLabelTxsDisplayed[position]) {
 				Log.d("List refresh sub", "" + position);
 		    	System.gc();

@@ -46,17 +46,17 @@ public class TxActivity extends Activity	{
 	private TextView tvTo = null;
 	private TextView tvFromAddress = null;
 	private TextView tvToAddress = null;
-	
+
 	private ImageView ivFromAddress = null;
 	private ImageView ivToAddress = null;
-	
+
 	private String strTxHash = null;
 	private boolean isSending = false;
 	private String strResult = null;
 	private long height = -1L;
 	private long latest_block = -1L;
 	private long ts = 0L;
-	
+
 	private LatestBlock latestBlock = null;
 	private Transaction transaction = null;
 

@@ -1,10 +1,21 @@
 package info.blockchain.wallet.ui;
  
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.math.BigInteger;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 
 import net.sourceforge.zbar.Symbol;
 
@@ -21,7 +32,10 @@ import piuk.blockchain.android.ui.SuccessCallback;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Looper;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.ContextMenu;
@@ -53,13 +67,15 @@ public class AddressBookActivity extends Activity {
     private AddressManager addressManager = null;
     private int curSelection = -1;
     
+    private Handler mHandler = new Handler();
+    
     private static int QR_GENERATION = 1;
     private static int EDIT_LABEL = 2;
     private static int SCAN_WATCH_ONLY = 3;
     private static int SCAN_SENDING_ADDRESS = 4;
     private static int SCAN_PRIVATE_KEY = 5;
 	private String editLabelAddress = null;
-
+	
     private static enum DisplayedAddresses {
 		SendingAddresses,
 		ActiveAddresses,
@@ -256,7 +272,6 @@ public class AddressBookActivity extends Activity {
 		return true;
 	}
 
-	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		Intent intent = new Intent(AddressBookActivity.this, ZBarScannerActivity.class);
@@ -486,27 +501,18 @@ public class AddressBookActivity extends Activity {
 	        }
 	        
 	        String type = allAddresses.get(position).substring(0, 1);
-	        String addr = allAddresses.get(position).substring(1);
+	        final String addr = allAddresses.get(position).substring(1);
 	        
     	    String label = labelMap.get(addr);
     	    if (label == null) {
     	    	label = "Unlabeled";	
     	    }
     	    
-    	    if(type.equals("A")) {
-//                ((ImageView)view.findViewById(R.id.type)).setImageResource(R.drawable.ic_launcher);
-    	    }
-    	    else if(type.equals("S")) {
-//                ((ImageView)view.findViewById(R.id.type)).setImageResource(R.drawable.address_book);
-    	    }
-    	    else {
-//                ((ImageView)view.findViewById(R.id.type)).setImageResource(R.drawable.blockchain_logo);
-    	    }
 	        ((TextView)view.findViewById(R.id.txt1)).setText(label);
 	        ((TextView)view.findViewById(R.id.txt2)).setText(addr);
 	       
-	        if (displayedAddresses == DisplayedAddresses.ActiveAddresses ||
-	        		displayedAddresses == DisplayedAddresses.ArchivedAddresses) {
+	        if (displayedAddresses == DisplayedAddresses.ActiveAddresses || displayedAddresses == DisplayedAddresses.ArchivedAddresses) {
+	        	
             	String amount = "0.000";
     	    	BigInteger balance = addressManager.getBalance(addr);
     		    if (balance != null) {
@@ -519,6 +525,42 @@ public class AddressBookActivity extends Activity {
     		    } else {
     		        ((TextView)view.findViewById(R.id.txt4)).setText("");    		    	
     		    }
+    		    
+    	        if (displayedAddresses == DisplayedAddresses.ArchivedAddresses && addressManager.isWatchOnly(addr)) {
+
+    	        	/*
+    	        	final View tview = view;
+
+    	        	Runnable runnable = new Runnable() {
+    	                @Override
+    	                public void run() {                
+    	                    {                    
+    	                    	
+                  	        	info.blockchain.api.Address address = new info.blockchain.api.Address(addr);
+                                String json = null;
+                                try {
+                                    json = IOUtils.toString(new URL(address.getUrl()), "UTF-8");
+                                    address.setData(json);
+                                    address.parse();
+                                }
+                                catch(MalformedURLException mue) {
+                                	mue.printStackTrace();
+                                }
+                                catch(IOException ioe) {
+                                	ioe.printStackTrace();
+                                }
+
+                		    	String amount = BlockchainUtil.formatBitcoin(BigInteger.valueOf(address.getBalance())) + " BTC";
+                    		    ((TextView)tview.findViewById(R.id.txt3)).setText(amount);
+
+    	                    }
+    	                }
+    	            };        
+                    mHandler.post(runnable);
+                    */
+
+    	        }
+
 	        } else {
     		    ((TextView)view.findViewById(R.id.txt3)).setText("");
 		        ((TextView)view.findViewById(R.id.txt4)).setText("");    		    	
@@ -543,3 +585,4 @@ public class AddressBookActivity extends Activity {
     }
 
 }
+
