@@ -16,8 +16,10 @@ import android.widget.Toast;
 import android.util.Log;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
+import java.util.List;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -67,6 +69,7 @@ public class TxActivity extends Activity	{
 
 	private AddressManager addressManager = null;
 	private boolean isDialogToAddToddressBookDisplayed = false;
+	private List<String> activeAddresses = null;
 
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -85,8 +88,8 @@ public class TxActivity extends Activity	{
 
 		WalletApplication application = WalletUtil.getInstance(this, this).getWalletApplication();
         addressManager = new AddressManager(WalletUtil.getInstance(this, this).getRemoteWallet(), application, this);        
+		activeAddresses = Arrays.asList(WalletUtil.getInstance(this, this).getRemoteWallet().getActiveAddresses());
 
-		
         latestBlock = new LatestBlock();
         transaction = new Transaction(strTxHash);
 
@@ -247,7 +250,7 @@ public class TxActivity extends Activity	{
 
         	tvValueFee.setText(BlockchainUtil.formatBitcoin(BigInteger.valueOf(transaction.getFee())) + " BTC");
         	
-        	String from;
+        	String from = null;
         	String to = null;
         	if(labels.get(transaction.getInputs().get(0).addr) != null) {
         		from = labels.get(transaction.getInputs().get(0).addr);
@@ -270,25 +273,27 @@ public class TxActivity extends Activity	{
         		from = from.substring(0, 25) + "...";
         	}
 
-        	if(labels.get(transaction.getOutputs().get(0).addr) != null) {
-        		to = labels.get(transaction.getOutputs().get(0).addr);
-        		ivToAddress.setVisibility(View.GONE);
-        	}
-        	else {
-        		to = transaction.getOutputs().get(0).addr;
-        		final String address = to;
-        		ivToAddress.setVisibility(View.VISIBLE);
-                ivToAddress.setOnTouchListener(new OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                    	promptDialogForAddToAddressBook(address);            			
-                        return false;
-                    }
-                });
+        	for(int i = 0; i < transaction.getOutputs().size(); i++) {
+            	if(labels.get(transaction.getOutputs().get(i).addr) != null) {
+            		to = labels.get(transaction.getOutputs().get(i).addr);
+            		ivToAddress.setVisibility(View.GONE);
+            	}
+            	else {
+            		to = transaction.getOutputs().get(i).addr;
+            		final String address = to;
+            		ivToAddress.setVisibility(View.VISIBLE);
+                    ivToAddress.setOnTouchListener(new OnTouchListener() {
+                        @Override
+                        public boolean onTouch(View v, MotionEvent event) {
+                        	promptDialogForAddToAddressBook(address);            			
+                            return false;
+                        }
+                    });
 
-        	}
-        	if(to.length() > 25) {
-        		to = to.substring(0, 25) + "...";
+            	}
+            	if(to.length() > 25) {
+            		to = to.substring(0, 25) + "...";
+            	}
         	}
 
         	tvFromAddress.setText(from);

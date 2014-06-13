@@ -761,7 +761,7 @@ public class BalanceFragment extends Fragment   {
 	        		if(addr != null && addr.equals(address)) {
 	        			filteredTxList.add(transaction);
 	        			isPartOfTx = true;
-	    				Log.d("TxBitmapPrep", transaction.getHashAsString() + " contains:" + addr);
+//	    				Log.d("TxBitmapPrep", transaction.getHashAsString() + " contains:" + addr);
 	        			break;
 	        		}
 	            } catch (ScriptException e) {
@@ -784,7 +784,7 @@ public class BalanceFragment extends Fragment   {
 	        			addr = script.getToAddress().toString();
 		        		if (addr != null && addr.equals(address)) {
 		        			filteredTxList.add(transaction);
-		    				Log.d("TxBitmapPrep", transaction.getHashAsString() + " contains:" + addr);
+//		    				Log.d("TxBitmapPrep", transaction.getHashAsString() + " contains:" + addr);
 		        			break;
 		        		}
 	        		}
@@ -827,11 +827,11 @@ public class BalanceFragment extends Fragment   {
 		        		}
 	        			if(txAmounts.get(addr) != null) {
 		        			txAmounts.put(addr, txAmounts.get(addr).subtract(ti.getValue()));
-		    				Log.d("TxBitmapPrep", transaction.getHashAsString() + "/" + addr + ":" + "subtract " + ti.getValue());
+//		    				Log.d("TxBitmapPrep", transaction.getHashAsString() + "/" + addr + ":" + "subtract " + ti.getValue());
 	        			}
 	        			else {
 		        			txAmounts.put(addr, BigInteger.ZERO.subtract(ti.getValue()));
-		    				Log.d("TxBitmapPrep", transaction.getHashAsString() + "/" + addr + ":" + "subtract " + ti.getValue());
+//		    				Log.d("TxBitmapPrep", transaction.getHashAsString() + "/" + addr + ":" + "subtract " + ti.getValue());
 	        			}
 	        		}
 	            } catch (ScriptException e) {
@@ -857,11 +857,11 @@ public class BalanceFragment extends Fragment   {
 			        		}
 		        			if(txAmounts.get(addr) != null) {
 			        			txAmounts.put(addr, txAmounts.get(addr).add(transactionOutput.getValue()));
-			    				Log.d("TxBitmapPrep", transaction.getHashAsString() + "/" + addr + ":" + "add " + transactionOutput.getValue());
+//			    				Log.d("TxBitmapPrep", transaction.getHashAsString() + "/" + addr + ":" + "add " + transactionOutput.getValue());
 		        			}
 		        			else {
 			        			txAmounts.put(addr, transactionOutput.getValue());
-			    				Log.d("TxBitmapPrep", transaction.getHashAsString() + "/" + addr + ":" + "add " + transactionOutput.getValue());
+//			    				Log.d("TxBitmapPrep", transaction.getHashAsString() + "/" + addr + ":" + "add " + transactionOutput.getValue());
 		        			}
 		        		}
 	        		}
