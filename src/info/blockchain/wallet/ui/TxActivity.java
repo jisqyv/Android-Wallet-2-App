@@ -262,7 +262,9 @@ public class TxActivity extends Activity	{
  	   									Toast.LENGTH_SHORT).show();
  	   						}
  	   					});
- 	   				} 	 				  
+ 	   				} else {
+	 	 	 				isDialogDisplayed = false;
+ 	   				}
  			  }
 		});
 
