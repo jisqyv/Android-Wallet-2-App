@@ -32,7 +32,6 @@ public class Transaction extends BlockchainAPI {
 
     private ArrayList<xPut> inputs = null;
     private ArrayList<xPut> outputs = null;
-
     private HashMap<String,Long> totalValues = null;
 
     /**
@@ -80,6 +79,10 @@ public class Transaction extends BlockchainAPI {
 
     public ArrayList<xPut> getOutputs() {
     	return outputs;
+    }
+
+    public HashMap<String, Long> getTotalValues() {
+    	return totalValues;
     }
 
     /**

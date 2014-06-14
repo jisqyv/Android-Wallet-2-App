@@ -953,6 +953,7 @@ public class BalanceFragment extends Fragment   {
         		intent.putExtra("TS", transaction.getTime().getTime() / 1000);
         		intent.putExtra("RESULT", BlockchainUtil.formatBitcoin(result.abs()));
         		intent.putExtra("SENDING", isSending);
+        		intent.putExtra("CURRENCY", strCurrentFiatCode);
         		startActivityForResult(intent, TX_ACTIVITY);
             }
         });

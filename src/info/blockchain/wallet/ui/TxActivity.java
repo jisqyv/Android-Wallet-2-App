@@ -34,7 +34,9 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
+import java.util.HashMap;
 import java.util.List;
+import java.util.ArrayList;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -101,6 +103,13 @@ public class TxActivity extends Activity	{
 	private WalletApplication application = null;
 	private boolean isDialogDisplayed = false;
 	
+	private String strCurrency = null;
+	private String strResultHistorical = "";
+	private boolean isHistorical = false;
+	private String strFiat = null;
+	
+	private HashMap<TextView,String> txAmounts = null;
+	
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -111,6 +120,7 @@ public class TxActivity extends Activity	{
         	strTxHash = extras.getString("TX");
         	isSending = extras.getBoolean("SENDING");
         	strResult = extras.getString("RESULT");
+        	strCurrency = extras.getString("CURRENCY");
         	ts = extras.getLong("TS");
         }
         
@@ -122,6 +132,8 @@ public class TxActivity extends Activity	{
 
         latestBlock = new LatestBlock();
         transaction = new Transaction(strTxHash);
+        
+    	txAmounts = new HashMap<TextView,String>(); 
 
         tvLabelConfirmations = (TextView)findViewById(R.id.confirm_label);
         tvLabelAmount = (TextView)findViewById(R.id.amount_label);
@@ -185,10 +197,38 @@ public class TxActivity extends Activity	{
             tvTo.setTextColor(getResources().getColor(R.color.blockchain_green));
             tvTS.setTextColor(getResources().getColor(R.color.blockchain_green));
         }
+    	strFiat = BlockchainUtil.BTC2Fiat(strResult);
         tvResult.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-     			Toast.makeText(TxActivity.this, "Toggle result here", Toast.LENGTH_LONG).show();
+            	if(!isHistorical) {
+                    if(isSending)	{
+                		tvResult.setText("SENT " + strFiat + " " + strCurrency);
+                    }
+                    else	{
+                		tvResult.setText("RECEIVED " + strFiat + " " + strCurrency);
+                    }
+                    
+                    for (TextView key : txAmounts.keySet()) {
+                    	key.setText(BlockchainUtil.BTC2Fiat(txAmounts.get(key))  + " " + strCurrency);
+                    }
+
+                    isHistorical = true;
+            	}
+            	else {
+                    if(isSending)	{
+                		tvResult.setText("SENT " + strResult + " BTC");
+                    }
+                    else	{
+                		tvResult.setText("RECEIVED " + strResult + " BTC");
+                    }
+
+                    for (TextView key : txAmounts.keySet()) {
+                    	key.setText(txAmounts.get(key) + " BTC");
+                    }
+
+                    isHistorical = false;
+            	}
             }
         });
         tvLabelFee.setText("Transaction fee");
@@ -212,6 +252,8 @@ public class TxActivity extends Activity	{
             }
         });
     	
+    	setValueHistorical(remoteWallet, strTxHash);
+
         DownloadTask task = new DownloadTask();
         task.execute(new String[] { transaction.getUrl(), latestBlock.getUrl() });
     }
@@ -415,27 +457,6 @@ public class TxActivity extends Activity	{
 
 	        LayoutInflater inflater = (LayoutInflater)TxActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-	        /*
-        	TableRow moreInfoRow = null;
-//        	if(transaction.getInputs().size() > 3) {
-	        	moreInfoRow = new TableRow(TxActivity.this);
-	        	moreInfoRow.setOrientation(TableRow.HORIZONTAL);
-//        	}
-//		        if(moreInfoRow != null) {
-			        LinearLayout row = (LinearLayout)inflater.inflate(R.layout.link_blockchain, null, false);
-	                ((TextView)row.findViewById(R.id.link)).setText("More info...");
-	            	((TextView)row.findViewById(R.id.link)).setOnTouchListener(new OnTouchListener() {
-	                    @Override
-	                    public boolean onTouch(View v, MotionEvent event) {
-	                    	Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse("https://blockchain.info/tx/" + transaction.getHash())); 
-	                    	startActivity(i);
-	                        return false;
-	                    }
-	                });
-			        moreInfoRow.addView(row);
-//		        }
-	         */
-
             TableLayout froms = (TableLayout)findViewById(R.id.froms);
 
         	String from = null;
@@ -473,9 +494,10 @@ public class TxActivity extends Activity	{
 	        	}
 	        	else {
 	                TextView tvResult2 = (TextView)row.findViewById(R.id.result2);
-	                long value = transaction.getInputs().get(i).value;
+	                long value = transaction.getTotalValues().get(transaction.getInputs().get(i).addr);
 	                String strValue = BlockchainUtil.formatBitcoin(BigInteger.valueOf(value).abs());
 	                tvResult2.setText(strValue + " BTC");
+	                txAmounts.put(tvResult2, strValue);
 	        	}
 
 		        //
@@ -676,7 +698,6 @@ public class TxActivity extends Activity	{
 						@Override
 						public void run() {
 							try {
-								
 								String result_local = (String) obj.get("result_local");
 								String result_local_historical = (String) obj.get("result_local_historical");
 
@@ -693,5 +714,48 @@ public class TxActivity extends Activity	{
 			}
 		}).start();
 	}
-    
+
+    private void setValueHistorical(final MyRemoteWallet remoteWallet, final String txHash) {
+		
+    	MyTransaction tx = remoteWallet.getTransaction(txHash);
+    	if (tx == null)
+    		return;
+    	
+    	long realResult = tx.getResult().longValue();
+		final long finalResult = realResult;
+		
+		final long txIndex = tx.getTxIndex();
+
+		final Handler handler = new Handler();
+
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {							
+					final JSONObject obj = getTransactionSummary(txIndex, remoteWallet.getGUID(), finalResult);
+
+					handler.post(new Runnable() {
+						@Override
+						public void run() {
+							try {
+//								String result_local = (String) obj.get("result_local");
+								strResultHistorical = (String) obj.get("result_local_historical");
+								if(strResultHistorical != null) {
+									while(Character.isDigit(strResultHistorical.charAt(0))) {
+										strResultHistorical = strResultHistorical.substring(1);
+									}
+								}
+
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+					});
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}).start();
+	}
+
 }
