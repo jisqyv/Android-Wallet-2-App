@@ -81,7 +81,7 @@ public class Transaction extends BlockchainAPI {
     	return outputs;
     }
 
-    public HashMap<String, Long> getTotalValues() {
+    public HashMap<String,Long> getTotalValues() {
     	return totalValues;
     }
 

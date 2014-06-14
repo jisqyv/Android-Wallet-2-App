@@ -8,26 +8,18 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ContextMenu.ContextMenuInfo;
-import android.view.View.OnCreateContextMenuListener;
 import android.view.View.OnTouchListener;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
-import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.os.AsyncTask;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
@@ -109,7 +101,7 @@ public class TxActivity extends Activity	{
 	private String strFiat = null;
 	
 	private HashMap<TextView,String> txAmounts = null;
-	
+
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -404,7 +396,7 @@ public class TxActivity extends Activity	{
     private class DownloadTask extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... urls) {
-
+        	
           String responseTx = "";
           String responseBlock = "";
 
@@ -437,7 +429,7 @@ public class TxActivity extends Activity	{
         
         @Override
         protected void onPostExecute(String result) {
-        	
+
         	String[] results = result.split("\\|");
 
         	transaction.setData(results[0]);
@@ -461,7 +453,17 @@ public class TxActivity extends Activity	{
 
         	String from = null;
         	String to = null;
+        	ArrayList<String> seenAddresses = new ArrayList<String>();
+        	int processed = 0;
 	        for(int i = 0; i < transaction.getInputs().size(); i++)	{
+
+	        	if(seenAddresses.contains(transaction.getInputs().get(i).addr))	{
+	        		continue;
+	        	}
+	        	else	{
+		        	seenAddresses.add(transaction.getInputs().get(i).addr);
+	        	}
+
 		        LinearLayout row = (LinearLayout)inflater.inflate(R.layout.layout_tx2, null, false);
 	            tvFrom = (TextView)row.findViewById(R.id.from);
 	            if(i > 0)	{
@@ -566,9 +568,10 @@ public class TxActivity extends Activity	{
 	            tablerow.addView(row);
 	            froms.addView(tablerow);
 
-	            if(i == 2) {
+	            if(processed == 2) {
 	            	break;
 	            }
+	            processed++;
 
 	        }
 
@@ -667,8 +670,8 @@ public class TxActivity extends Activity	{
       }
 
 	public static JSONObject getTransactionSummary(long txIndex, String guid, long result) throws Exception {
-		final String WebROOT = "https://"+Constants.BLOCKCHAIN_DOMAIN+"/tx-summary";
-		String url = WebROOT + "/"+ txIndex + "?guid="+guid+"&result="+result+"&format=json";
+		final String WebROOT = "https://" + Constants.BLOCKCHAIN_DOMAIN + "/tx-summary";
+		String url = WebROOT + "/" + txIndex + "?guid="+guid+"&result=" + result + "&format=json";
 
 		String response = WalletUtils.getURL(url);	
 
@@ -698,11 +701,23 @@ public class TxActivity extends Activity	{
 						@Override
 						public void run() {
 							try {
-								String result_local = (String) obj.get("result_local");
+								String result_local = (String)obj.get("result_local");
 								String result_local_historical = (String) obj.get("result_local_historical");
+								
+								if(result_local != null) {
+									while(!Character.isDigit(result_local.charAt(0))) {
+										result_local = result_local.substring(1);
+									}
+								}
 
-						        tvValueThenValue.setText(result_local);
-						        tvValueNowValue.setText(result_local_historical);	
+								if(result_local_historical != null) {
+									while(!Character.isDigit(result_local_historical.charAt(0))) {
+										result_local_historical = result_local_historical.substring(1);
+									}
+								}
+
+						        tvValueThenValue.setText(result_local + " USD");
+						        tvValueNowValue.setText(result_local_historical + " USD");	
 							} catch (Exception e) {
 								e.printStackTrace();
 							}
@@ -757,5 +772,4 @@ public class TxActivity extends Activity	{
 			}
 		}).start();
 	}
-
 }

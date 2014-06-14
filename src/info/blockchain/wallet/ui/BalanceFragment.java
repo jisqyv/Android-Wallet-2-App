@@ -307,8 +307,7 @@ public class BalanceFragment extends Fragment   {
         if (adapter != null) {
         	adapter.notifyDataSetChanged();
         }
-        
-        
+
         if (isAccountInformationIntialized == false) {
         	isAccountInformationIntialized = true;
 
