@@ -1028,9 +1028,8 @@ public class MyRemoteWallet extends MyWallet {
 
 			priority += outPoint.value.longValue() * outPoint.confirmations;
 
-			if (changeAddress == null && changeOutPoint == null) {
+			if (changeAddress == null)
 				changeOutPoint = outPoint;
-			}
 
 			if (valueSelected.compareTo(valueNeeded) == 0 || valueSelected.compareTo(valueNeeded.add(minFreeOutputSize)) >= 0)
 				break;
