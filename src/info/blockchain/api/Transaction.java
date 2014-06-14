@@ -1,6 +1,7 @@
 package info.blockchain.api;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.json.JSONObject;
 import org.json.JSONArray;
@@ -32,6 +33,8 @@ public class Transaction extends BlockchainAPI {
     private ArrayList<xPut> inputs = null;
     private ArrayList<xPut> outputs = null;
 
+    private HashMap<String,Long> totalValues = null;
+
     /**
      * Constructor for this instance.
      * 
@@ -44,6 +47,7 @@ public class Transaction extends BlockchainAPI {
 
     	inputs = new ArrayList<xPut>();
     	outputs = new ArrayList<xPut>();
+    	totalValues = new HashMap<String,Long>();
     }
 
     public String getHash() {
@@ -112,6 +116,13 @@ public class Transaction extends BlockchainAPI {
                 			if(prev_out.has("value"))	{
                     			input.value = prev_out.getLong("value");
                     			total_input += input.value;
+                    			
+                    			if(totalValues.get(input.addr) != null)	{
+                    				totalValues.put(input.addr, totalValues.get(input.addr) - input.value);
+                    			}
+                    			else	{
+                    				totalValues.put(input.addr, 0L - input.value);
+                    			}
                 			}
                 			inputs.add(input);
             			}
@@ -131,6 +142,13 @@ public class Transaction extends BlockchainAPI {
                 			if(_output.has("value"))	{
                     			output.value = _output.getLong("value");
                     			total_output += output.value;
+                    			
+                    			if(totalValues.get(output.addr) != null)	{
+                    				totalValues.put(output.addr, totalValues.get(output.addr) + output.value);
+                    			}
+                    			else	{
+                    				totalValues.put(output.addr, output.value);
+                    			}
                 			}
                 			outputs.add(output);
             			}

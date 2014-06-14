@@ -274,8 +274,6 @@ public class AddressBookActivity extends Activity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		Intent intent = new Intent(AddressBookActivity.this, ZBarScannerActivity.class);
-		intent.putExtra(ZBarConstants.SCAN_MODES, new int[] { Symbol.QRCODE } );
 	    switch (item.getItemId()) {
 	    	case R.id.new_address:
 	    		addressManager.newAddress(new AddAddressCallback() {
@@ -293,13 +291,25 @@ public class AddressBookActivity extends Activity {
 	    		Toast.makeText(AddressBookActivity.this, "generate new address", Toast.LENGTH_LONG).show();
 	    		return true;
 	    	case R.id.scan_watch_only:
-        		startActivityForResult(intent, SCAN_WATCH_ONLY);
+	    	 {
+		    		Intent intent = new Intent(AddressBookActivity.this, ZBarScannerActivity.class);
+		    		intent.putExtra(ZBarConstants.SCAN_MODES, new int[] { Symbol.QRCODE } );
+	        		startActivityForResult(intent, SCAN_WATCH_ONLY);
+	    	 }
 	    		return true;
 	    	case R.id.scan_sending_address:
-        		startActivityForResult(intent, SCAN_SENDING_ADDRESS);	    		
+	    	 {
+		    		Intent intent = new Intent(AddressBookActivity.this, ZBarScannerActivity.class);
+		    		intent.putExtra(ZBarConstants.SCAN_MODES, new int[] { Symbol.QRCODE } );
+	        		startActivityForResult(intent, SCAN_SENDING_ADDRESS);	    		
+	    	 }
 	    		return true;
 	    	case R.id.scan_private_key:
-        		startActivityForResult(intent, SCAN_PRIVATE_KEY);	    		
+	    	 {
+		    		Intent intent = new Intent(AddressBookActivity.this, ZBarScannerActivity.class);
+		    		intent.putExtra(ZBarConstants.SCAN_MODES, new int[] { Symbol.QRCODE } );
+	        		startActivityForResult(intent, SCAN_PRIVATE_KEY);	    		
+	    	 }
 	    		return true;
 	    	default:
 	    		return super.onOptionsItemSelected(item);
