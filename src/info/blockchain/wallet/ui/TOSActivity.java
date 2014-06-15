@@ -1,50 +1,34 @@
 package info.blockchain.wallet.ui;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.security.SecureRandom;
-import java.util.Arrays;
-import java.util.List;
 
 import org.json.simple.JSONObject;
 import org.spongycastle.util.encoders.Hex;
 
+import org.apache.commons.lang.RandomStringUtils;
+
 import piuk.EventListeners;
-import piuk.MyRemoteWallet;
 import piuk.MyWallet;
-import piuk.MyRemoteWallet.SendProgress;
 import piuk.blockchain.android.Constants;
 import piuk.blockchain.android.R;
 import piuk.blockchain.android.WalletApplication;
-import piuk.blockchain.android.ui.PinEntryActivity;
-import piuk.blockchain.android.ui.SendCoinsActivity;
 import piuk.blockchain.android.ui.SuccessCallback;
-import piuk.blockchain.android.ui.dialogs.RequestPasswordDialog;
 
 import com.google.android.gcm.GCMRegistrar;
-import com.google.bitcoin.core.Address;
-import com.google.bitcoin.core.ECKey;
-import com.google.bitcoin.core.Transaction;
-import com.google.bitcoin.core.TransactionOutput;
-import com.google.bitcoin.core.Wallet.SendRequest;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.ImageView;
 import android.widget.Toast;
 import android.text.util.Linkify;
 //import android.util.Log;
@@ -85,6 +69,8 @@ public class TOSActivity extends Activity	{
 					@Override
 					public void run() {
 						
+						Looper.prepare();
+						
 						final WalletApplication application = WalletUtil.getInstance(TOSActivity.this, TOSActivity.this).getWalletApplication();
 						try {
 							try {
@@ -99,7 +85,7 @@ public class TOSActivity extends Activity	{
 
 							final String guid = application.getRemoteWallet().getGUID();
 							final String sharedKey = application.getRemoteWallet().getSharedKey();
-							final String password = "123456789abc";
+							final String password = RandomStringUtils.randomAlphabetic(64);
 							final String pinCode = "1234";
 //							final String email = em;
 
@@ -241,6 +227,8 @@ public class TOSActivity extends Activity	{
 								}
 							});
 						}
+
+						Looper.loop();
 
 					}
 				}.start();

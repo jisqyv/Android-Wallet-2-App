@@ -200,11 +200,10 @@ public class TxActivity extends Activity	{
                     else	{
                 		tvResult.setText("RECEIVED " + strFiat + " " + strCurrency);
                     }
-                    
+
                     for (TextView key : txAmounts.keySet()) {
                     	key.setText(BlockchainUtil.BTC2Fiat(txAmounts.get(key))  + " " + strCurrency);
                     }
-
                     isHistorical = true;
             	}
             	else {
@@ -218,7 +217,6 @@ public class TxActivity extends Activity	{
                     for (TextView key : txAmounts.keySet()) {
                     	key.setText(txAmounts.get(key) + " BTC");
                     }
-
                     isHistorical = false;
             	}
             }
