@@ -95,6 +95,9 @@ public class ReceiveFragment extends Fragment   {
 
     private ImageView ivCheck = null;
 
+    private ImageView ivInputToggle = null;
+    private boolean isKeyboard = true;
+
     private List<HashMap<String,String>> magicData = null;
     private List<HashMap<String,String>> filteredDisplayList = null;
 	private MagicAdapter adapter = null;
@@ -222,7 +225,8 @@ public class ReceiveFragment extends Fragment   {
             }
         });
 
-        final ImageView clear_input = (ImageView)rootView.findViewById(R.id.clear);
+        ivInputToggle = (ImageView)rootView.findViewById(R.id.clear);
+        ivInputToggle.setImageResource(R.drawable.keyboard_icon);
   
     	LinearLayout divider1 = (LinearLayout)rootView.findViewById(R.id.divider1);
     	divider1.setBackgroundColor(BlockchainUtil.BLOCKCHAIN_GREEN);
@@ -331,10 +335,14 @@ public class ReceiveFragment extends Fragment   {
         				tvAmount2.setText(BlockchainUtil.Fiat2BTC(edAmount1.getText().toString()) + " BTC");
         			}
 
-        			clear_input.setVisibility(View.VISIBLE);
+//        			ivInputToggle.setVisibility(View.VISIBLE);
+        			isKeyboard = false;
+        			ivInputToggle.setImageResource(R.drawable.clear_icon);
         		}
         		else {
-        			clear_input.setVisibility(View.INVISIBLE);
+//        			ivInputToggle.setVisibility(View.INVISIBLE);
+        			isKeyboard = true;
+        			ivInputToggle.setImageResource(R.drawable.keyboard_icon);
         		}
         	}
 
@@ -375,9 +383,24 @@ public class ReceiveFragment extends Fragment   {
 
             	}
             	else {
-//            		removeMagicList();
+            		removeMagicList();
             	}
             		
+            }
+        });
+
+        // block keyboard
+        edAddress.setOnTouchListener(new OnTouchListener(){
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+            	int inType = edAddress.getInputType(); // backup the input type
+
+                edAddress.setInputType(InputType.TYPE_NULL); // disable soft input
+                edAddress.onTouchEvent(event); // call native handler
+                edAddress.setInputType(inType); // restore input type
+                edAddress.setFocusable(true);
+
+                return true; // consume touch even
             }
         });
 
@@ -393,10 +416,10 @@ public class ReceiveFragment extends Fragment   {
            				ivReceivingQR.setVisibility(View.INVISIBLE);       				
         			}
         			
-        			clear_input.setVisibility(View.VISIBLE);
+//        			ivInputToggle.setVisibility(View.VISIBLE);
         		}
         		else {
-        			clear_input.setVisibility(View.INVISIBLE);
+//        			ivInputToggle.setVisibility(View.INVISIBLE);
         		}
         	}
 
@@ -448,16 +471,29 @@ public class ReceiveFragment extends Fragment   {
 		    }
 		});
 
-        clear_input.setOnTouchListener(new OnTouchListener() {
+        ivInputToggle.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
             	
-            	clearReceive();
-            	
+            	if(isKeyboard) {
+                	InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.showSoftInput(edAddress, InputMethodManager.SHOW_IMPLICIT);
+                    ivInputToggle.setImageResource(R.drawable.clear_icon);
+                	isKeyboard = false;
+            	}
+            	else {
+                	clearReceive();
+                	InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+	                imm.hideSoftInputFromWindow(edAddress.getWindowToken(), 0);
+//                    ivInputToggle.setVisibility(View.INVISIBLE);
+	                ivInputToggle.setImageResource(R.drawable.keyboard_icon);
+                	isKeyboard = true;
+            	}
+
                 return false;
             }
         });
-        clear_input.setVisibility(View.INVISIBLE);
+//        ivInputToggle.setVisibility(View.INVISIBLE);
 
         return rootView;
     }
@@ -469,9 +505,15 @@ public class ReceiveFragment extends Fragment   {
         Log.d("BlockchainWallet", "setUserVisible");
 
         if(isVisibleToUser) {
-            if(edAddress.getText().length() < 1 && edAmount1.getText().length() < 1) {
-                ImageView clear_input = (ImageView)rootView.findViewById(R.id.clear);
-                clear_input.setVisibility(View.INVISIBLE);
+            if(edAddress.getText().length() < 1 && (edAmount1.getText().length() < 1 || edAmount1.getText().equals("0.0000"))) {
+//                ImageView clear_input = (ImageView)rootView.findViewById(R.id.clear);
+//                clear_input.setVisibility(View.INVISIBLE);
+            	ivInputToggle.setImageResource(R.drawable.keyboard_icon);
+            	isKeyboard = true;
+            }
+            else {
+            	ivInputToggle.setImageResource(R.drawable.clear_icon);
+            	isKeyboard = false;
             }
         }
 
@@ -481,7 +523,6 @@ public class ReceiveFragment extends Fragment   {
         		removeMagicList();
         	}
         	displayMagicList();
-        	doSimpleSend();
         }
         else {
         	;
@@ -496,14 +537,20 @@ public class ReceiveFragment extends Fragment   {
 
         Log.d("BlockchainWallet", "onResume");
         
-        if(edAddress.getText().length() < 1 && edAmount1.getText().length() < 1) {
-            ImageView clear_input = (ImageView)rootView.findViewById(R.id.clear);
-            clear_input.setVisibility(View.INVISIBLE);
+        if(edAddress.getText().length() < 1 && (edAmount1.getText().length() < 1 || edAmount1.getText().equals("0.0000"))) {
+//            ImageView clear_input = (ImageView)rootView.findViewById(R.id.clear);
+//            clear_input.setVisibility(View.INVISIBLE);
+        	ivInputToggle.setImageResource(R.drawable.keyboard_icon);
+        	isKeyboard = true;
+        }
+        else {
+        	ivInputToggle.setImageResource(R.drawable.clear_icon);
+        	isKeyboard = false;
         }
         
         if(!isReturnFromOutsideApp) {
-            removeMagicList();
-        	displayMagicList();
+//            removeMagicList();
+//        	displayMagicList();
         }
         else {
         	isReturnFromOutsideApp = false;
@@ -858,7 +905,6 @@ public class ReceiveFragment extends Fragment   {
         }
     }
 
-
     private void clearReceive()	{
     	edAddress.setText("");
         edAddress.setHint(R.string.request_payment_hint);
@@ -881,11 +927,10 @@ public class ReceiveFragment extends Fragment   {
         ivReceivingQR.setVisibility(View.INVISIBLE);
 
     	if(!isMagic) {
-        	displayMagicList();
+//        	displayMagicList();
     	}
 
-        final ImageView clear_input = (ImageView)rootView.findViewById(R.id.clear);
-        clear_input.setVisibility(View.INVISIBLE);
+//    	ivInputToggle.setVisibility(View.INVISIBLE);
     }
 
 }
