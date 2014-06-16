@@ -160,6 +160,9 @@ public class SendFragment extends Fragment   {
 //    private ImageView ivCheck = null;
     private TextView tvSentPrompt = null;
 
+    private ImageView ivInputToggle = null;
+    private boolean isKeyboard = true;
+
 	private boolean isBTC = true;
 
     private List<HashMap<String,String>> magicData = null;
@@ -193,52 +196,6 @@ public class SendFragment extends Fragment   {
                 String address = intent.getStringExtra("BTC_ADDRESS");
 
 //        		Toast.makeText(getActivity(), "In SendFragment:" + address, Toast.LENGTH_SHORT).show();
-
-                /*
-                if(BitcoinAddressCheck.isValidAddress(address)) {
-            		Toast.makeText(getActivity(), "is valid address", Toast.LENGTH_SHORT).show();
-
-            		if(isMagic) {
-            			removeMagicList();
-            		}
-
-                    InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(edAddress.getWindowToken(), 0);
-
-                    edAddress.setText(address);
-
-                    edAmount1.requestFocus();
-                    edAmount1.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-                    imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-                }
-                else if(BitcoinAddressCheck.isUri(address)) {
-            		Toast.makeText(getActivity(), "is uri", Toast.LENGTH_SHORT).show();
-
-            		if(isMagic) {
-            			removeMagicList();
-            		}
-
-                    String btc_address = BitcoinAddressCheck.getAddress(address);
-                    String btc_amount = BitcoinAddressCheck.getAmount(address);
-                    
-                    edAddress.setText(btc_address);
-                    InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(edAddress.getWindowToken(), 0);
-
-                    edAmount1.requestFocus();
-                    edAmount1.setText(Double.toString(Double.parseDouble(btc_amount) / 100000000.0));
-                    edAmount1.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-                    imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-
-                    isBTC = true;
-            	    tvCurrency.setTypeface(TypefaceUtil.getInstance(getActivity()).getBTCTypeface());
-            		tvCurrency.setText(Character.toString((char)TypefaceUtil.getInstance(getActivity()).getBTCSymbol()));
-                    
-                }
-                else {
-            		Toast.makeText(getActivity(), "not processed", Toast.LENGTH_SHORT).show();
-                }
-                */
 
     			doScanInput(address);
 
@@ -384,7 +341,8 @@ public class SendFragment extends Fragment   {
             }
         });
 
-        final ImageView clear_input = (ImageView)rootView.findViewById(R.id.clear);
+        ivInputToggle = (ImageView)rootView.findViewById(R.id.input_toggle);
+        ivInputToggle.setImageResource(R.drawable.keyboard_icon);
 
     	LinearLayout divider1 = (LinearLayout)rootView.findViewById(R.id.divider1);
     	divider1.setBackgroundColor(BlockchainUtil.BLOCKCHAIN_RED);
@@ -766,15 +724,6 @@ public class SendFragment extends Fragment   {
 				} else {
 					application.getRemoteWallet().simpleSendCoinsAsync(receivingAddress.toString(), amount, feePolicy, fee, progress);
 
-					//
-					//
-					//
-					/*
-					btSend.setVisibility(View.GONE);
-			        summary3.setVisibility(View.VISIBLE);
-			        tvSentPrompt.setVisibility(View.VISIBLE);
-			        */
-
 				}
 			}
 
@@ -786,29 +735,11 @@ public class SendFragment extends Fragment   {
 					activity.longToast(R.string.only_quick_supported);
 					return;
 				}
-				//TODO:
-				/*
-				Pair<String, String> selected = (Pair<String, String>) sendCoinsFromSpinner.getSelectedItem();
 
-				if (selected.first.equals("Any Address")) {
-					from = application.getRemoteWallet().getActiveAddresses();
-				} else {
-					from = new String[] {selected.first.toString()};
-				}
-				*/
 				final BigInteger amount = getBTCEnteredOutputValue(edAmount1.getText().toString());
 				final WalletApplication application = (WalletApplication) getActivity().getApplication();
 
 				application.getRemoteWallet().sendCoinsAsync(cs.getSendingAddresses(), receivingAddress.toString(), amount, feePolicy, fee, cs.getChangeAddress(), progress);
-
-				//
-				//
-				//
-				/*
-				btSend.setVisibility(View.GONE);
-		        summary3.setVisibility(View.VISIBLE);
-		        tvSentPrompt.setVisibility(View.VISIBLE);
-		        */
 
 			}
 
@@ -828,14 +759,6 @@ public class SendFragment extends Fragment   {
 
 				//application.getRemoteWallet().sendCoinsAsync(from, receivingAddress.toString(), amount, feePolicy, fee, progress);
 
-				//
-				//
-				//
-				/*
-				btSend.setVisibility(View.GONE);
-		        summary3.setVisibility(View.VISIBLE);
-		        tvSentPrompt.setVisibility(View.VISIBLE);
-		        */
 			}
 
             public void onClick(View v) {
@@ -1004,14 +927,15 @@ public class SendFragment extends Fragment   {
             			tvAmount2.setText(BlockchainUtil.BTC2Fiat(edAmount1.getText().toString()) + " " + strCurrentFiatCode);
         			}
         			else	{
-//                		tvAmount2.setTypeface(TypefaceUtil.getInstance(getActivity()).getBTCTypeface());
         				tvAmount2.setText(BlockchainUtil.Fiat2BTC(edAmount1.getText().toString()) + " BTC");
         			}
 
-        			clear_input.setVisibility(View.VISIBLE);
+        			isKeyboard = false;
+        			ivInputToggle.setImageResource(R.drawable.clear_icon);
         		}
         		else {
-        			clear_input.setVisibility(View.INVISIBLE);
+        			isKeyboard = true;
+        			ivInputToggle.setImageResource(R.drawable.keyboard_icon);
         		}
         	}
 
@@ -1043,22 +967,32 @@ public class SendFragment extends Fragment   {
             public void onClick(View v) {
             	
             	if(!isMagic) {
-            		
             		displayMagicList();
-
             	}
+            	else {
+            		removeMagicList();
+            	}
+            }
+        });
+
+        edAddress.setOnTouchListener(new OnTouchListener(){
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+            	int inType = edAddress.getInputType(); // backup the input type
+
+                edAddress.setInputType(InputType.TYPE_NULL); // disable soft input
+                edAddress.onTouchEvent(event); // call native handler
+                edAddress.setInputType(inType); // restore input type
+                edAddress.setFocusable(true);
+
+                return true; // consume touch even
             }
         });
 
         edAddress.addTextChangedListener(new TextWatcher()	{
 
         	public void afterTextChanged(Editable s) {
-        		if((edAddress.getText().toString() != null && edAddress.getText().toString().length() > 0) || (edAmount1.getText().toString() != null && edAmount1.getText().toString().length() > 0)) {
-        			clear_input.setVisibility(View.VISIBLE);
-        		}
-        		else {
-        			clear_input.setVisibility(View.INVISIBLE);
-        		}
+        		;
         	}
 
         	public void beforeTextChanged(CharSequence s, int start, int count, int after)	{ ; }
@@ -1114,16 +1048,28 @@ public class SendFragment extends Fragment   {
 		    }
 		});
 
-        clear_input.setOnTouchListener(new OnTouchListener() {
+        ivInputToggle.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
             	
-            	clearSendView();
+            	if(isKeyboard) {
+                	InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.showSoftInput(edAddress, InputMethodManager.SHOW_IMPLICIT);
+                    ivInputToggle.setImageResource(R.drawable.clear_icon);
+                	isKeyboard = false;
+            	}
+            	else {
+                	clearSendView();
+                	InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+	                imm.hideSoftInputFromWindow(edAddress.getWindowToken(), 0);
+//                    ivInputToggle.setVisibility(View.INVISIBLE);
+	                ivInputToggle.setImageResource(R.drawable.keyboard_icon);
+                	isKeyboard = true;
+            	}
 
                 return false;
             }
         });
-        clear_input.setVisibility(View.INVISIBLE);
 
         final ImageView imgSimpleSend = ((ImageView)rootView.findViewById(R.id.simple));
         final ImageView imgCustomSend = ((ImageView)rootView.findViewById(R.id.custom));
@@ -1203,17 +1149,6 @@ public class SendFragment extends Fragment   {
         return rootView;
     }
 
-    /*
-    public BigInteger getBTCEnteredOutputValue(EditText edAmount) {
-		String amountString = edAmount.getText().toString().trim();
-    	if(! isBTC) {
-    		return BlockchainUtil.bitcoinAmountStringToBigInteger(BlockchainUtil.Fiat2BTC(amountString));
-    	} else {
-    		return BlockchainUtil.bitcoinAmountStringToBigInteger(amountString);
-    	}
-    }
-    */   
-    
     public BigInteger getBTCEnteredOutputValue(String edAmount) {
 		String amountString = edAmount.trim();
     	if(!isBTC) {
@@ -1229,18 +1164,16 @@ public class SendFragment extends Fragment   {
         
         Log.d("BlockchainWallet", "setUserVisible");
 
-        /*
         if(isVisibleToUser) {
-        	if(isMagic) {
-        		removeMagicList();
-        	}
-        	displayMagicList();
-        	doSimpleSend();
+            if(edAddress.getText().length() < 1 && (edAmount1.getText().length() < 1 || edAmount1.getText().equals("0.0000"))) {
+            	ivInputToggle.setImageResource(R.drawable.keyboard_icon);
+            	isKeyboard = true;
+            }
+            else {
+            	ivInputToggle.setImageResource(R.drawable.clear_icon);
+            	isKeyboard = false;
+            }
         }
-        else {
-        	;
-        }
-        */
 
     }
 
@@ -1253,8 +1186,14 @@ public class SendFragment extends Fragment   {
 //        IntentFilter filter = new IntentFilter(ACTION_INTENT);
 //        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiver, filter);
 
-        removeMagicList();
-    	displayMagicList();
+        if(edAddress.getText().length() < 1 && (edAmount1.getText().length() < 1 || edAmount1.getText().equals("0.0000"))) {
+        	ivInputToggle.setImageResource(R.drawable.keyboard_icon);
+        	isKeyboard = true;
+        }
+        else {
+        	ivInputToggle.setImageResource(R.drawable.clear_icon);
+        	isKeyboard = false;
+        }
 
     }
 
@@ -2087,17 +2026,6 @@ public class SendFragment extends Fragment   {
                 }
             }
         });
-    	
-    	/*
-    	ImageButton ibPlus = new ImageButton(getActivity());
-    	ibPlus.setImageResource(R.drawable.plus_icon);
-    	((LinearLayout)layout_from.findViewById(R.id.plus)).addView(ibPlus);
-        ibPlus.setOnClickListener(new Button.OnClickListener() {
-            public void onClick(View v) {
-            	addSendingAddress(displayAddresses);
-            }
-        });
-        */
 
     	((LinearLayout)layout_custom_spend.findViewById(R.id.froms)).addView(layout_from);
     	lastSendingAddress = layout_from;
@@ -2615,34 +2543,7 @@ public class SendFragment extends Fragment   {
 
 	private void updateView()
 	{
-		/*
-		String address = getToAddress();
-
-		if (receivingAddressView.getText().toString().trim().length() == 0 || address != null) {
-			receivingAddressErrorView.setVisibility(View.GONE);	
-		} else {
-			receivingAddressErrorView.setVisibility(View.VISIBLE);
-		}
-
-		final BigInteger amount = amountView.getAmount();
-		final boolean validAmount = amount != null && amount.signum() > 0;
-
-		MyRemoteWallet.State state = application.getRemoteWallet().getState();
-		receivingAddressView.setEnabled(state == MyRemoteWallet.State.INPUT);
-
-		amountView.setEnabled(state == MyRemoteWallet.State.INPUT);
-
-		viewGo.setEnabled(state == MyRemoteWallet.State.INPUT && address != null && validAmount);
-		if (state == MyRemoteWallet.State.INPUT)
-			viewGo.setText(R.string.send_coins_fragment_button_send);
-		else if (state == MyRemoteWallet.State.SENDING)
-			viewGo.setText(R.string.send_coins_sending_msg);
-		else if (state == MyRemoteWallet.State.SENT)
-			viewGo.setText(R.string.send_coins_sent_msg);
-
-		viewCancel.setEnabled(state != MyRemoteWallet.State.SENDING);
-		viewCancel.setText(state != MyRemoteWallet.State.SENT ? R.string.button_cancel : R.string.send_coins_fragment_button_back);
-		*/
+		;
 	}
 
     private void doSelectInternationalPrefix()	{
@@ -2740,12 +2641,6 @@ public class SendFragment extends Fragment   {
     	layout_froms.removeAllViews();
     	layout_custom_spend.removeViews(1, layout_custom_spend.getChildCount() - 1);
 
-    	if(!isMagic) {
-        	displayMagicList();
-    	}
-
-        final ImageView clear_input = (ImageView)rootView.findViewById(R.id.clear);
-        clear_input.setVisibility(View.INVISIBLE);
     }
     
 	public void handleScanPrivateKey(final String contents) throws Exception {

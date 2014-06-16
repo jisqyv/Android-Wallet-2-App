@@ -93,8 +93,6 @@ public class ReceiveFragment extends Fragment   {
     private ImageView ivContacts = null;
     private ImageView ivPhoneContacts = null;
 
-    private ImageView ivCheck = null;
-
     private ImageView ivInputToggle = null;
     private boolean isKeyboard = true;
 
@@ -225,7 +223,7 @@ public class ReceiveFragment extends Fragment   {
             }
         });
 
-        ivInputToggle = (ImageView)rootView.findViewById(R.id.clear);
+        ivInputToggle = (ImageView)rootView.findViewById(R.id.input_toggle);
         ivInputToggle.setImageResource(R.drawable.keyboard_icon);
   
     	LinearLayout divider1 = (LinearLayout)rootView.findViewById(R.id.divider1);
@@ -335,7 +333,6 @@ public class ReceiveFragment extends Fragment   {
         				tvAmount2.setText(BlockchainUtil.Fiat2BTC(edAmount1.getText().toString()) + " BTC");
         			}
 
-//        			ivInputToggle.setVisibility(View.VISIBLE);
         			isKeyboard = false;
         			ivInputToggle.setImageResource(R.drawable.clear_icon);
         		}
@@ -378,9 +375,7 @@ public class ReceiveFragment extends Fragment   {
             	}
 
             	if(!isMagic) {
-            		
             		displayMagicList();
-
             	}
             	else {
             		removeMagicList();
@@ -389,7 +384,6 @@ public class ReceiveFragment extends Fragment   {
             }
         });
 
-        // block keyboard
         edAddress.setOnTouchListener(new OnTouchListener(){
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -415,11 +409,10 @@ public class ReceiveFragment extends Fragment   {
         			} else {
            				ivReceivingQR.setVisibility(View.INVISIBLE);       				
         			}
-        			
-//        			ivInputToggle.setVisibility(View.VISIBLE);
+
         		}
         		else {
-//        			ivInputToggle.setVisibility(View.INVISIBLE);
+        			;
         		}
         	}
 
@@ -485,7 +478,6 @@ public class ReceiveFragment extends Fragment   {
                 	clearReceive();
                 	InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 	                imm.hideSoftInputFromWindow(edAddress.getWindowToken(), 0);
-//                    ivInputToggle.setVisibility(View.INVISIBLE);
 	                ivInputToggle.setImageResource(R.drawable.keyboard_icon);
                 	isKeyboard = true;
             	}
@@ -493,7 +485,6 @@ public class ReceiveFragment extends Fragment   {
                 return false;
             }
         });
-//        ivInputToggle.setVisibility(View.INVISIBLE);
 
         return rootView;
     }
@@ -506,8 +497,6 @@ public class ReceiveFragment extends Fragment   {
 
         if(isVisibleToUser) {
             if(edAddress.getText().length() < 1 && (edAmount1.getText().length() < 1 || edAmount1.getText().equals("0.0000"))) {
-//                ImageView clear_input = (ImageView)rootView.findViewById(R.id.clear);
-//                clear_input.setVisibility(View.INVISIBLE);
             	ivInputToggle.setImageResource(R.drawable.keyboard_icon);
             	isKeyboard = true;
             }
@@ -516,18 +505,6 @@ public class ReceiveFragment extends Fragment   {
             	isKeyboard = false;
             }
         }
-
-        /*
-        if(isVisibleToUser) {
-        	if(isMagic) {
-        		removeMagicList();
-        	}
-        	displayMagicList();
-        }
-        else {
-        	;
-        }
-        */
 
     }
 
@@ -538,8 +515,6 @@ public class ReceiveFragment extends Fragment   {
         Log.d("BlockchainWallet", "onResume");
         
         if(edAddress.getText().length() < 1 && (edAmount1.getText().length() < 1 || edAmount1.getText().equals("0.0000"))) {
-//            ImageView clear_input = (ImageView)rootView.findViewById(R.id.clear);
-//            clear_input.setVisibility(View.INVISIBLE);
         	ivInputToggle.setImageResource(R.drawable.keyboard_icon);
         	isKeyboard = true;
         }
@@ -926,11 +901,6 @@ public class ReceiveFragment extends Fragment   {
         
         ivReceivingQR.setVisibility(View.INVISIBLE);
 
-    	if(!isMagic) {
-//        	displayMagicList();
-    	}
-
-//    	ivInputToggle.setVisibility(View.INVISIBLE);
     }
 
 }
