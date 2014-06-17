@@ -2003,7 +2003,7 @@ public class SendFragment extends Fragment   {
             	return false;
             }
         });
-        
+
     	spAddress.setOnItemSelectedListener(new OnItemSelectedListener()	{
 	    	public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3)	{
 
@@ -2011,7 +2011,7 @@ public class SendFragment extends Fragment   {
             		if(getBTCEnteredOutputValue(edAmount.getText().toString()).compareTo(wallet.getBalance(addresses.get(spAddress.getSelectedItemPosition()))) == 1) {
             			edAmount.setText(BlockchainUtil.formatBitcoin(wallet.getBalance(addresses.get(spAddress.getSelectedItemPosition()))));
             			BigInteger remainder = getBTCEnteredOutputValue(edAmount1.getText().toString()).subtract(wallet.getBalance(addresses.get(spAddress.getSelectedItemPosition())));
-            			addSendingAddress(displayAddresses, BlockchainUtil.formatBitcoin(remainder));
+            			addSendingAddress(displayAddresses, wallet, addresses, BlockchainUtil.formatBitcoin(remainder));
             		}
             	}
 
@@ -2455,7 +2455,7 @@ public class SendFragment extends Fragment   {
             		remainder = BlockchainUtil.formatBitcoin(remaining_amount);
             	}
 
-            	addSendingAddress(displayAddresses, remainder);
+            	addSendingAddress(displayAddresses, wallet, addresses, remainder);
             }
         });
 //    	((LinearLayout)layout_custom_spend.findViewById(R.id.custom_spend)).addView(btNewAddress);
@@ -2470,8 +2470,7 @@ public class SendFragment extends Fragment   {
 
     }
 
-    private void addSendingAddress(final List<String> displayAddresses, String remainder) {
-    	
+    private void addSendingAddress(final List<String> displayAddresses, final MyRemoteWallet wallet, final List<String> addresses, final String remainder) {
 
     	final LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
@@ -2524,6 +2523,53 @@ public class SendFragment extends Fragment   {
         tvCurrency.setLayoutParams(layout_params);
     	((LinearLayout)layout_from2.findViewById(R.id.p4)).setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL);
     	((LinearLayout)layout_from2.findViewById(R.id.p4)).addView(tvCurrency);
+    	
+        spAddress.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+            	if(edAmount1.getText().toString().length() > 0 && edAmount.getText().toString().equals("0.0000")) {
+                	edAmount.setText(BlockchainUtil.formatBitcoin(getBTCEnteredOutputValue(edAmount1.getText().toString()).subtract(getBTCEnteredOutputValue(remainder))));
+            	}
+            	return false;
+            }
+        });
+/*        
+    	spAddress.setOnItemSelectedListener(new OnItemSelectedListener()	{
+	    	public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3)	{
+            	if(edAmount.getText().toString().length() > 0) {
+            		if(getBTCEnteredOutputValue(remainder).compareTo(wallet.getBalance(addresses.get(spAddress.getSelectedItemPosition()))) == 1) {
+            			edAmount.setText(BlockchainUtil.formatBitcoin(wallet.getBalance(addresses.get(spAddress.getSelectedItemPosition()))));
+            			BigInteger remaining = getBTCEnteredOutputValue(remainder).subtract(wallet.getBalance(addresses.get(spAddress.getSelectedItemPosition())));
+            			addSendingAddress(displayAddresses, wallet, addresses, BlockchainUtil.formatBitcoin(remaining));
+            		}
+            	}
+	    	}
+	        public void onNothingSelected(AdapterView<?> arg0) {
+	        	;
+	        }
+    	});
+*/
+        edAmount.setOnFocusChangeListener(new OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus) {
+                	if(edAmount1.getText().toString().length() > 0 && edAmount.getText().toString().equals("0.0000")) {
+                		if(spAddress.getSelectedItemPosition() == 0) {
+                        	edAmount.setText(BlockchainUtil.formatBitcoin(getBTCEnteredOutputValue(edAmount1.getText().toString()).subtract(getBTCEnteredOutputValue(remainder))));
+                		}
+                		else {
+                    		if(getBTCEnteredOutputValue(remainder).compareTo(wallet.getBalance(addresses.get(spAddress.getSelectedItemPosition()))) == 1) {
+                    			edAmount.setText(BlockchainUtil.formatBitcoin(wallet.getBalance(addresses.get(spAddress.getSelectedItemPosition()))));
+                    		}
+                    		else {
+                    			BigInteger remaining = getBTCEnteredOutputValue(remainder).subtract(wallet.getBalance(addresses.get(spAddress.getSelectedItemPosition())));
+                    			edAmount.setText(BlockchainUtil.formatBitcoin(remaining));
+                    		}
+                		}
+                	}
+                }
+            }
+        });
 
     	((LinearLayout)layout_custom_spend.findViewById(R.id.froms)).addView(layout_from2);
     	lastSendingAddress = layout_from2;
