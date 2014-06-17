@@ -174,8 +174,6 @@ public class ReceiveFragment extends Fragment   {
       	});
         
         tvCurrency = (TextView)rootView.findViewById(R.id.currency);
-        tvCurrency.setTypeface(TypefaceUtil.getInstance(getActivity()).getBTCTypeface());
-        tvCurrency.setText(Character.toString((char)TypefaceUtil.getInstance(getActivity()).getBTCSymbol()));
         tvCurrency.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -485,6 +483,9 @@ public class ReceiveFragment extends Fragment   {
                 return false;
             }
         });
+
+        tvCurrency.setTypeface(TypefaceUtil.getInstance(getActivity()).getBTCTypeface());
+        tvCurrency.setText(Character.toString((char)TypefaceUtil.getInstance(getActivity()).getBTCSymbol()));
 
         return rootView;
     }

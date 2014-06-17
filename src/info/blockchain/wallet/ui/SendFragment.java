@@ -300,8 +300,6 @@ public class SendFragment extends Fragment   {
         tvSentPrompt.setVisibility(View.GONE);
         
         tvCurrency = (TextView)rootView.findViewById(R.id.currency);
-        tvCurrency.setTypeface(TypefaceUtil.getInstance(getActivity()).getBTCTypeface());
-        tvCurrency.setText(Character.toString((char)TypefaceUtil.getInstance(getActivity()).getBTCSymbol()));
         tvCurrency.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1158,7 +1156,10 @@ public class SendFragment extends Fragment   {
         */
 
 		EventListeners.addEventListener(eventListener);
-		
+
+	    tvCurrency.setTypeface(TypefaceUtil.getInstance(getActivity()).getBTCTypeface());
+	    tvCurrency.setText(Character.toString((char)TypefaceUtil.getInstance(getActivity()).getBTCSymbol()));
+
         return rootView;
     }
 
