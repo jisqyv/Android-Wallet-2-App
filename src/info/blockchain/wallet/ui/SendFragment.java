@@ -215,7 +215,7 @@ public class SendFragment extends Fragment   {
 	        summary3.setVisibility(View.VISIBLE);
 	        tvSentPrompt.setVisibility(View.VISIBLE);
 	        
-	        clearSendView();
+	        clearSend();
 		};
 
 		@Override
@@ -1059,7 +1059,7 @@ public class SendFragment extends Fragment   {
                 	isKeyboard = false;
             	}
             	else {
-                	clearSendView();
+                	clearSend();
                 	InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 	                imm.hideSoftInputFromWindow(edAddress.getWindowToken(), 0);
 //                    ivInputToggle.setVisibility(View.INVISIBLE);
@@ -2604,7 +2604,7 @@ public class SendFragment extends Fragment   {
         }
     }
 
-    private void clearSendView()	{
+    private void clearSend()	{
     	edAddress.setText("");
         edAddress.setHint(R.string.send_payment_hint);
       	edAmount1.setText("");
@@ -2614,8 +2614,12 @@ public class SendFragment extends Fragment   {
       	else {
           	edAmount1.setHint("0.00");
       	}
-    	tvAmount2.setText("0.0000");
-    	isBTC = true;
+      	if(isBTC) {
+          	tvAmount2.setText("0.00" + " " + strCurrentFiatCode);
+      	}
+      	else {
+          	tvAmount2.setText("0.0000" + " BTC");
+      	}
     	
         summary2.setVisibility(View.INVISIBLE);
         tvAmount.setText("");

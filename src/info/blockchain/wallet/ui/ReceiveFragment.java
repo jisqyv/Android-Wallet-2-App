@@ -891,8 +891,13 @@ public class ReceiveFragment extends Fragment   {
           	edAmount1.setHint("0.00");
       	}
     	edAmount1.setText("0.0000");
-    	tvAmount2.setText("0.0000");
-    	isBTC = true;
+    	
+      	if(isBTC) {
+          	tvAmount2.setText("0.00" + " " + strCurrentFiatCode);
+      	}
+      	else {
+          	tvAmount2.setText("0.0000" + " BTC");
+      	}
 
         tvAddress.setText("");
         tvAddress.setVisibility(View.INVISIBLE);
