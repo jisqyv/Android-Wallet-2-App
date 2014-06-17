@@ -24,6 +24,7 @@ import piuk.blockchain.android.ui.dialogs.RequestPasswordDialog;
 import piuk.blockchain.android.util.WalletUtils;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -187,6 +188,8 @@ public class SendFragment extends Fragment   {
 	private SendProgress csProgress = null;
 
 	public static final String ACTION_INTENT = "info.blockchain.wallet.ui.SendFragment.BTC_ADDRESS_SCAN";
+	
+	private ProgressDialog progress = null;
 
     protected BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
@@ -215,6 +218,10 @@ public class SendFragment extends Fragment   {
 	        summary3.setVisibility(View.VISIBLE);
 	        tvSentPrompt.setVisibility(View.VISIBLE);
 	        
+	        if(progress != null) {
+		        progress.dismiss();
+	        }
+
 	        clearSend();
 		};
 
@@ -707,7 +714,7 @@ public class SendFragment extends Fragment   {
 										updateView();
 
 										EventListeners.invokeOnTransactionsChanged();
-
+										
 									}
 									else
 									{
@@ -723,7 +730,6 @@ public class SendFragment extends Fragment   {
 					}).start();
 				} else {
 					application.getRemoteWallet().simpleSendCoinsAsync(receivingAddress.toString(), amount, feePolicy, fee, progress);
-
 				}
 			}
 
@@ -764,6 +770,13 @@ public class SendFragment extends Fragment   {
             public void onClick(View v) {
 				if (application.getRemoteWallet() == null)
 					return;
+
+		    	SendFragment.this.progress = new ProgressDialog(getActivity());
+		    	SendFragment.this.progress.setCancelable(true);
+		    	SendFragment.this.progress.setIndeterminate(true);
+		    	SendFragment.this.progress.setTitle("Sending...");
+		    	SendFragment.this.progress.setMessage("Please wait");
+		    	SendFragment.this.progress.show();
 
 				final MyRemoteWallet remoteWallet = application.getRemoteWallet();
 
@@ -1864,9 +1877,11 @@ public class SendFragment extends Fragment   {
     }
 
     private void doCustomSend() {
+    	/*
     	if(isMagic) {
     		removeMagicList();
     	}
+    	*/
 
 		final WalletApplication application = (WalletApplication)getActivity().getApplication();
 		final MyRemoteWallet wallet = application.getRemoteWallet();
@@ -2214,13 +2229,6 @@ public class SendFragment extends Fragment   {
     						public void run() {
     							application.getRemoteWallet().setState(MyRemoteWallet.State.SENT);
 //    							activity.longToast(message);
-    							
-    							/*
-    							Intent intent = activity.getIntent();
-    							intent.putExtra("tx", tx.getHash());
-    							activity.setResult(Activity.RESULT_OK, intent);
-    							*/
-
     							updateView();
     						}
     					});
@@ -2515,17 +2523,6 @@ public class SendFragment extends Fragment   {
         tvCurrency.setLayoutParams(layout_params);
     	((LinearLayout)layout_from2.findViewById(R.id.p4)).setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL);
     	((LinearLayout)layout_from2.findViewById(R.id.p4)).addView(tvCurrency);
-
-    	/*
-    	ImageButton ibPlus = new ImageButton(getActivity());
-    	ibPlus.setImageResource(R.drawable.plus_icon);
-    	((LinearLayout)layout_from2.findViewById(R.id.plus)).addView(ibPlus);
-        ibPlus.setOnClickListener(new Button.OnClickListener() {
-            public void onClick(View v) {
-            	addSendingAddress(displayAddresses);
-            }
-        });
-        */
 
     	((LinearLayout)layout_custom_spend.findViewById(R.id.froms)).addView(layout_from2);
     	lastSendingAddress = layout_from2;
