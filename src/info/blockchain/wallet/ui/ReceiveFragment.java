@@ -223,7 +223,7 @@ public class ReceiveFragment extends Fragment   {
 
         ivInputToggle = (ImageView)rootView.findViewById(R.id.input_toggle);
         ivInputToggle.setImageResource(R.drawable.keyboard_icon);
-  
+
     	LinearLayout divider1 = (LinearLayout)rootView.findViewById(R.id.divider1);
     	divider1.setBackgroundColor(BlockchainUtil.BLOCKCHAIN_GREEN);
     	LinearLayout divider2 = (LinearLayout)rootView.findViewById(R.id.divider2);
@@ -233,7 +233,7 @@ public class ReceiveFragment extends Fragment   {
         ((TextView)rootView.findViewById(R.id.currency)).setText(strCurrentFiatSymbol);
         ((TextView)rootView.findViewById(R.id.currency)).setTypeface(TypefaceUtil.getInstance(getActivity()).getGravityBoldTypeface());
 
-        initAddressBookList();
+        initMagicList();
 
         tvAmount2 = ((TextView)rootView.findViewById(R.id.amount2));
         tvAmount2.setText("0.00" + " " + strCurrentFiatCode);
@@ -374,7 +374,7 @@ public class ReceiveFragment extends Fragment   {
 
             	if(!isMagic) {
             		displayMagicList();
-            	}
+            		}
             	else {
             		removeMagicList();
             	}

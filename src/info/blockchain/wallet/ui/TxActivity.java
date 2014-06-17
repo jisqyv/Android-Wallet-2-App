@@ -407,7 +407,7 @@ public class TxActivity extends Activity	{
 		String url = WebROOT + "/" + txIndex + "?guid="+guid+"&result=" + result + "&format=json";
 
 		String response = WalletUtils.getURL(url);
-		
+
 		return (JSONObject) new JSONParser().parse(response);
 	}
 
@@ -486,7 +486,6 @@ public class TxActivity extends Activity	{
 						@Override
 						public void run() {
 							try {
-//								String result_local = (String) obj.get("result_local");
 								strResultHistorical = (String) obj.get("result_local_historical");
 								if(strResultHistorical != null) {
 									while(Character.isDigit(strResultHistorical.charAt(0))) {
@@ -582,7 +581,7 @@ public class TxActivity extends Activity	{
 						                ((LinearLayout)findViewById(R.id.div4)).setBackgroundResource(R.color.blockchain_green);
 						            }
 
-						        	if(transaction.getInputs().size() == 1) {
+						        	if(transaction.getInputValues().size() == 1) {
 						                ((TextView)row.findViewById(R.id.result2)).setVisibility(View.INVISIBLE);
 						        	}
 						        	else {

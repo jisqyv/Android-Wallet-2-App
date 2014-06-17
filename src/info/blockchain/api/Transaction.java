@@ -33,6 +33,8 @@ public class Transaction extends BlockchainAPI {
     private ArrayList<xPut> inputs = null;
     private ArrayList<xPut> outputs = null;
     private HashMap<String,Long> totalValues = null;
+    private HashMap<String,Long> inputValues = null;
+    private HashMap<String,Long> outputValues = null;
 
     /**
      * Constructor for this instance.
@@ -47,6 +49,8 @@ public class Transaction extends BlockchainAPI {
     	inputs = new ArrayList<xPut>();
     	outputs = new ArrayList<xPut>();
     	totalValues = new HashMap<String,Long>();
+    	inputValues = new HashMap<String,Long>();
+    	outputValues = new HashMap<String,Long>();
     }
 
     public String getHash() {
@@ -83,6 +87,14 @@ public class Transaction extends BlockchainAPI {
 
     public HashMap<String,Long> getTotalValues() {
     	return totalValues;
+    }
+
+    public HashMap<String,Long> getInputValues() {
+    	return inputValues;
+    }
+
+    public HashMap<String,Long> getOutputValues() {
+    	return outputValues;
     }
 
     /**
@@ -126,6 +138,14 @@ public class Transaction extends BlockchainAPI {
                     			else	{
                     				totalValues.put(input.addr, 0L - input.value);
                     			}
+                    			
+                    			if(inputValues.get(input.addr) != null)	{
+                    				inputValues.put(input.addr, inputValues.get(input.addr) - input.value);
+                    			}
+                    			else	{
+                    				inputValues.put(input.addr, 0L - input.value);
+                    			}
+
                 			}
                 			inputs.add(input);
             			}
@@ -152,6 +172,14 @@ public class Transaction extends BlockchainAPI {
                     			else	{
                     				totalValues.put(output.addr, output.value);
                     			}
+                    			
+                    			if(outputValues.get(output.addr) != null)	{
+                    				outputValues.put(output.addr, outputValues.get(output.addr) - output.value);
+                    			}
+                    			else	{
+                    				outputValues.put(output.addr, 0L - output.value);
+                    			}
+
                 			}
                 			outputs.add(output);
             			}
