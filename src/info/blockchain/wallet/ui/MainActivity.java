@@ -374,6 +374,37 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     	}
     }
 
+    private void doMerchantDirectory()	{
+        if(hasMerchantDirectory())	{
+        	LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
+        	boolean geoEnabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+        	if (!geoEnabled) {
+        		EnableGeo.displayGPSPrompt(this);
+        	}
+        	else {
+                Intent intent = getPackageManager().getLaunchIntentForPackage(BlockchainUtil.MERCHANT_DIRECTORY_PACKAGE);
+                startActivity(intent);
+        	}
+
+        }
+        else	{
+        	Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + BlockchainUtil.MERCHANT_DIRECTORY_PACKAGE));
+        	startActivity(intent);
+        }
+    }
+
+    private boolean hasMerchantDirectory()	{
+    	PackageManager pm = this.getPackageManager();
+    	try	{
+    		pm.getPackageInfo(BlockchainUtil.MERCHANT_DIRECTORY_PACKAGE, 0);
+    		return true;
+    	}
+    	catch(NameNotFoundException nnfe)	{
+    		return false;
+    	}
+    }
+
     private void doAbout()	{
     	Intent intent = new Intent(MainActivity.this, AboutActivity.class);
 		startActivityForResult(intent, ABOUT_ACTIVITY);
@@ -392,15 +423,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     private void doTOS()	{
     	Intent intent = new Intent(MainActivity.this, info.blockchain.wallet.ui.TOSActivity.class);
 		startActivityForResult(intent, TOS_ACTIVITY);
-    }
-
-    private void doMerchantDirectory()	{
-    	LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
-    	boolean geoEnabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
-
-    	if (!geoEnabled) {
-    		EnableGeo.displayGPSPrompt(this);
-    	} 
     }
 
     private void doSend2Friends()	{

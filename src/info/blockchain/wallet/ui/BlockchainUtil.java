@@ -19,6 +19,7 @@ public class BlockchainUtil {
     public static int BLOCKCHAIN_GREEN = 0xFF29A432;
     
     public static String ZEROBLOCK_PACKAGE = "com.phlint.android.zeroblock";
+    public static String MERCHANT_DIRECTORY_PACKAGE = "info.blockchain.merchant.directory";
     
     private static double BTC_RATE = 635.0;
 
