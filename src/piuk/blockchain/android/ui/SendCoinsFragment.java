@@ -73,7 +73,7 @@ import piuk.blockchain.android.R;
 import piuk.blockchain.android.Constants;
 import piuk.blockchain.android.WalletApplication;
 import piuk.blockchain.android.service.BlockchainService;
-import piuk.blockchain.android.service.BlockchainServiceImpl;
+//import piuk.blockchain.android.service.BlockchainServiceImpl;
 import piuk.blockchain.android.ui.AbstractWalletActivity.QrCodeDelagate;
 import piuk.blockchain.android.ui.CurrencyAmountView.Listener;
 import piuk.blockchain.android.ui.SendCoinsActivity.OnChangedSendTypeListener;
@@ -101,7 +101,7 @@ public final class SendCoinsFragment extends Fragment
 	private View sendTypeDescriptionContainer;
 	private TextView sendTypeDescription;
 	private ImageView sendTypeDescriptionIcon;
-	private BlockchainServiceImpl service;
+	//private BlockchainServiceImpl service;
 
 	private CurrencyAmountView amountView;
 	private Button viewGo;
@@ -112,12 +112,12 @@ public final class SendCoinsFragment extends Fragment
 	{
 		public void onServiceConnected(final ComponentName name, final IBinder binder)
 		{
-			service = (BlockchainServiceImpl) ((BlockchainServiceImpl.LocalBinder) binder).getService();
+			//service = (BlockchainServiceImpl) ((BlockchainServiceImpl.LocalBinder) binder).getService();
 		}
 
 		public void onServiceDisconnected(final ComponentName name)
 		{
-			service = null;
+			//service = null;
 		}
 	};
 
@@ -158,7 +158,7 @@ public final class SendCoinsFragment extends Fragment
 
 		application = (WalletApplication) activity.getApplication();
 
-		activity.bindService(new Intent(activity, BlockchainServiceImpl.class), serviceConnection, Context.BIND_AUTO_CREATE);
+		//activity.bindService(new Intent(activity, BlockchainServiceImpl.class), serviceConnection, Context.BIND_AUTO_CREATE);
 	}
 
 	public abstract class RightDrawableOnTouchListener implements OnTouchListener {
@@ -484,7 +484,7 @@ public final class SendCoinsFragment extends Fragment
 				}
 			};
 
-			public void send(Address receivingAddress, BigInteger fee, MyRemoteWallet.FeePolicy feePolicy) {
+			public void send(Address receivingAddress, BigInteger fee, MyRemoteWallet.FeePolicy feePolicy) throws Exception {
 
 				if (application.getRemoteWallet() == null)
 					return;
@@ -521,7 +521,8 @@ public final class SendCoinsFragment extends Fragment
 				final WalletApplication application = (WalletApplication) getActivity().getApplication();
 
 				if (application.isInP2PFallbackMode()) {
-
+					throw new Exception("P2PFallbackMode disabled");
+					/*
 					final long blockchainLag = System.currentTimeMillis() - service.blockChain.getChainHead().getHeader().getTime().getTime();
 
 					final boolean blockchainUptodate = blockchainLag < Constants.BLOCKCHAIN_UPTODATE_THRESHOLD_MS;
@@ -581,6 +582,7 @@ public final class SendCoinsFragment extends Fragment
 							});
 						}
 					}).start();
+					*/
 				} else {
 					application.getRemoteWallet().sendCoinsAsync(from, receivingAddress.toString(), amount, feePolicy, fee, null, progress);
 				}

@@ -193,7 +193,7 @@ public class WebSocketHandler {
 									if (tx.txIndex == txIndex.intValue()
 											&& confidence.height != blockHeight) {
 										confidence.height = blockHeight;
-										confidence.runListeners();
+										//confidence.runListeners();
 									}
 								}
 							}

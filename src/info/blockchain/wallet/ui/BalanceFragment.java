@@ -29,6 +29,7 @@ import com.google.bitcoin.core.Transaction;
 import com.google.bitcoin.core.TransactionInput;
 import com.google.bitcoin.core.TransactionOutput;
 import com.google.bitcoin.core.Wallet;
+import com.google.bitcoin.script.Script;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.android.Contents;
@@ -166,17 +167,17 @@ public class BalanceFragment extends Fragment   {
 		};
 	};
 
-	public List<String> getAddressesPartOfLastSentTransaction(final Transaction tx) {
+	public List<String> getAddressesPartOfLastSentTransaction(final Transaction tx, MyRemoteWallet remoteWallet) {
     	List<String> addressesPartOfLastSentTransaction = new ArrayList<String>();
 
     	List<TransactionOutput> transactionOutputs = tx.getOutputs();
 		for (Iterator<TransactionOutput> ito = transactionOutputs.iterator(); ito.hasNext();) {
 			TransactionOutput transactionOutput = ito.next();
         	try {
-        		com.google.bitcoin.core.Script script = transactionOutput.getScriptPubKey();
+        		Script script = transactionOutput.getScriptPubKey();
         		String addr = null;
         		if (script != null)
-        			addr = script.getToAddress().toString();
+        			addr = script.getToAddress(remoteWallet.params).toString();
 
         		addressesPartOfLastSentTransaction.add(addr);
             } catch (ScriptException e) {
@@ -240,7 +241,7 @@ public class BalanceFragment extends Fragment   {
 			addressLabelTxsDisplayed = new boolean[addressLabels.length];
 
 			if(sentTx != null) {
-				List<String> addressesPartOfLastSentTransaction = getAddressesPartOfLastSentTransaction(sentTx);
+				List<String> addressesPartOfLastSentTransaction = getAddressesPartOfLastSentTransaction(sentTx, remoteWallet);
 				for (int i = 0; i < addressLabelTxsDisplayed.length; i++) {
 					if (addressesPartOfLastSentTransaction.contains(activeAddresses.get(i))) {
 						addressLabelTxsDisplayed[i] = true;
@@ -777,10 +778,10 @@ public class BalanceFragment extends Fragment   {
 			for (Iterator<TransactionOutput> ito = transactionOutputs.iterator(); ito.hasNext();) {
 				TransactionOutput transactionOutput = ito.next();
 	        	try {
-	        		com.google.bitcoin.core.Script script = transactionOutput.getScriptPubKey();
+	        		Script script = transactionOutput.getScriptPubKey();
 	        		String addr = null;
 	        		if (script != null) {
-	        			addr = script.getToAddress().toString();
+	        			addr = script.getToAddress(remoteWallet.params).toString();
 		        		if (addr != null && addr.equals(address)) {
 		        			filteredTxList.add(transaction);
 //		    				Log.d("TxBitmapPrep", transaction.getHashAsString() + " contains:" + addr);
@@ -845,10 +846,10 @@ public class BalanceFragment extends Fragment   {
 			for (Iterator<TransactionOutput> ito = transactionOutputs.iterator(); ito.hasNext();) {
 				TransactionOutput transactionOutput = ito.next();
 	        	try {
-	        		com.google.bitcoin.core.Script script = transactionOutput.getScriptPubKey();
+	        		Script script = transactionOutput.getScriptPubKey();
 	        		String addr = null;
 	        		if (script != null) {
-	        			addr = script.getToAddress().toString();
+	        			addr = script.getToAddress(remoteWallet.params).toString();
 		        		if (addr != null) {
 			        		if(addr.equals(address)) {
 			        			result = result.add(transactionOutput.getValue());

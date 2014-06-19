@@ -234,6 +234,29 @@ public class MyWallet {
 		return true;
 	}
 
+	@SuppressWarnings("unchecked")
+	public void addAdditionalSeeds(String val) {
+		Map<String, Object> options = getOptions();
+
+		List<String> additional_seeds;
+		if (options.containsKey("additional_seeds")) {
+			additional_seeds = (List<String>) options.get("additional_seeds");
+			additional_seeds.add(val);			
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<String> getAdditionalSeeds() {
+		Map<String, Object> options = getOptions();
+
+		List<String> additional_seeds = null;
+		if (options.containsKey("additional_seeds")) {
+			additional_seeds = (List<String>) options.get("additional_seeds");
+		}
+
+		return additional_seeds;
+	}
+	
 	public int getFeePolicy() {
 		Map<String, Object> options = getOptions();
 
@@ -431,6 +454,18 @@ public class MyWallet {
 		EventListeners.invokeWalletDidChange();
 	}
 
+	public String getPrivateKey(String address) throws Exception {
+		Map<String, Object> key = this.findKey(address);
+
+		if (key == null) {
+			throw new Exception("Key not found");
+		}
+
+		String base58Priv = (String) key.get("priv");
+
+		return base58Priv;
+	}
+	
 	public ECKey getECKey(String address) throws Exception {
 		Map<String, Object> key = this.findKey(address);
 

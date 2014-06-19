@@ -149,8 +149,6 @@ public final class WalletAddressesActivity extends AbstractWalletActivity {
 						}, 500);
 					} catch (final AddressFormatException x) {
 						errorDialog(R.string.send_coins_uri_parse_error_title, contents);
-					} catch (final BitcoinURIParseException x) {
-						errorDialog(R.string.send_coins_uri_parse_error_title, contents);
 					}
 				}
 			});

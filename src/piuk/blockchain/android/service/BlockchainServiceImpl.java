@@ -53,7 +53,7 @@ import android.preference.PreferenceManager;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.util.Pair;
-
+/*
 import com.google.bitcoin.core.AbstractPeerEventListener;
 import com.google.bitcoin.core.Address;
 import com.google.bitcoin.core.Block;
@@ -74,11 +74,12 @@ import com.google.bitcoin.store.BlockStore;
 import com.google.bitcoin.store.BlockStoreException;
 import com.google.bitcoin.store.BoundedOverheadBlockStore;
 import com.google.bitcoin.store.SPVBlockStore;
-
+*/
 
 /**
  * @author Andreas Schildbach
  */
+/*
 public class BlockchainServiceImpl extends android.app.Service implements BlockchainService
 {
 	private WalletApplication application;
@@ -725,3 +726,4 @@ public class BlockchainServiceImpl extends android.app.Service implements Blockc
 		removeStickyBroadcast(new Intent(ACTION_BLOCKCHAIN_STATE));
 	}
 }
+*/

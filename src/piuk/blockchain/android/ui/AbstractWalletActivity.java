@@ -448,7 +448,8 @@ public abstract class AbstractWalletActivity extends FragmentActivity {
 				try {
 					final String address;
 					if (compressed) {
-						address = key.toAddressCompressed(NetworkParameters.prodNet()).toString();
+						//address = key.toAddressCompressed(NetworkParameters.prodNet()).toString();
+						address = key.toAddress(NetworkParameters.prodNet()).toString();
 					} else {
 						address = key.toAddress(NetworkParameters.prodNet()).toString();
 					}

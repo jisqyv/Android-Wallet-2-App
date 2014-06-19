@@ -30,7 +30,8 @@ public class MyTransactionConfidence extends TransactionConfidence {
 	@Override
 	public synchronized ConfidenceType getConfidenceType() {
 		if (height == 0)
-			return ConfidenceType.NOT_SEEN_IN_CHAIN;
+			return ConfidenceType.PENDING;
+			//return ConfidenceType.NOT_SEEN_IN_CHAIN;
 		else if (double_spend)
 			return ConfidenceType.DEAD; // OVERRIDDEN_BY_DOUBLE_SPEND
 		else if (height > 0)

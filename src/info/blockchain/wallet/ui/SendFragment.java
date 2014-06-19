@@ -17,7 +17,7 @@ import piuk.MyRemoteWallet.SendProgress;
 import piuk.blockchain.android.Constants;
 import piuk.blockchain.android.R;
 import piuk.blockchain.android.WalletApplication;
-import piuk.blockchain.android.service.BlockchainServiceImpl;
+//import piuk.blockchain.android.service.BlockchainServiceImpl;
 import piuk.blockchain.android.ui.SendCoinsActivity;
 import piuk.blockchain.android.ui.SuccessCallback;
 import piuk.blockchain.android.ui.dialogs.RequestPasswordDialog;
@@ -175,7 +175,7 @@ public class SendFragment extends Fragment   {
 	private final Handler handler = new Handler();
 	private Runnable sentRunnable;
 	private String sendType;
-	private BlockchainServiceImpl service;
+	//private BlockchainServiceImpl service;
 
 	private List<String> activeAddresses;
 	private Map<String,String> labels;
@@ -245,12 +245,12 @@ public class SendFragment extends Fragment   {
 	{
 		public void onServiceConnected(final ComponentName name, final IBinder binder)
 		{
-			service = (BlockchainServiceImpl) ((BlockchainServiceImpl.LocalBinder) binder).getService();
+			//service = (BlockchainServiceImpl) ((BlockchainServiceImpl.LocalBinder) binder).getService();
 		}
 
 		public void onServiceDisconnected(final ComponentName name)
 		{
-			service = null;
+			//service = null;
 		}
 	};
 
@@ -262,7 +262,7 @@ public class SendFragment extends Fragment   {
 
 		final MainActivity activity = (MainActivity) getActivity();
 		application = (WalletApplication) activity.getApplication();
-		activity.bindService(new Intent(activity, BlockchainServiceImpl.class), serviceConnection, Context.BIND_AUTO_CREATE);
+		//activity.bindService(new Intent(activity, BlockchainServiceImpl.class), serviceConnection, Context.BIND_AUTO_CREATE);
     	sendType = SendTypeQuickSend;
     	sendViaEmail = false;
     	sentViaSMS = false;
@@ -662,14 +662,15 @@ public class SendFragment extends Fragment   {
 				}
 			}
 
-			public void quickSend(Address receivingAddress, BigInteger fee, MyRemoteWallet.FeePolicy feePolicy) {
+			public void quickSend(Address receivingAddress, BigInteger fee, MyRemoteWallet.FeePolicy feePolicy) throws Exception {
 				if (application.getRemoteWallet() == null)
 					return;
 
 				final BigInteger amount = getBTCEnteredOutputValue(edAmount1.getText().toString());
 				final WalletApplication application = (WalletApplication) getActivity().getApplication();
 				if (application.isInP2PFallbackMode()) {
-
+					throw new Exception("P2PFallbackMode disabled");
+					/*
 					final long blockchainLag = System.currentTimeMillis() - service.blockChain.getChainHead().getHeader().getTime().getTime();
 
 					final boolean blockchainUptodate = blockchainLag < Constants.BLOCKCHAIN_UPTODATE_THRESHOLD_MS;
@@ -726,6 +727,7 @@ public class SendFragment extends Fragment   {
 							});
 						}
 					}).start();
+					*/
 				} else {
 					application.getRemoteWallet().simpleSendCoinsAsync(receivingAddress.toString(), amount, feePolicy, fee, progress);
 				}
@@ -1225,7 +1227,7 @@ public class SendFragment extends Fragment   {
 
 		handler.removeCallbacks(sentRunnable);
 
-		getActivity().unbindService(serviceConnection);
+		//getActivity().unbindService(serviceConnection);
 	}
 
 	@Override
@@ -2716,9 +2718,7 @@ public class SendFragment extends Fragment   {
 
 									ECKey key = pair.first;
 
-									if (!key.toAddressCompressed(Constants.NETWORK_PARAMETERS)
-											.toString().equals(SendCoinsActivity.scanPrivateKeyAddress) && 
-											!key.toAddress(Constants.NETWORK_PARAMETERS)
+									if (!key.toAddress(Constants.NETWORK_PARAMETERS)
 											.toString().equals(SendCoinsActivity.scanPrivateKeyAddress)) {
 										String scannedPrivateAddress = key.toAddress(Constants.NETWORK_PARAMETERS)
 												.toString();
@@ -2754,9 +2754,7 @@ public class SendFragment extends Fragment   {
 
 				ECKey key = pair.first;
 
-				if (!key.toAddressCompressed(Constants.NETWORK_PARAMETERS)
-						.toString().equals(SendCoinsActivity.scanPrivateKeyAddress) && 
-						!key.toAddress(Constants.NETWORK_PARAMETERS)
+				if (!key.toAddress(Constants.NETWORK_PARAMETERS)
 						.toString().equals(SendCoinsActivity.scanPrivateKeyAddress)) {
 					String scannedPrivateAddress = key.toAddress(Constants.NETWORK_PARAMETERS)
 							.toString();

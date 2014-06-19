@@ -160,9 +160,7 @@ public final class SendCoinsActivity extends AbstractWalletActivity {
 
 									ECKey key = pair.first;
 
-									if (!key.toAddressCompressed(Constants.NETWORK_PARAMETERS)
-											.toString().equals(scanPrivateKeyAddress) && 
-											!key.toAddress(Constants.NETWORK_PARAMETERS)
+									if (!key.toAddress(Constants.NETWORK_PARAMETERS)
 											.toString().equals(scanPrivateKeyAddress)) {
 										throw new Exception(getString(R.string.wrong_private_key));
 									} else {
@@ -195,9 +193,7 @@ public final class SendCoinsActivity extends AbstractWalletActivity {
 
 				ECKey key = pair.first;
 
-				if (!key.toAddressCompressed(Constants.NETWORK_PARAMETERS)
-						.toString().equals(scanPrivateKeyAddress) && 
-						!key.toAddress(Constants.NETWORK_PARAMETERS)
+				if (!key.toAddress(Constants.NETWORK_PARAMETERS)
 						.toString().equals(scanPrivateKeyAddress)) {
 					throw new Exception(getString(R.string.wrong_private_key));
 				} else {
@@ -229,32 +225,20 @@ public final class SendCoinsActivity extends AbstractWalletActivity {
 		if ((Intent.ACTION_VIEW.equals(action))
 				&& intentUri != null
 				&& "bitcoin".equals(scheme)) {
-			try {
-				final BitcoinURI bitcoinUri = new BitcoinURI(
-						intentUri.toString());
-				address = bitcoinUri.getAddress().toString();
-				amount = bitcoinUri.getAmount();
-			} catch (final BitcoinURIParseException x) {
-				errorDialog(R.string.send_coins_uri_parse_error_title,
-						intentUri.toString());
-				return;
-			}
+			final BitcoinURI bitcoinUri = new BitcoinURI(
+					intentUri.toString());
+			address = bitcoinUri.getAddress().toString();
+			amount = bitcoinUri.getAmount();
 		} else if (Intent.ACTION_WEB_SEARCH.equals(action)
 				&& intent.hasExtra(INTENT_EXTRA_QUERY)) {
-			try {
-				final BitcoinURI bitcoinUri = new BitcoinURI(
-						intent.getStringExtra(INTENT_EXTRA_QUERY));
-				if (bitcoinUri.getAddress() == null) {
-					address = null;
-					amount = null;
-				} else {
-					address = bitcoinUri.getAddress().toString();
-					amount = bitcoinUri.getAmount();
-				}
-			} catch (final BitcoinURIParseException x) {
-				errorDialog(R.string.send_coins_uri_parse_error_title,
-						intentUri.toString());
-				return;
+			final BitcoinURI bitcoinUri = new BitcoinURI(
+					intent.getStringExtra(INTENT_EXTRA_QUERY));
+			if (bitcoinUri.getAddress() == null) {
+				address = null;
+				amount = null;
+			} else {
+				address = bitcoinUri.getAddress().toString();
+				amount = bitcoinUri.getAmount();
 			}
 		} else if (intent.hasExtra(INTENT_EXTRA_ADDRESS)) {
 			address = intent.getStringExtra(INTENT_EXTRA_ADDRESS);

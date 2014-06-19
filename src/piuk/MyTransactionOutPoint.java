@@ -55,7 +55,7 @@ public class MyTransactionOutPoint extends TransactionOutPoint {
 		return new TransactionOutput(params, null, value, scriptBytes);
 	}
 
-	@Override
+	//@Override
 	public byte[] getConnectedPubKeyScript() {
 		return scriptBytes;
 	}

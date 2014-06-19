@@ -434,7 +434,8 @@ public class WalletUtils {
 
 		String address = null;
 		if (compressed) {
-			address = kp.toAddressCompressed(NetworkParameters.prodNet()).toString();
+			//address = kp.toAddressCompressed(NetworkParameters.prodNet()).toString();
+			address = kp.toAddress(NetworkParameters.prodNet()).toString();
 		} else {
 			address = kp.toAddress(NetworkParameters.prodNet()).toString();
 		}
@@ -479,7 +480,8 @@ public class WalletUtils {
 
 		byte[] salt = new byte[12];
 		System.arraycopy (store, 3, salt, 0, 12);
-		byte[] derived = SCrypt.generate (kp.getPubKeyCompressed(), salt, 1024, 1, 1, 64);
+		//byte[] derived = SCrypt.generate (kp.getPubKeyCompressed(), salt, 1024, 1, 1, 64);
+		byte[] derived = SCrypt.generate (kp.getPubKey(), salt, 1024, 1, 1, 64);
 		byte[] aeskey = new byte[32];
 		System.arraycopy (derived, 32, aeskey, 0, 32);
 
@@ -513,7 +515,8 @@ public class WalletUtils {
 
 		String address = null;
 		if (compressed) {
-			address = kp.toAddressCompressed(NetworkParameters.prodNet()).toString();
+			//address = kp.toAddressCompressed(NetworkParameters.prodNet()).toString();
+			address = kp.toAddress(NetworkParameters.prodNet()).toString();
 		} else {
 			address = kp.toAddress(NetworkParameters.prodNet()).toString();
 		}

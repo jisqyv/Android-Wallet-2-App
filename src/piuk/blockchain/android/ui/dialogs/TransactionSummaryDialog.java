@@ -191,7 +191,7 @@ public final class TransactionSummaryDialog extends DialogFragment
 			String to = null;
 			for (TransactionOutput output : tx.getOutputs()) {
 				try {
-					String toAddress = output.getScriptPubKey().getToAddress().toString();
+					String toAddress = output.getScriptPubKey().getToAddress(application.getRemoteWallet().params).toString();
 					if (!wallet.isAddressMine(toAddress)) {
 						to = toAddress;
 					}

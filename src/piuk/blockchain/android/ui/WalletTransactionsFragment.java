@@ -169,11 +169,13 @@ public final class WalletTransactionsFragment extends ListFragment {
 								final boolean sent = value.signum() < 0;
 
 								final int textColor;
-								if (confidenceType == ConfidenceType.NOT_SEEN_IN_CHAIN) {
+//								if (confidenceType == ConfidenceType.NOT_SEEN_IN_CHAIN) {
+								if (confidenceType == ConfidenceType.PENDING) {
 									textColor = colorInsignificant;
 								} else if (confidenceType == ConfidenceType.BUILDING) {
 									textColor = colorSignificant;
-								} else if (confidenceType == ConfidenceType.NOT_IN_BEST_CHAIN) {
+//								} else if (confidenceType == ConfidenceType.NOT_IN_BEST_CHAIN) {
+								} else if (confidenceType == ConfidenceType.PENDING) {
 									textColor = colorSignificant;
 								} else if (confidenceType == ConfidenceType.DEAD) {
 									textColor = Color.RED;
@@ -187,7 +189,7 @@ public final class WalletTransactionsFragment extends ListFragment {
 										address = "Unknown";
 									else
 										address = tx.getOutputs().get(0)
-										.getScriptPubKey().getToAddress()
+										.getScriptPubKey().getToAddress(application.getRemoteWallet().params)
 										.toString();
 								else if (tx.getInputs().size() == 0)
 									address = "Generation";
@@ -371,7 +373,7 @@ public final class WalletTransactionsFragment extends ListFragment {
 					return;
 
 				address = tx.getOutputs().get(0).getScriptPubKey()
-						.getToAddress();
+						.getToAddress(application.getRemoteWallet().params);
 			} else {
 				if (tx.getInputs().size() == 0)
 					return;

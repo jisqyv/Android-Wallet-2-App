@@ -36,8 +36,8 @@ import android.util.Pair;
 import android.widget.Toast;
 
 import com.google.bitcoin.core.*;
-import com.google.bitcoin.core.Wallet.AutosaveEventListener;
-import com.google.bitcoin.store.WalletExtensionSerializer;
+//import com.google.bitcoin.core.Wallet.AutosaveEventListener;
+//import com.google.bitcoin.store.WalletExtensionSerializer;
 import com.google.bitcoin.store.WalletProtobufSerializer;
 
 import org.apache.commons.io.IOUtils;
@@ -50,7 +50,7 @@ import piuk.MyRemoteWallet;
 import piuk.MyRemoteWallet.NotModfiedException;
 import piuk.MyWallet;
 import piuk.blockchain.android.R;
-import piuk.blockchain.android.service.BlockchainServiceImpl;
+//import piuk.blockchain.android.service.BlockchainServiceImpl;
 import piuk.blockchain.android.service.WebsocketService;
 import piuk.blockchain.android.ui.AbstractWalletActivity;
 import piuk.blockchain.android.ui.PinEntryActivity;
@@ -89,7 +89,7 @@ public class WalletApplication extends Application {
 	private final Handler handler = new Handler();
 	private Timer timer;
 	public int decryptionErrors = 0;
-	private Intent blockchainServiceIntent;
+	//private Intent blockchainServiceIntent;
 	private Intent websocketServiceIntent;
 	public boolean didEncounterFatalPINServerError = false;
 	public Wallet bitcoinjWallet;
@@ -169,7 +169,7 @@ public class WalletApplication extends Application {
 	public Integer getLatestHeightFromBlockExplorer() throws Exception {
 		return Integer.valueOf(WalletUtils.getURL("http://blockexplorer.com/q/getblockcount"));
 	}
-
+	/*
 	public Pair<Block, Integer> getLatestBlockHeaderFromBlockExplorer(Integer blockHeight) throws Exception {
 
 		String hash = WalletUtils.getURL("http://blockexplorer.com/q/getblockhash/"+blockHeight);
@@ -194,7 +194,7 @@ public class WalletApplication extends Application {
 
 		return new Pair<Block, Integer>(block, blockHeight);
 	}
-
+*/
 	public long estimateFirstSeenFromBlockExplorer() throws Exception {
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
 
@@ -244,7 +244,7 @@ public class WalletApplication extends Application {
 			throw new RuntimeException(x);
 		}
 	}
-
+	/*
 	private static final class WalletAutosaveEventListener implements AutosaveEventListener
 	{
 		public boolean caughtException(final Throwable throwable)
@@ -316,7 +316,7 @@ public class WalletApplication extends Application {
 			}
 		}
 	}
-
+*/
 	public String getDeviceID() {
 		try {
 			Class<?> c = Class.forName("android.os.SystemProperties");           
@@ -397,8 +397,8 @@ public class WalletApplication extends Application {
 						}
 					}*/
 
-					if (!isBitcoinJServiceRunning())
-						startService(blockchainServiceIntent);
+					//if (!isBitcoinJServiceRunning())
+					//	startService(blockchainServiceIntent);
 
 					EventListeners.invokeWalletDidChange();
 				}
@@ -413,7 +413,7 @@ public class WalletApplication extends Application {
 	public void leaveP2PMode() {
 		this.bitcoinjWallet = null;
 
-		stopService(blockchainServiceIntent);
+		//stopService(blockchainServiceIntent);
 
 		deleteBitcoinJLocalData();
 
@@ -487,7 +487,7 @@ public class WalletApplication extends Application {
 
 		if (this.isInP2PFallbackMode()) {
 			if (!this.isBitcoinJServiceRunning()) {
-				startService(blockchainServiceIntent);
+				//startService(blockchainServiceIntent);
 			}	
 		} 
 
@@ -544,7 +544,7 @@ public class WalletApplication extends Application {
 
 		ErrorReporter.getInstance().init(this);
 
-		blockchainServiceIntent = new Intent(this, BlockchainServiceImpl.class);
+		//blockchainServiceIntent = new Intent(this, BlockchainServiceImpl.class);
 		websocketServiceIntent = new Intent(this, WebsocketService.class);
 
 		System.setProperty("device_name", "android");
@@ -568,7 +568,7 @@ public class WalletApplication extends Application {
 
 		seedFromRandomOrg();
 
-		loadBitcoinJWallet();
+		//loadBitcoinJWallet();
 
 		connect();
 	}
@@ -670,9 +670,9 @@ public class WalletApplication extends Application {
 	private boolean isBitcoinJServiceRunning() {
 		ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
 		for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-			if (BlockchainServiceImpl.class.getName().equals(service.service.getClassName())) {
-				return true;
-			}
+//			if (BlockchainServiceImpl.class.getName().equals(service.service.getClassName())) {
+//				return true;
+//			}
 		}
 		return false;
 	}
