@@ -535,41 +535,6 @@ public class AddressBookActivity extends Activity {
     		    } else {
     		        ((TextView)view.findViewById(R.id.txt4)).setText("");    		    	
     		    }
-    		    
-    	        if (displayedAddresses == DisplayedAddresses.ArchivedAddresses && addressManager.isWatchOnly(addr)) {
-
-    	        	/*
-    	        	final View tview = view;
-
-    	        	Runnable runnable = new Runnable() {
-    	                @Override
-    	                public void run() {                
-    	                    {                    
-    	                    	
-                  	        	info.blockchain.api.Address address = new info.blockchain.api.Address(addr);
-                                String json = null;
-                                try {
-                                    json = IOUtils.toString(new URL(address.getUrl()), "UTF-8");
-                                    address.setData(json);
-                                    address.parse();
-                                }
-                                catch(MalformedURLException mue) {
-                                	mue.printStackTrace();
-                                }
-                                catch(IOException ioe) {
-                                	ioe.printStackTrace();
-                                }
-
-                		    	String amount = BlockchainUtil.formatBitcoin(BigInteger.valueOf(address.getBalance())) + " BTC";
-                    		    ((TextView)tview.findViewById(R.id.txt3)).setText(amount);
-
-    	                    }
-    	                }
-    	            };        
-                    mHandler.post(runnable);
-                    */
-
-    	        }
 
 	        } else {
     		    ((TextView)view.findViewById(R.id.txt3)).setText("");

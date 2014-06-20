@@ -2551,10 +2551,10 @@ public class SendFragment extends Fragment   {
     	spAddress.setOnItemSelectedListener(new OnItemSelectedListener()	{
 	    	public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3)	{
             	if(edAmount.getText().toString().length() > 0) {
-            		if(getBTCEnteredOutputValue(remainder).compareTo(wallet.getBalance(addresses.get(spAddress.getSelectedItemPosition()))) == 1) {
+            		if(arg2 != 0 && getBTCEnteredOutputValue(remainder).compareTo(wallet.getBalance(addresses.get(spAddress.getSelectedItemPosition()))) == 1) {
             			edAmount.setText(BlockchainUtil.formatBitcoin(wallet.getBalance(addresses.get(spAddress.getSelectedItemPosition()))));
             			BigInteger remaining = getBTCEnteredOutputValue(remainder).subtract(wallet.getBalance(addresses.get(spAddress.getSelectedItemPosition())));
-//            			addSendingAddress(displayAddresses, wallet, addresses, BlockchainUtil.formatBitcoin(remaining));
+            			addSendingAddress(displayAddresses, wallet, addresses, BlockchainUtil.formatBitcoin(remaining));
             		}
             	}
 	    	}
