@@ -497,6 +497,18 @@ public class ReceiveFragment extends Fragment   {
         Log.d("BlockchainWallet", "setUserVisible");
 
         if(isVisibleToUser) {
+        	
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            strCurrentFiatCode = prefs.getString("ccurrency", "USD");
+            strCurrentFiatSymbol = prefs.getString(strCurrentFiatCode + "-SYM", "$");
+            
+            if(isBTC) {
+        		tvAmount2.setText(tvAmount2.getText().toString().substring(0, tvAmount2.getText().toString().length() - 4) + " " + strCurrentFiatCode);
+            }
+            else {
+        		tvCurrency.setText(strCurrentFiatSymbol);
+            }
+
             if(edAddress.getText().length() < 1 && (edAmount1.getText().length() < 1 || edAmount1.getText().equals("0.0000"))) {
             	ivInputToggle.setImageResource(R.drawable.keyboard_icon);
             	isKeyboard = true;
