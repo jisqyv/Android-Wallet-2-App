@@ -56,7 +56,6 @@ import android.widget.Toast;
 //import android.util.Log;
 
 import piuk.MyRemoteWallet;
-import piuk.SharedCoin;
 import piuk.blockchain.android.Constants;
 import piuk.blockchain.android.R;
 import piuk.blockchain.android.WalletApplication;
@@ -245,63 +244,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 			application.checkIfWalletHasUpdatedAndFetchTransactions(application.getRemoteWallet().getTemporyPassword());
 		}
 		
-		
-    	new Thread()
-        {
-            public void run() {                                
-            	final SharedCoin sharedCoin = SharedCoin.getInstance(application, application.getRemoteWallet());
-            	//SharedCoin sharedCoin = SharedCoin(application.getRemoteWallet());
-            	/*
-                Log.d("SharedCoin", "SharedCoin__enabled: " + sharedCoin.isEnabled());
-                sharedCoin.getInfo(new SuccessCallback() {
-
-					public void onSuccess() {			
-		                Log.d("SharedCoin", "SharedCoin getInfo: onSuccess ");
-		                
-		                if (sharedCoin.isEnabled()) {
-		                //	MainActivity.this.testSharedCoin(sharedCoin);
-		                }
-					}
-					
-					public void onFail() {			
-		                Log.d("SharedCoin", "SharedCoin getInfo: onFail ");						
-					}
-
-                });
-                //*/
-                testSharedCoin(sharedCoin);
-                              
-                
-            }
-        }.start();
-	}
-	
-	void testSharedCoin(SharedCoin sharedCoin) {
-        if (SharedCoin.VERSION > sharedCoin.getMinSupportedVersion()) {
-            
-            Log.d("SharedCoin", "SharedCoin__enabled: " + sharedCoin.getMaximumOutputValue());
-            Log.d("SharedCoin", "SharedCoin__enabled: " + sharedCoin.getMinimumOutputValue());
-            Log.d("SharedCoin", "SharedCoin__enabled: " + sharedCoin.getFeePercent());
-            Log.d("SharedCoin", "SharedCoin__enabled: " + sharedCoin.getMinimumFee());
-
-            sharedCoin.getRecommendedMinIterations();
-            for (int i = sharedCoin.getRecommendedMinIterations(); i < sharedCoin.getRecommendedMaxIterations(); i++) {
-            	
-            }
-
-
-            Log.d("SharedCoin", "SharedCoin__enabled: " + sharedCoin.getRecommendedIterations());
-            List<String> list = new ArrayList<String>();
-            //list.add("1CtxXugsjmXkjcygc31mEg3mzWpCmdseEx");
-            list.add("143fCTNAt8qfiDcJiFoy6EejMkXQqa3g7p");
-            try {
-				sharedCoin.constructPlan(2, list, new BigInteger("10000000"), "12rNZwfVgqpa6jjpTgDwJ2MmsT4zw3PbnW");
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-        }
 	}
 	
 	@Override
