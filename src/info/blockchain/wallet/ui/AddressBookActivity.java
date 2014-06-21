@@ -30,8 +30,11 @@ import piuk.blockchain.android.WalletApplication;
 import piuk.blockchain.android.WalletApplication.AddAddressCallback;
 import piuk.blockchain.android.ui.SuccessCallback;
 import android.app.Activity;
+import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Looper;
@@ -47,6 +50,7 @@ import android.view.View.OnTouchListener;
 import android.view.View.OnCreateContextMenuListener;
 import android.view.MenuInflater;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
@@ -131,6 +135,14 @@ public class AddressBookActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.addressbook);
+
+        ActionBar actionBar = getActionBar();
+        actionBar.hide();
+        actionBar.setDisplayOptions(actionBar.getDisplayOptions() ^ ActionBar.DISPLAY_SHOW_TITLE);
+        actionBar.setLogo(R.drawable.masthead);
+        actionBar.setHomeButtonEnabled(false);
+        actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#FF1B8AC7")));
+        actionBar.show();
         
         boolean gotoSendingAddresses = false;
         Bundle extras = getIntent().getExtras();
