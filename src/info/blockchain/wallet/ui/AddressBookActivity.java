@@ -132,6 +132,14 @@ public class AddressBookActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.addressbook);
         
+        boolean gotoSendingAddresses = false;
+        Bundle extras = getIntent().getExtras();
+        if(extras != null)	{
+        	if(extras.getBoolean("SENDING") == true)	{
+        		gotoSendingAddresses = true;
+        	}
+        }
+
         //
         //
         //
@@ -264,6 +272,17 @@ public class AddressBookActivity extends Activity {
 		EventListeners.addEventListener(eventListener);
 		
 		application.checkIfWalletHasUpdatedAndFetchTransactions(application.getRemoteWallet().getTemporyPassword());
+		
+		if(gotoSendingAddresses) {
+			imgArchived.setBackgroundColor(color_spend_unselected);
+        	imgActive.setBackgroundColor(color_spend_unselected);
+        	imgSending.setBackgroundColor(color_spend_selected);
+        	layoutArchived.setBackgroundColor(color_spend_unselected);
+        	layoutActive.setBackgroundColor(color_spend_unselected);
+        	layoutSending.setBackgroundColor(color_spend_selected);
+
+        	initSendingList();
+		}
     }
 
 	@Override

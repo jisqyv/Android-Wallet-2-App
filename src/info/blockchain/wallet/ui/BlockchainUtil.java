@@ -20,7 +20,11 @@ public class BlockchainUtil {
     
     public static String ZEROBLOCK_PACKAGE = "com.phlint.android.zeroblock";
     public static String MERCHANT_DIRECTORY_PACKAGE = "info.blockchain.merchant.directory";
-    
+
+//    public static String BLOCKCHAIN_DONATE = "1JArS6jzE3AJ9sZ3aFij1BmTcpFGgN86hA";
+    public static String BLOCKCHAIN_DONATE = "Add New Address";
+    public static String BLOCKCHAIN_DONATE2 = "Address Book Empty";
+
     private static double BTC_RATE = 635.0;
 
 	private BlockchainUtil() { ; }
