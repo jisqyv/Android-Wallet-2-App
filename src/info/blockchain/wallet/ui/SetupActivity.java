@@ -54,7 +54,8 @@ public class SetupActivity extends Activity		{
 	    setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         Button imgCreate = ((Button)findViewById(R.id.create));
-        imgCreate.setTypeface(TypefaceUtil.getInstance(this).getRobotoLightTypeface());
+        imgCreate.setTypeface(TypefaceUtil.getInstance(this).getGravityBoldTypeface());
+        imgCreate.setTextColor(0xFF1B8AC7);
         imgCreate.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
     			Intent intent = new Intent(SetupActivity.this, TOSActivity.class);
@@ -64,7 +65,8 @@ public class SetupActivity extends Activity		{
         });
 
         Button imgPair = ((Button)findViewById(R.id.pair));
-        imgPair.setTypeface(TypefaceUtil.getInstance(this).getRobotoLightTypeface());
+        imgPair.setTypeface(TypefaceUtil.getInstance(this).getGravityLightTypeface());
+        imgPair.setTextColor(0xFF808080);
         imgPair.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
         		Intent intent = new Intent(SetupActivity.this, ZBarScannerActivity.class);
