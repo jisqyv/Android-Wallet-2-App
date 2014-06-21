@@ -17,8 +17,10 @@ import java.util.Map;
 import piuk.MyRemoteWallet;
 import piuk.blockchain.android.R;
 import piuk.blockchain.android.WalletApplication;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -629,8 +631,13 @@ public class ReceiveFragment extends Fragment   {
 		        ((TextView)view.findViewById(R.id.p1)).setTextColor(0xFF616161);
 	        }
 
-	        String labelOrAddress = BlockchainUtil.formatAddress(row.get("labelOrAddress"), 15) ;
-	        ((TextView)view.findViewById(R.id.p1)).setText(labelOrAddress);
+	        if(row.get("labelOrAddress").equals(BlockchainUtil.BLOCKCHAIN_DONATE2)) {
+		        ((TextView)view.findViewById(R.id.p1)).setText(row.get("labelOrAddress"));
+	        }
+	        else {
+		        String labelOrAddress = BlockchainUtil.formatAddress(row.get("labelOrAddress"), 15) ;
+		        ((TextView)view.findViewById(R.id.p1)).setText(labelOrAddress);
+	        }
 
 	        if (contactsOn) {
 		        String address = BlockchainUtil.formatAddress(row.get("address"), 15) ;
@@ -720,9 +727,9 @@ public class ReceiveFragment extends Fragment   {
         }
         else {
 		    HashMap<String,String> row = new HashMap<String,String>();
-		    row.put("label", "Blockchain.info");
-		    row.put("address", "1JArS6jzE3AJ9sZ3aFij1BmTcpFGgN86hA");
-	        row.put("labelOrAddress", "Blockchain.info");
+		    row.put("label", BlockchainUtil.BLOCKCHAIN_DONATE2);
+		    row.put("address", BlockchainUtil.BLOCKCHAIN_DONATE);
+	        row.put("labelOrAddress", BlockchainUtil.BLOCKCHAIN_DONATE2);
 
 			magicData.add(row);
          	filteredDisplayList.add(row);
@@ -828,14 +835,49 @@ public class ReceiveFragment extends Fragment   {
 
         magicList.setOnItemClickListener(new OnItemClickListener() {
 	        public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3)	{
-//                Toast.makeText(getActivity(), keys.get(position), Toast.LENGTH_SHORT).show();
+	        	
+                HashMap<String, String> map = filteredDisplayList.get(position);
+                String labelOrAddress = map.get("labelOrAddress");
+            	edAddress.setText(labelOrAddress);         	                	               
+            	currentSelectedAddress = map.get("address");
+            	
+            	if(position == 0 && currentSelectedAddress.equals(BlockchainUtil.BLOCKCHAIN_DONATE))	{
+                	currentSelectedAddress = null;
+                	edAddress.setText("");
+                	
+                   	final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    final String message = "You do not yet have any sending addresses in your addressbook. "
+                        + " Would you like to create one?";
+                    builder.setMessage(message)
+                        .setPositiveButton("Yes",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface d, int id) {
+                                    d.dismiss();
+                                	Intent intent = new Intent(getActivity(), info.blockchain.wallet.ui.AddressBookActivity.class);
+                                	intent.putExtra("SENDING", true);
+                            		startActivity(intent);
+                                }
+                        })
+                        .setNegativeButton("No",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface d, int id) {
+                                    d.dismiss();
+                                }
+                        });
+                    builder.create().show();
+                    
+                    return;
+            	}
+
                 InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(edAddress.getWindowToken(), 0);
 
+                /*
                 HashMap<String, String> map = filteredDisplayList.get(position);
                 String labelOrAddress = map.get("labelOrAddress");
             	edAddress.setText(labelOrAddress);            	                	               
             	currentSelectedAddress = map.get("address");
+            	*/
             	
 				ivReceivingQR.setVisibility(View.VISIBLE);
 				ivReceivingQR.setImageBitmap(generateQRCode(BitcoinURI.convertToBitcoinURI(currentSelectedAddress, null, "", "")));		        		
