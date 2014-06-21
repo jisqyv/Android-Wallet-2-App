@@ -1,25 +1,35 @@
 package info.blockchain.wallet.ui;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Pattern;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.Editable;
+import android.text.InputType;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.CheckBox;
+import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.TextView.OnEditorActionListener;
 import android.view.KeyEvent;
 import android.view.View.OnKeyListener;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 //import android.util.Log;
 
 import piuk.MyRemoteWallet;
@@ -68,6 +78,16 @@ public class Setup2Activity extends Activity	{
             }
         });
 
+        pin2.addTextChangedListener(new TextWatcher()	{
+        	public void afterTextChanged(Editable s) {
+        		if(pin2.getText().toString().length() == 0) {
+                    pin1.requestFocus();
+        		}
+        	}
+        	public void beforeTextChanged(CharSequence s, int start, int count, int after)	{ ; }
+        	public void onTextChanged(CharSequence s, int start, int before, int count)	{ ; }
+        });
+
         pin3.setOnKeyListener(new OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -75,6 +95,16 @@ public class Setup2Activity extends Activity	{
                     pin4.requestFocus();
                 return false;
             }
+        });
+
+        pin3.addTextChangedListener(new TextWatcher()	{
+        	public void afterTextChanged(Editable s) {
+        		if(pin3.getText().toString().length() == 0) {
+                    pin2.requestFocus();
+        		}
+        	}
+        	public void beforeTextChanged(CharSequence s, int start, int count, int after)	{ ; }
+        	public void onTextChanged(CharSequence s, int start, int before, int count)	{ ; }
         });
 
         pin4.setOnKeyListener(new OnKeyListener() {
@@ -86,6 +116,16 @@ public class Setup2Activity extends Activity	{
             }
         });
 
+        pin4.addTextChangedListener(new TextWatcher()	{
+        	public void afterTextChanged(Editable s) {
+        		if(pin4.getText().toString().length() == 0) {
+                    pin3.requestFocus();
+        		}
+        	}
+        	public void beforeTextChanged(CharSequence s, int start, int count, int after)	{ ; }
+        	public void onTextChanged(CharSequence s, int start, int before, int count)	{ ; }
+        });
+
         pin2_1.setOnKeyListener(new OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -93,6 +133,16 @@ public class Setup2Activity extends Activity	{
                     pin2_2.requestFocus();
                 return false;
             }
+        });
+
+        pin2_1.addTextChangedListener(new TextWatcher()	{
+        	public void afterTextChanged(Editable s) {
+        		if(pin2_1.getText().toString().length() == 0) {
+                    pin4.requestFocus();
+        		}
+        	}
+        	public void beforeTextChanged(CharSequence s, int start, int count, int after)	{ ; }
+        	public void onTextChanged(CharSequence s, int start, int before, int count)	{ ; }
         });
 
         pin2_2.setOnKeyListener(new OnKeyListener() {
@@ -104,6 +154,16 @@ public class Setup2Activity extends Activity	{
             }
         });
 
+        pin2_2.addTextChangedListener(new TextWatcher()	{
+        	public void afterTextChanged(Editable s) {
+        		if(pin2_2.getText().toString().length() == 0) {
+                    pin2_1.requestFocus();
+        		}
+        	}
+        	public void beforeTextChanged(CharSequence s, int start, int count, int after)	{ ; }
+        	public void onTextChanged(CharSequence s, int start, int before, int count)	{ ; }
+        });
+
         pin2_3.setOnKeyListener(new OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -111,6 +171,26 @@ public class Setup2Activity extends Activity	{
                     pin2_4.requestFocus();
                 return false;
             }
+        });
+
+        pin2_3.addTextChangedListener(new TextWatcher()	{
+        	public void afterTextChanged(Editable s) {
+        		if(pin2_3.getText().toString().length() == 0) {
+                    pin2_2.requestFocus();
+        		}
+        	}
+        	public void beforeTextChanged(CharSequence s, int start, int count, int after)	{ ; }
+        	public void onTextChanged(CharSequence s, int start, int before, int count)	{ ; }
+        });
+
+        pin2_4.addTextChangedListener(new TextWatcher()	{
+        	public void afterTextChanged(Editable s) {
+        		if(pin2_4.getText().toString().length() == 0) {
+                    pin2_3.requestFocus();
+        		}
+        	}
+        	public void beforeTextChanged(CharSequence s, int start, int count, int after)	{ ; }
+        	public void onTextChanged(CharSequence s, int start, int before, int count)	{ ; }
         });
 
         final EditText password1 = ((EditText)findViewById(R.id.password1));
