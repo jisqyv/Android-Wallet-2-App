@@ -514,6 +514,18 @@ public class MyRemoteWallet extends MyWallet {
 		}
 	}
 
+	public synchronized String doMultiAddr(String[] addresses, boolean notifications) throws Exception {
+		String url =  WebROOT + "multiaddr?active=" + StringUtils.join(addresses, "|")+"&symbol_btc="+btcCurrencyCode+"&symbol_local="+localCurrencyCode;
+
+		String response = fetchURL(url);
+
+		parseMultiAddr(response, notifications);
+
+		lastMultiAddress = System.currentTimeMillis();
+
+		return response;
+	}
+	
 	public synchronized String doMultiAddr(boolean notifications) throws Exception {
 		String url =  WebROOT + "multiaddr?active=" + StringUtils.join(getActiveAddresses(), "|")+"&symbol_btc="+btcCurrencyCode+"&symbol_local="+localCurrencyCode;
 

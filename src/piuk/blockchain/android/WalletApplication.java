@@ -1055,7 +1055,80 @@ public class WalletApplication extends Application {
 			}
 		}).start();
 	}
+	
+	public void doMultiAddr(final String[] addresses, final boolean notifications, final SuccessCallback callback) {
+		final MyRemoteWallet blockchainWallet = this.blockchainWallet;
 
+		if (blockchainWallet == null) {
+			if (callback != null)
+				callback.onFail();
+
+			return;
+		}
+
+		if (!isRunningMultiAddr.compareAndSet(false, true)) {
+			if (callback != null)
+				callback.onFail();
+
+			return;
+		}
+
+		new Thread(new Runnable() {
+			public void run() {
+				try {
+					String multiAddr = null;
+
+					try {
+						multiAddr = blockchainWallet.doMultiAddr(addresses, notifications);
+					} catch (Exception e) {
+						e.printStackTrace(); 
+
+						try {
+							//Sleep for a bit and retry
+							Thread.sleep(5000);
+						} catch (InterruptedException e1) {
+							e1.printStackTrace();
+						}
+
+						try {
+							multiAddr = blockchainWallet.doMultiAddr(addresses, notifications);
+						} catch (Exception e1) {
+							e1.printStackTrace(); 
+
+							EventListeners.invokeOnMultiAddrError();
+
+							if (callback != null)
+								callback.onFail();
+
+							return;
+						}
+					}
+
+					if (callback != null)
+						callback.onSuccess();
+
+					try {
+						writeMultiAddrCache(multiAddr);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+
+					//After multi addr the currency is set
+					if (blockchainWallet.getLocalCurrencyCode() != null)
+						setCurrency(blockchainWallet.getLocalCurrencyCode());
+
+					handler.post(new Runnable() {
+						public void run() {
+							notifyWidgets();
+						}
+					});
+				} finally {
+					isRunningMultiAddr.set(false);
+				}
+			}
+		}).start();
+	}
+	
 	public void getAccountInformation(final boolean notifications, final SuccessCallback callback) {
 		final MyRemoteWallet blockchainWallet = this.blockchainWallet;
 
