@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package piuk;
+package piuk.blockchain.android;
 
 import android.util.Base64;
 import org.spongycastle.util.encoders.Hex;

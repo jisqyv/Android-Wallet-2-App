@@ -40,11 +40,11 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-import piuk.MyRemoteWallet;
+import piuk.blockchain.android.MyRemoteWallet;
 import piuk.blockchain.android.R;
 import piuk.blockchain.android.WalletApplication;
 import piuk.blockchain.android.ui.AbstractWalletActivity;
-import piuk.blockchain.android.ui.SuccessCallback;
+import piuk.blockchain.android.SuccessCallback;
 
 /**
  * @author Andreas Schildbach

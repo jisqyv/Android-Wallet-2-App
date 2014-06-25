@@ -35,12 +35,13 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import com.google.bitcoin.core.ECKey;
-import piuk.BitcoinAddress;
-import piuk.BitcoinURI;
+import piuk.blockchain.android.BitcoinAddress;
+import piuk.blockchain.android.BitcoinURI;
 import com.google.bitcoin.uri.BitcoinURIParseException;
 
 import piuk.blockchain.android.R;
 import piuk.blockchain.android.Constants;
+import piuk.blockchain.android.SuccessCallback;
 import piuk.blockchain.android.ui.dialogs.RequestPasswordDialog;
 import piuk.blockchain.android.util.ActionBarFragment;
 import piuk.blockchain.android.util.WalletUtils;
@@ -264,9 +265,8 @@ public final class SendCoinsActivity extends AbstractWalletActivity {
 	}
 	private void updateSendCoinsFragment(final String address,
 			final BigInteger amount) {
-		final SendCoinsFragment sendCoinsFragment = (SendCoinsFragment) getSupportFragmentManager()
-				.findFragmentById(R.id.send_coins_fragment);
+//		final SendCoinsFragment sendCoinsFragment = (SendCoinsFragment) getSupportFragmentManager().findFragmentById(R.id.send_coins_fragment);
 
-		sendCoinsFragment.update(address, amount);
+//		sendCoinsFragment.update(address, amount);
 	}
 }

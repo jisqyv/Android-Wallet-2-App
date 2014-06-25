@@ -25,13 +25,13 @@ import java.util.Map;
 import org.json.simple.JSONValue;
 import org.spongycastle.util.encoders.Hex;
 
-import piuk.EventListeners;
-import piuk.MyBlock;
-import piuk.MyRemoteWallet;
-import piuk.MyTransaction;
-import piuk.MyTransactionConfidence;
-import piuk.MyTransactionInput;
-import piuk.MyTransactionOutput;
+import piuk.blockchain.android.EventListeners;
+import piuk.blockchain.android.MyBlock;
+import piuk.blockchain.android.MyRemoteWallet;
+import piuk.blockchain.android.MyTransaction;
+import piuk.blockchain.android.MyTransactionConfidence;
+import piuk.blockchain.android.MyTransactionInput;
+import piuk.blockchain.android.MyTransactionOutput;
 import piuk.blockchain.android.Constants;
 import piuk.blockchain.android.WalletApplication;
 

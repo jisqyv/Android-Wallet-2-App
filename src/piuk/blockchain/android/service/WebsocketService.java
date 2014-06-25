@@ -23,8 +23,8 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import piuk.EventListeners;
-import piuk.MyTransactionOutput;
+import piuk.blockchain.android.EventListeners;
+import piuk.blockchain.android.MyTransactionOutput;
 import piuk.blockchain.android.Constants;
 import piuk.blockchain.android.R;
 import piuk.blockchain.android.WalletApplication;

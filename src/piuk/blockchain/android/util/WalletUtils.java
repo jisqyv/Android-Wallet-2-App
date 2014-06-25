@@ -38,8 +38,8 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
-import piuk.Hash;
-import piuk.MyWallet;
+import piuk.blockchain.android.Hash;
+import piuk.blockchain.android.MyWallet;
 import piuk.blockchain.android.Constants;
 
 import java.io.DataOutputStream;

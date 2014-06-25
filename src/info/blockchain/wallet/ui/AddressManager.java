@@ -15,13 +15,13 @@ import com.google.bitcoin.core.ECKey;
 import com.google.bitcoin.core.NetworkParameters;
 import com.google.bitcoin.uri.BitcoinURI;
 
-import piuk.EventListeners;
-import piuk.MyRemoteWallet;
+import piuk.blockchain.android.EventListeners;
+import piuk.blockchain.android.MyRemoteWallet;
 import piuk.blockchain.android.Constants;
 import piuk.blockchain.android.R;
 import piuk.blockchain.android.WalletApplication;
 import piuk.blockchain.android.WalletApplication.AddAddressCallback;
-import piuk.blockchain.android.ui.SuccessCallback;
+import piuk.blockchain.android.SuccessCallback;
 import piuk.blockchain.android.util.WalletUtils;
 
 public class AddressManager {

@@ -1,4 +1,4 @@
-package piuk;
+package piuk.blockchain.android;
 
 /*
  * Copyright 2010 the original author or authors.

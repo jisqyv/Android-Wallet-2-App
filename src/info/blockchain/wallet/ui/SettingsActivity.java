@@ -5,7 +5,7 @@ import java.io.FileWriter;
 import java.io.Writer;
 import java.util.Date;
 
-import piuk.MyRemoteWallet;
+import piuk.blockchain.android.MyRemoteWallet;
 import piuk.blockchain.android.Constants;
 import piuk.blockchain.android.R;
 import piuk.blockchain.android.WalletApplication;

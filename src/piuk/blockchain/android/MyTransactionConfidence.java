@@ -1,4 +1,4 @@
-package piuk;
+package piuk.blockchain.android;
 
 import com.google.bitcoin.core.Transaction;
 import com.google.bitcoin.core.TransactionConfidence;

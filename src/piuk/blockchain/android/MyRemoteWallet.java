@@ -16,7 +16,7 @@
  */
 
 
-package piuk;
+package piuk.blockchain.android;
 
 import java.math.BigInteger;
 import java.net.URLEncoder;
@@ -41,7 +41,7 @@ import org.json.simple.JSONValue;
 import org.json.simple.parser.JSONParser;
 import org.spongycastle.util.encoders.Hex;
 import piuk.blockchain.android.Constants;
-import piuk.blockchain.android.ui.SuccessCallback;
+import piuk.blockchain.android.SuccessCallback;
 import piuk.blockchain.android.util.WalletUtils;
 import android.annotation.SuppressLint;
 import android.util.Log;

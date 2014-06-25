@@ -18,14 +18,15 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.spongycastle.util.encoders.Hex;
 
-import piuk.EventListeners;
-import piuk.MyWallet;
+import piuk.blockchain.android.EventListeners;
+import piuk.blockchain.android.MyWallet;
 import piuk.blockchain.android.Constants;
 import piuk.blockchain.android.R;
+import piuk.blockchain.android.SuccessCallback;
 import piuk.blockchain.android.WalletApplication;
-import piuk.blockchain.android.ui.dialogs.RekeyWalletDialog;
+//import piuk.blockchain.android.ui.dialogs.RekeyWalletDialog;
 import piuk.blockchain.android.ui.dialogs.RequestPasswordDialog;
-import piuk.blockchain.android.ui.dialogs.WelcomeDialog;
+//import piuk.blockchain.android.ui.dialogs.WelcomeDialog;
 import piuk.blockchain.android.util.WalletUtils;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -208,7 +209,8 @@ public class PinEntryActivity extends AbstractWalletActivity {
 										.show();	
 
 										disableKeyPad(false);
-
+										
+										/*
 										if (application.needsWalletRekey()) {
 											RekeyWalletDialog.show(getSupportFragmentManager(), application, new SuccessCallback() {
 												@Override
@@ -224,6 +226,8 @@ public class PinEntryActivity extends AbstractWalletActivity {
 										} else {
 											finish();
 										}
+										*/
+										finish();
 									}
 								});
 							}
@@ -574,7 +578,7 @@ public class PinEntryActivity extends AbstractWalletActivity {
 		clear();
 
 		RequestPasswordDialog.hide();
-		WelcomeDialog.hide();
+//		WelcomeDialog.hide();
 
 		String pin_lookup_key = PreferenceManager.getDefaultSharedPreferences(this).getString("pin_kookup_key", null);
 		String encrypted_password = PreferenceManager.getDefaultSharedPreferences(this).getString("encrypted_password", null);
@@ -596,11 +600,11 @@ public class PinEntryActivity extends AbstractWalletActivity {
 									statusView.setText("Password Ok. Please create a PIN.");
 								}
 								public void onFail() {							
-									WelcomeDialog.show(getSupportFragmentManager(), activity, (WalletApplication)getApplication());
+//									WelcomeDialog.show(getSupportFragmentManager(), activity, (WalletApplication)getApplication());
 								}
 							}, RequestPasswordDialog.PasswordTypeMain);
 				} else {
-					WelcomeDialog.show(getSupportFragmentManager(), activity, (WalletApplication)getApplication());
+//					WelcomeDialog.show(getSupportFragmentManager(), activity, (WalletApplication)getApplication());
 				}
 			} 
 		} else {

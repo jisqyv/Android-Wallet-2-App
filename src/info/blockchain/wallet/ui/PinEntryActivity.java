@@ -2,10 +2,10 @@ package info.blockchain.wallet.ui;
 
 import java.security.SecureRandom;
 
-import piuk.MyWallet;
+import piuk.blockchain.android.MyWallet;
 import piuk.blockchain.android.WalletApplication;
-import piuk.blockchain.android.ui.SuccessCallback;
-import piuk.blockchain.android.ui.dialogs.RekeyWalletDialog;
+import piuk.blockchain.android.SuccessCallback;
+//import piuk.blockchain.android.ui.dialogs.RekeyWalletDialog;
 import piuk.blockchain.android.ui.dialogs.RequestPasswordDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -669,6 +669,7 @@ public class PinEntryActivity extends FragmentActivity {
 
 //										disableKeyPad(false);
 
+										/*
 										if (application.needsWalletRekey()) {
 											
 //											Toast.makeText(PinEntryActivity.this, "Rekey needed:" + response.toString(), Toast.LENGTH_SHORT).show();	
@@ -687,6 +688,7 @@ public class PinEntryActivity extends FragmentActivity {
 										} else {
 //											finish();
 										}
+										*/
 										
 										Editor edit = PreferenceManager.getDefaultSharedPreferences(PinEntryActivity.this).edit();
 										edit.putBoolean("verified", true);

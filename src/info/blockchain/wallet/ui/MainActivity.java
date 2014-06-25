@@ -55,12 +55,12 @@ import android.widget.Toast;
 
 //import android.util.Log;
 
-import piuk.MyRemoteWallet;
+import piuk.blockchain.android.MyRemoteWallet;
 import piuk.blockchain.android.Constants;
 import piuk.blockchain.android.R;
 import piuk.blockchain.android.WalletApplication;
 import piuk.blockchain.android.ui.AbstractWalletActivity;
-import piuk.blockchain.android.ui.SuccessCallback;
+import piuk.blockchain.android.SuccessCallback;
 
 @SuppressLint("NewApi")
 public class MainActivity extends FragmentActivity implements ActionBar.TabListener {
@@ -274,11 +274,13 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     	case R.id.action_about:
     		doAbout();
     		return true;
+    	/*
     	case R.id.action_prev_wallet:
 			Intent intent2 = new Intent(MainActivity.this, piuk.blockchain.android.ui.WalletActivity.class);
 			intent2.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
 			startActivity(intent2);
     		return true;
+    	*/
 	    default:
 	        return super.onOptionsItemSelected(item);
 	    }

@@ -3,7 +3,7 @@ package info.blockchain.wallet.ui;
 import java.util.Arrays;
 import java.util.Map;
 
-import piuk.MyRemoteWallet;
+import piuk.blockchain.android.MyRemoteWallet;
 import piuk.blockchain.android.WalletApplication;
 
 import com.google.zxing.BarcodeFormat;

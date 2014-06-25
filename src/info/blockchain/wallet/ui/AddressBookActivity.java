@@ -23,12 +23,12 @@ import com.dm.zbar.android.scanner.ZBarConstants;
 import com.dm.zbar.android.scanner.ZBarScannerActivity;
 import com.google.bitcoin.core.Transaction;
 
-import piuk.EventListeners;
-import piuk.MyRemoteWallet;
+import piuk.blockchain.android.EventListeners;
+import piuk.blockchain.android.MyRemoteWallet;
 import piuk.blockchain.android.R;
 import piuk.blockchain.android.WalletApplication;
 import piuk.blockchain.android.WalletApplication.AddAddressCallback;
-import piuk.blockchain.android.ui.SuccessCallback;
+import piuk.blockchain.android.SuccessCallback;
 import android.app.Activity;
 import android.app.ActionBar;
 import android.content.Context;

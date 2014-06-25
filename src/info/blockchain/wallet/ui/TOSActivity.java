@@ -7,12 +7,12 @@ import org.spongycastle.util.encoders.Hex;
 
 import org.apache.commons.lang.RandomStringUtils;
 
-import piuk.EventListeners;
-import piuk.MyWallet;
+import piuk.blockchain.android.EventListeners;
+import piuk.blockchain.android.MyWallet;
 import piuk.blockchain.android.Constants;
 import piuk.blockchain.android.R;
 import piuk.blockchain.android.WalletApplication;
-import piuk.blockchain.android.ui.SuccessCallback;
+import piuk.blockchain.android.SuccessCallback;
 
 import com.google.android.gcm.GCMRegistrar;
 

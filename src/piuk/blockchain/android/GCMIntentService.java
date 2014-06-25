@@ -112,12 +112,10 @@ public class GCMIntentService extends GCMBaseIntentService {
 				context.getSystemService(Context.NOTIFICATION_SERVICE);
 		Notification notification = new Notification(icon, message, when);
 		String title = context.getString(R.string.app_name);
-		Intent notificationIntent = new Intent(context, WalletActivity.class);
+		Intent notificationIntent = new Intent(context, info.blockchain.wallet.ui.PinEntryActivity.class);
 		// set intent so it does not start a new activity
-		notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
-				Intent.FLAG_ACTIVITY_SINGLE_TOP);
-		PendingIntent intent =
-				PendingIntent.getActivity(context, 0, notificationIntent, 0);
+		notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+		PendingIntent intent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
 		notification.setLatestEventInfo(context, title, message, intent);
 		notification.flags |= Notification.FLAG_AUTO_CANCEL;
 		notificationManager.notify(0, notification);

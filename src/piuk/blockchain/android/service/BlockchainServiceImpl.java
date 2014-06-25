@@ -32,7 +32,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
-import piuk.EventListeners;
+import piuk.blockchain.android.EventListeners;
 import piuk.blockchain.android.Constants;
 import piuk.blockchain.android.WalletApplication;
 

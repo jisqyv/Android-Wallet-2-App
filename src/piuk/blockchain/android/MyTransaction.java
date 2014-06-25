@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package piuk;
+package piuk.blockchain.android;
 
 import java.io.Serializable;
 import java.math.BigInteger;

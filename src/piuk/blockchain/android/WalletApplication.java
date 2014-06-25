@@ -45,17 +45,17 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.spongycastle.util.encoders.Hex;
 
-import piuk.EventListeners;
-import piuk.MyRemoteWallet;
-import piuk.MyRemoteWallet.NotModfiedException;
-import piuk.MyWallet;
+import piuk.blockchain.android.EventListeners;
+import piuk.blockchain.android.MyRemoteWallet;
+import piuk.blockchain.android.MyRemoteWallet.NotModfiedException;
+import piuk.blockchain.android.MyWallet;
 import piuk.blockchain.android.R;
 //import piuk.blockchain.android.service.BlockchainServiceImpl;
 import piuk.blockchain.android.service.WebsocketService;
 import piuk.blockchain.android.ui.AbstractWalletActivity;
 import piuk.blockchain.android.ui.PinEntryActivity;
-import piuk.blockchain.android.ui.SuccessCallback;
-import piuk.blockchain.android.ui.dialogs.RekeyWalletDialog;
+import piuk.blockchain.android.SuccessCallback;
+//import piuk.blockchain.android.ui.dialogs.RekeyWalletDialog;
 import piuk.blockchain.android.util.ErrorReporter;
 import piuk.blockchain.android.util.RandomOrgGenerator;
 import piuk.blockchain.android.util.WalletUtils;
@@ -585,7 +585,7 @@ public class WalletApplication extends Application {
 	public long getLastTriedToRegisterForNotifications() {
 		return PreferenceManager.getDefaultSharedPreferences(this).getLong("last_notification_register", 0);
 	}
-
+/*
 	public boolean needsWalletRekey() { 
 		MyRemoteWallet wallet = getRemoteWallet();
 
@@ -596,7 +596,7 @@ public class WalletApplication extends Application {
 
 		return !getHasAskedToRekeyWallet() && insecure_addresses.size() > 0 && !RekeyWalletDialog.hasKnownAndroidAddresses(wallet);
 	}
-
+*/
 	public boolean getHasAskedToRekeyWallet() { 
 		return PreferenceManager.getDefaultSharedPreferences(this).getBoolean("has_asked_rekeyed_wallet4", false);
 	}
@@ -939,6 +939,7 @@ public class WalletApplication extends Application {
 
 				localSaveWallet();
 
+				/*
 				try {
 					// Copy our labels into the address book
 					if (blockchainWallet.getLabelMap() != null) {
@@ -953,6 +954,7 @@ public class WalletApplication extends Application {
 
 					writeException(e);
 				}
+				*/
 
 				try {
 					// Get the balance and transaction

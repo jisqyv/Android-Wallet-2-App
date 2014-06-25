@@ -17,34 +17,21 @@
 
 package piuk.blockchain.android.ui;
 
-import info.blockchain.wallet.ui.Setup2Activity;
-import info.blockchain.wallet.ui.SetupActivity;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.Writer;
-import java.math.BigInteger;
 import java.util.Date;
 
 import com.google.android.gcm.GCMRegistrar;
 import com.google.bitcoin.core.Address;
-import com.google.bitcoin.core.ECKey;
-import com.google.bitcoin.core.NetworkParameters;
-import com.google.bitcoin.core.Transaction;
 
-import piuk.MyRemoteWallet;
-import piuk.MyRemoteWallet.SendProgress;
+import piuk.blockchain.android.MyRemoteWallet;
 import piuk.blockchain.android.Constants;
 import piuk.blockchain.android.R;
-import piuk.blockchain.android.WalletApplication;
-import piuk.blockchain.android.WalletApplication.AddAddressCallback;
-import piuk.blockchain.android.ui.AbstractWalletActivity.QrCodeDelagate;
-import piuk.blockchain.android.ui.dialogs.RequestPasswordDialog;
-import piuk.blockchain.android.ui.dialogs.WelcomeDialog;
+//import piuk.blockchain.android.ui.dialogs.WelcomeDialog;
 import piuk.blockchain.android.util.ActionBarFragment;
 import piuk.blockchain.android.util.ErrorReporter;
 import piuk.blockchain.android.util.Iso8601Format;
-import piuk.blockchain.android.util.WalletUtils;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -57,19 +44,16 @@ import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Pair;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.FrameLayout;
-import android.widget.Toast;
+//import android.widget.Toast;
 
 public final class WalletActivity extends AbstractWalletActivity {
 	public static WalletActivity instance = null;
 
 	AsyncTask<Void, Void, Void> mRegisterTask;
-	WalletTransactionsFragment transactionsFragment = null;
+//	WalletTransactionsFragment transactionsFragment = null;
 	FrameLayout frameLayoutContainer = null;
 
 	private static final int DIALOG_EXPORT_KEYS = 1;
@@ -128,18 +112,18 @@ public final class WalletActivity extends AbstractWalletActivity {
 
 		frameLayoutContainer = (FrameLayout)this.findViewById(R.id.frame_layout_container);
 
-		transactionsFragment = (WalletTransactionsFragment) getSupportFragmentManager()
-				.findFragmentById(R.id.wallet_transactions_fragment);
+//		transactionsFragment = (WalletTransactionsFragment) getSupportFragmentManager().findFragmentById(R.id.wallet_transactions_fragment);
 
 		final Activity activity = this;
 
+		/*
 		actionBar.getPrimaryTitleView().setOnClickListener(
 				new OnClickListener() {
 					public void onClick(final View v) {
 						if (application.getRemoteWallet() == null)
 							return;
 
-						WelcomeDialog.show(getSupportFragmentManager(), activity, application);
+//						WelcomeDialog.show(getSupportFragmentManager(), activity, application);
 					}
 				});
 
@@ -149,7 +133,7 @@ public final class WalletActivity extends AbstractWalletActivity {
 						if (application.getRemoteWallet() == null)
 							return;
 
-						WelcomeDialog.show(getSupportFragmentManager(), activity, application);
+//						WelcomeDialog.show(getSupportFragmentManager(), activity, application);
 					}
 				});
 
@@ -170,8 +154,7 @@ public final class WalletActivity extends AbstractWalletActivity {
 						if (application.getRemoteWallet() == null)
 							return;
 
-						startActivity(new Intent(WalletActivity.this,
-								RequestCoinsActivity.class));
+//						startActivity(new Intent(WalletActivity.this, RequestCoinsActivity.class));
 					}
 				});
 
@@ -181,6 +164,7 @@ public final class WalletActivity extends AbstractWalletActivity {
 						openOptionsMenu();
 					}
 				});
+		*/
 
 		registerReceiver(mHandleMessageReceiver, new IntentFilter(Constants.DISPLAY_MESSAGE_ACTION));
 	}
@@ -202,7 +186,7 @@ public final class WalletActivity extends AbstractWalletActivity {
 	protected void onResume() {
 		super.onResume();
 	}
-
+/*
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu)
 	{
@@ -327,7 +311,7 @@ public final class WalletActivity extends AbstractWalletActivity {
 			return false;
 		}
 	}
-
+*/
 	public void openDeopositPage() {
 		if (application.getRemoteWallet() == null)
 			return;

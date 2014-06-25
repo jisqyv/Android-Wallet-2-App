@@ -28,11 +28,12 @@ import net.sourceforge.zbar.Symbol;
 
 import piuk.blockchain.android.Constants;
 import piuk.blockchain.android.WalletApplication;
-import piuk.MyRemoteWallet;
-import piuk.MyWallet;
-import piuk.blockchain.android.ui.dialogs.RequestIdentifierDialog;
+import piuk.blockchain.android.MyRemoteWallet;
+import piuk.blockchain.android.MyWallet;
+import piuk.blockchain.android.SuccessCallback;
+//import piuk.blockchain.android.ui.dialogs.RequestIdentifierDialog;
 import piuk.blockchain.android.ui.dialogs.RequestPasswordDialog;
-import piuk.blockchain.android.ui.dialogs.WelcomeDialog;
+//import piuk.blockchain.android.ui.dialogs.WelcomeDialog;
 import piuk.blockchain.android.ui.*;
 import piuk.blockchain.android.R;
 

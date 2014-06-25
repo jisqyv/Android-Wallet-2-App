@@ -3,7 +3,7 @@ package info.blockchain.wallet.ui;
 import android.content.Context;
 import android.app.Activity;
 
-import piuk.MyRemoteWallet;
+import piuk.blockchain.android.MyRemoteWallet;
 import piuk.blockchain.android.WalletApplication;
 import piuk.blockchain.android.util.WalletUtils;
 

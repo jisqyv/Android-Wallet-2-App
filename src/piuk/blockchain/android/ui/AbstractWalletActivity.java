@@ -39,11 +39,12 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
 import android.widget.Toast;
-import piuk.EventListeners;
-import piuk.MyRemoteWallet;
-import piuk.MyRemoteWallet.SendProgress;
+import piuk.blockchain.android.EventListeners;
+import piuk.blockchain.android.MyRemoteWallet;
+import piuk.blockchain.android.MyRemoteWallet.SendProgress;
 import piuk.blockchain.android.R;
 import piuk.blockchain.android.Constants;
+import piuk.blockchain.android.SuccessCallback;
 import piuk.blockchain.android.WalletApplication;
 import piuk.blockchain.android.WalletApplication.AddAddressCallback;
 import piuk.blockchain.android.ui.dialogs.RequestPasswordDialog;
@@ -688,7 +689,7 @@ public abstract class AbstractWalletActivity extends FragmentActivity {
 					application.saveWallet(new SuccessCallback() {
 						@Override
 						public void onSuccess() {
-							EditAddressBookEntryFragment.edit(getSupportFragmentManager(), finalAddress);
+//							EditAddressBookEntryFragment.edit(getSupportFragmentManager(), finalAddress);
 						}
 
 						@Override

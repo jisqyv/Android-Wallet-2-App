@@ -1,4 +1,4 @@
-package piuk;
+package piuk.blockchain.android;
 
 import java.math.BigInteger;
 

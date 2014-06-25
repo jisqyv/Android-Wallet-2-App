@@ -24,10 +24,10 @@ import android.view.KeyEvent;
 import android.view.View.OnKeyListener;
 //import android.util.Log;
 
-import piuk.MyRemoteWallet;
+import piuk.blockchain.android.MyRemoteWallet;
 import piuk.blockchain.android.R;
 import piuk.blockchain.android.WalletApplication;
-import piuk.blockchain.android.ui.SuccessCallback;
+import piuk.blockchain.android.SuccessCallback;
 
 public class Setup2Activity extends Activity	{
 

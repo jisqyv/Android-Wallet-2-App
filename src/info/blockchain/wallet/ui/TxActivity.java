@@ -37,12 +37,12 @@ import org.json.simple.parser.JSONParser;
 
 import info.blockchain.api.LatestBlock;
 import info.blockchain.api.Transaction;
-import piuk.MyRemoteWallet;
-import piuk.MyTransaction;
+import piuk.blockchain.android.MyRemoteWallet;
+import piuk.blockchain.android.MyTransaction;
 import piuk.blockchain.android.Constants;
 import piuk.blockchain.android.R;
 import piuk.blockchain.android.WalletApplication;
-import piuk.blockchain.android.ui.SuccessCallback;
+import piuk.blockchain.android.SuccessCallback;
 import piuk.blockchain.android.util.WalletUtils;
 
 public class TxActivity extends Activity	{

@@ -14,7 +14,7 @@ import java.util.Map;
 
 //import org.json.simple.JSONObject;
 
-import piuk.MyRemoteWallet;
+import piuk.blockchain.android.MyRemoteWallet;
 import piuk.blockchain.android.R;
 import piuk.blockchain.android.WalletApplication;
 import android.app.AlertDialog;

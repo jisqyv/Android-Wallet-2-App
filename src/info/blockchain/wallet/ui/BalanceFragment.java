@@ -14,13 +14,13 @@ import java.util.HashMap;
 
 import org.json.simple.JSONObject;
 
-import piuk.EventListeners;
-import piuk.MyRemoteWallet;
-import piuk.MyTransaction;
-import piuk.MyTransactionInput;
+import piuk.blockchain.android.EventListeners;
+import piuk.blockchain.android.MyRemoteWallet;
+import piuk.blockchain.android.MyTransaction;
+import piuk.blockchain.android.MyTransactionInput;
 import piuk.blockchain.android.R;
 import piuk.blockchain.android.WalletApplication;
-import piuk.blockchain.android.ui.SuccessCallback;
+import piuk.blockchain.android.SuccessCallback;
 import piuk.blockchain.android.util.WalletUtils;
 
 import com.google.bitcoin.core.Address;
