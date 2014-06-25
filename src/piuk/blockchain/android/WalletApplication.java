@@ -43,6 +43,7 @@ import com.google.bitcoin.store.WalletProtobufSerializer;
 import org.apache.commons.io.IOUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.spongycastle.util.encoders.Hex;
 
 import piuk.blockchain.android.EventListeners;
@@ -60,6 +61,7 @@ import piuk.blockchain.android.util.ErrorReporter;
 import piuk.blockchain.android.util.RandomOrgGenerator;
 import piuk.blockchain.android.util.WalletUtils;
 import info.blockchain.wallet.ui.MainActivity;
+import info.blockchain.wallet.ui.ObjectSuccessCallback;
 import info.blockchain.wallet.ui.WalletUtil;
 
 import java.io.File;
@@ -817,6 +819,7 @@ public class WalletApplication extends Application {
 
 						localWallet = readLocalWallet();
 
+						
 						//First try and restore the local cache
 						if (decryptLocalWallet(localWallet, password)) {	
 							if (callback != null)  {
@@ -1058,30 +1061,23 @@ public class WalletApplication extends Application {
 		}).start();
 	}
 	
-	public void doMultiAddr(final String[] addresses, final boolean notifications, final SuccessCallback callback) {
+	public void getBalances(final String[] addresses, final boolean notifications, final ObjectSuccessCallback callback) {
 		final MyRemoteWallet blockchainWallet = this.blockchainWallet;
 
 		if (blockchainWallet == null) {
 			if (callback != null)
-				callback.onFail();
+				callback.onFail("blockchainWallet == null");
 
 			return;
 		}
-
-		if (!isRunningMultiAddr.compareAndSet(false, true)) {
-			if (callback != null)
-				callback.onFail();
-
-			return;
-		}
-
+		
 		new Thread(new Runnable() {
 			public void run() {
 				try {
-					String multiAddr = null;
+					String response = null;
 
 					try {
-						multiAddr = blockchainWallet.doMultiAddr(addresses, notifications);
+						response = blockchainWallet.getBalances(addresses, notifications);
 					} catch (Exception e) {
 						e.printStackTrace(); 
 
@@ -1093,31 +1089,26 @@ public class WalletApplication extends Application {
 						}
 
 						try {
-							multiAddr = blockchainWallet.doMultiAddr(addresses, notifications);
+							response = blockchainWallet.getBalances(addresses, notifications);
 						} catch (Exception e1) {
 							e1.printStackTrace(); 
 
 							EventListeners.invokeOnMultiAddrError();
 
 							if (callback != null)
-								callback.onFail();
+								callback.onFail(e1.getLocalizedMessage());
 
 							return;
 						}
 					}
 
-					if (callback != null)
-						callback.onSuccess();
-
-					try {
-						writeMultiAddrCache(multiAddr);
-					} catch (Exception e) {
-						e.printStackTrace();
+					if (callback != null) {
+						try {
+							callback.onSuccess((JSONObject) new JSONParser().parse(response));
+						} catch (ParseException e) {
+							callback.onFail(e.getLocalizedMessage());
+						}
 					}
-
-					//After multi addr the currency is set
-					if (blockchainWallet.getLocalCurrencyCode() != null)
-						setCurrency(blockchainWallet.getLocalCurrencyCode());
 
 					handler.post(new Runnable() {
 						public void run() {
@@ -1125,7 +1116,6 @@ public class WalletApplication extends Application {
 						}
 					});
 				} finally {
-					isRunningMultiAddr.set(false);
 				}
 			}
 		}).start();
@@ -1672,6 +1662,7 @@ public class WalletApplication extends Application {
 
 	public boolean decryptLocalWallet(String payload, String password) {
 		try {
+
 			MyRemoteWallet wallet = new MyRemoteWallet(payload, password);
 
 			if (wallet.getGUID().equals(getGUID())) {

@@ -235,13 +235,22 @@ public class MyWallet {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void addAdditionalSeeds(String val) {
+	public synchronized void addAdditionalSeeds(String val) {
 		Map<String, Object> options = getOptions();
 
 		List<String> additional_seeds;
 		if (options.containsKey("additional_seeds")) {
 			additional_seeds = (List<String>) options.get("additional_seeds");
 			additional_seeds.add(val);			
+		}
+	}
+	
+	//debug code, use to clear seed list so recoverSeeds is shorter, dont actually use in production
+	public synchronized void clearAdditionalSeeds() {
+		Map<String, Object> options = getOptions();
+		
+		if (options.containsKey("additional_seeds")) {
+			options.put("additional_seeds", new ArrayList<String>());			
 		}
 	}
 	
