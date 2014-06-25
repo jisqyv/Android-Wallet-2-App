@@ -165,12 +165,13 @@ public class WebsocketService extends android.app.Service
 		text.insert(0, "To ");
 
 		final Notification notification = new Notification(R.drawable.stat_notify_received, tickerMsg, System.currentTimeMillis());
-		notification.setLatestEventInfo(WebsocketService.this, msg, text,
-				PendingIntent.getActivity(WebsocketService.this, 0, new Intent(WebsocketService.this, WalletActivity.class), 0));
-
+		Intent notificationIntent = new Intent(WebsocketService.this, info.blockchain.wallet.ui.PinEntryActivity.class);
+		notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+		PendingIntent intent = PendingIntent.getActivity(WebsocketService.this, 0, notificationIntent, 0);
+		notification.setLatestEventInfo(WebsocketService.this, msg, text, intent);
+		notification.flags |= Notification.FLAG_AUTO_CANCEL;
 		notification.number = 0;
 		notification.sound = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.alert);
-
 		nm.notify(NOTIFICATION_ID_COINS_SENT, notification);
 
 		Toast.makeText(application, tickerMsg, Toast.LENGTH_LONG).show();
@@ -228,12 +229,13 @@ public class WebsocketService extends android.app.Service
 		text.insert(0, "From ");
 
 		final Notification notification = new Notification(R.drawable.stat_notify_received, tickerMsg, System.currentTimeMillis());
-		notification.setLatestEventInfo(WebsocketService.this, msg, text,
-				PendingIntent.getActivity(WebsocketService.this, 0, new Intent(WebsocketService.this, WalletActivity.class), 0));
-
+		Intent notificationIntent = new Intent(WebsocketService.this, info.blockchain.wallet.ui.PinEntryActivity.class);
+		notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+		PendingIntent intent = PendingIntent.getActivity(WebsocketService.this, 0, notificationIntent, 0);
+		notification.setLatestEventInfo(WebsocketService.this, msg, text, intent);
+		notification.flags |= Notification.FLAG_AUTO_CANCEL;
 		notification.number = 0;
 		notification.sound = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.alert);
-
 		nm.notify(NOTIFICATION_ID_COINS_RECEIVED, notification);
 
 		Toast.makeText(application, tickerMsg, Toast.LENGTH_LONG).show();
