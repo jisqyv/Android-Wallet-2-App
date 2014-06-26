@@ -136,7 +136,7 @@ public class BalanceFragment extends Fragment   {
 		@Override
 		public void onCoinsSent(final Transaction tx, final long result) {
 			sentTx = tx;
-	        ((ViewPager)getActivity().findViewById(info.blockchain.wallet.ui.R.id.pager)).setCurrentItem(1);
+	        ((ViewPager)getActivity().findViewById(R.id.pager)).setCurrentItem(1);
 			setAdapterContent();
 			sentTx = null;
 			adapter.notifyDataSetChanged();
@@ -338,7 +338,7 @@ public class BalanceFragment extends Fragment   {
 		final Activity activity = getActivity();
 //		application = (WalletApplication) activity.getApplication();
 
-        rootView = inflater.inflate(info.blockchain.wallet.ui.R.layout.fragment_balance, container, false);
+        rootView = inflater.inflate(R.layout.fragment_balance, container, false);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         strCurrentFiatCode = prefs.getString("ccurrency", "USD");

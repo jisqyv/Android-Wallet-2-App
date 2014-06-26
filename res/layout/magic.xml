@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+    <LinearLayout 
+	    xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/magic"
+	    android:layout_width="match_parent"
+	    android:layout_height="50dp"
+	    android:orientation="horizontal" 
+	    android:background="#FFb6b6b6"
+	>
+
+	<LinearLayout 
+	    android:layout_width="61dp"
+	    android:layout_height="50dp"
+	    android:orientation="horizontal" 
+	    android:background="#FFf2f3f2"
+	/>
+
+	<!-- divider -->    
+    <LinearLayout 
+        android:id="@+id/divider1"
+	    android:layout_width="5dp"
+    	android:layout_height="50dp"
+	    android:orientation="vertical" 
+	    android:background="#FF808080"
+	/>
+
+    <LinearLayout 
+        android:id="@+id/magic_bis"
+	    android:layout_width="fill_parent"
+	    android:layout_height="50dp"
+	    android:orientation="horizontal" 
+	>
+    
+	    <LinearLayout 
+	    android:layout_width="0dp"
+	    android:layout_height="50dp"
+	    android:layout_weight="1"
+	    android:orientation="horizontal"
+	    android:layout_gravity="left"
+	    android:gravity="left"
+		>
+        <ImageButton
+    	android:id="@+id/contacts"
+        android:src="@drawable/address_book"
+        android:scaleType="centerCrop"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center_vertical"
+    	/>
+        <ImageButton
+    	android:id="@+id/addresses"
+        android:src="@drawable/my_addresses"
+        android:scaleType="centerCrop"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center_vertical"
+    	/>
+	    <ImageButton
+    	android:id="@+id/phone_contacts"
+        android:src="@drawable/phone_contacts"
+        android:scaleType="centerCrop"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center_vertical"
+    	/>
+        </LinearLayout>
+	    
+	    <LinearLayout 
+	    android:layout_width="0dp"
+	    android:layout_height="50dp"
+	    android:layout_weight="1"
+	    android:orientation="horizontal"
+	    android:layout_gravity="right"
+	    android:gravity="right"
+		>
+	    <ImageView
+    	android:id="@+id/qr_icon"
+        android:src="@drawable/camera_icon"
+        android:scaleType="centerInside"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginRight="3dp"
+    	/>
+		</LinearLayout>
+	    	    
+	</LinearLayout>
+	
+</LinearLayout>

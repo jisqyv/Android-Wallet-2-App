@@ -325,5 +325,32 @@
         <item>Custom Send</item>
         <item>Shared Send</item>
     </string-array>
+    
+    <string name="action_settings">Account settings</string>
+    <string name="address_book">Address book</string>
+    <string name="exchange_rates">Exchange rates</string>
+    <string name="scan_private_key">Scan private key</string>
+    <string name="scan_watch_only">Scan watch only address</string>
+    <string name="backup_wallet">Backup wallet</string>
+    <string name="p2p_mode">Enter P2P mode</string>
+    <string name="nearby_merchants">Locate nearby Bitcoin merchants</string>
+    <string name="send_to_friends">Send Bitcoins to friends</string>
+    <string name="scan_sending_address">Scan sending address</string>
+    
+    <string name="new_address">Generate new address</string>
+    <string name="edit_label">Edit label</string>
+    <string name="archive_address">Archive address</string>
+    <string name="unarchive_address">Unarchive address</string>
+    <string name="remove_address">Remove address</string>
+    <string name="qr_code">Show QR code</string>
+    <string name="default_address">Make default address</string>
+    
+    <string name="support">Support</string>
+    <string name="rate_us">Rate us</string>
+    <string name="email_chooser">Send e-mail...</string>
+    <string name="about_us">About Blockchain Wallet</string>
+    <string name="about">Blockchain Wallet %1$s\n©%2$s Blockchain.info</string>
+    <string name="merchant_download">Free Merchant app</string>
+    
 
 </resources>

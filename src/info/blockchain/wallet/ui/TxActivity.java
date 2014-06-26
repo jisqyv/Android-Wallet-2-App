@@ -102,7 +102,7 @@ public class TxActivity extends Activity	{
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-	    setContentView(info.blockchain.wallet.ui.R.layout.layout_tx);
+	    setContentView(R.layout.layout_tx);
 
         Bundle extras = getIntent().getExtras();
         if(extras != null)	{

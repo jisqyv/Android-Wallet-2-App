@@ -5,6 +5,7 @@ import java.security.SecureRandom;
 import piuk.blockchain.android.MyWallet;
 import piuk.blockchain.android.WalletApplication;
 import piuk.blockchain.android.SuccessCallback;
+import piuk.blockchain.android.R;
 //import piuk.blockchain.android.ui.dialogs.RekeyWalletDialog;
 import piuk.blockchain.android.ui.dialogs.RequestPasswordDialog;
 import android.os.AsyncTask;
@@ -39,7 +40,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.util.Log;
 
-import info.blockchain.wallet.ui.R;
 import info.blockchain.api.ExchangeRates;
 
 import net.sourceforge.zbar.Symbol;
@@ -96,7 +96,7 @@ public class PinEntryActivity extends FragmentActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
         WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		
-		setContentView(info.blockchain.wallet.ui.R.layout.activity_pin_entry);
+		setContentView(R.layout.activity_pin_entry);
 		
         Bundle extras = getIntent().getExtras();
         if(extras != null)	{

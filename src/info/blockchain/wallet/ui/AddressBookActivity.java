@@ -299,7 +299,7 @@ public class AddressBookActivity extends Activity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(info.blockchain.wallet.ui.R.menu.addressbook, menu);
+		getMenuInflater().inflate(R.menu.addressbook, menu);
 		return true;
 	}
 

@@ -91,7 +91,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-	    setContentView(info.blockchain.wallet.ui.R.layout.activity_main);
+	    setContentView(R.layout.activity_main);
 
 	    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 	    
@@ -135,7 +135,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 	    tabs[1] = "Balance";
 	    tabs[2] = "Receive";
 
-        viewPager = (ViewPager) findViewById(info.blockchain.wallet.ui.R.id.pager);
+        viewPager = (ViewPager) findViewById(R.id.pager);
         mAdapter = new TabsPagerAdapter(getSupportFragmentManager());
 
         viewPager.setAdapter(mAdapter);
@@ -295,7 +295,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(info.blockchain.wallet.ui.R.menu.main, menu);
+		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
 

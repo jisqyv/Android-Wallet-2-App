@@ -15,6 +15,8 @@ import android.widget.TextView;
 //import android.widget.RadioButton;
 import android.widget.Spinner;
 
+import piuk.blockchain.android.R;
+
 public class InternationalPrefixActivity extends Activity {
 	
 	private static String[] mCountries = {

@@ -5,6 +5,7 @@ import java.util.Map;
 
 import piuk.blockchain.android.MyRemoteWallet;
 import piuk.blockchain.android.WalletApplication;
+import piuk.blockchain.android.R;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;

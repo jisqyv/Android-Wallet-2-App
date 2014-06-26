@@ -12,6 +12,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 import android.net.Uri;
+import piuk.blockchain.android.R;
 //import android.util.Log;
 
 public class AboutActivity extends Activity	{

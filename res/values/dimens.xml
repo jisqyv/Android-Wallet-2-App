@@ -16,4 +16,7 @@
 
 	<item name="address_scalex" type="dimen">1.0</item>
 
+	<dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+	
 </resources>

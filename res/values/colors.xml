@@ -10,4 +10,11 @@
 	<color name="background_bright">#ffffffff</color>
 	<color name="background_less_bright">#ffd8d8e0</color>
 
+	<color name="blockchain_red">#FFd17d7d</color>
+    <color name="blockchain_green">#FF6daf50</color>
+    <color name="blockchain_blue">#FF1B8AC7</color>
+    <color name="blockchain_grey">#FF808080</color>
+    <color name="magiclist_bg_selected">#FF1B8AC7</color>
+    <color name="magiclist_bg_unselected">#FFFFFFFF</color>
+	
 </resources>
