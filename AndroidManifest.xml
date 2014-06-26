@@ -182,11 +182,11 @@
             android:name="piuk.blockchain.android.ExchangeRatesProvider"
             android:authorities="piuk.blockchain.android.exchange_rates"
             android:exported="false" />
--->
+
         <service
             android:name="piuk.blockchain.android.service.BlockchainServiceImpl"
             android:exported="false" />
-<!--
+
         <receiver
             android:name="piuk.blockchain.android.WalletBalanceWidgetProvider"
             android:label="Blockchain Balance" >
