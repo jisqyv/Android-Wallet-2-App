@@ -28,11 +28,13 @@ import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.ConnectivityManager;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.Pair;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.bitcoin.core.*;
@@ -70,6 +72,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.reflect.Method;
+import java.math.BigInteger;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.security.MessageDigest;
@@ -87,6 +90,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @SuppressLint("SimpleDateFormat")
 public class WalletApplication extends Application {
 	private MyRemoteWallet blockchainWallet;
+	private SharedCoin sharedCoin;
 
 	private final Handler handler = new Handler();
 	private Timer timer;
@@ -1755,5 +1759,126 @@ public class WalletApplication extends Application {
 		} catch (NameNotFoundException x) {
 			return "unknown";
 		}
+	}
+ 
+	public void sharedCoinRecoverSeeds(List<String> shared_coin_seeds) {
+		sharedCoin.recoverSeeds(shared_coin_seeds, new SuccessCallback() {
+			@Override
+			public void onSuccess() {
+	            Log.d("SharedCoin", "SharedCoin recoverSeeds onSuccess");				
+				handler.post(new Runnable() {
+					public void run() {
+						Toast.makeText(WalletApplication.this, "SharedCoin recoverSeeds Success", Toast.LENGTH_LONG).show();
+					}
+				});
+			}
+
+			@Override
+			public void onFail() {
+	            Log.d("SharedCoin", "SharedCoin recoverSeeds onFail");				
+				handler.post(new Runnable() {
+					public void run() {
+						Toast.makeText(WalletApplication.this, "SharedCoin recoverSeeds fail", Toast.LENGTH_LONG).show();
+					}
+				});
+			}
+		});
+	}
+	
+	public void sendSharedCoin(List<String> fromAddresses, String toAddress, BigInteger amount) {
+        if (SharedCoin.VERSION > sharedCoin.getMinSupportedVersion()) {
+            try {
+				sharedCoin.sendSharedCoin(2, fromAddresses, amount, toAddress, new ObjectSuccessCallback() {
+					@Override
+					public void onSuccess(final Object obj) {
+			            Log.d("SharedCoin", "SharedCoin sendSharedCoin onSuccess");				
+						handler.post(new Runnable() {
+							public void run() {
+								Toast.makeText(WalletApplication.this, (String) obj, Toast.LENGTH_LONG).show();
+							}
+						});
+					}
+
+					@Override
+					public void onFail(final String error) {
+			            Log.d("SharedCoin", "SharedCoin sendSharedCoin onFail " + error);				
+						handler.post(new Runnable() {
+							public void run() {
+								Toast.makeText(WalletApplication.this, error, Toast.LENGTH_LONG).show();
+							}
+						});
+					}
+					
+				});
+			} catch (Exception e) {
+	            Log.d("SharedCoin", "SharedCoin sendSharedCoin Exception " + e.getLocalizedMessage());				
+				Toast.makeText(WalletApplication.this, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+				e.printStackTrace();
+			}
+        }
+	}
+
+
+	public void sharedCoinGetInfo(final SuccessCallback callback) {
+		final MyRemoteWallet blockchainWallet = this.blockchainWallet;
+
+		if (blockchainWallet == null) {
+			if (callback != null)
+				callback.onFail();
+
+			return;
+		}
+
+    	sharedCoin = SharedCoin.getInstance(this, blockchainWallet);
+
+		new Thread(new Runnable() {
+			public void run() {
+				try {
+
+					try {
+						sharedCoin.getInfo();
+					} catch (Exception e) {
+						e.printStackTrace(); 
+
+						try {
+							//Sleep for a bit and retry
+							Thread.sleep(5000);
+						} catch (InterruptedException e1) {
+							e1.printStackTrace();
+						}
+
+						try {
+							sharedCoin.getInfo();
+						} catch (Exception e1) {
+							e1.printStackTrace(); 
+
+							EventListeners.invokeOnMultiAddrError();
+
+							if (callback != null)
+								callback.onFail();
+
+							return;
+						}
+					}
+
+					if (callback != null)
+						callback.onSuccess();
+
+					handler.post(new Runnable() {
+						public void run() {
+						}
+					});
+				} finally {
+				}
+			}
+		}).start();
+	}
+
+	public SharedCoin getSharedCoin() {
+		return sharedCoin;
+	}
+
+	public void setSharedCoin(SharedCoin sharedCoin) {
+		this.sharedCoin = sharedCoin;
 	}
 }
