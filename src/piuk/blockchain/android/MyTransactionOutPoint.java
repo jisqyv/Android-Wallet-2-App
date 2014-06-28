@@ -2,12 +2,12 @@ package piuk.blockchain.android;
 
 import java.math.BigInteger;
 
-
 import com.google.bitcoin.core.NetworkParameters;
 import com.google.bitcoin.core.ProtocolException;
 import com.google.bitcoin.core.Sha256Hash;
 import com.google.bitcoin.core.TransactionOutPoint;
 import com.google.bitcoin.core.TransactionOutput;
+import com.google.bitcoin.params.MainNetParams;
 
 //Very messy
 public class MyTransactionOutPoint extends TransactionOutPoint {
@@ -19,7 +19,7 @@ public class MyTransactionOutPoint extends TransactionOutPoint {
 	int confirmations;
 	
 	public MyTransactionOutPoint(Sha256Hash txHash, int txOutputN, BigInteger value, byte[] scriptBytes) throws ProtocolException {
-		super(NetworkParameters.prodNet(), txOutputN, new Sha256Hash(txHash.getBytes()));
+		super(MainNetParams.get(), txOutputN, new Sha256Hash(txHash.getBytes()));
 		this.scriptBytes = scriptBytes;
 		this.value = value;
 		this.txOutputN = txOutputN;

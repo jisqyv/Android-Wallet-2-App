@@ -31,6 +31,7 @@ import com.google.bitcoin.core.DumpedPrivateKey;
 import com.google.bitcoin.core.ECKey;
 import com.google.bitcoin.core.NetworkParameters;
 import com.google.bitcoin.core.Utils;
+import com.google.bitcoin.params.MainNetParams;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.WriterException;
@@ -74,7 +75,7 @@ public class WalletUtils {
 
 	public static Pair<ECKey, Boolean> parsePrivateKey(String format, String contents, String password) throws Exception { 
 		if (format.equals("sipa") || format.equals("compsipa")) {
-			DumpedPrivateKey pk = new DumpedPrivateKey(NetworkParameters.prodNet(), contents);
+			DumpedPrivateKey pk = new DumpedPrivateKey(MainNetParams.get(), contents);
 
 			return new Pair<ECKey, Boolean>(pk.getKey(), format.equals("compsipa"));
 		} else if (format.equals("base58")) {
@@ -434,10 +435,10 @@ public class WalletUtils {
 
 		String address = null;
 		if (compressed) {
-			//address = kp.toAddressCompressed(NetworkParameters.prodNet()).toString();
-			address = kp.toAddress(NetworkParameters.prodNet()).toString();
+			//address = kp.toAddressCompressed(MainNetParams.get()).toString();
+			address = kp.toAddress(MainNetParams.get()).toString();
 		} else {
-			address = kp.toAddress(NetworkParameters.prodNet()).toString();
+			address = kp.toAddress(MainNetParams.get()).toString();
 		}
 
 		byte[] acs = hash (address.toString().getBytes ("US-ASCII"));
@@ -515,10 +516,10 @@ public class WalletUtils {
 
 		String address = null;
 		if (compressed) {
-			//address = kp.toAddressCompressed(NetworkParameters.prodNet()).toString();
-			address = kp.toAddress(NetworkParameters.prodNet()).toString();
+			//address = kp.toAddressCompressed(MainNetParams.get()).toString();
+			address = kp.toAddress(MainNetParams.get()).toString();
 		} else {
-			address = kp.toAddress(NetworkParameters.prodNet()).toString();
+			address = kp.toAddress(MainNetParams.get()).toString();
 		}
 
 		byte[] acs = hash (address.getBytes ("US-ASCII"));

@@ -34,18 +34,21 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.json.simple.parser.JSONParser;
 import org.spongycastle.util.encoders.Hex;
+
 import piuk.blockchain.android.Constants;
 import piuk.blockchain.android.SuccessCallback;
 import piuk.blockchain.android.util.WalletUtils;
 import android.annotation.SuppressLint;
 import android.util.Log;
 import android.util.Pair;
+
 import com.google.bitcoin.core.Address;
 import com.google.bitcoin.core.AddressFormatException;
 import com.google.bitcoin.core.Base58;
@@ -59,6 +62,7 @@ import com.google.bitcoin.core.TransactionInput;
 import com.google.bitcoin.core.TransactionOutput;
 import com.google.bitcoin.core.Utils;
 import com.google.bitcoin.core.Wallet;
+import com.google.bitcoin.params.MainNetParams;
 
 
 @SuppressLint("DefaultLocale")
@@ -738,7 +742,7 @@ public class MyRemoteWallet extends MyWallet {
 
 						progress.onProgress("Signing Inputs");
 
-						Wallet wallet = new Wallet(NetworkParameters.prodNet());
+						Wallet wallet = new Wallet(MainNetParams.get());
 						for (TransactionInput input : tx.getInputs()) {
 
 							try {
@@ -913,7 +917,7 @@ public class MyRemoteWallet extends MyWallet {
 
 					progress.onProgress("Signing Inputs");
 
-					Wallet wallet = new Wallet(NetworkParameters.prodNet());
+					Wallet wallet = new Wallet(MainNetParams.get());
 					for (TransactionInput input : tx.getInputs()) {
 
 						try {

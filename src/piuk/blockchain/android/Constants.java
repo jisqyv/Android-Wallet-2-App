@@ -27,6 +27,7 @@ import android.text.format.DateUtils;
 
 import com.google.bitcoin.core.NetworkParameters;
 import com.google.bitcoin.core.Utils;
+import com.google.bitcoin.params.MainNetParams;
 
 import piuk.blockchain.android.R;
 
@@ -37,7 +38,7 @@ public class Constants {
 	public static final boolean TEST = false; // replace protected
 
 	public static final NetworkParameters NETWORK_PARAMETERS = TEST ? NetworkParameters
-			.testNet() : NetworkParameters.prodNet();
+			.testNet() : MainNetParams.get();
 			
 			public static final String WALLET_FILENAME_PROTOBUF = "wallet-protobuf";
 

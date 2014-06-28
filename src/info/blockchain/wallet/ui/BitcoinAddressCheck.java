@@ -2,6 +2,7 @@ package info.blockchain.wallet.ui;
 
 import piuk.blockchain.android.R;
 
+import com.google.bitcoin.params.MainNetParams;
 import com.google.bitcoin.uri.BitcoinURI;
 import com.google.bitcoin.uri.BitcoinURIParseException;
 import com.google.bitcoin.core.Address;
@@ -122,7 +123,7 @@ public class BitcoinAddressCheck {
 		Address address = null;
 		
 		try {
-			address = new Address(NetworkParameters.prodNet(), btcaddress);
+			address = new Address(MainNetParams.get(), btcaddress);
 			if(address != null) {
 				ret = true;
 			}

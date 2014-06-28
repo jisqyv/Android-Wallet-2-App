@@ -38,6 +38,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.google.bitcoin.core.*;
+import com.google.bitcoin.params.MainNetParams;
 //import com.google.bitcoin.core.Wallet.AutosaveEventListener;
 //import com.google.bitcoin.store.WalletExtensionSerializer;
 import com.google.bitcoin.store.WalletProtobufSerializer;
@@ -1260,7 +1261,7 @@ public class WalletApplication extends Application {
 							public void onSuccess() {	
 								try {
 									ECKey key = blockchainWallet.getECKey(address);									
-									if (key != null && key.toAddress(NetworkParameters.prodNet()).toString().equals(address)) {
+									if (key != null && key.toAddress(MainNetParams.get()).toString().equals(address)) {
 										callback.onSavedAddress(address);
 									} else {
 										blockchainWallet.removeKey(key);

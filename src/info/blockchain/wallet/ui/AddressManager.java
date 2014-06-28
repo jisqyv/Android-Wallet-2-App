@@ -13,6 +13,7 @@ import android.widget.Toast;
 import com.google.bitcoin.core.Address;
 import com.google.bitcoin.core.ECKey;
 import com.google.bitcoin.core.NetworkParameters;
+import com.google.bitcoin.params.MainNetParams;
 import com.google.bitcoin.uri.BitcoinURI;
 
 import piuk.blockchain.android.EventListeners;
@@ -174,10 +175,10 @@ public class AddressManager {
 				try {
 					final String address;
 					if (compressed) {
-						//address = key.toAddressCompressed(NetworkParameters.prodNet()).toString();
-						address = key.toAddress(NetworkParameters.prodNet()).toString();
+						//address = key.toAddressCompressed(MainNetParams.get()).toString();
+						address = key.toAddress(MainNetParams.get()).toString();
 					} else {
-						address = key.toAddress(NetworkParameters.prodNet()).toString();
+						address = key.toAddress(MainNetParams.get()).toString();
 					}
 
 		    		Log.d("AddressManager", "AddressManager onError Address " + address);			    		
@@ -187,7 +188,7 @@ public class AddressManager {
 					final BigInteger finalBalance = balance;
 		    		Log.d("AddressManager", "AddressManager onError finalBalance " + finalBalance);			    		
 
-					application.addKeyToWallet(key, key.toAddress(NetworkParameters.prodNet()).toString(), null, 0,
+					application.addKeyToWallet(key, key.toAddress(MainNetParams.get()).toString(), null, 0,
 							new AddAddressCallback() {
 
 						public void onSavedAddress(String address) {
@@ -273,7 +274,7 @@ public class AddressManager {
 	
 	public void newAddress(final AddAddressCallback callback) {
 		final ECKey key = application.getRemoteWallet().generateECKey();			
-		addKeyToWallet(key, key.toAddress(NetworkParameters.prodNet()).toString(), null, 0, callback);
+		addKeyToWallet(key, key.toAddress(MainNetParams.get()).toString(), null, 0, callback);
 	}
 
 	public void addKeyToWallet(final ECKey key, final String address, final String label, final int tag,
@@ -302,7 +303,7 @@ public class AddressManager {
 							public void onSuccess() {	
 								try {
 									ECKey key = blockchainWallet.getECKey(address);									
-									if (key != null && key.toAddress(NetworkParameters.prodNet()).toString().equals(address)) {
+									if (key != null && key.toAddress(MainNetParams.get()).toString().equals(address)) {
 										callback.onSavedAddress(address);
 									} else {
 										blockchainWallet.removeKey(key);

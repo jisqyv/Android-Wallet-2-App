@@ -18,11 +18,15 @@
 package piuk.blockchain.android;
 
 import android.util.Base64;
+
 import org.spongycastle.util.encoders.Hex;
+
 import com.google.bitcoin.core.Base58;
 import com.google.bitcoin.core.ECKey;
 import com.google.bitcoin.core.NetworkParameters;
 import com.google.bitcoin.core.Wallet;
+import com.google.bitcoin.params.MainNetParams;
+
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.json.simple.JSONObject;
@@ -59,7 +63,7 @@ public class MyWallet {
 	public String temporySecondPassword;
 	public static final double SupportedEncryptionVersion = 2.0;
 
-	public static final NetworkParameters params = NetworkParameters.prodNet();
+	public static final NetworkParameters params = MainNetParams.get();
 	public static byte[] extra_seed;
 
 	@SuppressWarnings("unchecked")
@@ -110,7 +114,7 @@ public class MyWallet {
 
 		ECKey key = generateECKey();
 
-		addKey(key, key.toAddress(NetworkParameters.prodNet()).toString(), "My 1st Address");
+		addKey(key, key.toAddress(MainNetParams.get()).toString(), "My 1st Address");
 	}
 
 	@SuppressWarnings("unchecked")

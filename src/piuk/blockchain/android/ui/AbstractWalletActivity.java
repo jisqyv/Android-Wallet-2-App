@@ -58,6 +58,7 @@ import com.google.bitcoin.core.Address;
 import com.google.bitcoin.core.ECKey;
 import com.google.bitcoin.core.NetworkParameters;
 import com.google.bitcoin.core.Transaction;
+import com.google.bitcoin.params.MainNetParams;
 import com.google.bitcoin.uri.BitcoinURI;
 
 /**
@@ -449,10 +450,10 @@ public abstract class AbstractWalletActivity extends FragmentActivity {
 				try {
 					final String address;
 					if (compressed) {
-						//address = key.toAddressCompressed(NetworkParameters.prodNet()).toString();
-						address = key.toAddress(NetworkParameters.prodNet()).toString();
+						//address = key.toAddressCompressed(MainNetParams.get()).toString();
+						address = key.toAddress(MainNetParams.get()).toString();
 					} else {
-						address = key.toAddress(NetworkParameters.prodNet()).toString();
+						address = key.toAddress(MainNetParams.get()).toString();
 					}
 
 					System.out.println("Scanned PK Address " + address);
@@ -601,7 +602,7 @@ public abstract class AbstractWalletActivity extends FragmentActivity {
 	}
 
 	private void reallyAddKey(final Dialog dialog, final ECKey key) {
-		application.addKeyToWallet(key, key.toAddress(NetworkParameters.prodNet()).toString(), null, 0,
+		application.addKeyToWallet(key, key.toAddress(MainNetParams.get()).toString(), null, 0,
 				new AddAddressCallback() {
 
 			public void onSavedAddress(String address) {
