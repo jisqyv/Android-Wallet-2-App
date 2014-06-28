@@ -1,10 +1,5 @@
 package info.blockchain.wallet.ui;
 
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import net.sourceforge.zbar.Symbol;
 
 import com.dm.zbar.android.scanner.ZBarConstants;
@@ -422,6 +417,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     }
 
     private void doMerchantDirectory()	{
+    	/*
         if(hasMerchantDirectory())	{
         	LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
         	boolean geoEnabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
@@ -439,8 +435,12 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         	Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + BlockchainUtil.MERCHANT_DIRECTORY_PACKAGE));
         	startActivity(intent);
         }
+        */
+    	Intent intent = new Intent(MainActivity.this, info.blockchain.merchant.directory.MapActivity.class);
+		startActivity(intent);
     }
 
+    /*
     private boolean hasMerchantDirectory()	{
     	PackageManager pm = this.getPackageManager();
     	try	{
@@ -451,6 +451,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     		return false;
     	}
     }
+    	*/
 
     private void doAbout()	{
     	Intent intent = new Intent(MainActivity.this, AboutActivity.class);

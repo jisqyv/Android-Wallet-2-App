@@ -43,7 +43,7 @@ import piuk.blockchain.android.R;
 import piuk.blockchain.android.Constants;
 import piuk.blockchain.android.SuccessCallback;
 import piuk.blockchain.android.ui.dialogs.RequestPasswordDialog;
-import piuk.blockchain.android.util.ActionBarFragment;
+//import piuk.blockchain.android.util.ActionBarFragment;
 import piuk.blockchain.android.util.WalletUtils;
 
 public final class SendCoinsActivity extends AbstractWalletActivity {
@@ -73,13 +73,15 @@ public final class SendCoinsActivity extends AbstractWalletActivity {
 
 		setContentView(R.layout.send_coins_content);
 
-		final ActionBarFragment actionBar = getActionBarFragment();
+//		final ActionBarFragment actionBar = getActionBarFragment();
 
+		/*
 		actionBar.setBack(new OnClickListener() {
 			public void onClick(final View v) {
 				finish();
 			}
 		});
+		*/
 
 		spinner = new Spinner(this);
 
@@ -98,7 +100,7 @@ public final class SendCoinsActivity extends AbstractWalletActivity {
 
 		spinner.setAdapter(adapter);
 
-		actionBar.addView(spinner);
+//		actionBar.addView(spinner);
 
 		spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 			public void onItemSelected(AdapterView<?> parent, View view, 
@@ -113,7 +115,7 @@ public final class SendCoinsActivity extends AbstractWalletActivity {
 	}
 
 	public void setSendType(String type) {		
-		actionBar.setPrimaryTitle(type);
+//		actionBar.setPrimaryTitle(type);
 
 		if (listener != null) {
 			listener.onChangedSendType(type);

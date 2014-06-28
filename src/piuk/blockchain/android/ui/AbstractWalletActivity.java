@@ -48,7 +48,7 @@ import piuk.blockchain.android.SuccessCallback;
 import piuk.blockchain.android.WalletApplication;
 import piuk.blockchain.android.WalletApplication.AddAddressCallback;
 import piuk.blockchain.android.ui.dialogs.RequestPasswordDialog;
-import piuk.blockchain.android.util.ActionBarFragment;
+//import piuk.blockchain.android.util.ActionBarFragment;
 import piuk.blockchain.android.util.WalletUtils;
 
 import com.dm.zbar.android.scanner.ZBarConstants;
@@ -66,7 +66,7 @@ import com.google.bitcoin.uri.BitcoinURI;
  */
 public abstract class AbstractWalletActivity extends FragmentActivity {
 	protected WalletApplication application = (WalletApplication) this.getApplication();
-	protected ActionBarFragment actionBar;
+//	protected ActionBarFragment actionBar;
 	protected final AbstractWalletActivity self = this;
 	protected Handler handler = new Handler();
 	protected ActivityDelegate activityDelegate;
@@ -299,12 +299,15 @@ public abstract class AbstractWalletActivity extends FragmentActivity {
 	protected void onStart() {
 		super.onStart();
 
+		/*
 		if (getActionBarFragment() != null) {
 			actionBar.setIcon(Constants.APP_ICON_RESID);
 			actionBar.setSecondaryTitle(Constants.TEST ? "[testnet]" : null);
 		}
+		*/
 	}
 
+	/*
 	public ActionBarFragment getActionBarFragment() {
 		if (actionBar == null)
 			actionBar = (ActionBarFragment) getSupportFragmentManager()
@@ -312,6 +315,7 @@ public abstract class AbstractWalletActivity extends FragmentActivity {
 
 		return actionBar;
 	}
+	*/
 
 	public final void toast(final String text, final Object... formatArgs) {
 		toast(text, 0, Toast.LENGTH_SHORT, formatArgs);

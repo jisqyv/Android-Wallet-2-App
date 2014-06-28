@@ -60,7 +60,7 @@ import piuk.blockchain.android.ui.AbstractWalletActivity;
 import piuk.blockchain.android.ui.PinEntryActivity;
 import piuk.blockchain.android.SuccessCallback;
 //import piuk.blockchain.android.ui.dialogs.RekeyWalletDialog;
-import piuk.blockchain.android.util.ErrorReporter;
+//import piuk.blockchain.android.util.ErrorReporter;
 import piuk.blockchain.android.util.RandomOrgGenerator;
 import piuk.blockchain.android.util.WalletUtils;
 import info.blockchain.wallet.ui.MainActivity;
@@ -549,7 +549,7 @@ public class WalletApplication extends Application {
 	public void onCreate() {
 		super.onCreate();
 
-		ErrorReporter.getInstance().init(this);
+//		ErrorReporter.getInstance().init(this);
 
 		//blockchainServiceIntent = new Intent(this, BlockchainServiceImpl.class);
 		websocketServiceIntent = new Intent(this, WebsocketService.class);

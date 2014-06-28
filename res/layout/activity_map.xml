@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    >
+
+    <LinearLayout 
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    android:orientation="horizontal" 
+	>
+
+            <LinearLayout 
+        	android:id="@+id/layout_cafe"
+		    android:layout_width="0dp"
+		    android:layout_weight="1"
+    		android:layout_height="match_parent"
+    		android:orientation="horizontal" 
+		    android:gravity="center_vertical|center_horizontal" 
+			android:background="#FF808080"
+			>
+		    <ImageView
+        	android:id="@+id/cafe"
+        	android:src="@drawable/marker_cafe"
+        	android:scaleType="centerInside"
+        	android:layout_width="72dp"
+        	android:layout_height="72dp"
+		    />
+            </LinearLayout>
+        
+            <LinearLayout 
+        	android:id="@+id/layout_drink"
+		    android:layout_width="0dp"
+		    android:layout_weight="1"
+    		android:layout_height="match_parent"
+    		android:orientation="horizontal" 
+		    android:gravity="center_vertical|center_horizontal" 
+			android:background="#FF808080"
+			>
+		    <ImageView
+        	android:id="@+id/drink"
+        	android:src="@drawable/marker_drink"
+        	android:scaleType="centerInside"
+        	android:layout_width="72dp"
+        	android:layout_height="72dp"
+		    />
+            </LinearLayout>
+            
+            <LinearLayout 
+        	android:id="@+id/layout_eat"
+		    android:layout_width="0dp"
+		    android:layout_weight="1"
+    		android:layout_height="match_parent"
+    		android:orientation="horizontal" 
+		    android:gravity="center_vertical|center_horizontal" 
+			android:background="#FF808080"
+			>
+		    <ImageView
+        	android:id="@+id/eat"
+        	android:src="@drawable/marker_eat"
+        	android:scaleType="centerInside"
+        	android:layout_width="72dp"
+        	android:layout_height="72dp"
+		    />
+            </LinearLayout>
+            
+            <LinearLayout 
+        	android:id="@+id/layout_spend"
+		    android:layout_width="0dp"
+		    android:layout_weight="1"
+    		android:layout_height="match_parent"
+    		android:orientation="horizontal" 
+		    android:gravity="center_vertical|center_horizontal" 
+			android:background="#FF808080"
+			>
+		    <ImageView
+        	android:id="@+id/spend"
+        	android:src="@drawable/marker_spend"
+        	android:scaleType="centerInside"
+        	android:layout_width="72dp"
+        	android:layout_height="72dp"
+		    />
+            </LinearLayout>
+            
+            <LinearLayout 
+        	android:id="@+id/layout_atm"
+		    android:layout_width="0dp"
+		    android:layout_weight="1"
+    		android:layout_height="match_parent"
+    		android:orientation="horizontal" 
+		    android:gravity="center_vertical|center_horizontal"
+			android:background="#FF808080"
+			>
+		    <ImageView
+        	android:id="@+id/atm"
+        	android:src="@drawable/marker_atm"
+        	android:scaleType="centerInside"
+        	android:layout_width="72dp"
+        	android:layout_height="72dp"
+		    />
+            </LinearLayout>
+            
+	</LinearLayout>
+    
+    <LinearLayout 
+    android:layout_width="match_parent"
+    android:layout_height="fill_parent"
+    android:layout_centerHorizontal="true"
+    android:orientation="horizontal" 
+	>
+    <fragment
+        android:id="@+id/map"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        class="com.google.android.gms.maps.MapFragment" />
+    </LinearLayout>
+
+</LinearLayout> 

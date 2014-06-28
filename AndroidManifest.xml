@@ -3,10 +3,19 @@
     package="piuk.blockchain.android"
     android:installLocation="preferExternal"
     android:versionCode="132"
-    android:versionName="0.9.32">
+    android:versionName="0.9.33">
 
-    <uses-sdk android:minSdkVersion="11" android:targetSdkVersion="17" />
+    <uses-sdk android:minSdkVersion="17" android:targetSdkVersion="17" />
+    
+    <permission
+        android:name="piuk.blockchain.android.permission.MAPS_RECEIVE"
+        android:protectionLevel="signature" />
 
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
+
+    <uses-permission android:name="piuk.blockchain.android.permission.MAPS_RECEIVE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.BROADCAST_STICKY" />
     <uses-permission android:name="android.permission.VIBRATE" />
@@ -98,108 +107,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-<!--        
-        <activity
-            android:name="piuk.blockchain.android.ui.WalletActivity"
-            android:configChanges="orientation|keyboard|keyboardHidden"
-            android:launchMode="singleTask"
-            android:screenOrientation="nosensor"
-            android:theme="@style/Theme.HoloLight"
-            >
-            <intent-filter>
-            </intent-filter>
-        </activity>
 
-        <activity
-            android:name="piuk.blockchain.android.ui.SendCoinsActivity"
-            android:configChanges="orientation|keyboard|keyboardHidden"
-            android:launchMode="singleTask"
-            android:screenOrientation="nosensor"
-            android:theme="@style/Theme.MyLight"
-            >
-            <intent-filter android:label="@string/send_coins_activity_title" >
-                <action android:name="android.intent.action.VIEW" />
-
-                <data android:scheme="bitcoin" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-            </intent-filter>
-            <intent-filter android:label="@string/send_coins_activity_title" >
-                <action android:name="android.intent.action.WEB_SEARCH" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-
-        <activity
-            android:name="piuk.blockchain.android.ui.PairWalletActivity"
-            android:configChanges="orientation|keyboard|keyboardHidden"
-            android:launchMode="singleTask"
-            android:screenOrientation="nosensor"
-            android:theme="@style/Theme.HoloLight" >
-        </activity>
-
-        <activity
-            android:name="piuk.blockchain.android.ui.RequestCoinsActivity"
-            android:configChanges="orientation|keyboard|keyboardHidden"
-            android:launchMode="singleTask"
-            android:screenOrientation="behind"
-            android:theme="@style/Theme.MyLight" />
-
-        <activity
-            android:name="piuk.blockchain.android.ui.ExchangeRatesActivity"
-            android:configChanges="orientation|keyboard|keyboardHidden"
-            android:launchMode="singleTask"
-            android:screenOrientation="behind"
-            android:theme="@style/Theme.MyLight" >
-        </activity>
-
-        <activity
-            android:name="piuk.blockchain.android.ui.WalletAddressesActivity"
-            android:configChanges="orientation|keyboard|keyboardHidden"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.HoloLight" />
-
-        <activity
-            android:name="piuk.blockchain.android.ui.PinEntryActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.MyPIN" >
-        </activity>
--->
         <activity
             android:name="com.dm.zbar.android.scanner.ZBarScannerActivity"
             android:label="@string/app_name"
             android:screenOrientation="landscape" />
-<!--
-        <provider
-            android:name="piuk.blockchain.android.AddressBookProvider"
-            android:authorities="piuk.blockchain.android.address_book"
-            android:exported="false" />
-        <provider
-            android:name="piuk.blockchain.android.ExchangeRatesProvider"
-            android:authorities="piuk.blockchain.android.exchange_rates"
-            android:exported="false" />
 
-        <service
-            android:name="piuk.blockchain.android.service.BlockchainServiceImpl"
-            android:exported="false" />
-
-        <receiver
-            android:name="piuk.blockchain.android.WalletBalanceWidgetProvider"
-            android:label="Blockchain Balance" >
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/wallet_balance_widget" >
-            </meta-data>
-        </receiver>
--->
         <service android:name="piuk.blockchain.android.service.WebsocketService" />
 
         <activity android:name="info.blockchain.wallet.ui.AboutActivity"
@@ -274,6 +187,26 @@
 			>
 			<intent-filter /> 
         </activity>
+
+        <activity android:name="info.blockchain.merchant.directory.MapActivity"
+			android:label="@string/app_name" 
+			>
+			<intent-filter /> 
+        </activity>
+
+        <activity android:name="info.blockchain.merchant.directory.ListActivity"
+			android:label="@string/app_name" 
+			>
+			<intent-filter /> 
+        </activity>
+
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="AIzaSyBgIp1BfRBI_-EA6Ovg56iIjW6Jswebl3s" />
+
+        <meta-data
+		    android:name="com.google.android.gms.version"
+		    android:value="@integer/google_play_services_version" />
         
         </application>
 

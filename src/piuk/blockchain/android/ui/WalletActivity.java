@@ -29,8 +29,8 @@ import piuk.blockchain.android.MyRemoteWallet;
 import piuk.blockchain.android.Constants;
 import piuk.blockchain.android.R;
 //import piuk.blockchain.android.ui.dialogs.WelcomeDialog;
-import piuk.blockchain.android.util.ActionBarFragment;
-import piuk.blockchain.android.util.ErrorReporter;
+//import piuk.blockchain.android.util.ActionBarFragment;
+//import piuk.blockchain.android.util.ErrorReporter;
 import piuk.blockchain.android.util.Iso8601Format;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -102,13 +102,13 @@ public final class WalletActivity extends AbstractWalletActivity {
 
 		instance = this;
 
-		ErrorReporter.getInstance().check(this);
+//		ErrorReporter.getInstance().check(this);
 
 		setContentView(R.layout.wallet_content);
 
-		final ActionBarFragment actionBar = getActionBarFragment();
+//		final ActionBarFragment actionBar = getActionBarFragment();
 
-		actionBar.setPrimaryTitle(R.string.app_name);
+//		actionBar.setPrimaryTitle(R.string.app_name);
 
 		frameLayoutContainer = (FrameLayout)this.findViewById(R.id.frame_layout_container);
 
