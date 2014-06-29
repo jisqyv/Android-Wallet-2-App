@@ -1,6 +1,5 @@
-Define this as Library Project in Eclipse:
+UI no longer contained in separate Library project.
 
-Project -> Properties -> Android add Library project created for UI
+Android-Wallet-2-App can now be compiled directly in Eclipse or via Ant.
 
-Afterwards, select "Run configuration".
-
+Include your own Google developer key based on your debug certificate if you need to test maps.
