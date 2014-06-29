@@ -1,2 +1,5 @@
-UI no longer contained in separate Library project. Android-Wallet-2-App can now be compiled directly in Eclipse or via Ant.
+UI no longer contained in separate Library project.
 
+Android-Wallet-2-App can now be compiled directly in Eclipse or via Ant.
+
+Include your own Google developer key based on your debug certificate if you need to test maps.
