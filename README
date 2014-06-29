@@ -1,6 +1,2 @@
-Define this as Library Project in Eclipse:
-
-Project -> Properties -> Android add Library project created for UI
-
-Afterwards, select "Run configuration".
+UI no longer contained in separate Library project. Android-Wallet-2-App can now be compiled directly in Eclipse or via Ant.
 
