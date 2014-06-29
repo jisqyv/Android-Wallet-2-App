@@ -61,12 +61,12 @@ import piuk.blockchain.android.SuccessCallback;
 @SuppressLint("NewApi")
 public class MainActivity extends FragmentActivity implements ActionBar.TabListener {
 
-    private static int PIN_ENTRY_ACTIVITY 	= 1;
-    private static int SETUP_ACTIVITY	 	= 2;
+//    private static int PIN_ENTRY_ACTIVITY 	= 1;
+//    private static int SETUP_ACTIVITY	 	= 2;
     private static int ABOUT_ACTIVITY 		= 3;
     private static int PICK_CONTACT 		= 4;
-    private static int NEARBY_MERCHANTS 	= 5;
-    private static int SELECT_FIAT		 	= 6;
+//    private static int NEARBY_MERCHANTS 	= 5;
+//    private static int SELECT_FIAT		 	= 6;
     private static int SETTINGS_ACTIVITY	= 7;
     private static int ADDRESSBOOK_ACTIVITY	= 8;
     private static int TOS_ACTIVITY			= 9;
@@ -310,13 +310,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     	case R.id.action_about:
     		doAbout();
     		return true;
-    	/*
-    	case R.id.action_prev_wallet:
-			Intent intent2 = new Intent(MainActivity.this, piuk.blockchain.android.ui.WalletActivity.class);
-			intent2.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-			startActivity(intent2);
-    		return true;
-    	*/
 	    default:
 	        return super.onOptionsItemSelected(item);
 	    }
@@ -417,41 +410,17 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     }
 
     private void doMerchantDirectory()	{
-    	/*
-        if(hasMerchantDirectory())	{
-        	LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
-        	boolean geoEnabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+    	LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
+    	boolean geoEnabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
-        	if (!geoEnabled) {
-        		EnableGeo.displayGPSPrompt(this);
-        	}
-        	else {
-                Intent intent = getPackageManager().getLaunchIntentForPackage(BlockchainUtil.MERCHANT_DIRECTORY_PACKAGE);
-                startActivity(intent);
-        	}
-
-        }
-        else	{
-        	Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + BlockchainUtil.MERCHANT_DIRECTORY_PACKAGE));
-        	startActivity(intent);
-        }
-        */
-    	Intent intent = new Intent(MainActivity.this, info.blockchain.merchant.directory.MapActivity.class);
-		startActivity(intent);
-    }
-
-    /*
-    private boolean hasMerchantDirectory()	{
-    	PackageManager pm = this.getPackageManager();
-    	try	{
-    		pm.getPackageInfo(BlockchainUtil.MERCHANT_DIRECTORY_PACKAGE, 0);
-    		return true;
+    	if (!geoEnabled) {
+    		EnableGeo.displayGPSPrompt(this);
     	}
-    	catch(NameNotFoundException nnfe)	{
-    		return false;
+    	else {
+        	Intent intent = new Intent(MainActivity.this, info.blockchain.merchant.directory.MapActivity.class);
+    		startActivity(intent);
     	}
     }
-    	*/
 
     private void doAbout()	{
     	Intent intent = new Intent(MainActivity.this, AboutActivity.class);
@@ -480,53 +449,4 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     	startActivityForResult(intent, PICK_CONTACT);
     }
 
-	public final void toast(final String text, final Object... formatArgs) {
-		toast(text, 0, Toast.LENGTH_SHORT, formatArgs);
-	}
-
-	public final void longToast(final String text, final Object... formatArgs) {
-		toast(text, 0, Toast.LENGTH_LONG, formatArgs);
-	}
-	
-	public final void toast(final String text, final int imageResId,
-			final int duration, final Object... formatArgs) {
-
-		if (text == null)
-			return;
-
-		final View view = getLayoutInflater().inflate(
-				R.layout.transient_notification, null);
-		TextView tv = (TextView) view
-				.findViewById(R.id.transient_notification_text);
-		tv.setText(String.format(text, formatArgs));
-		tv.setCompoundDrawablesWithIntrinsicBounds(imageResId, 0, 0, 0);
-
-		final Toast toast = new Toast(this);
-		toast.setView(view);
-		toast.setDuration(duration);
-		toast.show();
-	}
-	
-	public final void toast(final int textResId, final Object... formatArgs) {
-		toast(textResId, 0, Toast.LENGTH_SHORT, formatArgs);
-	}
-
-	public final void longToast(final int textResId, final Object... formatArgs) {
-		toast(textResId, 0, Toast.LENGTH_LONG, formatArgs);
-	}
-	
-	public final void toast(final int textResId, final int imageResId,
-			final int duration, final Object... formatArgs) {
-		final View view = getLayoutInflater().inflate(
-				R.layout.transient_notification, null);
-		TextView tv = (TextView) view
-				.findViewById(R.id.transient_notification_text);
-		tv.setText(getString(textResId, formatArgs));
-		tv.setCompoundDrawablesWithIntrinsicBounds(imageResId, 0, 0, 0);
-
-		final Toast toast = new Toast(this);
-		toast.setView(view);
-		toast.setDuration(duration);
-		toast.show();
-	}
 }

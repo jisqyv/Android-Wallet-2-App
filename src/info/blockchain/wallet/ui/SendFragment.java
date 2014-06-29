@@ -370,7 +370,7 @@ public class SendFragment extends Fragment   {
 					handler.post(new Runnable() {
 						public void run() {
 							application.getRemoteWallet().setState(MyRemoteWallet.State.SENT);
-							activity.longToast(message);
+				            Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
 
 							Intent intent = activity.getIntent();
 							intent.putExtra("tx", tx.getHash());
@@ -396,7 +396,7 @@ public class SendFragment extends Fragment   {
 							System.out.println("On Error");
 
 							if (message != null)
-								activity.longToast(message);
+								Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
 
 							application.getRemoteWallet().setState(MyRemoteWallet.State.INPUT);
 
@@ -527,7 +527,7 @@ public class SendFragment extends Fragment   {
 					handler.post(new Runnable() {
 						public void run() {
 							application.getRemoteWallet().setState(MyRemoteWallet.State.SENT);
-							activity.longToast(message);
+				            Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
 
 							Intent intent = activity.getIntent();
 							intent.putExtra("tx", tx.getHash());
@@ -553,7 +553,7 @@ public class SendFragment extends Fragment   {
 							System.out.println("On Error");
 
 							if (message != null)
-								activity.longToast(message);
+								Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
 
 							application.getRemoteWallet().setState(MyRemoteWallet.State.INPUT);
 
@@ -739,7 +739,7 @@ public class SendFragment extends Fragment   {
 					return;
 
 				if (sendType != null && !sendType.equals(SendTypeQuickSend) && application.isInP2PFallbackMode()) {
-					activity.longToast(R.string.only_quick_supported);
+		            Toast.makeText(getActivity(), R.string.only_quick_supported, Toast.LENGTH_LONG).show();
 					return;
 				}
 
@@ -755,7 +755,7 @@ public class SendFragment extends Fragment   {
 					return;
 
 				if (sendType != null && !sendType.equals(SendTypeQuickSend) && application.isInP2PFallbackMode()) {
-					activity.longToast(R.string.only_quick_supported);
+		            Toast.makeText(getActivity(), R.string.only_quick_supported, Toast.LENGTH_LONG).show();
 					return;
 				}
 				String[] from = application.getRemoteWallet().getActiveAddresses();
@@ -1336,7 +1336,6 @@ public class SendFragment extends Fragment   {
 		                    if(strName != null && strName.equals("null"))	{
 		                    	strName = "";
 		                    }
-
 
 		                    if(strEmail != null && strNumber != null)	{
 		                    		//
