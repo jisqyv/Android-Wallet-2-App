@@ -35,6 +35,7 @@ import android.net.Uri;
 import android.util.Log;
 
 import piuk.blockchain.android.R;
+import piuk.blockchain.android.util.WalletUtils;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -391,7 +392,7 @@ public class MapActivity extends Activity implements LocationListener	{
 						final String url = "http://46.149.17.91/cgi-bin/btcd.pl?ULAT=" + selfLat + "&ULON=" + selfLng + "&D=40000&K=1";
 //	         			Toast.makeText(MainActivity.this, url, Toast.LENGTH_SHORT).show();
 //	         			Log.d("BlockchainMerchantDirectory", url);
-	         			strJSONData = FetchData.getURL(url);
+	         			strJSONData = WalletUtils.getURL(url);
 //	         			Toast.makeText(MainActivity.this, strJSONData, Toast.LENGTH_SHORT).show();
 //	         			Log.d("BlockchainMerchantDirectory", strJSONData);
 					}

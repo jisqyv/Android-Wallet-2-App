@@ -6,10 +6,12 @@ import java.util.ArrayList;
 
 import android.util.Log;
 
-import org.apache.commons.io.IOUtils;
+//import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import piuk.blockchain.android.util.WalletUtils;
 
 public class BTCBusinesses	{
 
@@ -39,50 +41,11 @@ public class BTCBusinesses	{
 
 		Log.d("URL", url);
 
-		String data = getURL(url);
+		String data = WalletUtils.getURL(url);
 		Log.d("JSON data", data);
 		businesses = parse(data);
 		Log.d("Businesses returned", "" + businesses.size());
 
-	}
-
-	private static String getURL(String URL) throws Exception {
-		
-		final int DefaultRequestRetry = 2;
-		final int DefaultRequestTimeout = 60000;
-
-		URL url = new URL(URL);
-
-		String error = null;
-		
-		for (int i = 0; i < DefaultRequestRetry; i++) {
-
-			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-			try {
-				connection.setRequestMethod("GET");
-				connection.setRequestProperty("charset", "utf-8");
-				connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36");
-
-				connection.setConnectTimeout(DefaultRequestTimeout);
-				connection.setReadTimeout(DefaultRequestTimeout);
-
-				connection.setInstanceFollowRedirects(false);
-
-				connection.connect();
-
-				if (connection.getResponseCode() == 200)
-					return IOUtils.toString(connection.getInputStream(), "UTF-8");
-				else
-					error = IOUtils.toString(connection.getErrorStream(), "UTF-8");
-				
-				Thread.sleep(5000);
-			} finally {
-				connection.disconnect();
-			}
-		}
-		
-		return error;
 	}
 
     public static ArrayList<BTCBusiness> parse(String data)	{

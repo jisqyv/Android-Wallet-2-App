@@ -9,9 +9,11 @@ import java.net.URL;
 import java.net.MalformedURLException;
 import java.io.IOException;
 
-import org.apache.commons.io.IOUtils;
+//import org.apache.commons.io.IOUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import piuk.blockchain.android.util.WalletUtils;
 
 public class ExchangeRateUtil {
 	
@@ -45,7 +47,8 @@ public class ExchangeRateUtil {
 		
         try {
         	if(System.currentTimeMillis() - ts > (15 * 60 * 1000)) {
-                get("USD", IOUtils.toString(new URL("http://blockchain.info/ticker"), "UTF-8"));
+//                get("USD", IOUtils.toString(new URL("http://blockchain.info/ticker"), "UTF-8"));
+                get("USD", WalletUtils.getURL("http://blockchain.info/ticker"));
         	}
         }
         catch(MalformedURLException mue) {
@@ -53,6 +56,9 @@ public class ExchangeRateUtil {
         }
         catch(IOException ioe) {
         	ioe.printStackTrace();
+        }
+        catch(Exception e) {
+        	e.printStackTrace();
         }
         
         return fx;
