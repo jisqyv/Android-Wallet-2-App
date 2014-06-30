@@ -28,13 +28,11 @@ import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.ConnectivityManager;
-import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.Pair;
-import android.view.View;
 import android.widget.Toast;
 
 import com.google.bitcoin.core.*;
@@ -63,16 +61,13 @@ import piuk.blockchain.android.SuccessCallback;
 //import piuk.blockchain.android.util.ErrorReporter;
 import piuk.blockchain.android.util.RandomOrgGenerator;
 import piuk.blockchain.android.util.WalletUtils;
-import info.blockchain.wallet.ui.MainActivity;
 import info.blockchain.wallet.ui.ObjectSuccessCallback;
-import info.blockchain.wallet.ui.WalletUtil;
 
 import java.io.File;
 import java.io.FileInputStream; 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.net.CookieHandler;
 import java.net.CookieManager;
@@ -80,12 +75,10 @@ import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.security.Security;
 import java.text.SimpleDateFormat;
-import java.util.Map.Entry;
 import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @SuppressLint("SimpleDateFormat")
@@ -324,15 +317,7 @@ public class WalletApplication extends Application {
 		}
 	}
 */
-	public String getDeviceID() {
-		try {
-			Class<?> c = Class.forName("android.os.SystemProperties");           
-			Method get = c.getMethod("get", String.class, String.class );       
-			return (String) (get.invoke(c, "ro.serialno", ""));  
-		} catch (Exception e) {
-			return null;
-		}
-	}
+
 	public void deleteBitcoinJLocalData() {
 		try {
 			//Delete the wallet file
@@ -584,7 +569,14 @@ public class WalletApplication extends Application {
 		return blockchainWallet;
 	}
 
+	public SharedCoin getSharedCoin() {
+		return sharedCoin;
+	}
 
+	public void setSharedCoin(SharedCoin sharedCoin) {
+		this.sharedCoin = sharedCoin;
+	}
+	
 	public String getGUID() {
 		return PreferenceManager.getDefaultSharedPreferences(this).getString("guid", null);
 	}
@@ -1303,69 +1295,6 @@ public class WalletApplication extends Application {
 			callback.onError(e.getLocalizedMessage());
 		}
 	}
-
-	public void setAddressLabel(final String address, final String label) {
-		if (blockchainWallet == null)
-			return;
-
-		checkIfWalletHasUpdatedAndFetchTransactions(blockchainWallet.getTemporyPassword(), new SuccessCallback() {
-
-			@Override
-			public void onSuccess() {
-				try {
-					blockchainWallet.addLabel(address, label);
-
-					new Thread() {
-						@Override
-						public void run() {
-							try {
-								blockchainWallet.remoteSave();
-
-								System.out.println("invokeWalletDidChange()");
-
-								EventListeners.invokeWalletDidChange();
-							} catch (Exception e) {
-								e.printStackTrace(); 
-
-								writeException(e);
-
-								handler.post(new Runnable() {
-									public void run() {
-										Toast.makeText(WalletApplication.this,
-												R.string.toast_error_syncing_wallet,
-												Toast.LENGTH_LONG).show();
-									}
-								});
-							}
-						}
-					}.start();
-				} catch (Exception e) {
-					e.printStackTrace();
-
-					handler.post(new Runnable() {
-						@Override
-						public void run() {
-							Toast.makeText(WalletApplication.this,
-									R.string.error_setting_label, Toast.LENGTH_LONG).show();
-						}
-					});
-				}
-			}
-
-			@Override
-			public void onFail() {
-				handler.post(new Runnable() {
-					public void run() {
-						Toast.makeText(WalletApplication.this,
-								R.string.toast_error_syncing_wallet,
-								Toast.LENGTH_LONG).show();
-					}
-				});
-			}
-		});
-
-
-	}
 	
 	public void updateEmail(final String email, final SuccessCallback callback) {
 		final MyRemoteWallet blockchainWallet = this.blockchainWallet;
@@ -1873,13 +1802,5 @@ public class WalletApplication extends Application {
 				}
 			}
 		}).start();
-	}
-
-	public SharedCoin getSharedCoin() {
-		return sharedCoin;
-	}
-
-	public void setSharedCoin(SharedCoin sharedCoin) {
-		this.sharedCoin = sharedCoin;
 	}
 }

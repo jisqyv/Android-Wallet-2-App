@@ -3,8 +3,6 @@ package info.blockchain.wallet.ui;
 import java.math.BigInteger;
 import java.util.HashMap;
 
-//import android.util.Log;
-
 public class CustomSend {
 	
 	private HashMap<String, BigInteger> sendingAddresses;

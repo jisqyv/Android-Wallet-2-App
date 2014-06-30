@@ -33,7 +33,6 @@ public class AddressManager {
 	protected Handler handler;
 
 	public static AddressManager getInstance(MyRemoteWallet remoteWallet, WalletApplication application, Activity activity) {
-				
 		if(instance == null) {
 			instance = new AddressManager(remoteWallet, application, activity);
 		}
@@ -181,13 +180,6 @@ public class AddressManager {
 						address = key.toAddress(MainNetParams.get()).toString();
 					}
 
-		    		Log.d("AddressManager", "AddressManager onError Address " + address);			    		
-
-					BigInteger balance = MyRemoteWallet.getAddressBalance(address);
-
-					final BigInteger finalBalance = balance;
-		    		Log.d("AddressManager", "AddressManager onError finalBalance " + finalBalance);			    		
-
 					application.addKeyToWallet(key, key.toAddress(MainNetParams.get()).toString(), null, 0,
 							new AddAddressCallback() {
 
@@ -197,12 +189,10 @@ public class AddressManager {
 				    			@Override
 				    			public void onSuccess() {
 						    		Log.d("AddressManager", "AddressManager checkIfWalletHasUpdatedAndFetchTransactions onSuccess");			    		
-
 				    			}
 				    			
 				    			public void onFail() {
 						    		Log.d("AddressManager", "AddressManager checkIfWalletHasUpdatedAndFetchTransactions onFail");			    		
-
 				    			}
 				    		});
 				    						    			
@@ -409,5 +399,4 @@ public class AddressManager {
 		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
 		prefs.edit().putString(Constants.PREFS_KEY_SELECTED_ADDRESS, address.toString()).commit();
 	}
-
 }
