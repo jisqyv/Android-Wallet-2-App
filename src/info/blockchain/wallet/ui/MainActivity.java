@@ -39,7 +39,6 @@ import android.view.View;
 import android.view.Gravity;
 import android.widget.LinearLayout;
 import android.view.View.OnTouchListener;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.support.v4.content.LocalBroadcastManager;
 import android.widget.TextView;
@@ -50,12 +49,9 @@ import android.widget.Toast;
 
 //import android.util.Log;
 
-import piuk.blockchain.android.MyRemoteWallet;
-import piuk.blockchain.android.Constants;
 import piuk.blockchain.android.R;
 import piuk.blockchain.android.SharedCoin;
 import piuk.blockchain.android.WalletApplication;
-import piuk.blockchain.android.ui.AbstractWalletActivity;
 import piuk.blockchain.android.SuccessCallback;
 
 @SuppressLint("NewApi")
