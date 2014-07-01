@@ -102,18 +102,106 @@
             </LinearLayout>
             
 	</LinearLayout>
+
+
     
-    <LinearLayout 
+<LinearLayout 
     android:layout_width="match_parent"
     android:layout_height="fill_parent"
     android:layout_centerHorizontal="true"
+    android:orientation="vertical" 
+	>
+
+    <LinearLayout 
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="6"
+    android:layout_centerHorizontal="true"
     android:orientation="horizontal" 
 	>
+
     <fragment
         android:id="@+id/map"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         class="com.google.android.gms.maps.MapFragment" />
+
     </LinearLayout>
+
+
+<ScrollView
+    android:layout_width="fill_parent" 
+    android:layout_height="0dp"
+    android:layout_weight="4"
+	android:background="#FFffffff"
+    android:orientation="vertical"
+    android:id="@+id/info"
+    >
+
+<LinearLayout 
+    android:layout_width="match_parent" 
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="5dp"
+    >
+
+    <TextView
+        android:id="@+id/tv_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textColor="#FF000000"
+        />
+ 
+    <TextView
+        android:id="@+id/tv_address"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#FF000000"
+        />
+    
+    <TextView
+        android:id="@+id/tv_city"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#FF000000"
+        />
+    
+    <TextView
+        android:id="@+id/tv_tel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#FF000000"
+        />
+    
+    <TextView
+        android:id="@+id/tv_web"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#FF000000"
+        />
+    
+    <TextView
+        android:id="@+id/tv_desc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#FF000000"
+        />
+<!--    
+    <TextView
+        android:id="@+id/tv_distance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#FF000000"
+        />
+-->
+</LinearLayout>
+</ScrollView>
+
+
+</LinearLayout>
+
+
+
 
 </LinearLayout> 

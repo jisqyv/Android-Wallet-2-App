@@ -1,5 +1,9 @@
 package info.blockchain.merchant.directory;
 
+import info.blockchain.wallet.ui.BlockchainUtil;
+import info.blockchain.wallet.ui.OnSwipeTouchListener;
+import info.blockchain.wallet.ui.TypefaceUtil;
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,18 +23,20 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
 import android.view.View.OnTouchListener;
-import android.text.util.Linkify;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.ScrollView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+import android.text.util.Linkify;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.net.Uri;
 import android.util.Log;
 
@@ -46,8 +52,9 @@ import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
-import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
+//import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
+//import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
+import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 
 public class MapActivity extends Activity implements LocationListener	{
 
@@ -95,6 +102,8 @@ public class MapActivity extends Activity implements LocationListener	{
 	
 	private String strJSONData = null;
 	public static ArrayList<BTCBusiness> btcb = null;
+	
+	private ScrollView infoLayout = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -115,82 +124,35 @@ public class MapActivity extends Activity implements LocationListener	{
     	btcb = new ArrayList<BTCBusiness>();
 
 		locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-		/*
-    	boolean geoGPSEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-    	boolean geoNetEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-    	if (!geoGPSEnabled && !geoNetEnabled) {
-    		displayGPSPrompt(this);
-    	}
-    	*/
 		locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
+		
+		infoLayout = ((ScrollView)findViewById(R.id.info));
+		/*
+        infoLayout.setOnTouchListener(new OnTouchListener(){
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+            	
+            	if(infoLayout.getVisibility() == View.VISIBLE) {
+            		infoLayout.setVisibility(View.GONE);
+            	}
+
+                return true;
+            }
+        });
+        */
+		infoLayout.setOnTouchListener(new OnSwipeTouchListener(this) {
+		    public void onSwipeBottom() {
+            	if(infoLayout.getVisibility() == View.VISIBLE) {
+            		infoLayout.setVisibility(View.GONE);
+            	}
+		    }
+		});
+
+		infoLayout.setVisibility(View.GONE);
 
 		map = ((MapFragment)getFragmentManager().findFragmentById(R.id.map)).getMap();
 		map.setMyLocationEnabled(true);
-        map.setInfoWindowAdapter(new InfoWindowAdapter() {
- 
-            // Use default InfoWindow frame
-            @Override
-            public View getInfoWindow(Marker arg0) {
-                return null;
-            }
- 
-            // Defines the contents of the InfoWindow
-            @Override
-            public View getInfoContents(Marker arg0) {
-            	
-                View v = getLayoutInflater().inflate(R.layout.info_window_layout, null);
-                
-                if(arg0 == null)
-                	return v;
-
-                if(markerValues == null || markerValues.size() < 1)
-                	return v;
-
-                LatLng latLng = arg0.getPosition();
-                
-                Log.d("BlockchainMerchantDirectory", "" + arg0.getId());
-                
-                BTCBusiness b = markerValues.get(arg0.getId());
-
-                TextView tvName = (TextView) v.findViewById(R.id.tv_name);
-                tvName.setText(b.name);
-
-                TextView tvAddress = (TextView) v.findViewById(R.id.tv_address);
-                tvAddress.setText(b.address);
-
-                TextView tvCity = (TextView) v.findViewById(R.id.tv_city);
-                tvCity.setText(b.city + " " + b.pcode);
-
-                TextView tvTel = (TextView) v.findViewById(R.id.tv_tel);
-                tvTel.setText(b.tel);
-//                Linkify.addLinks(tvTel, Linkify.PHONE_NUMBERS);
-                
-                if(markerValues.get(arg0.getId()).web != null) {
-                    TextView tvWeb = (TextView) v.findViewById(R.id.tv_web);
-                    tvWeb.setText(b.web);
-//                    Linkify.addLinks(tvWeb, Linkify.WEB_URLS);
-                }
-
-                TextView tvDesc = (TextView) v.findViewById(R.id.tv_desc);
-                tvDesc.setText(b.desc);
-
-                TextView tvDistance = (TextView) v.findViewById(R.id.tv_distance);
-                tvDistance.setText(markerValues.get(arg0.getId()).distance);
-                Double distance = Double.parseDouble(markerValues.get(arg0.getId()).distance);
-                if(distance < 1.0) {
-                	distance *= 1000;
-                	DecimalFormat df = new DecimalFormat("###");
-                    tvDistance.setText(df.format(distance) + " meters");
-                }
-                else {
-                	DecimalFormat df = new DecimalFormat("#####.#");
-                    tvDistance.setText(df.format(distance) + "km");
-                }
-
-                return v;
-            }
-        });
-
+		/*
         map.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(final Marker marker) {
@@ -219,20 +181,83 @@ public class MapActivity extends Activity implements LocationListener	{
                                 }
                             });
                 }
-                /*
-                if(markerValues.get(marker.getId()).web != null) {
-                    alert.setNegativeButton("Web",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface arg0, int arg1) {
-                         			Intent intent = new Intent(Intent.ACTION_VIEW);
-                         			intent.setData(Uri.parse(markerValues.get(marker.getId()).web));
-                         			startActivity(intent);
-                                }
-                            });
-                }
-                */
+//                if(markerValues.get(marker.getId()).web != null) {
+//                    alert.setNegativeButton("Web",
+//                            new DialogInterface.OnClickListener() {
+//                                public void onClick(DialogInterface arg0, int arg1) {
+//                         			Intent intent = new Intent(Intent.ACTION_VIEW);
+//                         			intent.setData(Uri.parse(markerValues.get(marker.getId()).web));
+//                         			startActivity(intent);
+//                                }
+//                            });
+//                }
                 alert.show();
 
+            }
+        });
+        */
+
+        map.setOnMarkerClickListener(new OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(final Marker marker) {
+            	
+                if(marker == null)
+                	return true;
+
+                if(markerValues == null || markerValues.size() < 1)
+                	return true;
+
+                LatLng latLng = marker.getPosition();
+                                
+                BTCBusiness b = markerValues.get(marker.getId());
+
+                TextView tvAddress = (TextView)infoLayout.findViewById(R.id.tv_address);
+                tvAddress.setText(b.address);
+
+                TextView tvCity = (TextView)infoLayout.findViewById(R.id.tv_city);
+                tvCity.setText(b.city + " " + b.pcode);
+
+                TextView tvTel = (TextView)infoLayout.findViewById(R.id.tv_tel);
+                tvTel.setText(b.tel);
+                Linkify.addLinks(tvTel, Linkify.PHONE_NUMBERS);
+                
+                TextView tvWeb = (TextView)infoLayout.findViewById(R.id.tv_web);
+                tvWeb.setText(b.web);
+                Linkify.addLinks(tvWeb, Linkify.WEB_URLS);
+
+                TextView tvDesc = (TextView)infoLayout.findViewById(R.id.tv_desc);
+                tvDesc.setText(b.desc);
+
+                TextView tvDistance = (TextView)infoLayout.findViewById(R.id.tv_distance);
+                Double distance = Double.parseDouble(markerValues.get(marker.getId()).distance);
+                String strDistance = null;
+                if(distance < 1.0) {
+                	distance *= 1000;
+                	DecimalFormat df = new DecimalFormat("###");
+                	strDistance = df.format(distance) + " meters";
+                }
+                else {
+                	DecimalFormat df = new DecimalFormat("#####.#");
+                	strDistance = df.format(distance) + " km";
+                }
+                
+                //
+                // launch via intent: waze://?ll=<lat>,<lon>&navigate=yes
+                //
+                // Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse("google.navigation:q=New+York+NY));
+                // startActivity(i);
+                //
+				String url = "http://maps.google.com/?saddr=" +
+ 	     	    	mSelf.getPosition().latitude + "," + mSelf.getPosition().longitude +
+ 	     	     	"&daddr=" + markerValues.get(marker.getId()).lat + "," + markerValues.get(marker.getId()).lon;
+
+                TextView tvName = (TextView)infoLayout.findViewById(R.id.tv_name);
+                tvName.setText(Html.fromHtml(b.name + " (<a href=\"" + url + "\">" + strDistance + "</a>)"));
+                tvName.setMovementMethod(LinkMovementMethod.getInstance());
+                
+     			infoLayout.setVisibility(View.VISIBLE);
+
+            	return true;
             }
         });
 
@@ -388,12 +413,9 @@ public class MapActivity extends Activity implements LocationListener	{
 
 				try {
 					if(fetch) {
-						// http://46.149.17.91/cgi-bin/btcd.pl?ULAT=48.82784&ULON=2.3569&D=40000&K=1
 						final String url = "http://46.149.17.91/cgi-bin/btcd.pl?ULAT=" + selfLat + "&ULON=" + selfLng + "&D=40000&K=1";
-//	         			Toast.makeText(MainActivity.this, url, Toast.LENGTH_SHORT).show();
 //	         			Log.d("BlockchainMerchantDirectory", url);
 	         			strJSONData = WalletUtils.getURL(url);
-//	         			Toast.makeText(MainActivity.this, strJSONData, Toast.LENGTH_SHORT).show();
 //	         			Log.d("BlockchainMerchantDirectory", strJSONData);
 					}
 
@@ -472,34 +494,6 @@ public class MapActivity extends Activity implements LocationListener	{
     	intent.putExtra("ULAT", Double.toString(mSelf.getPosition().latitude));
     	intent.putExtra("ULON", Double.toString(mSelf.getPosition().longitude));
 		startActivity(intent);
-    }
-
-	public void displayGPSPrompt(final Activity activity) {
-
-    	final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        
-    	final String action = Settings.ACTION_LOCATION_SOURCE_SETTINGS;
-    
-        final String message = "Enable either GPS or any other location"
-            + " service to find current location.  Click OK to go to"
-            + " location services settings to let you do so.";
- 
-        builder.setMessage(message)
-            .setPositiveButton("OK",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface d, int id) {
-                        activity.startActivity(new Intent(action));
-                        d.dismiss();
-                    }
-            })
-            .setNegativeButton("Cancel",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface d, int id) {
-                        d.cancel();
-                    }
-            });
-
-        builder.create().show();
     }
 
 }

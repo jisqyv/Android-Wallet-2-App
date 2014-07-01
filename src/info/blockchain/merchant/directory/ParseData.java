@@ -41,7 +41,7 @@ public class ParseData {
             			business.tel = jsonObj.getString("tel");
         			}
         			if(jsonObj.has("web"))	{
-            			business.id = jsonObj.getString("web");
+            			business.web = jsonObj.getString("web");
         			}
         			if(jsonObj.has("lat"))	{
             			business.lat = jsonObj.getString("lat");
