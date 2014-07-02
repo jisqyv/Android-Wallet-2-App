@@ -75,18 +75,36 @@ public class MapActivity extends Activity implements LocationListener	{
 	
 	private int color_category_selected = 0xffFFFFFF;
     private int color_category_unselected = 0xffF1F1F1;
+    
+	private int color_cafe_selected = 0xffc12a0c;
+	private int color_drink_selected = 0xffb65db1;
+	private int color_eat_selected = 0xfffd7308;
+	private int color_spend_selected = 0xff5592ae;
+	private int color_atm_selected = 0xff4dad5c;
 
     private ImageView imgCafe = null;
     private LinearLayout layoutCafe = null;
+    private LinearLayout dividerCafe = null;
     private ImageView imgDrink = null;
     private LinearLayout layoutDrink = null;
+    private LinearLayout dividerDrink = null;
     private ImageView imgEat = null;
     private LinearLayout layoutEat = null;
+    private LinearLayout dividerEat = null;
     private ImageView imgSpend = null;
     private LinearLayout layoutSpend = null;
+    private LinearLayout dividerSpend = null;
     private ImageView imgATM = null;
     private LinearLayout layoutATM = null;
+    private LinearLayout dividerATM = null;
     
+    private TextView tvName = null;
+    private TextView tvAddress = null;
+//    private TextView tvCity = null;
+    private TextView tvTel = null;
+    private TextView tvWeb = null;
+    private TextView tvDesc = null;
+
     private boolean cafeSelected = true;
     private boolean drinkSelected = true;
     private boolean eatSelected = true;
@@ -103,7 +121,7 @@ public class MapActivity extends Activity implements LocationListener	{
 	private String strJSONData = null;
 	public static ArrayList<BTCBusiness> btcb = null;
 	
-	private ScrollView infoLayout = null;
+	private LinearLayout infoLayout = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -126,7 +144,7 @@ public class MapActivity extends Activity implements LocationListener	{
 		locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
 		locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
 		
-		infoLayout = ((ScrollView)findViewById(R.id.info));
+		infoLayout = ((LinearLayout)findViewById(R.id.info));
 		/*
         infoLayout.setOnTouchListener(new OnTouchListener(){
             @Override
@@ -149,6 +167,19 @@ public class MapActivity extends Activity implements LocationListener	{
 		});
 
 		infoLayout.setVisibility(View.GONE);
+		
+        tvName = (TextView)findViewById(R.id.tv_name);
+        tvName.setTypeface(TypefaceUtil.getInstance(this).getRobotoTypeface());
+        tvAddress = (TextView)findViewById(R.id.tv_address);
+        tvAddress.setTypeface(TypefaceUtil.getInstance(this).getRobotoTypeface());
+//        tvCity = (TextView)findViewById(R.id.tv_city);
+//        tvCity.setTypeface(TypefaceUtil.getInstance(this).getRobotoTypeface());
+        tvTel = (TextView)findViewById(R.id.tv_tel);
+        tvTel.setTypeface(TypefaceUtil.getInstance(this).getRobotoTypeface());
+        tvWeb = (TextView)findViewById(R.id.tv_web);
+        tvWeb.setTypeface(TypefaceUtil.getInstance(this).getRobotoTypeface());
+        tvDesc = (TextView)findViewById(R.id.tv_desc);
+        tvDesc.setTypeface(TypefaceUtil.getInstance(this).getRobotoTypeface());
 
 		map = ((MapFragment)getFragmentManager().findFragmentById(R.id.map)).getMap();
 		map.setMyLocationEnabled(true);
@@ -211,24 +242,18 @@ public class MapActivity extends Activity implements LocationListener	{
                                 
                 BTCBusiness b = markerValues.get(marker.getId());
 
-                TextView tvAddress = (TextView)infoLayout.findViewById(R.id.tv_address);
-                tvAddress.setText(b.address);
+                tvAddress.setText(b.address + ", " + b.city + " " + b.pcode);
 
-                TextView tvCity = (TextView)infoLayout.findViewById(R.id.tv_city);
-                tvCity.setText(b.city + " " + b.pcode);
+//                tvCity.setText(b.city + " " + b.pcode);
 
-                TextView tvTel = (TextView)infoLayout.findViewById(R.id.tv_tel);
                 tvTel.setText(b.tel);
                 Linkify.addLinks(tvTel, Linkify.PHONE_NUMBERS);
                 
-                TextView tvWeb = (TextView)infoLayout.findViewById(R.id.tv_web);
                 tvWeb.setText(b.web);
                 Linkify.addLinks(tvWeb, Linkify.WEB_URLS);
 
-                TextView tvDesc = (TextView)infoLayout.findViewById(R.id.tv_desc);
                 tvDesc.setText(b.desc);
 
-                TextView tvDistance = (TextView)infoLayout.findViewById(R.id.tv_distance);
                 Double distance = Double.parseDouble(markerValues.get(marker.getId()).distance);
                 String strDistance = null;
                 if(distance < 1.0) {
@@ -251,9 +276,9 @@ public class MapActivity extends Activity implements LocationListener	{
  	     	    	mSelf.getPosition().latitude + "," + mSelf.getPosition().longitude +
  	     	     	"&daddr=" + markerValues.get(marker.getId()).lat + "," + markerValues.get(marker.getId()).lon;
 
-                TextView tvName = (TextView)infoLayout.findViewById(R.id.tv_name);
-                tvName.setText(Html.fromHtml(b.name + " (<a href=\"" + url + "\">" + strDistance + "</a>)"));
-                tvName.setMovementMethod(LinkMovementMethod.getInstance());
+                tvName.setText(b.name);
+//                tvName.setText(Html.fromHtml(b.name + " (<a href=\"" + url + "\">" + strDistance + "</a>)"));
+//                tvName.setMovementMethod(LinkMovementMethod.getInstance());
                 
      			infoLayout.setVisibility(View.VISIBLE);
 
@@ -263,30 +288,40 @@ public class MapActivity extends Activity implements LocationListener	{
 
 	    imgCafe = ((ImageView)findViewById(R.id.cafe));
 	    layoutCafe = ((LinearLayout)findViewById(R.id.layout_cafe));
+	    dividerCafe = ((LinearLayout)findViewById(R.id.divider_cafe));
 	    imgDrink = ((ImageView)findViewById(R.id.drink));
 	    layoutDrink = ((LinearLayout)findViewById(R.id.layout_drink));
+	    dividerDrink = ((LinearLayout)findViewById(R.id.divider_drink));
 	    imgEat = ((ImageView)findViewById(R.id.eat));
 	    layoutEat = ((LinearLayout)findViewById(R.id.layout_eat));
+	    dividerEat = ((LinearLayout)findViewById(R.id.divider_eat));
 	    imgSpend = ((ImageView)findViewById(R.id.spend));
 	    layoutSpend = ((LinearLayout)findViewById(R.id.layout_spend));
+	    dividerSpend = ((LinearLayout)findViewById(R.id.divider_spend));
 	    imgATM = ((ImageView)findViewById(R.id.atm));
 	    layoutATM = ((LinearLayout)findViewById(R.id.layout_atm));
+	    dividerATM = ((LinearLayout)findViewById(R.id.divider_atm));
 	    imgCafe.setBackgroundColor(color_category_selected);
 	    layoutCafe.setBackgroundColor(color_category_selected);
+	    dividerCafe.setBackgroundColor(color_cafe_selected);
 	    imgDrink.setBackgroundColor(color_category_selected);
 	    layoutDrink.setBackgroundColor(color_category_selected);
+	    dividerDrink.setBackgroundColor(color_drink_selected);
 	    imgEat.setBackgroundColor(color_category_selected);
 	    layoutEat.setBackgroundColor(color_category_selected);
+	    dividerEat.setBackgroundColor(color_eat_selected);
 	    imgSpend.setBackgroundColor(color_category_selected);
 	    layoutSpend.setBackgroundColor(color_category_selected);
+	    dividerSpend.setBackgroundColor(color_spend_selected);
 	    imgATM.setBackgroundColor(color_category_selected);
 	    layoutATM.setBackgroundColor(color_category_selected);
+	    dividerATM.setBackgroundColor(color_atm_selected);
 	    
         layoutCafe.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-            	imgCafe.setBackgroundColor(cafeSelected ? color_category_unselected : color_category_selected);
-            	layoutCafe.setBackgroundColor(cafeSelected ? color_category_unselected : color_category_selected);
+            	imgCafe.setImageResource(cafeSelected ? R.drawable.marker_cafe_off : R.drawable.marker_cafe);
+            	dividerCafe.setBackgroundColor(cafeSelected ? color_category_unselected : color_cafe_selected);
             	cafeSelected = cafeSelected ? false : true;
             	drawData(false);
                 return false;
@@ -296,8 +331,8 @@ public class MapActivity extends Activity implements LocationListener	{
         layoutDrink.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-            	imgDrink.setBackgroundColor(drinkSelected ? color_category_unselected : color_category_selected);
-            	layoutDrink.setBackgroundColor(drinkSelected ? color_category_unselected : color_category_selected);
+            	imgDrink.setImageResource(drinkSelected ? R.drawable.marker_drink_off : R.drawable.marker_drink);
+            	dividerDrink.setBackgroundColor(drinkSelected ? color_category_unselected : color_drink_selected);
             	drinkSelected = drinkSelected ? false : true;
             	drawData(false);
                 return false;
@@ -307,8 +342,8 @@ public class MapActivity extends Activity implements LocationListener	{
         layoutEat.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-            	imgEat.setBackgroundColor(eatSelected ? color_category_unselected : color_category_selected);
-            	layoutEat.setBackgroundColor(eatSelected ? color_category_unselected : color_category_selected);
+            	imgEat.setImageResource(eatSelected ? R.drawable.marker_eat_off : R.drawable.marker_eat);
+            	dividerEat.setBackgroundColor(eatSelected ? color_category_unselected : color_eat_selected);
             	eatSelected = eatSelected ? false : true;
             	drawData(false);
                 return false;
@@ -318,8 +353,8 @@ public class MapActivity extends Activity implements LocationListener	{
         layoutSpend.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-            	imgSpend.setBackgroundColor(spendSelected ? color_category_unselected : color_category_selected);
-            	layoutSpend.setBackgroundColor(spendSelected ? color_category_unselected : color_category_selected);
+            	imgSpend.setImageResource(spendSelected ? R.drawable.marker_spend_off : R.drawable.marker_spend);
+            	dividerSpend.setBackgroundColor(spendSelected ? color_category_unselected : color_spend_selected);
             	spendSelected = spendSelected ? false : true;
             	drawData(false);
                 return false;
@@ -329,8 +364,8 @@ public class MapActivity extends Activity implements LocationListener	{
         layoutATM.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-            	imgATM.setBackgroundColor(atmSelected ? color_category_unselected : color_category_selected);
-            	layoutATM.setBackgroundColor(atmSelected ? color_category_unselected : color_category_selected);
+            	imgATM.setImageResource(atmSelected ? R.drawable.marker_atm_off : R.drawable.marker_atm);
+            	dividerATM.setBackgroundColor(atmSelected ? color_category_unselected : color_atm_selected);
             	atmSelected = atmSelected ? false : true;
             	drawData(false);
                 return false;
@@ -413,7 +448,8 @@ public class MapActivity extends Activity implements LocationListener	{
 
 				try {
 					if(fetch) {
-						final String url = "http://46.149.17.91/cgi-bin/btcd.pl?ULAT=" + selfLat + "&ULON=" + selfLng + "&D=40000&K=1";
+//						final String url = "http://46.149.17.91/cgi-bin/btcd.pl?ULAT=" + selfLat + "&ULON=" + selfLng + "&D=40000&K=1";
+						final String url = "http://192.64.115.86/cgi-bin/btcd.pl?ULAT=" + selfLat + "&ULON=" + selfLng + "&D=40000&K=1";
 //	         			Log.d("BlockchainMerchantDirectory", url);
 	         			strJSONData = WalletUtils.getURL(url);
 //	         			Log.d("BlockchainMerchantDirectory", strJSONData);
@@ -424,10 +460,18 @@ public class MapActivity extends Activity implements LocationListener	{
 						public void run() {
 
 							try {
+								ArrayList<BTCBusiness> tmp = null; 
+								tmp = ParseData.parse(strJSONData);
+								if(tmp != null && tmp.size() > 0) {
+									btcb = tmp;
+								}
+								else {
+									btcb = null;
+								}
 								
-								btcb = ParseData.parse(strJSONData);
+//								btcb = ParseData.parse(strJSONData);
 								
-								if(btcb.size() > 0) {
+								if(btcb != null && btcb.size() > 0) {
 				         			Log.d("BlockchainMerchantDirectory", "list size=" + btcb.size());
 									
 //									markerValues.clear();
