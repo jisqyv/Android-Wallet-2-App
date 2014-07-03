@@ -352,5 +352,9 @@
     <string name="about">Blockchain Wallet %1$s\n©%2$s Blockchain.info</string>
     <string name="merchant_download">Free Merchant app</string>
     
-
+    <string name="BTC">BTC</string>
+    <string name="scan_button">scan button</string>
+    <string name="refresh_button">refresh button</string>
+    <string name="send_button">send button</string>
+    
 </resources>
