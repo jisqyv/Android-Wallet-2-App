@@ -139,7 +139,6 @@
 <LinearLayout 
     android:layout_width="match_parent"
     android:layout_height="fill_parent"
-    android:layout_centerHorizontal="true"
     android:orientation="vertical" 
 	>
 
@@ -147,21 +146,34 @@
     android:layout_width="match_parent"
     android:layout_height="0dp"
     android:layout_weight="1"
-    android:layout_centerHorizontal="true"
-    android:orientation="horizontal" 
-	android:background="@drawable/container_dropshadow"
+    android:orientation="horizontal"
 	>
 
-    <fragment
+    <RelativeLayout 
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+	>
+        <fragment
         android:id="@+id/map"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         class="com.google.android.gms.maps.MapFragment" />
+        
+        <LinearLayout 
+    	android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+    	android:orientation="horizontal"
+    	android:background="@drawable/container_dropshadow2"
+	    android:gravity="bottom"
+	    android:layout_alignParentBottom="true"
+		/>
+
+    </RelativeLayout>
 
     </LinearLayout>
 
-
-
+    
+    
 <LinearLayout 
     android:layout_width="match_parent" 
     android:layout_height="wrap_content"
@@ -169,7 +181,7 @@
     android:id="@+id/info"
     android:layout_marginLeft="10dp"
     android:layout_marginRight="10dp"
-    android:layout_marginBottom="10dp"
+    android:layout_marginBottom="20dp"
     android:layout_marginTop="10dp"
     >
 
@@ -177,7 +189,6 @@
         android:id="@+id/tv_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="#FFfd7308"
         android:textSize="28sp"
 	    android:background="#FFffffff"
         />
@@ -186,10 +197,10 @@
         android:id="@+id/tv_desc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="#FF000000"
+        android:textColor="#FF777777"
 	    android:background="#FFffffff"
 	    android:maxLines="4"
-	    android:textSize="16sp"
+	    android:textSize="14sp"
         />
 
     
@@ -199,32 +210,40 @@
     android:layout_width="match_parent" 
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="#FFffffff"
     android:layout_marginTop="10dp"
     >
     
     
     <LinearLayout 
     android:layout_width="match_parent" 
-    android:layout_height="30dp"
+    android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:background="@drawable/rounded_view_white"
     android:id="@+id/row_call"
+    android:padding="5dp"
     >
 		<LinearLayout 
     	android:layout_width="0dp"
     	android:layout_weight="1"
     	android:layout_height="wrap_content"
     	android:orientation="horizontal"
-   		android:background="#FFffffff"
+        android:gravity="center_horizontal|center_vertical"
+        android:layout_gravity="center_horizontal|center_vertical"
     	>
-    	</LinearLayout>
+	    <ImageView
+        android:src="@drawable/call_icon"
+        android:scaleType="centerInside"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:gravity="center_horizontal|center_vertical"
+        android:layout_gravity="center_horizontal|center_vertical"
+    	/>
+		</LinearLayout>
 		<LinearLayout 
     	android:layout_width="0dp"
     	android:layout_weight="2"
     	android:layout_height="wrap_content"
     	android:orientation="horizontal"
-   		android:background="#FFffffff"
         android:gravity="center_horizontal|center_vertical"
         android:layout_gravity="center_horizontal|center_vertical"
     	>
@@ -272,25 +291,35 @@
 	
 	<LinearLayout 
     android:layout_width="match_parent" 
-    android:layout_height="30dp"
+    android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:background="@drawable/rounded_view_white"
     android:id="@+id/row_nav"
+    android:padding="5dp"
+    android:layout_marginTop="1dp"
     >
 		<LinearLayout 
     	android:layout_width="0dp"
     	android:layout_weight="1"
     	android:layout_height="wrap_content"
     	android:orientation="horizontal"
-   		android:background="#FFffffff"
+        android:gravity="center_horizontal|center_vertical"
+        android:layout_gravity="center_horizontal|center_vertical"
     	>
-    	</LinearLayout>
+	    <ImageView
+        android:src="@drawable/nav_icon"
+        android:scaleType="centerInside"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:gravity="center_horizontal|center_vertical"
+        android:layout_gravity="center_horizontal|center_vertical"
+    	/>
+		</LinearLayout>
 		<LinearLayout 
     	android:layout_width="0dp"
     	android:layout_weight="2"
     	android:layout_height="wrap_content"
     	android:orientation="horizontal"
-   		android:background="#FFffffff"
         android:gravity="center_horizontal|center_vertical"
         android:layout_gravity="center_horizontal|center_vertical"
     	>
@@ -339,25 +368,35 @@
 	
 	<LinearLayout 
     android:layout_width="match_parent" 
-    android:layout_height="30dp"
+    android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:background="@drawable/rounded_view_white"
     android:id="@+id/row_web"
+    android:padding="5dp"
+    android:layout_marginTop="1dp"
     >
 		<LinearLayout 
     	android:layout_width="0dp"
     	android:layout_weight="1"
     	android:layout_height="wrap_content"
     	android:orientation="horizontal"
-   		android:background="#FFffffff"
+        android:gravity="center_horizontal|center_vertical"
+        android:layout_gravity="center_horizontal|center_vertical"
     	>
-    	</LinearLayout>
+	    <ImageView
+        android:src="@drawable/web_icon"
+        android:scaleType="centerInside"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:gravity="center_horizontal|center_vertical"
+        android:layout_gravity="center_horizontal|center_vertical"
+    	/>
+		</LinearLayout>
 		<LinearLayout 
     	android:layout_width="0dp"
     	android:layout_weight="2"
     	android:layout_height="wrap_content"
     	android:orientation="horizontal"
-   		android:background="#FFffffff"
         android:gravity="center_horizontal|center_vertical"
         android:layout_gravity="center_horizontal|center_vertical"
     	>

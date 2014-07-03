@@ -100,10 +100,10 @@ public class PinEntryActivity extends FragmentActivity {
 		
         Bundle extras = getIntent().getExtras();
         if(extras != null)	{
-            if(extras.getString("S").equals("1"))	{
+            if(extras.getString("S") != null && extras.getString("S").equals("1"))	{
             	validating = false;
             }
-            else if(extras.getString("S").length() == 4)	{
+            else if(extras.getString("S") != null && extras.getString("S").length() == 4)	{
             	validating = false;
             	userInput = extras.getString("S");
             }

@@ -1,6 +1,5 @@
 package info.blockchain.merchant.directory;
 
-import info.blockchain.wallet.ui.BlockchainUtil;
 import info.blockchain.wallet.ui.OnSwipeTouchListener;
 import info.blockchain.wallet.ui.TypefaceUtil;
 
@@ -11,10 +10,9 @@ import java.util.HashMap;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.DialogInterface;
+import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
@@ -29,9 +27,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.ScrollView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 import android.text.util.Linkify;
@@ -66,12 +62,11 @@ public class MapActivity extends Activity implements LocationListener	{
 	private static final long MIN_TIME = 400;
 	private static final float MIN_DISTANCE = 1000;
 	private Marker mSelf = null;
-
-	private static final int HEADING_CAFE = 1;
-	private static final int HEADING_BAR = 2;
-	private static final int HEADING_RESTAURANT = 3;
-	private static final int HEADING_SPEND = 4;
-	private static final int HEADING_ATM = 5;
+	
+	private static float Z00M_LEVEL_DEFAULT = 13.0f;
+	private static float Z00M_LEVEL_CLOSE = 18.0f;
+	private static float Z00M_LEVEL_FAR = 10.0f;
+	private float saveZ00mLevel = Z00M_LEVEL_DEFAULT;
 	
 	private int color_category_selected = 0xffFFFFFF;
     private int color_category_unselected = 0xffF1F1F1;
@@ -128,6 +123,8 @@ public class MapActivity extends Activity implements LocationListener	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_map);
 
+	    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
         ActionBar actionBar = getActionBar();
         actionBar.hide();
 //        actionBar.setDisplayOptions(actionBar.getDisplayOptions() | ActionBar.DISPLAY_SHOW_CUSTOM);
@@ -162,6 +159,7 @@ public class MapActivity extends Activity implements LocationListener	{
 		    public void onSwipeBottom() {
             	if(infoLayout.getVisibility() == View.VISIBLE) {
             		infoLayout.setVisibility(View.GONE);
+            		map.animateCamera(CameraUpdateFactory.zoomTo(saveZ00mLevel));
             	}
 		    }
 		});
@@ -169,7 +167,7 @@ public class MapActivity extends Activity implements LocationListener	{
 		infoLayout.setVisibility(View.GONE);
 		
         tvName = (TextView)findViewById(R.id.tv_name);
-        tvName.setTypeface(TypefaceUtil.getInstance(this).getRobotoTypeface());
+        tvName.setTypeface(TypefaceUtil.getInstance(this).getGravityLightTypeface());
         tvAddress = (TextView)findViewById(R.id.tv_address);
         tvAddress.setTypeface(TypefaceUtil.getInstance(this).getRobotoTypeface());
 //        tvCity = (TextView)findViewById(R.id.tv_city);
@@ -232,25 +230,48 @@ public class MapActivity extends Activity implements LocationListener	{
             @Override
             public boolean onMarkerClick(final Marker marker) {
             	
-                if(marker == null)
+                if(marker == null) {
                 	return true;
+                }
 
-                if(markerValues == null || markerValues.size() < 1)
+                if(markerValues == null || markerValues.size() < 1) {
                 	return true;
+                }
+                
+                ((LinearLayout)findViewById(R.id.row_call)).setVisibility(View.VISIBLE);
+                ((LinearLayout)findViewById(R.id.row_web)).setVisibility(View.VISIBLE);
 
                 LatLng latLng = marker.getPosition();
                                 
                 BTCBusiness b = markerValues.get(marker.getId());
 
-                tvAddress.setText(b.address + ", " + b.city + " " + b.pcode);
+                //
+                // launch via intent: waze://?ll=<lat>,<lon>&navigate=yes
+                //
+                // Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse("google.navigation:q=New+York+NY));
+                // startActivity(i);
+                //
+				String url = "http://maps.google.com/?saddr=" +
+	 	     	    	mSelf.getPosition().latitude + "," + mSelf.getPosition().longitude +
+	 	     	     	"&daddr=" + markerValues.get(marker.getId()).lat + "," + markerValues.get(marker.getId()).lon;
+                tvAddress.setText(Html.fromHtml("<a href=\"" + url + "\">" + b.address + ", " + b.city + " " + b.pcode + "</a>"));
+                tvAddress.setMovementMethod(LinkMovementMethod.getInstance());
 
-//                tvCity.setText(b.city + " " + b.pcode);
-
-                tvTel.setText(b.tel);
-                Linkify.addLinks(tvTel, Linkify.PHONE_NUMBERS);
+                if(b.tel != null && b.tel.length() > 0)	{
+                    tvTel.setText(b.tel);
+                    Linkify.addLinks(tvTel, Linkify.PHONE_NUMBERS);
+                }
+                else	{
+                    ((LinearLayout)findViewById(R.id.row_call)).setVisibility(View.GONE);
+                }
                 
-                tvWeb.setText(b.web);
-                Linkify.addLinks(tvWeb, Linkify.WEB_URLS);
+                if(b.web != null && b.web.length() > 0)	{
+                    tvWeb.setText(b.web);
+                    Linkify.addLinks(tvWeb, Linkify.WEB_URLS);
+                }
+                else	{
+                    ((LinearLayout)findViewById(R.id.row_web)).setVisibility(View.GONE);
+                }
 
                 tvDesc.setText(b.desc);
 
@@ -265,22 +286,38 @@ public class MapActivity extends Activity implements LocationListener	{
                 	DecimalFormat df = new DecimalFormat("#####.#");
                 	strDistance = df.format(distance) + " km";
                 }
-                
-                //
-                // launch via intent: waze://?ll=<lat>,<lon>&navigate=yes
-                //
-                // Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse("google.navigation:q=New+York+NY));
-                // startActivity(i);
-                //
-				String url = "http://maps.google.com/?saddr=" +
- 	     	    	mSelf.getPosition().latitude + "," + mSelf.getPosition().longitude +
- 	     	     	"&daddr=" + markerValues.get(marker.getId()).lat + "," + markerValues.get(marker.getId()).lon;
 
                 tvName.setText(b.name);
-//                tvName.setText(Html.fromHtml(b.name + " (<a href=\"" + url + "\">" + strDistance + "</a>)"));
-//                tvName.setMovementMethod(LinkMovementMethod.getInstance());
-                
+    			switch(Integer.parseInt(b.hc)) {
+				case BTCBusiness.HEADING_CAFE:
+					tvName.setTextColor(color_cafe_selected);
+					break;
+				case BTCBusiness.HEADING_BAR:
+					tvName.setTextColor(color_drink_selected);
+					break;
+				case BTCBusiness.HEADING_RESTAURANT:
+					tvName.setTextColor(color_eat_selected);
+					break;
+				case BTCBusiness.HEADING_SPEND:
+					tvName.setTextColor(color_spend_selected);
+					break;
+				case BTCBusiness.HEADING_ATM:
+					tvName.setTextColor(color_atm_selected);
+					break;
+				default:
+					tvName.setTextColor(color_cafe_selected);
+					break;
+				}
+
      			infoLayout.setVisibility(View.VISIBLE);
+     			
+     			saveZ00mLevel = map.getCameraPosition().zoom;
+     			if(map.getCameraPosition().zoom < Z00M_LEVEL_CLOSE) {
+         			map.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), Z00M_LEVEL_CLOSE));
+     			}
+     			else {
+         			map.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), map.getCameraPosition().zoom));
+     			}
 
             	return true;
             }
@@ -377,6 +414,7 @@ public class MapActivity extends Activity implements LocationListener	{
 		currLocation.setLongitude(-2.58755);
 
 		map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(51.45783091, -2.58755), 15));
+//		map.moveCamera(CameraUpdateFactory.newLatLngZoom(LocationManager., Z00M_LEVEL_DEFAULT));
 
 		drawData(true);
 		mSelf = map.addMarker(new MarkerOptions().position(new LatLng(51.45783091, -2.58755)).title("You are here").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
@@ -393,8 +431,7 @@ public class MapActivity extends Activity implements LocationListener	{
 		selfLng = mSelf.getPosition().longitude;
 
 		currLocation = location;
-		CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 15);
-//		CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(currLocation.getLatitude(), currLocation.getLongitude()), 15);
+		CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, map.getCameraPosition().zoom);
 		map.animateCamera(cameraUpdate);
 		locationManager.removeUpdates(this);
 		
@@ -448,7 +485,6 @@ public class MapActivity extends Activity implements LocationListener	{
 
 				try {
 					if(fetch) {
-//						final String url = "http://46.149.17.91/cgi-bin/btcd.pl?ULAT=" + selfLat + "&ULON=" + selfLng + "&D=40000&K=1";
 						final String url = "http://192.64.115.86/cgi-bin/btcd.pl?ULAT=" + selfLat + "&ULON=" + selfLng + "&D=40000&K=1";
 //	         			Log.d("BlockchainMerchantDirectory", url);
 	         			strJSONData = WalletUtils.getURL(url);
@@ -485,23 +521,53 @@ public class MapActivity extends Activity implements LocationListener	{
 				            			BitmapDescriptor bmd = null;
 				            			
 				            			switch(Integer.parseInt(b.hc)) {
-				            				case HEADING_CAFE:
-				            					bmd = cafeSelected ? BitmapDescriptorFactory.fromResource(R.drawable.marker_cafe) : null;
+				            				case BTCBusiness.HEADING_CAFE:
+				            					if(cafeSelected) {
+					            					bmd = b.flag.equals("1") ? BitmapDescriptorFactory.fromResource(R.drawable.marker_cafe_featured) : BitmapDescriptorFactory.fromResource(R.drawable.marker_cafe);
+				            					}
+				            					else {
+					            					bmd = null;
+				            					}
 				            					break;
-				            				case HEADING_BAR:
-				            					bmd = drinkSelected ? BitmapDescriptorFactory.fromResource(R.drawable.marker_drink) : null;
+				            				case BTCBusiness.HEADING_BAR:
+				            					if(drinkSelected) {
+					            					bmd = b.flag.equals("1") ? BitmapDescriptorFactory.fromResource(R.drawable.marker_drink_featured) : BitmapDescriptorFactory.fromResource(R.drawable.marker_drink);
+				            					}
+				            					else {
+					            					bmd = null;
+				            					}
 				            					break;
-				            				case HEADING_RESTAURANT:
-				            					bmd = eatSelected ? BitmapDescriptorFactory.fromResource(R.drawable.marker_eat) : null;
+				            				case BTCBusiness.HEADING_RESTAURANT:
+				            					if(eatSelected) {
+					            					bmd = b.flag.equals("1") ? BitmapDescriptorFactory.fromResource(R.drawable.marker_eat_featured) : BitmapDescriptorFactory.fromResource(R.drawable.marker_eat);
+				            					}
+				            					else {
+					            					bmd = null;
+				            					}
 				            					break;
-				            				case HEADING_SPEND:
-				            					bmd = spendSelected ? BitmapDescriptorFactory.fromResource(R.drawable.marker_spend) : null;
+				            				case BTCBusiness.HEADING_SPEND:
+				            					if(spendSelected) {
+					            					bmd = b.flag.equals("1") ? BitmapDescriptorFactory.fromResource(R.drawable.marker_spend_featured) : BitmapDescriptorFactory.fromResource(R.drawable.marker_spend);
+				            					}
+				            					else {
+					            					bmd = null;
+				            					}
 				            					break;
-				            				case HEADING_ATM:
-				            					bmd = atmSelected ? BitmapDescriptorFactory.fromResource(R.drawable.marker_atm) : null;
+				            				case BTCBusiness.HEADING_ATM:
+				            					if(atmSelected) {
+					            					bmd = b.flag.equals("1") ? BitmapDescriptorFactory.fromResource(R.drawable.marker_atm_featured) : BitmapDescriptorFactory.fromResource(R.drawable.marker_atm);
+				            					}
+				            					else {
+					            					bmd = null;
+				            					}
 				            					break;
 				            				default:
-				            					bmd = cafeSelected ? BitmapDescriptorFactory.fromResource(R.drawable.marker_cafe) : null;
+				            					if(cafeSelected) {
+					            					bmd = b.flag.equals("1") ? BitmapDescriptorFactory.fromResource(R.drawable.marker_cafe_featured) : BitmapDescriptorFactory.fromResource(R.drawable.marker_cafe);
+				            					}
+				            					else {
+					            					bmd = null;
+				            					}
 				            					break;
 				            				}
 				            			
