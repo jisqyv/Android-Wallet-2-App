@@ -351,21 +351,22 @@ public class AddressBookActivity extends Activity {
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 
-		String scanData = data.getStringExtra(ZBarConstants.SCAN_RESULT);
-		
 		if(resultCode == Activity.RESULT_OK && requestCode == SCAN_WATCH_ONLY) {
+			String scanData = data.getStringExtra(ZBarConstants.SCAN_RESULT);
 			try {
 				addressManager.handleAddWatchOnly(scanData);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		} else if(resultCode == Activity.RESULT_OK && requestCode == SCAN_SENDING_ADDRESS) {
+			String scanData = data.getStringExtra(ZBarConstants.SCAN_RESULT);
 			if (addressManager.canAddAddressBookEntry(scanData, "")) {
 				addressManager.handleAddAddressBookEntry(scanData, "");
 			} else {
 	    		Toast.makeText(AddressBookActivity.this, "Address already exist", Toast.LENGTH_LONG).show();
 			}			
 		} else if(resultCode == Activity.RESULT_OK && requestCode == SCAN_PRIVATE_KEY) {
+			String scanData = data.getStringExtra(ZBarConstants.SCAN_RESULT);
 			try {
 				addressManager.handleScanPrivateKey(scanData);
 			} catch (Exception e) {
