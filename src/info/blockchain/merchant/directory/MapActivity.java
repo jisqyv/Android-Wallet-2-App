@@ -139,7 +139,7 @@ public class MapActivity extends Activity implements LocationListener	{
     	btcb = new ArrayList<BTCBusiness>();
 
 		locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-		locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
+		locationManager.requestLocationUpdates(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ? LocationManager.GPS_PROVIDER : LocationManager.NETWORK_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
 		
 		infoLayout = ((LinearLayout)findViewById(R.id.info));
 		/*
@@ -410,14 +410,27 @@ public class MapActivity extends Activity implements LocationListener	{
         });
 
 		currLocation = new Location(LocationManager.NETWORK_PROVIDER);
-		currLocation.setLatitude(51.45783091);
-		currLocation.setLongitude(-2.58755);
+        Location lastKnownByGps = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        Location lastKnownByNetwork = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        if(lastKnownByGps == null && lastKnownByNetwork == null) {
+    		currLocation.setLatitude(0.0);
+    		currLocation.setLongitude(0.0);
+        }
+        else if(lastKnownByGps != null && lastKnownByNetwork == null) {
+        	currLocation  = lastKnownByGps;
+        }
+        else if(lastKnownByGps == null && lastKnownByNetwork != null) {
+        	currLocation  = lastKnownByNetwork;
+        }
+        else {
+        	currLocation = (lastKnownByGps.getAccuracy() <= lastKnownByNetwork.getAccuracy()) ? lastKnownByGps : lastKnownByNetwork;
+        }
 
-		map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(51.45783091, -2.58755), 15));
-//		map.moveCamera(CameraUpdateFactory.newLatLngZoom(LocationManager., Z00M_LEVEL_DEFAULT));
+		map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currLocation.getLatitude(), currLocation.getLongitude()), Z00M_LEVEL_DEFAULT));
 
 		drawData(true);
-		mSelf = map.addMarker(new MarkerOptions().position(new LatLng(51.45783091, -2.58755)).title("You are here").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+
+		mSelf = map.addMarker(new MarkerOptions().position(new LatLng(currLocation.getLatitude(), currLocation.getLongitude())).title("You are here").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
 		
 	}
 
