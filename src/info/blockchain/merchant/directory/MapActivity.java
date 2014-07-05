@@ -61,7 +61,7 @@ public class MapActivity extends Activity implements LocationListener	{
     private Location currLocation = null;
 	private static final long MIN_TIME = 400;
 	private static final float MIN_DISTANCE = 1000;
-	private Marker mSelf = null;
+//	private Marker mSelf = null;
 	
 	private static float Z00M_LEVEL_DEFAULT = 13.0f;
 	private static float Z00M_LEVEL_CLOSE = 18.0f;
@@ -108,8 +108,8 @@ public class MapActivity extends Activity implements LocationListener	{
 
 	private ProgressDialog progress = null;
 	
-	private double selfLat = 0.0;
-	private double selfLng = 0.0;
+//	private double selfLat = 0.0;
+//	private double selfLng = 0.0;
 	
 	private HashMap<String,BTCBusiness> markerValues = null;
 	
@@ -252,7 +252,7 @@ public class MapActivity extends Activity implements LocationListener	{
                 // startActivity(i);
                 //
 				String url = "http://maps.google.com/?saddr=" +
-	 	     	    	mSelf.getPosition().latitude + "," + mSelf.getPosition().longitude +
+	 	     	    	currLocation.getLatitude() + "," + currLocation.getLongitude() +
 	 	     	     	"&daddr=" + markerValues.get(marker.getId()).lat + "," + markerValues.get(marker.getId()).lon;
                 tvAddress.setText(Html.fromHtml("<a href=\"" + url + "\">" + b.address + ", " + b.city + " " + b.pcode + "</a>"));
                 tvAddress.setMovementMethod(LinkMovementMethod.getInstance());
@@ -430,7 +430,8 @@ public class MapActivity extends Activity implements LocationListener	{
 
 		drawData(true);
 
-		mSelf = map.addMarker(new MarkerOptions().position(new LatLng(currLocation.getLatitude(), currLocation.getLongitude())).title("You are here").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+//		mSelf = map.addMarker(new MarkerOptions().position(new LatLng(currLocation.getLatitude(), currLocation.getLongitude())).title("You are here").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+//		mSelf.setVisible(false);
 		
 	}
 
@@ -439,9 +440,9 @@ public class MapActivity extends Activity implements LocationListener	{
 
 		LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
 
-		mSelf.setPosition(latLng);
-		selfLat = mSelf.getPosition().latitude;
-		selfLng = mSelf.getPosition().longitude;
+//		mSelf.setPosition(latLng);
+//		selfLat = mSelf.getPosition().latitude;
+//		selfLng = mSelf.getPosition().longitude;
 
 		currLocation = location;
 		CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, map.getCameraPosition().zoom);
@@ -498,7 +499,7 @@ public class MapActivity extends Activity implements LocationListener	{
 
 				try {
 					if(fetch) {
-						final String url = "http://192.64.115.86/cgi-bin/btcd.pl?ULAT=" + selfLat + "&ULON=" + selfLng + "&D=40000&K=1";
+						final String url = "http://192.64.115.86/cgi-bin/btcd.pl?ULAT=" + currLocation.getLatitude() + "&ULON=" + currLocation.getLongitude() + "&D=40000&K=1";
 //	         			Log.d("BlockchainMerchantDirectory", url);
 	         			strJSONData = WalletUtils.getURL(url);
 //	         			Log.d("BlockchainMerchantDirectory", strJSONData);
@@ -614,8 +615,8 @@ public class MapActivity extends Activity implements LocationListener	{
 
     private void doListView() {
     	Intent intent = new Intent(MapActivity.this, ListActivity.class);
-    	intent.putExtra("ULAT", Double.toString(mSelf.getPosition().latitude));
-    	intent.putExtra("ULON", Double.toString(mSelf.getPosition().longitude));
+    	intent.putExtra("ULAT", Double.toString(currLocation.getLatitude()));
+    	intent.putExtra("ULON", Double.toString(currLocation.getLongitude()));
 		startActivity(intent);
     }
 
