@@ -43,9 +43,12 @@ public class WalletBalanceWidgetProvider extends AppWidgetProvider {
 
 	@Override
 	public void onUpdate(final Context context, final AppWidgetManager appWidgetManager, final int[] appWidgetIds) {
-		Log.d("wiiiiget", "wiiiiget onUpdate");
 		final RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.wallet_balance_widget_content);
 		
+		remoteViews.setImageViewResource(R.id.scan_button, R.drawable.ic_input_qrcode);
+		remoteViews.setImageViewResource(R.id.refresh_button, R.drawable.refresh_icon);
+		remoteViews.setImageViewResource(R.id.send_button, R.drawable.red_arrow);
+
 		WalletBalanceWidgetProvider.setBalance(context, remoteViews);
 		
         // register for button event

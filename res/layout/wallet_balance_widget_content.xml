@@ -4,15 +4,8 @@
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
 	android:background="@drawable/appwidget_dark_bg_clickable"
-	android:focusable="true"
+	android:focusable="false"
 	android:orientation="horizontal" >
-
-	<LinearLayout
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_gravity="center"
-		android:layout_weight="100"
-		android:gravity="center_horizontal" >
 
 		<TextView
 			android:id="@+id/widget_wallet_balance"
@@ -34,22 +27,16 @@
 	        android:id="@+id/scan_button"
 			android:contentDescription="@string/scan_button"
 	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:src="@drawable/ic_input_qrcode" />	
+	        android:layout_height="wrap_content" />	
 	    <ImageButton
 	        android:id="@+id/refresh_button"
 			android:contentDescription="@string/refresh_button"
 	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:src="@drawable/refresh_icon" />	
+	        android:layout_height="wrap_content" />	
 	    <ImageButton
 	        android:id="@+id/send_button"
 			android:contentDescription="@string/send_button"
 	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:src="@drawable/red_arrow" />	
-	    	    	    
-	    	        	
-	</LinearLayout>
+	        android:layout_height="wrap_content" />	
 
 </LinearLayout>
