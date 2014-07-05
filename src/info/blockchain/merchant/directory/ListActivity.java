@@ -208,22 +208,22 @@ public class ListActivity extends Activity {
 	        ImageView ivHeading = (ImageView)view.findViewById(R.id.heading);
 			switch(Integer.parseInt(b.hc)) {
 			case HEADING_CAFE:
-		        ivHeading.setImageResource(R.drawable.marker_cafe);
+		        ivHeading.setImageResource(b.flag.equals("1") ? R.drawable.marker_cafe_featured : R.drawable.marker_cafe);
 				break;
 			case HEADING_BAR:
-		        ivHeading.setImageResource(R.drawable.marker_drink);
+		        ivHeading.setImageResource(b.flag.equals("1") ? R.drawable.marker_drink_featured : R.drawable.marker_drink);
 				break;
 			case HEADING_RESTAURANT:
-		        ivHeading.setImageResource(R.drawable.marker_eat);
+		        ivHeading.setImageResource(b.flag.equals("1") ? R.drawable.marker_eat_featured : R.drawable.marker_eat);
 				break;
 			case HEADING_SPEND:
-		        ivHeading.setImageResource(R.drawable.marker_spend);
+		        ivHeading.setImageResource(b.flag.equals("1") ? R.drawable.marker_spend_featured : R.drawable.marker_spend);
 				break;
 			case HEADING_ATM:
-		        ivHeading.setImageResource(R.drawable.marker_atm);
+		        ivHeading.setImageResource(b.flag.equals("1") ? R.drawable.marker_atm_featured : R.drawable.marker_atm);
 				break;
 			default:
-		        ivHeading.setImageResource(R.drawable.marker_cafe);
+		        ivHeading.setImageResource(b.flag.equals("1") ? R.drawable.marker_cafe_featured : R.drawable.marker_cafe);
 				break;
 			}
 
