@@ -266,7 +266,7 @@
         android:layout_gravity="center_vertical|center_horizontal"
         android:textAlignment="gravity"
         android:textColor="#FFffffff"
-    	android:background="#FF808080"
+    	android:background="#FFb2b2b2"
     	android:text="DISMISS AND CONTINUE TO WALLET"
     	android:paddingLeft="10dp"
     	android:paddingRight="10dp"

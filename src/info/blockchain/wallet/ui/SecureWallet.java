@@ -3,10 +3,13 @@ package info.blockchain.wallet.ui;
 import java.security.SecureRandom;
 import java.util.regex.Pattern;
 
+import net.sourceforge.zbar.Symbol;
+
 import org.json.simple.JSONObject;
 import org.spongycastle.util.encoders.Hex;
 
 import com.dm.zbar.android.scanner.ZBarConstants;
+import com.dm.zbar.android.scanner.ZBarScannerActivity;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -26,10 +29,12 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.View.OnTouchListener;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 import android.view.View.OnClickListener;
+import android.graphics.Rect;
 import android.widget.Toast;
 
 import piuk.blockchain.android.MyRemoteWallet;
@@ -115,7 +120,12 @@ public class SecureWallet extends Activity {
 		}
 
 		tvWarning1 = (TextView)findViewById(R.id.warning1);
-		tvWarning1.setText("Your Wallet Is Ready!");
+		if(creating) {
+			tvWarning1.setText("Your Wallet Is Ready!");
+		}
+		else {
+			tvWarning1.setText("");
+		}
 
 		tvWarning2 = (TextView)findViewById(R.id.warning2);
 		if(creating) {
@@ -123,7 +133,7 @@ public class SecureWallet extends Activity {
 			tvWarning2.setText("Please enable the following security features...");
 		}
 		else {
-			tvWarning2.setTextColor(0xFFff0000);
+			tvWarning2.setTextColor(0xFFd65858);
 //			tvWarning2.setText("If this device is lost, stolen or compromised your bitcoin will be lost forever. Please enable the security features below to easily secure your wallet.");
 			tvWarning2.setText("If this device is lost, stolen or compromised your bitcoin will be lost forever. Please enable the security features below.");
 		}
@@ -156,13 +166,25 @@ public class SecureWallet extends Activity {
 
         tvDismiss = (TextView)findViewById(R.id.dismiss);
         tvDismiss.setOnTouchListener(new OnTouchListener() {
+        	private Rect rect = null;
+        	
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-    			Intent intent = new Intent(SecureWallet.this, MainActivity.class);
-    			intent.putExtra("dismissed", true);
-    			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-    			startActivity(intent);
-            	return false;
+            	switch(event.getAction()) {
+            		case MotionEvent.ACTION_DOWN:
+            			rect = new Rect(v.getLeft(), v.getTop(), v.getRight(), v.getBottom());
+            			return true;
+            		case MotionEvent.ACTION_UP:
+            			if(rect.contains(v.getLeft() + (int) event.getX(), v.getTop() + (int) event.getY())) {
+                			Intent intent = new Intent(SecureWallet.this, MainActivity.class);
+                			intent.putExtra("dismissed", true);
+                			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                			startActivity(intent);
+            			}
+            			return false;
+            		default:
+            			return false;
+            	}
             }
         });
 

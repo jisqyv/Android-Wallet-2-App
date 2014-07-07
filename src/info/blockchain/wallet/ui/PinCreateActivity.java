@@ -56,8 +56,17 @@ public class PinCreateActivity extends Activity {
 	private CheckBox cbAccept = null;
 
 	private String strPIN = null;
+	
+    private EditText pin1 = null;
+    private EditText pin2 = null;
+    private EditText pin3 = null;
+    private EditText pin4 = null;
+    private EditText pin1_2 = null;
+    private EditText pin2_2 = null;
+    private EditText pin3_2 = null;
+    private EditText pin4_2 = null;
 
-	public static final int PBKDF2Iterations = 2000;
+    public static final int PBKDF2Iterations = 2000;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -92,15 +101,15 @@ public class PinCreateActivity extends Activity {
 		tvWarning2.setTextColor(0xFF039BD3);
 		tvWarning2.setText("Enter a 4-digit code that will be easy for you to remember but not easily guessed by anyone else.");
 
-        final EditText pin1 = ((EditText)findViewById(R.id.pin1));
-        final EditText pin2 = ((EditText)findViewById(R.id.pin2));
-        final EditText pin3 = ((EditText)findViewById(R.id.pin3));
-        final EditText pin4 = ((EditText)findViewById(R.id.pin4));
+        pin1 = ((EditText)findViewById(R.id.pin1));
+        pin2 = ((EditText)findViewById(R.id.pin2));
+        pin3 = ((EditText)findViewById(R.id.pin3));
+        pin4 = ((EditText)findViewById(R.id.pin4));
 
-        final EditText pin1_2 = ((EditText)findViewById(R.id.pin1_2));
-        final EditText pin2_2 = ((EditText)findViewById(R.id.pin2_2));
-        final EditText pin3_2 = ((EditText)findViewById(R.id.pin3_2));
-        final EditText pin4_2 = ((EditText)findViewById(R.id.pin4_2));
+        pin1_2 = ((EditText)findViewById(R.id.pin1_2));
+        pin2_2 = ((EditText)findViewById(R.id.pin2_2));
+        pin3_2 = ((EditText)findViewById(R.id.pin3_2));
+        pin4_2 = ((EditText)findViewById(R.id.pin4_2));
 
         pin1.setOnKeyListener(new OnKeyListener() {
             @Override

@@ -54,7 +54,6 @@ import piuk.blockchain.android.SharedCoin;
 import piuk.blockchain.android.WalletApplication;
 import piuk.blockchain.android.SuccessCallback;
 
-
 @SuppressLint("NewApi")
 public class MainActivity extends FragmentActivity implements ActionBar.TabListener, SendFragment.OnCompleteListener {
 
