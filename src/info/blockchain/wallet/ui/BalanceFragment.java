@@ -326,6 +326,8 @@ public class BalanceFragment extends Fragment   {
     	    		Log.d("getAccountInformation", "getAccountInformation fail");	
     			}
     		});   
+    		
+    		application.setSharedPrefsActiveAddresses(Arrays.asList(remoteWallet.getActiveAddresses()));    		
         }
     }
 	

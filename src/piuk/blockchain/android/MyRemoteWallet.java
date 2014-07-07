@@ -533,7 +533,7 @@ public class MyRemoteWallet extends MyWallet {
 		}
 	}
 
-	public synchronized String getBalances(String[] addresses, boolean notifications) throws Exception {
+	public static synchronized String getBalances(String[] addresses, boolean notifications) throws Exception {
 		String url =  WebROOT + "multiaddr?active=" + StringUtils.join(addresses, "|")+"&simple=true&format=json";
 
 		String response = fetchURL(url);

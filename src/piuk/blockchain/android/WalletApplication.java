@@ -75,8 +75,11 @@ import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.security.Security;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -106,6 +109,22 @@ public class WalletApplication extends Application {
         this.isPassedPinScreen = isPassPinScreen;
     }
   
+    public List<String> getSharedPrefsActiveAddresses() {
+    	Set<String> activeAddressesSet = PreferenceManager.getDefaultSharedPreferences(this).getStringSet("activeAddresses", null);
+    	if (activeAddressesSet != null)
+    		return new ArrayList<String>(activeAddressesSet);
+    	else
+    		return null;
+    }
+    
+    public boolean setSharedPrefsActiveAddresses(List<String> activeAddresses) {
+    	Set<String> activeAddressesSet = new HashSet<String>();
+    	activeAddressesSet.addAll(activeAddresses);
+		Editor edit = PreferenceManager.getDefaultSharedPreferences(this).edit();
+		edit.putStringSet("activeAddresses", activeAddressesSet);  
+		return edit.commit();
+    }
+
     
 	private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver()
 	{
@@ -1068,23 +1087,14 @@ public class WalletApplication extends Application {
 		}).start();
 	}
 	
-	public void getBalances(final String[] addresses, final boolean notifications, final ObjectSuccessCallback callback) {
-		final MyRemoteWallet blockchainWallet = this.blockchainWallet;
-
-		if (blockchainWallet == null) {
-			if (callback != null)
-				callback.onFail("blockchainWallet == null");
-
-			return;
-		}
-		
+	public void getBalances(final String[] addresses, final boolean notifications, final ObjectSuccessCallback callback) {		
 		new Thread(new Runnable() {
 			public void run() {
 				try {
 					String response = null;
 
 					try {
-						response = blockchainWallet.getBalances(addresses, notifications);
+						response = MyRemoteWallet.getBalances(addresses, notifications);
 					} catch (Exception e) {
 						e.printStackTrace(); 
 
@@ -1096,7 +1106,7 @@ public class WalletApplication extends Application {
 						}
 
 						try {
-							response = blockchainWallet.getBalances(addresses, notifications);
+							response = MyRemoteWallet.getBalances(addresses, notifications);
 						} catch (Exception e1) {
 							e1.printStackTrace(); 
 
