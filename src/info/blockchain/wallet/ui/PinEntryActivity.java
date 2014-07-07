@@ -865,6 +865,6 @@ public class PinEntryActivity extends FragmentActivity {
 	protected void onResume() {
 		super.onResume();
 		final WalletApplication application = (WalletApplication) getApplication();
-		application.setIsPassPinScreen(false);
+		application.setIsPassedPinScreen(false);
 	}	
 }

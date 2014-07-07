@@ -306,13 +306,13 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 	@Override
 	protected void onResume() {
 		super.onResume();
-		application.setIsPassPinScreen(true);
+		application.setIsPassedPinScreen(true);
 	}
 	
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		application.setIsPassPinScreen(false);
+		application.setIsPassedPinScreen(false);
 	}
 		  
 	@Override
@@ -383,7 +383,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
 			alert.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.yes), new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int id) {
-					application.setIsPassPinScreen(false);
+					application.setIsPassedPinScreen(false);
 					
 					finish();
 					

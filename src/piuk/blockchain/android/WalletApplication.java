@@ -96,14 +96,14 @@ public class WalletApplication extends Application {
 	public Pair<Block, Integer> blockExplorerBlockPair;
 	public long earliestKeyTime;
 	private volatile boolean checkWalletStatusScheduled = false;
-    private boolean isPassPinScreen = false;
+    private boolean isPassedPinScreen = false;
     
-    public boolean getIsPassPinScreen(){
-        return isPassPinScreen;
+    public boolean getIsPassedPinScreen(){
+        return isPassedPinScreen;
     }
     
-    public void setIsPassPinScreen(boolean isPassPinScreen){
-        this.isPassPinScreen = isPassPinScreen;
+    public void setIsPassedPinScreen(boolean isPassPinScreen){
+        this.isPassedPinScreen = isPassPinScreen;
     }
   
     

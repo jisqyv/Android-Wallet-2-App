@@ -128,7 +128,7 @@ public class WalletBalanceWidgetProvider extends AppWidgetProvider {
 		RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.wallet_balance_widget_content);
 
 		if (action.equals(WalletBalanceWidgetProvider.ACTION_WIDGET_SEND_SCREEN)) {
-			boolean isPassPinScreen = ((WalletApplication)context.getApplicationContext()).getIsPassPinScreen();
+			boolean isPassPinScreen = ((WalletApplication)context.getApplicationContext()).getIsPassedPinScreen();
 			final Intent navigateIntent;
 			if (isPassPinScreen) {
 				navigateIntent = new Intent(context, MainActivity.class);
@@ -143,7 +143,7 @@ public class WalletBalanceWidgetProvider extends AppWidgetProvider {
             context.startActivity(navigateIntent);
             
 		} else if (action.equals(WalletBalanceWidgetProvider.ACTION_WIDGET_SCAN_RECEIVING)) {
-			boolean isPassPinScreen = ((WalletApplication)context.getApplicationContext()).getIsPassPinScreen();
+			boolean isPassPinScreen = ((WalletApplication)context.getApplicationContext()).getIsPassedPinScreen();
 			final Intent navigateIntent;
 			if (isPassPinScreen) {
 				navigateIntent = new Intent(context, MainActivity.class);
