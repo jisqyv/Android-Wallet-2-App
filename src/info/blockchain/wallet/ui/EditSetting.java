@@ -36,6 +36,10 @@ public class EditSetting extends Activity {
             setTitle(extras.getString("prompt"));
         	tvPrompt.setText(extras.getString("existing") + ": ");
         	etValue.setText(extras.getString("value"));
+        	
+            if(extras.getString("prompt").contains("password") || extras.getString("prompt").contains("Password")) {
+            	etValue.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            }
 
         }
 

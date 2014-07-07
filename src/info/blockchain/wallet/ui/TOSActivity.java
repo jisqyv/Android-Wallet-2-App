@@ -38,6 +38,8 @@ public class TOSActivity extends Activity	{
 	private TextView tvTOS =  null;
 
 	public static final int PBKDF2Iterations = 2000;
+	
+	private String strPIN = null;
 
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +51,14 @@ public class TOSActivity extends Activity	{
 
         Bundle extras = getIntent().getExtras();
         if(extras != null)	{
-        	;
+            if(extras.getString("P") != null && extras.getString("P").length() == 4)	{
+            	strPIN = extras.getString("P");
+            }
+            else	{
+	        	Intent intent = new Intent(TOSActivity.this, SetupActivity.class);
+				intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+	    		startActivity(intent);
+            }
         }
 
         TextView tvTOS = (TextView) findViewById(R.id.tos);
@@ -86,7 +95,8 @@ public class TOSActivity extends Activity	{
 							final String guid = application.getRemoteWallet().getGUID();
 							final String sharedKey = application.getRemoteWallet().getSharedKey();
 							final String password = RandomStringUtils.randomAlphabetic(64);
-							final String pinCode = "1234";
+//							final String pinCode = "1234";
+							final String pinCode = strPIN;
 //							final String email = em;
 
 							application.getRemoteWallet().setTemporyPassword(password);
@@ -147,9 +157,10 @@ public class TOSActivity extends Activity	{
 																	}
 																	else {
 //																		Toast.makeText(application, R.string.toast_pin_saved, Toast.LENGTH_SHORT).show();
-															        	Intent intent = new Intent(TOSActivity.this, MainActivity.class);
-															        	intent.putExtra("first", true);
-															        	intent.putExtra("secured", false);
+//															        	Intent intent = new Intent(TOSActivity.this, MainActivity.class);
+															        	Intent intent = new Intent(TOSActivity.this, SecureWallet.class);
+//															        	intent.putExtra("first", true);
+//															        	intent.putExtra("secured", false);
 																		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
 															    		startActivity(intent);
 																	}

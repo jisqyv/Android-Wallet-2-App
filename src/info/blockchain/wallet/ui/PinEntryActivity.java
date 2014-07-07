@@ -83,6 +83,7 @@ public class PinEntryActivity extends FragmentActivity {
 	Button buttonDeleteBack = null;
 	
 	private boolean validating = true;
+	private boolean creating = false;
 	private String userInput = null;
 	
 	@Override
@@ -96,11 +97,20 @@ public class PinEntryActivity extends FragmentActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
         WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		
-		setContentView(R.layout.activity_pin_entry);
+//		setContentView(R.layout.activity_pin_entry);
 		
         Bundle extras = getIntent().getExtras();
         if(extras != null)	{
-            if(extras.getString("S") != null && extras.getString("S").equals("1"))	{
+            if(extras.getString("N") != null && extras.getString("N").equals("1"))	{
+            	validating = false;
+            	creating = true;
+            }
+            else if(extras.getString("N") != null && extras.getString("N").length() == 4)	{
+            	validating = false;
+            	creating = true;
+            	userInput = extras.getString("N");
+            }
+            else if(extras.getString("S") != null && extras.getString("S").equals("1"))	{
             	validating = false;
             }
             else if(extras.getString("S") != null && extras.getString("S").length() == 4)	{
@@ -110,6 +120,16 @@ public class PinEntryActivity extends FragmentActivity {
             else	{
             	validating = true;
             }
+        }
+        
+        if(creating)	{
+    		setContentView(R.layout.activity_pin_create);
+    		TextView tvHeader = (TextView)findViewById(R.id.header);
+    		tvHeader.setTypeface(TypefaceUtil.getInstance(this).getGravityLightTypeface());
+			tvHeader.setText("create new wallet");
+        }
+        else	{
+    		setContentView(R.layout.activity_pin_entry);
         }
 
 		Typeface typeface = Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf");  
@@ -179,58 +199,73 @@ public class PinEntryActivity extends FragmentActivity {
 		    			else	{
 		    				if(userInput != null)	{
 		    					if(userInput.equals(userEntered))	{
+		    						
+		    						if(creating)	{
+		    							//
+		    							// TOS
+		    							//
+							        	Intent intent = new Intent(PinEntryActivity.this, TOSActivity.class);
+							        	intent.putExtra("P", userEntered);
+										intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+							    		startActivity(intent);
+		    						}
+		    						else	{
+		    							
+										new Thread(new Runnable(){
+										    @Override
+										    public void run() {
+										    	
+												Looper.prepare();
 
-									new Thread(new Runnable(){
-									    @Override
-									    public void run() {
-									    	
-											Looper.prepare();
+												final WalletApplication application = (WalletApplication) getApplication();
+												Editor edit = PreferenceManager.getDefaultSharedPreferences(PinEntryActivity.this).edit();
 
-											final WalletApplication application = (WalletApplication) getApplication();
-											Editor edit = PreferenceManager.getDefaultSharedPreferences(PinEntryActivity.this).edit();
+												//
+												// Save PIN
+												//
+										        try {
+													byte[] bytes = new byte[16];
+													SecureRandom random = new SecureRandom();
+													random.nextBytes(bytes);
+													final String key = new String(Hex.encode(bytes), "UTF-8");
+													random.nextBytes(bytes);
+													final String value = new String(Hex.encode(bytes), "UTF-8");
+													final JSONObject response = piuk.blockchain.android.ui.PinEntryActivity.apiStoreKey(key, value, userInput);
+													if (response.get("success") != null) {
+														
+														edit.putString("pin_kookup_key", key);
+														edit.putString("encrypted_password", MyWallet.encrypt(application.getRemoteWallet().getTemporyPassword(), value, piuk.blockchain.android.ui.PinEntryActivity.PBKDF2Iterations));
 
-											//
-											// Save PIN
-											//
-									        try {
-												byte[] bytes = new byte[16];
-												SecureRandom random = new SecureRandom();
-												random.nextBytes(bytes);
-												final String key = new String(Hex.encode(bytes), "UTF-8");
-												random.nextBytes(bytes);
-												final String value = new String(Hex.encode(bytes), "UTF-8");
-												final JSONObject response = piuk.blockchain.android.ui.PinEntryActivity.apiStoreKey(key, value, userInput);
-												if (response.get("success") != null) {
-													
-													edit.putString("pin_kookup_key", key);
-													edit.putString("encrypted_password", MyWallet.encrypt(application.getRemoteWallet().getTemporyPassword(), value, piuk.blockchain.android.ui.PinEntryActivity.PBKDF2Iterations));
+														if (!edit.commit()) {
+															throw new Exception("Error Saving Preferences");
+														}
+														else {
+															Toast.makeText(PinEntryActivity.this, "PIN saved", Toast.LENGTH_SHORT).show();	
+												        	Intent intent = new Intent(PinEntryActivity.this, MainActivity.class);
+															intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+												    		startActivity(intent);
+														}
 
-													if (!edit.commit()) {
-														throw new Exception("Error Saving Preferences");
 													}
 													else {
-														Toast.makeText(PinEntryActivity.this, "PIN saved", Toast.LENGTH_SHORT).show();	
-											        	Intent intent = new Intent(PinEntryActivity.this, MainActivity.class);
-														intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-											    		startActivity(intent);
+														Toast.makeText(application, response.toString(), Toast.LENGTH_LONG).show();
 													}
+										        } catch (Exception e) {
+													Toast.makeText(application, e.toString(), Toast.LENGTH_LONG).show();
+										            e.printStackTrace();
+										        }
+												//
+												//
+												//
+										        
+												Looper.loop();
 
-												}
-												else {
-													Toast.makeText(application, response.toString(), Toast.LENGTH_LONG).show();
-												}
-									        } catch (Exception e) {
-												Toast.makeText(application, e.toString(), Toast.LENGTH_LONG).show();
-									            e.printStackTrace();
-									        }
-											//
-											//
-											//
-									        
-											Looper.loop();
+										    }
+										}).start();
 
-									    }
-									}).start();
+		    							
+		    						}
+
 		    						
 		    					}
 		    					else	{
@@ -243,10 +278,18 @@ public class PinEntryActivity extends FragmentActivity {
 		    					}
 		    				}
 		    				else	{
-					        	Intent intent = new Intent(PinEntryActivity.this, PinEntryActivity.class);
-					        	intent.putExtra("S", userEntered);
-								intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-					    		startActivity(intent);
+		    					if(creating)	{
+						        	Intent intent = new Intent(PinEntryActivity.this, PinEntryActivity.class);
+						        	intent.putExtra("N", userEntered);
+									intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+						    		startActivity(intent);
+		    					}
+		    					else	{
+						        	Intent intent = new Intent(PinEntryActivity.this, PinEntryActivity.class);
+						        	intent.putExtra("S", userEntered);
+									intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+						    		startActivity(intent);
+		    					}
 		    				}
 		    			}
 
@@ -569,7 +612,7 @@ public class PinEntryActivity extends FragmentActivity {
         task.execute(new String[] { fxRates.getUrl() });
 
 		final WalletApplication application = (WalletApplication)PinEntryActivity.this.getApplication();
-		if (application.getGUID() == null) {
+		if (application.getGUID() == null && !creating) {
         	Intent intent = new Intent(PinEntryActivity.this, SetupActivity.class);
 			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
     		startActivity(intent);

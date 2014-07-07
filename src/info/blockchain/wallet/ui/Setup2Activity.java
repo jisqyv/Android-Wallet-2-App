@@ -319,7 +319,7 @@ public class Setup2Activity extends Activity	{
 		    		Log.d("Setup2Activity", "Setup2Activity setTemporyPassword saveWallet");	
 
 					remoteWallet.setTemporyPassword(pw1);
-		    		Log.d("Setup2Activity", "Setup2Activity setTemporyPassword: " + remoteWallet.getTemporyPassword());	
+//		    		Log.d("Setup2Activity", "Setup2Activity setTemporyPassword: " + remoteWallet.getTemporyPassword());	
 					application.saveWallet( new SuccessCallback() {
 						@Override
 						public void onSuccess() {		    		

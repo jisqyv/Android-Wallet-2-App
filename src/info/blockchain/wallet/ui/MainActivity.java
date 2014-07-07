@@ -88,17 +88,19 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 	    
         boolean isFirst = false;
         boolean isSecured = false;
+        boolean isDismissed = false;
         Bundle extras = getIntent().getExtras();
         if(extras != null)	{
         	isFirst = extras.getBoolean("first");
-        	isSecured = extras.getBoolean("secured");
+        	isDismissed = extras.getBoolean("dismissed");
         }
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         boolean isValidated = false;
         isValidated = prefs.getBoolean("validated", false);
+    	isSecured = prefs.getBoolean("PWSecured", false) && prefs.getBoolean("EmailBackups", false) ? true : false;
         
-        if(isValidated || isSecured) {
+        if(isValidated || isSecured || isDismissed) {
         	;
         }
         else if(!isSecured && isFirst) {
@@ -106,12 +108,12 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 			edit.putBoolean("first", false);
 			edit.commit();
 
-			Intent intent = new Intent(this, SecureYourWalletActivity.class);
+			Intent intent = new Intent(this, SecureWallet.class);
 			intent.putExtra("first", true);
 			startActivity(intent);
         }
         else if(!isSecured && !isFirst) {
-			Intent intent = new Intent(this, SecureYourWalletActivity.class);
+			Intent intent = new Intent(this, SecureWallet.class);
 			intent.putExtra("first", false);
 			startActivity(intent);
         }
