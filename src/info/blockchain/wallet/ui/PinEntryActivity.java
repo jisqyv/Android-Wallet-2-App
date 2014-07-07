@@ -95,7 +95,7 @@ public class PinEntryActivity extends FragmentActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
         WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		
-//		setContentView(R.layout.activity_pin_entry);
+		setContentView(R.layout.activity_pin_entry);
 		
         Bundle extras = getIntent().getExtras();
         if(extras != null)	{
@@ -120,16 +120,6 @@ public class PinEntryActivity extends FragmentActivity {
             }
         }
         
-        if(creating)	{
-    		setContentView(R.layout.activity_pin_create);
-    		TextView tvHeader = (TextView)findViewById(R.id.header);
-    		tvHeader.setTypeface(TypefaceUtil.getInstance(this).getGravityLightTypeface());
-			tvHeader.setText("create new wallet");
-        }
-        else	{
-    		setContentView(R.layout.activity_pin_entry);
-        }
-
 		Typeface typeface = Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf");  
 		
 		buttonForgot = (Button) findViewById(R.id.buttonForgot);
