@@ -58,14 +58,10 @@ import piuk.blockchain.android.SuccessCallback;
 @SuppressLint("NewApi")
 public class MainActivity extends FragmentActivity implements ActionBar.TabListener, SendFragment.OnCompleteListener {
 
-//    private static int PIN_ENTRY_ACTIVITY 	= 1;
-//    private static int SETUP_ACTIVITY	 	= 2;
-    private static int ABOUT_ACTIVITY 		= 3;
-    private static int PICK_CONTACT 		= 4;
-//    private static int NEARBY_MERCHANTS 	= 5;
-//    private static int SELECT_FIAT		 	= 6;
-    private static int SETTINGS_ACTIVITY	= 7;
-    private static int ADDRESSBOOK_ACTIVITY	= 8;
+    private static int ABOUT_ACTIVITY 		= 1;
+    private static int PICK_CONTACT 		= 2;
+    private static int SETTINGS_ACTIVITY	= 3;
+    private static int ADDRESSBOOK_ACTIVITY	= 4;
 
 	private ViewPager viewPager;
     private TabsPagerAdapter mAdapter;

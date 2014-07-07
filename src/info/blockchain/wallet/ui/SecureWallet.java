@@ -291,7 +291,6 @@ public class SecureWallet extends Activity {
 			if(em.length() > 0 && !emailPattern.matcher(em).matches()) {
 				Toast.makeText(SecureWallet.this, R.string.new_account_password_invalid_email, Toast.LENGTH_LONG).show();
 		    	tgEmail.setChecked(false);
-		    	return;
 			}
 			else {
 				handler = new Handler();

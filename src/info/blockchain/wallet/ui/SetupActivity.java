@@ -59,11 +59,7 @@ public class SetupActivity extends Activity		{
         imgCreate.setTextColor(0xFF1B8AC7);
         imgCreate.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
-//    			Intent intent = new Intent(SetupActivity.this, TOSActivity.class);
-//    			Intent intent = new Intent(SetupActivity.this, CreateWallet.class);
-//    			Intent intent = new Intent(SetupActivity.this, info.blockchain.wallet.ui.PinEntryActivity.class);
     			Intent intent = new Intent(SetupActivity.this, info.blockchain.wallet.ui.PinCreateActivity.class);
-//        		intent.putExtra("N", "1");
     			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
     			startActivity(intent);
             }
@@ -87,8 +83,6 @@ public class SetupActivity extends Activity		{
 		
 		if(resultCode == Activity.RESULT_OK && requestCode == ZBAR_SCANNER_REQUEST)	{
 			String strResult = data.getStringExtra(ZBarConstants.SCAN_RESULT);
-//            Toast.makeText(this, strResult, Toast.LENGTH_SHORT).show();
-            
         	handleQRCode(strResult);
 
         }
