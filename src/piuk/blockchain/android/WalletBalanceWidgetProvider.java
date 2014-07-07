@@ -63,8 +63,7 @@ public class WalletBalanceWidgetProvider extends AppWidgetProvider {
 						context.getPackageName(),
 						R.layout.wallet_balance_widget_content);
 				views.setTextViewText(R.id.widget_wallet_balance, balanceStr);
-				views.setImageViewResource(R.id.widget_app_icon,
-						Constants.APP_ICON_RESID);
+//				views.setImageViewResource(R.id.widget_app_icon, Constants.APP_ICON_RESID);
 				
 				views.setImageViewResource(R.id.scan_button, R.drawable.ic_input_qrcode);
 				views.setImageViewResource(R.id.refresh_button, R.drawable.refresh_icon);

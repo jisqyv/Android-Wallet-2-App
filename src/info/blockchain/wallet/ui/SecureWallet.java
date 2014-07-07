@@ -225,6 +225,7 @@ public class SecureWallet extends Activity {
 			
 			if(pw1.length() < 11 || pw1.length() > 255 || pw1.length() < 11 || pw1.length() > 255) {
 				Toast.makeText(SecureWallet.this, R.string.new_account_password_length_error, Toast.LENGTH_LONG).show();
+		    	tgPassword.setChecked(false);
 				return;
 			}
 			else {
@@ -243,6 +244,7 @@ public class SecureWallet extends Activity {
 			
 			if(!strPw1.equals(pw2)) {
 				Toast.makeText(SecureWallet.this, R.string.new_account_password_mismatch_error, Toast.LENGTH_LONG).show();
+		    	tgPassword.setChecked(false);
 			}
 			else {
 	    		Log.d("SecureWallet", "SecureWallet setTemporyPassword");
@@ -302,7 +304,8 @@ public class SecureWallet extends Activity {
 			
 			if(em.length() > 0 && !emailPattern.matcher(em).matches()) {
 				Toast.makeText(SecureWallet.this, R.string.new_account_password_invalid_email, Toast.LENGTH_LONG).show();
-				return;
+		    	tgEmail.setChecked(false);
+		    	return;
 			}
 			else {
 				handler = new Handler();

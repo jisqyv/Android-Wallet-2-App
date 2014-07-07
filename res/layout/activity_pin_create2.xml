@@ -158,6 +158,92 @@
 
 	    
 	    
+	    
+	    <LinearLayout 
+	        android:id="@+id/confirm_pin"
+    		android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+    		android:orientation="horizontal" 
+	        android:gravity="center_horizontal|center_vertical"
+		    android:layout_gravity="center_horizontal|center_vertical"
+		    android:background="#FFffffff"
+		    android:paddingLeft="40dp"
+		    android:paddingRight="40dp"
+		    android:paddingTop="20dp"
+			>
+
+	        <EditText 
+        	android:id="@+id/pin1_2"
+    		android:layout_width="0dp"
+    		android:layout_height="wrap_content"
+    		android:textSize="24sp"
+    		android:textColor="#FF000000"
+    		android:textStyle="italic"
+			android:textCursorDrawable="@null"
+    		android:layout_weight="1"
+			android:singleLine="true"
+			android:maxLength="1"
+			android:password="true"
+			android:inputType="number"
+	        android:gravity="center_horizontal"
+		    android:layout_gravity="center_horizontal"
+	    	/>
+	        
+	        <EditText 
+        	android:id="@+id/pin2_2"
+    		android:layout_width="0dp"
+    		android:layout_height="wrap_content"
+    		android:textSize="24sp"
+    		android:textColor="#FF000000"
+    		android:textStyle="italic"
+			android:textCursorDrawable="@null"
+    		android:layout_weight="1"
+			android:singleLine="true"
+			android:maxLength="1"
+			android:password="true"
+			android:inputType="number"
+	        android:gravity="center_horizontal"
+		    android:layout_gravity="center_horizontal"
+	    	/>
+
+	        <EditText 
+        	android:id="@+id/pin3_2"
+    		android:layout_width="0dp"
+    		android:layout_height="wrap_content"
+    		android:textSize="24sp"
+    		android:textColor="#FF000000"
+    		android:textStyle="italic"
+			android:textCursorDrawable="@null"
+    		android:layout_weight="1"
+			android:singleLine="true"
+			android:maxLength="1"
+			android:password="true"
+			android:inputType="number"
+	        android:gravity="center_horizontal"
+		    android:layout_gravity="center_horizontal"
+	    	/>
+	        	        	        
+	        <EditText 
+        	android:id="@+id/pin4_2"
+    		android:layout_width="0dp"
+    		android:layout_height="wrap_content"
+    		android:textSize="24sp"
+    		android:textColor="#FF000000"
+    		android:textStyle="italic"
+			android:textCursorDrawable="@null"
+    		android:layout_weight="1"
+			android:singleLine="true"
+			android:maxLength="1"
+			android:password="true"
+			android:inputType="number"
+	        android:gravity="center_horizontal"
+		    android:layout_gravity="center_horizontal"
+	    	/>
+	        	        	        	        	        	        	        
+	    </LinearLayout>
+	    
+	    
+	    
 	    <LinearLayout 
 	        android:id="@+id/tos"
     		android:layout_width="match_parent"
@@ -180,6 +266,7 @@
         android:gravity="center_horizontal|left"
         android:layout_gravity="center_horizontal|left"
         android:textAlignment="gravity"
+	    android:layout_marginBottom="10dp"
     	/>
 	        
 		<CheckBox
@@ -206,45 +293,6 @@
     android:layout_weight="1"
     android:background="#FF039BD3"
     android:orientation="horizontal"
-    >
-	<LinearLayout 
-    	android:layout_width="0dp" 
-    	android:layout_height="match_parent"
-    	android:layout_weight="1"
-    	android:background="#FF039BD3"
-    	android:orientation="horizontal"
-    	android:gravity="center_vertical|center_horizontal"
-    	android:layout_gravity="center_vertical|center_horizontal"
-	    >
-    <ImageView
-        android:src="@drawable/info_icon"
-        android:scaleType="centerInside"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
     />
-    </LinearLayout>
-    <LinearLayout 
-    	android:layout_width="0dp" 
-    	android:layout_height="match_parent"
-    	android:layout_weight="5"
-    	android:background="#FF039BD3"
-    	android:orientation="horizontal"
-    	android:gravity="center_vertical|left"
-    	android:layout_gravity="center_vertical|left"
-	    >
-        <TextView 
-        android:id="@+id/footer"
-    	android:layout_width="wrap_content"
-    	android:layout_height="match_parent"
-    	android:textSize="12sp"
-        android:gravity="center_vertical|left"
-        android:layout_gravity="center_vertical|left"
-        android:textAlignment="gravity"
-        android:textColor="#FFffffff"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp"
-    	/>
-    </LinearLayout>
-</LinearLayout>
 	    
 </LinearLayout>
