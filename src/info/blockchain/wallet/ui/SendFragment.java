@@ -113,7 +113,7 @@ public class SendFragment extends Fragment   {
     private static int SCAN_PRIVATE_KEY_FOR_SENDING = 1;
 	private static int PICK_CONTACT = 10;
 	private static int SELECT_INTL_PREFIX = 11;
-	private static int ZBAR_SCANNER_REQUEST = 2026;
+	public static int ZBAR_SCANNER_REQUEST = 2026;
 
 	private static int CURRENT_SEND = SIMPLE_SEND;
 
@@ -1161,6 +1161,8 @@ public class SendFragment extends Fragment   {
 	    tvCurrency.setTypeface(TypefaceUtil.getInstance(getActivity()).getBTCTypeface());
 	    tvCurrency.setText(Character.toString((char)TypefaceUtil.getInstance(getActivity()).getBTCSymbol()));
 
+	    mListener.onComplete();
+
         return rootView;
     }
 
@@ -1173,6 +1175,23 @@ public class SendFragment extends Fragment   {
     	}
     }    
     
+    public static interface OnCompleteListener {
+        public abstract void onComplete();
+    }
+
+    private OnCompleteListener mListener;
+
+    @Override
+    public void onAttach(Activity activity) {
+    	super.onAttach(activity);
+    	try {
+            this.mListener = (OnCompleteListener)activity;
+        }
+        catch (final ClassCastException e) {
+            throw new ClassCastException(activity.toString() + " must implement OnCompleteListener");
+        }
+    }
+    
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
@@ -1184,7 +1203,7 @@ public class SendFragment extends Fragment   {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
             strCurrentFiatCode = prefs.getString("ccurrency", "USD");
             strCurrentFiatSymbol = prefs.getString(strCurrentFiatCode + "-SYM", "$");
-            
+
             if(isBTC) {
         		tvAmount2.setText(tvAmount2.getText().toString().substring(0, tvAmount2.getText().toString().length() - 4) + " " + strCurrentFiatCode);
             }
@@ -1201,7 +1220,6 @@ public class SendFragment extends Fragment   {
             	isKeyboard = false;
             }
         }
-
     }
 
     @Override

@@ -96,7 +96,17 @@ public class WalletApplication extends Application {
 	public Pair<Block, Integer> blockExplorerBlockPair;
 	public long earliestKeyTime;
 	private volatile boolean checkWalletStatusScheduled = false;
-
+    private boolean isPassedPinScreen = false;
+    
+    public boolean getIsPassedPinScreen(){
+        return isPassedPinScreen;
+    }
+    
+    public void setIsPassedPinScreen(boolean isPassPinScreen){
+        this.isPassedPinScreen = isPassPinScreen;
+    }
+  
+    
 	private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver()
 	{
 		@Override
