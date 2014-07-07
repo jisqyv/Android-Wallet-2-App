@@ -66,7 +66,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 //    private static int SELECT_FIAT		 	= 6;
     private static int SETTINGS_ACTIVITY	= 7;
     private static int ADDRESSBOOK_ACTIVITY	= 8;
-    private static int TOS_ACTIVITY			= 9;
 
 	private ViewPager viewPager;
     private TabsPagerAdapter mAdapter;
@@ -466,11 +465,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     private void doAddressBook()	{
     	Intent intent = new Intent(MainActivity.this, info.blockchain.wallet.ui.AddressBookActivity.class);
 		startActivityForResult(intent, ADDRESSBOOK_ACTIVITY);
-    }
-
-    private void doTOS()	{
-    	Intent intent = new Intent(MainActivity.this, info.blockchain.wallet.ui.TOSActivity.class);
-		startActivityForResult(intent, TOS_ACTIVITY);
     }
 
     private void doSend2Friends()	{

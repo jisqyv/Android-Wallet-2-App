@@ -198,80 +198,66 @@ public class PinEntryActivity extends FragmentActivity {
 		    				if(userInput != null)	{
 		    					if(userInput.equals(userEntered))	{
 		    						
-		    						if(creating)	{
-		    							//
-		    							// TOS
-		    							//
-							        	Intent intent = new Intent(PinEntryActivity.this, TOSActivity.class);
-							        	intent.putExtra("P", userEntered);
-										intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-							    		startActivity(intent);
-		    						}
-		    						else	{
-		    							
-										new Thread(new Runnable(){
-										    @Override
-										    public void run() {
-										    	
-												Looper.prepare();
+									new Thread(new Runnable(){
+									    @Override
+									    public void run() {
+									    	
+											Looper.prepare();
 
-												final WalletApplication application = (WalletApplication) getApplication();
-												Editor edit = PreferenceManager.getDefaultSharedPreferences(PinEntryActivity.this).edit();
+											final WalletApplication application = (WalletApplication) getApplication();
+											Editor edit = PreferenceManager.getDefaultSharedPreferences(PinEntryActivity.this).edit();
 
-												//
-												// Save PIN
-												//
-										        try {
-													byte[] bytes = new byte[16];
-													SecureRandom random = new SecureRandom();
-													random.nextBytes(bytes);
-													final String key = new String(Hex.encode(bytes), "UTF-8");
-													random.nextBytes(bytes);
-													final String value = new String(Hex.encode(bytes), "UTF-8");
-													final JSONObject response = piuk.blockchain.android.ui.PinEntryActivity.apiStoreKey(key, value, userInput);
-													if (response.get("success") != null) {
-														
-														edit.putString("pin_kookup_key", key);
-														edit.putString("encrypted_password", MyWallet.encrypt(application.getRemoteWallet().getTemporyPassword(), value, piuk.blockchain.android.ui.PinEntryActivity.PBKDF2Iterations));
+											//
+											// Save PIN
+											//
+									        try {
+												byte[] bytes = new byte[16];
+												SecureRandom random = new SecureRandom();
+												random.nextBytes(bytes);
+												final String key = new String(Hex.encode(bytes), "UTF-8");
+												random.nextBytes(bytes);
+												final String value = new String(Hex.encode(bytes), "UTF-8");
+												final JSONObject response = piuk.blockchain.android.ui.PinEntryActivity.apiStoreKey(key, value, userInput);
+												if (response.get("success") != null) {
+													
+													edit.putString("pin_kookup_key", key);
+													edit.putString("encrypted_password", MyWallet.encrypt(application.getRemoteWallet().getTemporyPassword(), value, piuk.blockchain.android.ui.PinEntryActivity.PBKDF2Iterations));
 
-														if (!edit.commit()) {
-															throw new Exception("Error Saving Preferences");
-														}
-														else {
-															Toast.makeText(PinEntryActivity.this, "PIN saved", Toast.LENGTH_SHORT).show();	
-												        	Intent intent = new Intent(PinEntryActivity.this, MainActivity.class);
-															intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-												    		startActivity(intent);
-														}
-
+													if (!edit.commit()) {
+														throw new Exception("Error Saving Preferences");
 													}
 													else {
-
-														Toast.makeText(application, response.toString(), Toast.LENGTH_LONG).show();
-
 														Toast.makeText(PinEntryActivity.this, "PIN saved", Toast.LENGTH_SHORT).show();	
 											        	Intent intent = new Intent(PinEntryActivity.this, MainActivity.class);
-														String navigateTo = getIntent().getStringExtra("navigateTo");
-														intent.putExtra("navigateTo", navigateTo);   
 														intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
 											    		startActivity(intent);
-
 													}
-										        } catch (Exception e) {
-													Toast.makeText(application, e.toString(), Toast.LENGTH_LONG).show();
-										            e.printStackTrace();
-										        }
-												//
-												//
-												//
-										        
-												Looper.loop();
 
-										    }
-										}).start();
+												}
+												else {
 
-		    							
-		    						}
+													Toast.makeText(application, response.toString(), Toast.LENGTH_LONG).show();
+
+													Toast.makeText(PinEntryActivity.this, "PIN saved", Toast.LENGTH_SHORT).show();	
+										        	Intent intent = new Intent(PinEntryActivity.this, MainActivity.class);
+													String navigateTo = getIntent().getStringExtra("navigateTo");
+													intent.putExtra("navigateTo", navigateTo);   
+													intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+										    		startActivity(intent);
+
+												}
+									        } catch (Exception e) {
+												Toast.makeText(application, e.toString(), Toast.LENGTH_LONG).show();
+									            e.printStackTrace();
+									        }
+											//
+											//
+											//
+									        
+											Looper.loop();
+
+									    }
+									}).start();
 
 		    						
 		    					}

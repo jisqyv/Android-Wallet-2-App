@@ -85,20 +85,6 @@ public class SecureWallet extends Activity {
 
 	    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-	    /*
-        Bundle extras = getIntent().getExtras();
-        if(extras != null)	{
-            if(extras.getString("P") != null && extras.getString("P").length() == 4)	{
-            	strPIN = extras.getString("P");
-            }
-            else	{
-	        	Intent intent = new Intent(CreateWallet.this, SetupActivity.class);
-				intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-	    		startActivity(intent);
-            }
-        }
-        */
-
 		prefs = PreferenceManager.getDefaultSharedPreferences(this);
 	    creating = prefs.getBoolean("Creating1", true);
 		edit = prefs.edit();
