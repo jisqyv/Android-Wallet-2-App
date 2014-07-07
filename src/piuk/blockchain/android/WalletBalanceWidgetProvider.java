@@ -65,11 +65,6 @@ public class WalletBalanceWidgetProvider extends AppWidgetProvider {
 	
 	public static void updateViewItems(Context context, RemoteViews views, BigInteger balance) {
 		views.setTextViewText(R.id.widget_wallet_balance, BlockchainUtil.formatBitcoin(balance));
-
-		views.setImageViewResource(R.id.scan_button, R.drawable.top_camera_icon);
-		views.setImageViewResource(R.id.refresh_button, R.drawable.refresh_icon);
-		views.setImageViewResource(R.id.send_button, R.drawable.red_arrow);
-
 		registerButtons(context, views);
 	}
 	
