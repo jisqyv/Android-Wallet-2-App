@@ -62,12 +62,12 @@
     	android:layout_height="wrap_content"
     	android:textSize="14sp"
     	android:textStyle="bold"
-        android:gravity="center_vertical|left"
-        android:layout_gravity="center_vertical|left"
+        android:gravity="center_vertical|center_horizontal"
+        android:layout_gravity="center_vertical|center_horizontal"
         android:textAlignment="gravity"
 	    android:layout_marginLeft="20dp"
 	    android:layout_marginRight="20dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="10dp"
     	/>
 	</LinearLayout>
 

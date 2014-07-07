@@ -113,7 +113,7 @@ public class SecureWallet extends Activity {
 
 		tvFooter = (TextView)findViewById(R.id.footer);
 		if(creating) {
-			tvFooter.setText("It is very important that you enable the suggested security features. Enabling these features ensures you are always in full control of your bitcoin and your wallet at all times. This message will continue to display until you enable all suggested features.");
+			tvFooter.setText("Enabling these security options ensures you are always in full control of your wallet and your bitcoin. This message will appear until you enable all options.");
 		}
 		else {
 			tvFooter.setText("This message will display every time you launch your blockchain wallet until the security features are activated.");
@@ -124,7 +124,8 @@ public class SecureWallet extends Activity {
 			tvWarning1.setText("Your Wallet Is Ready!");
 		}
 		else {
-			tvWarning1.setText("");
+//			tvWarning1.setText("");
+			tvWarning1.setVisibility(View.GONE);
 		}
 
 		tvWarning2 = (TextView)findViewById(R.id.warning2);
@@ -199,7 +200,7 @@ public class SecureWallet extends Activity {
              	 	startActivityForResult(intent, EDIT_PASSWORD);            	
                     }
                  else {
-                        Toast.makeText(SecureWallet.this, "PW Off", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(SecureWallet.this, "PW Off", Toast.LENGTH_SHORT).show();
                  }
             }
         });
@@ -215,7 +216,7 @@ public class SecureWallet extends Activity {
                 	 	startActivityForResult(intent, EDIT_EMAIL);            	
                     }
                  else {
-                        Toast.makeText(SecureWallet.this, "EM Off", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(SecureWallet.this, "EM Off", Toast.LENGTH_SHORT).show();
                  }
             }
         });
