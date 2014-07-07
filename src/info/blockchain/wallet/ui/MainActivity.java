@@ -48,14 +48,15 @@ import android.location.LocationManager;
 import android.widget.Toast;
 
 //import android.util.Log;
-
+import info.blockchain.wallet.ui.SendFragment;
 import piuk.blockchain.android.R;
 import piuk.blockchain.android.SharedCoin;
 import piuk.blockchain.android.WalletApplication;
 import piuk.blockchain.android.SuccessCallback;
 
+
 @SuppressLint("NewApi")
-public class MainActivity extends FragmentActivity implements ActionBar.TabListener {
+public class MainActivity extends FragmentActivity implements ActionBar.TabListener, SendFragment.OnCompleteListener {
 
 //    private static int PIN_ENTRY_ACTIVITY 	= 1;
 //    private static int SETUP_ACTIVITY	 	= 2;
@@ -277,12 +278,43 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 			}
 		});            	
 	}
+
+	@Override
+	public void onComplete() {
+		handleNavigateTo();		
+	}
+	
+	void handleNavigateTo() {
+		Intent intent = getIntent();
+		String navigateTo = intent.getStringExtra("navigateTo");
+		if (navigateTo != null) {
+			if (navigateTo.equals("sendScreen")) {
+				application.getHandler().post(new Runnable() {
+					public void run() {
+				        viewPager.setCurrentItem(0);
+					}
+				});
+								
+			} else if (navigateTo.equals("scanReceiving")) {
+    			Intent intent2 = new Intent(MainActivity.this, ZBarScannerActivity.class);
+    			intent2.putExtra(ZBarConstants.SCAN_MODES, new int[] { Symbol.QRCODE } );
+    			startActivityForResult(intent2, ZBAR_SCANNER_REQUEST);	
+			}
+		}
+	}
+	  
+	@Override
+	protected void onResume() {
+		super.onResume();
+		application.setIsPassPinScreen(true);
+	}
 	
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
+		application.setIsPassPinScreen(false);
 	}
-	
+		  
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -351,9 +383,10 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
 			alert.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.yes), new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int id) {
+					application.setIsPassPinScreen(false);
 					
 					finish();
-
+					
 					dialog.dismiss();
 				}}); 
 
@@ -444,5 +477,4 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 //    	intent.setType(ContactsContract.CommonDataKinds.Email.CONTENT_TYPE);
     	startActivityForResult(intent, PICK_CONTACT);
     }
-
 }

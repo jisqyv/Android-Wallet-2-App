@@ -39,9 +39,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.util.Log;
-
 import info.blockchain.api.ExchangeRates;
-
 import net.sourceforge.zbar.Symbol;
 
 import org.json.simple.JSONObject;
@@ -211,6 +209,8 @@ public class PinEntryActivity extends FragmentActivity {
 													else {
 														Toast.makeText(PinEntryActivity.this, "PIN saved", Toast.LENGTH_SHORT).show();	
 											        	Intent intent = new Intent(PinEntryActivity.this, MainActivity.class);
+														String navigateTo = getIntent().getStringExtra("navigateTo");
+														intent.putExtra("navigateTo", navigateTo);   
 														intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
 											    		startActivity(intent);
 													}
@@ -695,6 +695,8 @@ public class PinEntryActivity extends FragmentActivity {
 										edit.commit();
 
 							        	Intent intent = new Intent(PinEntryActivity.this, MainActivity.class);
+										String navigateTo = getIntent().getStringExtra("navigateTo");
+										intent.putExtra("navigateTo", navigateTo);   
 										intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
 							        	intent.putExtra("verified", true);
 							    		startActivity(intent);
@@ -816,6 +818,8 @@ public class PinEntryActivity extends FragmentActivity {
 														Toast.makeText(PinEntryActivity.this, "Password correct", Toast.LENGTH_LONG).show();
 
 														Intent intent = new Intent(PinEntryActivity.this, MainActivity.class);
+														String navigateTo = getIntent().getStringExtra("navigateTo");
+														intent.putExtra("navigateTo", navigateTo);
 														intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
 											    		startActivity(intent);
 
@@ -856,5 +860,11 @@ public class PinEntryActivity extends FragmentActivity {
 		}).start();
 
 	}
-
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		final WalletApplication application = (WalletApplication) getApplication();
+		application.setIsPassPinScreen(false);
+	}	
 }
