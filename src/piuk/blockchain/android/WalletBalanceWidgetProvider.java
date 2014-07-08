@@ -42,7 +42,7 @@ import piuk.blockchain.android.ui.WalletActivity;
  * @author Andreas Schildbach
  */
 public class WalletBalanceWidgetProvider extends AppWidgetProvider {
-	final public static String ACTION_WIDGET_SEND_SCREEN ="piuk.blockchain.android.intent.action.ACTION_WIDGET_SEND_SCREEN";
+	final public static String ACTION_WIDGET_MERCHANT_DIRECTORY ="piuk.blockchain.android.intent.action.ACTION_WIDGET_MERCHANT_DIRECTORY";
 	final public static String ACTION_WIDGET_SCAN_RECEIVING ="piuk.blockchain.android.intent.action.ACTION_WIDGET_SCAN_RECEIVING";
 	final public static String ACTION_WIDGET_REFRESH_BALANCE ="piuk.blockchain.android.intent.action.ACTION_WIDGET_REFRESH_BALANCE";
 
@@ -75,8 +75,8 @@ public class WalletBalanceWidgetProvider extends AppWidgetProvider {
 		remoteViews.setOnClickPendingIntent(R.id.refresh_button,
                 buildButtonPendingIntent(context, ACTION_WIDGET_REFRESH_BALANCE));
 
-		remoteViews.setOnClickPendingIntent(R.id.send_button,
-                buildButtonPendingIntent(context, ACTION_WIDGET_SEND_SCREEN));
+		remoteViews.setOnClickPendingIntent(R.id.merchant_directory_button,
+                buildButtonPendingIntent(context, ACTION_WIDGET_MERCHANT_DIRECTORY));
 	}
 	
 	public void updateBalance(final Context context, final RemoteViews remoteViews) {
@@ -133,7 +133,7 @@ public class WalletBalanceWidgetProvider extends AppWidgetProvider {
 
 		RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.wallet_balance_widget_content);
 
-		if (action.equals(WalletBalanceWidgetProvider.ACTION_WIDGET_SEND_SCREEN)) {
+		if (action.equals(WalletBalanceWidgetProvider.ACTION_WIDGET_MERCHANT_DIRECTORY)) {
 			boolean isPassPinScreen = ((WalletApplication)context.getApplicationContext()).getIsPassedPinScreen();
 			final Intent navigateIntent;
 			if (isPassPinScreen) {
@@ -142,7 +142,7 @@ public class WalletBalanceWidgetProvider extends AppWidgetProvider {
 				navigateIntent = new Intent(context, PinEntryActivity.class);
 			}
 			
-            navigateIntent.putExtra("navigateTo", "sendScreen");            
+            navigateIntent.putExtra("navigateTo", "merchantDirectory");            
             remoteViews.setOnClickPendingIntent(R.id.widget_frame,
                             PendingIntent.getActivity(context, 0, navigateIntent, 0));            
             navigateIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);

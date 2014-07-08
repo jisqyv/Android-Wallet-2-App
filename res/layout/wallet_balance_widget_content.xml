@@ -38,13 +38,6 @@
 			android:textSize="16sp" />
 
 	    <Button
-	        android:id="@+id/scan_button"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-            android:background="@drawable/top_camera_icon"
-            android:text=""	        
-	        />	
-	    <Button
 	        android:id="@+id/refresh_button"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
@@ -52,12 +45,19 @@
             android:text=""	        
 	        />		        	
 	    <Button
-	        android:id="@+id/send_button"
+	        android:id="@+id/merchant_directory_button"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"		
             android:background="@drawable/red_arrow"
             android:text=""	        
 	        />			
+	    <Button
+	        android:id="@+id/scan_button"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+            android:background="@drawable/top_camera_icon"
+            android:text=""	        
+	        />		        
 	</LinearLayout>
 
 </LinearLayout>

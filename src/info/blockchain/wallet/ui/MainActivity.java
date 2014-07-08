@@ -284,13 +284,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 		Intent intent = getIntent();
 		String navigateTo = intent.getStringExtra("navigateTo");
 		if (navigateTo != null) {
-			if (navigateTo.equals("sendScreen")) {
-				application.getHandler().post(new Runnable() {
-					public void run() {
-				        viewPager.setCurrentItem(0);
-					}
-				});
-								
+			if (navigateTo.equals("merchantDirectory")) {
+				doMerchantDirectory();
 			} else if (navigateTo.equals("scanReceiving")) {
     			Intent intent2 = new Intent(MainActivity.this, ZBarScannerActivity.class);
     			intent2.putExtra(ZBarConstants.SCAN_MODES, new int[] { Symbol.QRCODE } );
