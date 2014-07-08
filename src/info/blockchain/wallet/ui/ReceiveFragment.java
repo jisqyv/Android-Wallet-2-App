@@ -138,6 +138,24 @@ public class ReceiveFragment extends Fragment   {
 
         ivReceivingQR = (ImageView)rootView.findViewById(R.id.qr);
         ivReceivingQR.setVisibility(View.INVISIBLE);
+        
+        
+        ivReceivingQR.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+    			android.content.ClipboardManager clipboard = (android.content.ClipboardManager)getActivity().getSystemService(android.content.Context.CLIPBOARD_SERVICE);
+    		    android.content.ClipData clip = null;
+	        	if (currentSelectedAddress != null) {
+	    		    clip = android.content.ClipData.newPlainText("Send address", currentSelectedAddress);
+	    			Toast.makeText(getActivity(), R.string.copied_address_to_clipboard, Toast.LENGTH_LONG).show();
+	        	} else {
+	    		    clip = android.content.ClipData.newPlainText("Send address", edAddress.getText().toString());
+	    			Toast.makeText(getActivity(), R.string.copied_address_to_clipboard, Toast.LENGTH_LONG).show();
+	        	}
+    		    clipboard.setPrimaryClip(clip);
+            }
+      	});
+        
         ivReceivingQR.setOnLongClickListener(new View.OnLongClickListener() {
       	  public boolean onLongClick(View view) {
     			
@@ -156,10 +174,8 @@ public class ReceiveFragment extends Fragment   {
     		    android.content.ClipData clip = null;
 	        	if (currentSelectedAddress != null) {
 	    		    clip = android.content.ClipData.newPlainText("Send address", currentSelectedAddress);
-	    			Toast.makeText(getActivity(), R.string.copied_address_to_clipboard, Toast.LENGTH_LONG).show();
 	        	} else {
 	    		    clip = android.content.ClipData.newPlainText("Send address", edAddress.getText().toString());
-	    			Toast.makeText(getActivity(), R.string.copied_address_to_clipboard, Toast.LENGTH_LONG).show();
 	        	}
     		    clipboard.setPrimaryClip(clip);
 
