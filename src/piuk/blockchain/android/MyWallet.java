@@ -63,7 +63,7 @@ public class MyWallet {
 	public String temporySecondPassword;
 	public static final double SupportedEncryptionVersion = 2.0;
 
-	public static final NetworkParameters params = MainNetParams.get();
+	private static final NetworkParameters params = MainNetParams.get();
 	public static byte[] extra_seed;
 
 	@SuppressWarnings("unchecked")
@@ -550,7 +550,7 @@ public class MyWallet {
 
 	public Wallet getBitcoinJWallet() throws Exception {
 		// Construct a BitcoinJ wallet containing all our private keys
-		Wallet keywallet = new WalletOverride(params);
+		Wallet keywallet = new WalletOverride(getParams());
 
 		addKeysTobitoinJWallet(keywallet, false, 0);
 
@@ -559,7 +559,7 @@ public class MyWallet {
 
 
 	public synchronized boolean removeKey(ECKey key) {
-		final String address = key.toAddress(params).toString();
+		final String address = key.toAddress(getParams()).toString();
 
 		final List<Map<String, Object>> keyMap = getKeysMap();
 
@@ -842,5 +842,9 @@ public class MyWallet {
 
 	public ECKey decodePK(String base58Priv) throws Exception {
 		return decodeBase58PK(decryptPK(base58Priv));
+	}
+
+	public static NetworkParameters getParams() {
+		return params;
 	}
 }

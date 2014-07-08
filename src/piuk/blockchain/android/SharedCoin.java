@@ -128,7 +128,7 @@ public class SharedCoin {
 		this.extra_private_keys = new HashMap<String,String>();
 		this.remoteWallet = remoteWallet;
 		this.application = application;
-		this.params = this.remoteWallet.params;
+		this.params = MyRemoteWallet.getParams();
 	}
 	
 	public static SharedCoin getInstance(WalletApplication application, MyRemoteWallet remoteWallet) {				

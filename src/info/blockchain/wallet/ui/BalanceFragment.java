@@ -177,7 +177,7 @@ public class BalanceFragment extends Fragment   {
         		Script script = transactionOutput.getScriptPubKey();
         		String addr = null;
         		if (script != null)
-        			addr = script.getToAddress(remoteWallet.params).toString();
+        			addr = script.getToAddress(MyRemoteWallet.getParams()).toString();
 
         		addressesPartOfLastSentTransaction.add(addr);
             } catch (ScriptException e) {
@@ -783,7 +783,7 @@ public class BalanceFragment extends Fragment   {
 	        		Script script = transactionOutput.getScriptPubKey();
 	        		String addr = null;
 	        		if (script != null) {
-	        			addr = script.getToAddress(remoteWallet.params).toString();
+	        			addr = script.getToAddress(MyRemoteWallet.getParams()).toString();
 		        		if (addr != null && addr.equals(address)) {
 		        			filteredTxList.add(transaction);
 //		    				Log.d("TxBitmapPrep", transaction.getHashAsString() + " contains:" + addr);
@@ -851,7 +851,7 @@ public class BalanceFragment extends Fragment   {
 	        		Script script = transactionOutput.getScriptPubKey();
 	        		String addr = null;
 	        		if (script != null) {
-	        			addr = script.getToAddress(remoteWallet.params).toString();
+	        			addr = script.getToAddress(MyRemoteWallet.getParams()).toString();
 		        		if (addr != null) {
 			        		if(addr.equals(address)) {
 			        			result = result.add(transactionOutput.getValue());

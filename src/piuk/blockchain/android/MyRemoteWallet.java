@@ -647,10 +647,10 @@ public class MyRemoteWallet extends MyWallet {
 
 						final ECKey eckey = new ECKey(bytes, null);
 
-				        final DumpedPrivateKey dumpedPrivateKey1 = eckey.getPrivateKeyEncoded(params);
+				        final DumpedPrivateKey dumpedPrivateKey1 = eckey.getPrivateKeyEncoded(getParams());
 				        String privateKey1 = Base58.encode(dumpedPrivateKey1.bytes);
 
-				        final String toAddress = eckey.toAddress(params).toString();
+				        final String toAddress = eckey.toAddress(getParams()).toString();
 						Log.d("sendCoinsToFriend", "generateNewMiniPrivateKey: minikey: " + minikey);
 						Log.d("sendCoinsToFriend", "generateNewMiniPrivateKey: privateKey: " + privateKey1);
 						Log.d("sendCoinsToFriend", "generateNewMiniPrivateKey: address: " + toAddress);
@@ -705,10 +705,10 @@ public class MyRemoteWallet extends MyWallet {
 
 					progress.onProgress("Constructing Transaction");
 
-			        final DumpedPrivateKey dumpedPrivateKey = key.getPrivateKeyEncoded(params);
+			        final DumpedPrivateKey dumpedPrivateKey = key.getPrivateKeyEncoded(getParams());
 			        String privateKey = Base58.encode(dumpedPrivateKey.bytes);
 
-			        final String toAddress = key.toAddress(params).toString();
+			        final String toAddress = key.toAddress(getParams()).toString();
 					Log.d("sendCoinsToFriend", "sendCoinsToFriend: privateKey: " + privateKey);
 					Log.d("sendCoinsToFriend", "sendCoinsToFriend: toAddress: " + toAddress);
 					BigInteger fee = BigInteger.ZERO;
@@ -986,7 +986,7 @@ public class MyRemoteWallet extends MyWallet {
 			fee = BigInteger.ZERO;
 
 		//Construct a new transaction
-		Transaction tx = new Transaction(params);
+		Transaction tx = new Transaction(getParams());
 
 		BigInteger outputValueSum = BigInteger.ZERO;
 
@@ -1002,7 +1002,7 @@ public class MyRemoteWallet extends MyWallet {
 			//Add the output
 			BitcoinScript toOutputScript = BitcoinScript.createSimpleOutBitoinScript(new BitcoinAddress(toAddress));
 
-			TransactionOutput output = new TransactionOutput(params, null, amount, toOutputScript.getProgram());
+			TransactionOutput output = new TransactionOutput(getParams(), null, amount, toOutputScript.getProgram());
 
 			tx.addOutput(output);
 		}
@@ -1028,7 +1028,7 @@ public class MyRemoteWallet extends MyWallet {
 			if (isSimpleSend && receivingAddresses.get(address) != null)
 				continue;
 
-			MyTransactionInput input = new MyTransactionInput(params, null, new byte[0], outPoint);
+			MyTransactionInput input = new MyTransactionInput(getParams(), null, new byte[0], outPoint);
 
 			input.outpoint = outPoint;
 
@@ -1065,7 +1065,7 @@ public class MyRemoteWallet extends MyWallet {
 			} else {
 				throw new Exception("Invalid transaction attempt");
 			}
-			TransactionOutput change_output = new TransactionOutput(params, null, change, change_script.getProgram());
+			TransactionOutput change_output = new TransactionOutput(getParams(), null, change, change_script.getProgram());
 
 			tx.addOutput(change_output);				
 		}
@@ -1089,7 +1089,7 @@ public class MyRemoteWallet extends MyWallet {
 			fee = BigInteger.ZERO;
 
 		//Construct a new transaction
-		Transaction tx = new Transaction(params);
+		Transaction tx = new Transaction(getParams());
 
 		BigInteger outputValueSum = BigInteger.ZERO;
 
@@ -1105,7 +1105,7 @@ public class MyRemoteWallet extends MyWallet {
 			//Add the output
 			BitcoinScript toOutputScript = BitcoinScript.createSimpleOutBitoinScript(new BitcoinAddress(toAddress));
 
-			TransactionOutput output = new TransactionOutput(params, null, amount, toOutputScript.getProgram());
+			TransactionOutput output = new TransactionOutput(getParams(), null, amount, toOutputScript.getProgram());
 			tx.addOutput(output);
 		}
 
@@ -1138,7 +1138,7 @@ public class MyRemoteWallet extends MyWallet {
 				addressTotalUnspentValues.put(address, addressTotalUnspentValue.add(outPoint.value));
 			}
 
-			MyTransactionInput input = new MyTransactionInput(params, null, new byte[0], outPoint);
+			MyTransactionInput input = new MyTransactionInput(getParams(), null, new byte[0], outPoint);
 
 			input.outpoint = outPoint;
 
@@ -1185,7 +1185,7 @@ public class MyRemoteWallet extends MyWallet {
 	    			//Add the output
 	    			BitcoinScript toOutputScript = BitcoinScript.createSimpleOutBitoinScript(new BitcoinAddress(address));
 
-	    			TransactionOutput output = new TransactionOutput(params, null, addressChangeAmount, toOutputScript.getProgram());
+	    			TransactionOutput output = new TransactionOutput(getParams(), null, addressChangeAmount, toOutputScript.getProgram());
 
 	    			tx.addOutput(output);        		
 	        	}
@@ -1205,7 +1205,7 @@ public class MyRemoteWallet extends MyWallet {
     			//Add the output
     			BitcoinScript toOutputScript = BitcoinScript.createSimpleOutBitoinScript(new BitcoinAddress(changeAddress));
 
-    			TransactionOutput output = new TransactionOutput(params, null, addressChangeAmountSum.subtract(fee), toOutputScript.getProgram());
+    			TransactionOutput output = new TransactionOutput(getParams(), null, addressChangeAmountSum.subtract(fee), toOutputScript.getProgram());
     			tx.addOutput(output);        		
         	}
 		}
