@@ -12,6 +12,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import net.sourceforge.zbar.Symbol;
+
 //import org.json.simple.JSONObject;
 
 import piuk.blockchain.android.MyRemoteWallet;
@@ -58,6 +60,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.text.InputType;
 import android.util.Log;
 
+import com.dm.zbar.android.scanner.ZBarConstants;
+import com.dm.zbar.android.scanner.ZBarScannerActivity;
 import com.google.bitcoin.uri.BitcoinURI;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
@@ -91,12 +95,20 @@ public class ReceiveFragment extends Fragment   {
     private View childList = null;
     private ListView magicList = null;
 
-    private ImageView ivAddresses = null;
-    private ImageView ivContacts = null;
-    private ImageView ivPhoneContacts = null;
+    private LinearLayout layoutAddresses = null;
+    private LinearLayout layoutContacts = null;
+    private LinearLayout layoutPhoneContacts = null;
+    private TextView tvAddresses = null;
+    private TextView tvContacts = null;
+    private TextView tvPhoneContacts = null;
 
-    private ImageView ivInputToggle = null;
-    private boolean isKeyboard = true;
+    private LinearLayout icon_row = null;
+    private LinearLayout magic_contacts = null;
+    private LinearLayout magic_qr = null;
+    private LinearLayout magic_keyboard = null;
+
+    private ImageView ivClearInput = null;
+    private boolean isKeyboard = false;
 
     private List<HashMap<String,String>> magicData = null;
     private List<HashMap<String,String>> filteredDisplayList = null;
@@ -223,13 +235,16 @@ public class ReceiveFragment extends Fragment   {
             }
         });
 
-        ivInputToggle = (ImageView)rootView.findViewById(R.id.input_toggle);
-        ivInputToggle.setImageResource(R.drawable.keyboard_icon);
+        ivClearInput = (ImageView)rootView.findViewById(R.id.input_toggle);
 
     	LinearLayout divider1 = (LinearLayout)rootView.findViewById(R.id.divider1);
     	divider1.setBackgroundColor(BlockchainUtil.BLOCKCHAIN_GREEN);
     	LinearLayout divider2 = (LinearLayout)rootView.findViewById(R.id.divider2);
     	divider2.setBackgroundColor(BlockchainUtil.BLOCKCHAIN_GREEN);
+    	LinearLayout divider3 = (LinearLayout)rootView.findViewById(R.id.divider3);
+    	divider3.setBackgroundColor(BlockchainUtil.BLOCKCHAIN_GREEN);
+    	LinearLayout divider4 = (LinearLayout)rootView.findViewById(R.id.divider4);
+    	divider4.setBackgroundColor(BlockchainUtil.BLOCKCHAIN_GREEN);
 
         ((ImageView)rootView.findViewById(R.id.direction)).setImageResource(R.drawable.green_arrow);
         ((TextView)rootView.findViewById(R.id.currency)).setText(strCurrentFiatSymbol);
@@ -333,13 +348,10 @@ public class ReceiveFragment extends Fragment   {
         				tvAmount2.setText(BlockchainUtil.Fiat2BTC(edAmount1.getText().toString()) + " BTC");
         			}
 
-        			isKeyboard = false;
-        			ivInputToggle.setImageResource(R.drawable.clear_icon);
+        			ivClearInput.setVisibility(View.VISIBLE);
         		}
         		else {
-//        			ivInputToggle.setVisibility(View.INVISIBLE);
-        			isKeyboard = true;
-        			ivInputToggle.setImageResource(R.drawable.keyboard_icon);
+        			ivClearInput.setVisibility(View.INVISIBLE);
         		}
         	}
 
@@ -374,12 +386,14 @@ public class ReceiveFragment extends Fragment   {
             		clearReceive();
             	}
 
+            	/*
             	if(!isMagic) {
             		displayMagicList();
             		}
             	else {
             		removeMagicList();
             	}
+            	*/
             		
             }
         });
@@ -421,6 +435,16 @@ public class ReceiveFragment extends Fragment   {
         	public void onTextChanged(CharSequence s, int start, int before, int count)	{        		
         		String inputAddress = edAddress.getText().toString();
         		int len = edAddress.getText().length();
+        		
+                if(len < 1) {
+                	ivClearInput.setVisibility(View.INVISIBLE);
+                	isKeyboard = true;
+                }
+                else {
+                	ivClearInput.setVisibility(View.VISIBLE);
+                	isKeyboard = false;
+                }
+
         		List<HashMap<String,String>> filtered = new ArrayList<HashMap<String,String>>();
         		
         		for (HashMap<String,String> row : magicData) {
@@ -453,6 +477,8 @@ public class ReceiveFragment extends Fragment   {
 		        		removeMagicList();
 		        	}
 
+		            icon_row.setVisibility(View.INVISIBLE);
+
 	                InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 	                imm.hideSoftInputFromWindow(edAddress.getWindowToken(), 0);
 	                edAmount1.requestFocus();
@@ -464,26 +490,86 @@ public class ReceiveFragment extends Fragment   {
 		    }
 		});
 
-        ivInputToggle.setOnTouchListener(new OnTouchListener() {
+        ivClearInput.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
             	
-            	if(isKeyboard) {
-                	InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.showSoftInput(edAddress, InputMethodManager.SHOW_IMPLICIT);
-                    ivInputToggle.setImageResource(R.drawable.clear_icon);
-                	isKeyboard = false;
-            	}
-            	else {
-                	clearReceive();
-                	InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-	                imm.hideSoftInputFromWindow(edAddress.getWindowToken(), 0);
-	                ivInputToggle.setImageResource(R.drawable.keyboard_icon);
-                	isKeyboard = true;
-            	}
+            	clearReceive();
 
                 return false;
             }
+        });
+        
+		final int colorOn = 0xFF808080;
+		final int colorOff = 0xFFffffff;
+        icon_row = ((LinearLayout)rootView.findViewById(R.id.icon_row));
+        magic = ((LinearLayout)rootView.findViewById(R.id.magic_input));
+
+        magic_contacts = (LinearLayout)magic.findViewById(R.id.magic2_contact);
+        magic_contacts.setBackgroundColor(colorOff);
+        magic_contacts.setOnTouchListener(new OnTouchListener() {
+          @Override
+          public boolean onTouch(View v, MotionEvent event) {
+          	
+              switch (event.getAction())	{
+              	case android.view.MotionEvent.ACTION_DOWN:
+              	case android.view.MotionEvent.ACTION_MOVE:
+              		magic_contacts.setBackgroundColor(colorOn);                		
+              		break;
+              	case android.view.MotionEvent.ACTION_UP:
+              	case android.view.MotionEvent.ACTION_CANCEL:
+              		magic_contacts.setBackgroundColor(colorOff);
+              		
+                	if(!isMagic) {
+                		displayMagicList();
+                	}
+                	else {
+                		removeMagicList();
+                	}
+
+              		break;
+              	}
+
+              return true;
+          }
+        });
+
+        magic_qr = (LinearLayout)magic.findViewById(R.id.magic2_camera);
+        magic_qr.setVisibility(View.GONE);
+
+        magic_keyboard = (LinearLayout)magic.findViewById(R.id.magic2_keyboard);
+        magic_keyboard.setBackgroundColor(colorOff);
+        magic_keyboard.setOnTouchListener(new OnTouchListener() {
+          @Override
+          public boolean onTouch(View v, MotionEvent event) {
+          	
+              switch (event.getAction())	{
+              	case android.view.MotionEvent.ACTION_DOWN:
+              	case android.view.MotionEvent.ACTION_MOVE:
+              		magic_keyboard.setBackgroundColor(colorOn);                		
+              		break;
+              	case android.view.MotionEvent.ACTION_UP:
+              	case android.view.MotionEvent.ACTION_CANCEL:
+              		magic_keyboard.setBackgroundColor(colorOff);
+              		
+                	if(isKeyboard) {
+                		edAddress.requestFocus();
+                    	InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.showSoftInput(edAddress, InputMethodManager.SHOW_IMPLICIT);
+                    	isKeyboard = false;
+                	}
+                	else {
+//                    	clearReceive();
+                    	InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+    	                imm.hideSoftInputFromWindow(edAddress.getWindowToken(), 0);
+                    	isKeyboard = true;
+                	}
+
+              		break;
+              	}
+
+              return true;
+          }
         });
 
         tvCurrency.setTypeface(TypefaceUtil.getInstance(getActivity()).getBTCTypeface());
@@ -512,11 +598,11 @@ public class ReceiveFragment extends Fragment   {
             }
 
             if(edAddress.getText().length() < 1 && (edAmount1.getText().length() < 1 || edAmount1.getText().equals("0.0000"))) {
-            	ivInputToggle.setImageResource(R.drawable.keyboard_icon);
+            	ivClearInput.setVisibility(View.INVISIBLE);
             	isKeyboard = true;
             }
             else {
-            	ivInputToggle.setImageResource(R.drawable.clear_icon);
+            	ivClearInput.setVisibility(View.VISIBLE);
             	isKeyboard = false;
             }
         }
@@ -530,11 +616,11 @@ public class ReceiveFragment extends Fragment   {
         Log.d("BlockchainWallet", "onResume");
         
         if(edAddress.getText().length() < 1 && (edAmount1.getText().length() < 1 || edAmount1.getText().equals("0.0000"))) {
-        	ivInputToggle.setImageResource(R.drawable.keyboard_icon);
+        	ivClearInput.setVisibility(View.INVISIBLE);
         	isKeyboard = true;
         }
         else {
-        	ivInputToggle.setImageResource(R.drawable.clear_icon);
+        	ivClearInput.setVisibility(View.VISIBLE);
         	isKeyboard = false;
         }
         
@@ -747,9 +833,6 @@ public class ReceiveFragment extends Fragment   {
 
     	isMagic = true;
 
-		final int colorOn = 0xFF9d9d9d;
-		final int colorOff = 0xFFb6b6b6;
-
 		//
 		//
 		//
@@ -774,46 +857,55 @@ public class ReceiveFragment extends Fragment   {
         parent = (LinearLayout)oldView.getParent();
         oldView.setVisibility(View.GONE);
 		childIcons = inflater.inflate(R.layout.magic, null);
-        ivAddresses = (ImageView)childIcons.findViewById(R.id.addresses);
-        ivAddresses.setImageResource(R.drawable.my_addresses);
-        ivAddresses.setBackgroundColor(colorOn);
-        ivContacts = (ImageView)childIcons.findViewById(R.id.contacts);
-        ivContacts.setVisibility(View.VISIBLE);
-        ivContacts.setImageResource(R.drawable.address_book);
-        ivContacts.setBackgroundColor(colorOff);
-        ivPhoneContacts = (ImageView)childIcons.findViewById(R.id.phone_contacts);
-        ivPhoneContacts.setVisibility(View.GONE);
+
+        final int color_contacts_selected = 0xff808080;
+        final int color_contacts_unselected = 0xffe0e0e0;
+
+        layoutAddresses = (LinearLayout)childIcons.findViewById(R.id.addresses_bg);
+        layoutContacts = (LinearLayout)childIcons.findViewById(R.id.contacts_bg);
+        layoutPhoneContacts = (LinearLayout)childIcons.findViewById(R.id.phone_contacts_bg);
+        layoutPhoneContacts.setVisibility(View.INVISIBLE);
+        tvAddresses = (TextView)childIcons.findViewById(R.id.addresses);
+        tvContacts = (TextView)childIcons.findViewById(R.id.contacts);
+        tvPhoneContacts = (TextView)childIcons.findViewById(R.id.phone_contacts);
+
+		layoutAddresses.setBackgroundColor(color_contacts_selected);
+		tvAddresses.setTextColor(0xFFffffff);
+		layoutContacts.setBackgroundColor(color_contacts_unselected);
+		tvContacts.setTextColor(0xFF000000);
+
         addressesOn = true;
         contactsOn = false;
-        ivAddresses.setOnClickListener(new View.OnClickListener() {        
+        layoutAddresses.setOnClickListener(new View.OnClickListener() {        
             @Override
                 public void onClick(View view) {
             		if(!addressesOn) {
             			addressesOn = true;
             			contactsOn = false;
-                        ivAddresses.setBackgroundColor(colorOn);
-                        ivContacts.setBackgroundColor(colorOff);
+            			layoutAddresses.setBackgroundColor(color_contacts_selected);
+            			tvAddresses.setTextColor(0xFFffffff);
+            			layoutContacts.setBackgroundColor(color_contacts_unselected);
+            			tvContacts.setTextColor(0xFF000000);
             		}
             		initMagicList();
             		adapter.notifyDataSetChanged();                            		
                 }
         });
-        ivContacts.setOnClickListener(new View.OnClickListener() {        
+        layoutContacts.setOnClickListener(new View.OnClickListener() {        
             @Override
                 public void onClick(View view) {
             		if(!contactsOn) {
             			contactsOn = true;
             			addressesOn = false;
-                        ivAddresses.setBackgroundColor(colorOff);
-                        ivContacts.setBackgroundColor(colorOn);
+            			layoutContacts.setBackgroundColor(color_contacts_selected);
+            			tvContacts.setTextColor(0xFFffffff);
+            			layoutAddresses.setBackgroundColor(color_contacts_unselected);
+            			tvAddresses.setTextColor(0xFF000000);
             		}
             		initAddressBookList();
             		adapter.notifyDataSetChanged();                            		
                 }
         });
-
-        final ImageView qr_scan = (ImageView)childIcons.findViewById(R.id.qr_icon);
-        qr_scan.setVisibility(View.INVISIBLE);
 
         //	    parent.addView(child, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 	    parent.addView(childIcons);
@@ -868,6 +960,8 @@ public class ReceiveFragment extends Fragment   {
                     
                     return;
             	}
+
+                icon_row.setVisibility(View.GONE);
 
                 InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(edAddress.getWindowToken(), 0);
@@ -960,6 +1054,9 @@ public class ReceiveFragment extends Fragment   {
         tvAddressBis.setVisibility(View.INVISIBLE);
         
         ivReceivingQR.setVisibility(View.INVISIBLE);
+        
+        ivClearInput.setVisibility(View.INVISIBLE);
+        icon_row.setVisibility(View.VISIBLE);
 
     }
 

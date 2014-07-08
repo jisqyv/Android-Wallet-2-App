@@ -33,56 +33,82 @@
 	>
     
 	    <LinearLayout 
-	    android:layout_width="0dp"
+	    android:layout_width="match_parent"
 	    android:layout_height="50dp"
-	    android:layout_weight="1"
 	    android:orientation="horizontal"
 	    android:layout_gravity="left"
 	    android:gravity="left"
 		>
-        <ImageButton
-    	android:id="@+id/contacts"
-        android:src="@drawable/address_book"
-        android:scaleType="centerCrop"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_gravity="center_vertical"
-    	/>
-        <ImageButton
-    	android:id="@+id/addresses"
-        android:src="@drawable/my_addresses"
-        android:scaleType="centerCrop"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_gravity="center_vertical"
-    	/>
-	    <ImageButton
-    	android:id="@+id/phone_contacts"
-        android:src="@drawable/phone_contacts"
-        android:scaleType="centerCrop"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_gravity="center_vertical"
-    	/>
-        </LinearLayout>
-	    
-	    <LinearLayout 
-	    android:layout_width="0dp"
-	    android:layout_height="50dp"
-	    android:layout_weight="1"
-	    android:orientation="horizontal"
-	    android:layout_gravity="right"
-	    android:gravity="right"
-		>
-	    <ImageView
-    	android:id="@+id/qr_icon"
-        android:src="@drawable/camera_icon"
-        android:scaleType="centerInside"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginRight="3dp"
-    	/>
-		</LinearLayout>
+		
+
+	    	<LinearLayout 
+        	android:id="@+id/contacts_bg"
+	    	android:layout_width="0dp"
+	    	android:layout_weight="1"
+	    	android:layout_height="50dp"
+	    	android:orientation="horizontal"
+	    	android:layout_gravity="center_horizontal|center_vertical"
+	    	android:gravity="center_horizontal|center_vertical"
+	    	android:background="#FF808080"
+			>
+    			<TextView 
+        		android:id="@+id/contacts"
+        		android:layout_width="wrap_content"
+        		android:layout_height="wrap_content"
+    			android:textSize="12sp"
+    			android:textColor="#FFffffff"
+        		android:gravity="center_horizontal|center_vertical"
+        		android:text="My Contacts"
+    			/>
+    		</LinearLayout>
+
+	    	<LinearLayout 
+        	android:id="@+id/addresses_bg"
+	    	android:layout_width="0dp"
+	    	android:layout_weight="1"
+	    	android:layout_height="50dp"
+	    	android:orientation="horizontal"
+	    	android:layout_gravity="center_horizontal|center_vertical"
+	    	android:gravity="center_horizontal|center_vertical"
+	    	android:background="#FFe0e0e0"
+			>
+    			<TextView 
+        		android:id="@+id/addresses"
+        		android:layout_width="wrap_content"
+        		android:layout_height="wrap_content"
+    			android:textSize="12sp"
+    			android:textColor="#FF000000"
+        		android:gravity="center_horizontal|center_vertical"
+        		android:text="My Addresses"
+    			/>
+    		</LinearLayout>
+	    		    	
+	    	<LinearLayout 
+        	android:id="@+id/phone_contacts_bg"
+	    	android:layout_width="0dp"
+	    	android:layout_weight="1"
+	    	android:layout_height="50dp"
+	    	android:orientation="horizontal"
+	    	android:layout_gravity="center_horizontal|center_vertical"
+	    	android:gravity="center_horizontal|center_vertical"
+	    	android:background="#FFe0e0e0"
+			>
+    			<TextView 
+        		android:id="@+id/phone_contacts"
+        		android:layout_width="wrap_content"
+        		android:layout_height="wrap_content"
+    			android:textSize="12sp"
+    			android:textColor="#FF000000"
+        		android:gravity="center_horizontal|center_vertical"
+        		android:text="Phone Contacts"
+    			/>
+    		</LinearLayout>
+
+
+	    	
+
+	    </LinearLayout>
+
 	    	    
 	</LinearLayout>
 	
