@@ -114,7 +114,7 @@ public class MyWallet {
 
 		ECKey key = generateECKey();
 
-		addKey(key, key.toAddress(MainNetParams.get()).toString(), "My 1st Address");
+		addKey(key, key.toAddress(MainNetParams.get()).toString(), "My Address");
 	}
 
 	@SuppressWarnings("unchecked")
