@@ -34,6 +34,7 @@ public class TxBitmap {
 	private List<Map.Entry<String, String>> addressValueEntryList;	
 
 	public TxBitmap() { ; }
+	
 	public TxBitmap(Context ctx, List<Map.Entry<String, String>> addressValueEntryList) {
 		this.setAddressValueEntryList(addressValueEntryList);
 
