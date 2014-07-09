@@ -573,6 +573,8 @@ public class MyRemoteWallet extends MyWallet {
 
 
 	public interface SendProgress {
+		public void onStart();
+
 		//Return false to cancel
 		public boolean onReady(Transaction tx, BigInteger fee, FeePolicy feePolicy, long priority);
 		public void onSend(Transaction tx, String message);
@@ -682,7 +684,7 @@ public class MyRemoteWallet extends MyWallet {
 		new Thread() {
 			@Override
 			public void run() {
-
+				progress.onStart();
 				final List<ECKey> tempKeys = new ArrayList<ECKey>();
 
 				try {
@@ -856,6 +858,8 @@ public class MyRemoteWallet extends MyWallet {
 		new Thread() {
 			@Override
 			public void run() {
+				progress.onStart();
+
 				final  BigInteger feeAmount;
 				if (fee == null)
 					feeAmount = BigInteger.ZERO;
