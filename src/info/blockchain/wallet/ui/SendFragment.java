@@ -211,7 +211,7 @@ public class SendFragment extends Fragment   {
 
 	public static final String ACTION_INTENT = "info.blockchain.wallet.ui.SendFragment.BTC_ADDRESS_SCAN";
 	
-	private ProgressDialog progress = null;
+	private ProgressDialog sendingProgressDialog = null;
 
     protected BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
@@ -240,8 +240,8 @@ public class SendFragment extends Fragment   {
 	        summary3.setVisibility(View.VISIBLE);
 	        tvSentPrompt.setVisibility(View.VISIBLE);
 	        
-	        if(progress != null) {
-		        progress.dismiss();
+	        if(sendingProgressDialog != null) {
+		        sendingProgressDialog.dismiss();
 	        }
 
 	        clearSend();
@@ -394,13 +394,15 @@ public class SendFragment extends Fragment   {
 					handler.post(new Runnable() {
 						public void run() {
 							application.getRemoteWallet().setState(MyRemoteWallet.State.SENT);
+							
+					        if(sendingProgressDialog != null) {
+						        sendingProgressDialog.dismiss();
+					        }
 				            Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
 
 							Intent intent = activity.getIntent();
 							intent.putExtra("tx", tx.getHash());
 							activity.setResult(Activity.RESULT_OK, intent);
-
-							updateView();
 						}
 					});
 
@@ -419,12 +421,13 @@ public class SendFragment extends Fragment   {
 
 							System.out.println("On Error");
 
+					        if(sendingProgressDialog != null) {
+						        sendingProgressDialog.dismiss();
+					        }
 							if (message != null)
 								Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
 
 							application.getRemoteWallet().setState(MyRemoteWallet.State.INPUT);
-
-							updateView();
 						}
 					});
 				}
@@ -433,8 +436,6 @@ public class SendFragment extends Fragment   {
 					handler.post(new Runnable() {
 						public void run() {
 							application.getRemoteWallet().setState(MyRemoteWallet.State.SENDING);
-
-							updateView();
 						}
 					});
 				}
@@ -456,6 +457,9 @@ public class SendFragment extends Fragment   {
 						} else if (priority < 97600000L) {
 							handler.post(new Runnable() {
 								public void run() {
+	    					        if(sendingProgressDialog != null) {
+	    						        sendingProgressDialog.dismiss();
+	    					        }
 									AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 									builder.setMessage(R.string.ask_for_fee)
 									.setCancelable(false);
@@ -487,7 +491,6 @@ public class SendFragment extends Fragment   {
 							handler.post(new Runnable() {
 								public void run() {
 									application.getRemoteWallet().setState(MyRemoteWallet.State.INPUT);
-									updateView();
 								}
 							});
 							return false;
@@ -505,6 +508,9 @@ public class SendFragment extends Fragment   {
 
 					handler.post(new Runnable() {
 						public void run() {
+					        if(sendingProgressDialog != null) {
+						        sendingProgressDialog.dismiss();
+					        }
 							AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 							builder.setMessage(getString(R.string.ask_for_private_key, address))
 							.setCancelable(false)
@@ -544,6 +550,20 @@ public class SendFragment extends Fragment   {
 
 					return SendCoinsActivity.temporaryPrivateKeys.get(address);
 				}
+
+				@Override
+				public void onStart() {
+					handler.post(new Runnable() {
+						public void run() {
+					    	SendFragment.this.sendingProgressDialog = new ProgressDialog(getActivity());
+					    	SendFragment.this.sendingProgressDialog.setCancelable(true);
+					    	SendFragment.this.sendingProgressDialog.setIndeterminate(true);
+					    	SendFragment.this.sendingProgressDialog.setTitle("Sending...");
+					    	SendFragment.this.sendingProgressDialog.setMessage("Please wait");
+					    	SendFragment.this.sendingProgressDialog.show();
+						}
+					});					
+				}
 			};
         	
 			final SendProgress progressEmailSMS = new SendProgress() {
@@ -551,13 +571,15 @@ public class SendFragment extends Fragment   {
 					handler.post(new Runnable() {
 						public void run() {
 							application.getRemoteWallet().setState(MyRemoteWallet.State.SENT);
-				            Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
+
+					        if(sendingProgressDialog != null) {
+						        sendingProgressDialog.dismiss();
+					        }
+							Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
 
 							Intent intent = activity.getIntent();
 							intent.putExtra("tx", tx.getHash());
 							activity.setResult(Activity.RESULT_OK, intent);
-
-							updateView();
 						}
 					});
 
@@ -576,12 +598,13 @@ public class SendFragment extends Fragment   {
 
 							System.out.println("On Error");
 
+					        if(sendingProgressDialog != null) {
+						        sendingProgressDialog.dismiss();
+					        }
 							if (message != null)
 								Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
 
 							application.getRemoteWallet().setState(MyRemoteWallet.State.INPUT);
-
-							updateView();
 						}
 					});
 				}
@@ -590,8 +613,6 @@ public class SendFragment extends Fragment   {
 					handler.post(new Runnable() {
 						public void run() {
 							application.getRemoteWallet().setState(MyRemoteWallet.State.SENDING);
-
-							updateView();
 						}
 					});
 				}
@@ -607,6 +628,20 @@ public class SendFragment extends Fragment   {
 				public ECKey onPrivateKeyMissing(String address) {
 					// TODO Auto-generated method stub
 					return null;
+				}
+
+				@Override
+				public void onStart() {
+					handler.post(new Runnable() {
+						public void run() {
+					    	SendFragment.this.sendingProgressDialog = new ProgressDialog(getActivity());
+					    	SendFragment.this.sendingProgressDialog.setCancelable(true);
+					    	SendFragment.this.sendingProgressDialog.setIndeterminate(true);
+					    	SendFragment.this.sendingProgressDialog.setTitle("Sending...");
+					    	SendFragment.this.sendingProgressDialog.setMessage("Please wait");
+					    	SendFragment.this.sendingProgressDialog.show();
+						}
+					});	
 				}
 			};
 
@@ -795,13 +830,6 @@ public class SendFragment extends Fragment   {
             public void onClick(View v) {
 				if (application.getRemoteWallet() == null)
 					return;
-
-		    	SendFragment.this.progress = new ProgressDialog(getActivity());
-		    	SendFragment.this.progress.setCancelable(true);
-		    	SendFragment.this.progress.setIndeterminate(true);
-		    	SendFragment.this.progress.setTitle("Sending...");
-		    	SendFragment.this.progress.setMessage("Please wait");
-		    	SendFragment.this.progress.show();
 
 				final MyRemoteWallet remoteWallet = application.getRemoteWallet();
 
@@ -2425,8 +2453,10 @@ public class SendFragment extends Fragment   {
     					handler.post(new Runnable() {
     						public void run() {
     							application.getRemoteWallet().setState(MyRemoteWallet.State.SENT);
-//    							activity.longToast(message);
-    							updateView();
+    					        if(sendingProgressDialog != null) {
+    						        sendingProgressDialog.dismiss();
+    					        }
+			            		Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
     						}
     					});
 
@@ -2445,12 +2475,13 @@ public class SendFragment extends Fragment   {
 
     							System.out.println("On Error");
 
+    					        if(sendingProgressDialog != null) {
+    						        sendingProgressDialog.dismiss();
+    					        }
     							if (message != null)
-//    								activity.longToast(message);
+    			            		Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
 
     							application.getRemoteWallet().setState(MyRemoteWallet.State.INPUT);
-
-    							updateView();
     						}
     					});
     				}
@@ -2459,8 +2490,6 @@ public class SendFragment extends Fragment   {
     					handler.post(new Runnable() {
     						public void run() {
     							application.getRemoteWallet().setState(MyRemoteWallet.State.SENDING);
-
-    							updateView();
     						}
     					});
     				}
@@ -2482,6 +2511,10 @@ public class SendFragment extends Fragment   {
     						} else if (priority < 97600000L) {
     							handler.post(new Runnable() {
     								public void run() {
+    							        if(sendingProgressDialog != null) {
+    								        sendingProgressDialog.dismiss();
+    							        }
+    							        
     									AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
     									builder.setMessage(R.string.ask_for_fee)
     									.setCancelable(false);
@@ -2513,7 +2546,6 @@ public class SendFragment extends Fragment   {
     							handler.post(new Runnable() {
     								public void run() {
     									application.getRemoteWallet().setState(MyRemoteWallet.State.INPUT);
-    									updateView();
     								}
     							});
 
@@ -2532,6 +2564,9 @@ public class SendFragment extends Fragment   {
 
     					handler.post(new Runnable() {
     						public void run() {
+    					        if(sendingProgressDialog != null) {
+    						        sendingProgressDialog.dismiss();
+    					        }
     							AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
     							builder.setMessage(getString(R.string.ask_for_private_key, address))
     							.setCancelable(false)
@@ -2571,6 +2606,20 @@ public class SendFragment extends Fragment   {
 
     					return SendCoinsActivity.temporaryPrivateKeys.get(address);
     				}
+
+					@Override
+					public void onStart() {
+						handler.post(new Runnable() {
+    						public void run() {
+    					    	SendFragment.this.sendingProgressDialog = new ProgressDialog(getActivity());
+    					    	SendFragment.this.sendingProgressDialog.setCancelable(true);
+    					    	SendFragment.this.sendingProgressDialog.setIndeterminate(true);
+    					    	SendFragment.this.sendingProgressDialog.setTitle("Sending...");
+    					    	SendFragment.this.sendingProgressDialog.setMessage("Please wait");
+    					    	SendFragment.this.sendingProgressDialog.show();
+    						}
+						});
+					}
     			};
     			
     			//
@@ -2753,10 +2802,6 @@ public class SendFragment extends Fragment   {
     	intent.setData(ContactsContract.Contacts.CONTENT_URI);
     	startActivityForResult(intent, PICK_CONTACT);    	
     }
-
-	private void updateView()	{
-		;
-	}
 
     private void doSelectInternationalPrefix()	{
 		Intent intent = new Intent(getActivity(), InternationalPrefixActivity.class);

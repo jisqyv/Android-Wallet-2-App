@@ -573,6 +573,10 @@ public abstract class AbstractWalletActivity extends FragmentActivity {
 
 											@Override
 											public void onProgress(String message) {}
+
+											@Override
+											public void onStart() {												
+											}
 										});
 
 									} catch (final Exception e) {
