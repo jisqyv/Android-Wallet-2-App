@@ -835,7 +835,7 @@ public class SendFragment extends Fragment   {
 
 				final MyRemoteWallet.FeePolicy feePolicy;
 				if (sendType != null && sendType == SendTypeQuickSend) {
-					feePolicy = MyRemoteWallet.FeePolicy.FeeOnlyIfNeeded;
+					feePolicy = MyRemoteWallet.FeePolicy.FeeForce;
 				} else {
 					feePolicy = MyRemoteWallet.FeePolicy.FeeOnlyIfNeeded;
 				}
