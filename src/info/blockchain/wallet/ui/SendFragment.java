@@ -2174,25 +2174,9 @@ public class SendFragment extends Fragment   {
     	((LinearLayout)layout_from.findViewById(R.id.p3)).setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
     	((LinearLayout)layout_from.findViewById(R.id.p3)).addView(edAmount);
 
-    	/*
-    	final ImageButton ibPlus = new ImageButton(getActivity());
-    	ibPlus.setImageResource(R.drawable.plus_icon);
-    	((LinearLayout)layout_from.findViewById(R.id.plus)).addView(ibPlus);
-        ibPlus.setOnClickListener(new Button.OnClickListener() {
-            public void onClick(View v) {
-//            	ibPlus.setVisibility(View.GONE);
-            	addSendingAddress(displayAddresses, wallet, addresses, "0.0000");
-            }
-        });
-        */
-        
-//    	final ImageButton ibPlus = new ImageButton(getActivity());
-//    	ibPlus.setImageResource(R.drawable.plus_icon);
-//    	ImageView ibPlus = ((ImageView)layout_from.findViewById(R.id.plus_icon)).addView(ibPlus);
     	ImageView ibPlus = (ImageView)layout_from.findViewById(R.id.plus_icon);
         ibPlus.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
-//            	ibPlus.setVisibility(View.GONE);
             	addSendingAddress(displayAddresses, wallet, addresses, "0.0000");
             }
         });
@@ -2363,7 +2347,9 @@ public class SendFragment extends Fragment   {
     	((LinearLayout)layout_custom_spend.findViewById(R.id.custom_spend)).addView(layout_change);
     	
     	Button btConfirm = new Button(getActivity());
-    	btConfirm.setText("OK");
+    	btConfirm.setText("Send money");
+    	btConfirm.setTextSize(22);
+    	btConfirm.setBackgroundResource(R.color.blockchain_blue);
     	btConfirm.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
         btConfirm.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
@@ -2420,17 +2406,10 @@ public class SendFragment extends Fragment   {
             	for (Iterator iterator = keys.iterator(); iterator.hasNext();) {
                     String s = (String)iterator.next();
                     total_amount = total_amount.add(addresses.get(s));
-//            		Toast.makeText(getActivity(), "Address:" + s + ", amount:" + addresses.get(s), Toast.LENGTH_SHORT).show();
                 }
-//        		Toast.makeText(getActivity(), "Fee:" + cs.getFee(), Toast.LENGTH_SHORT).show();
-//        		Toast.makeText(getActivity(), "Change:" + cs.getChangeAddress(), Toast.LENGTH_SHORT).show();
         		//
         		//
         		//
-
-            	//
-            	// take 'cs' here and initiate custom send
-            	//
 
 				final BigInteger entered_amount = getBTCEnteredOutputValue(edAmount1.getText().toString());
 				final WalletApplication application = (WalletApplication) getActivity().getApplication();
@@ -2629,62 +2608,10 @@ public class SendFragment extends Fragment   {
 
             }
         });
-//    	((LinearLayout)layout_custom_spend.findViewById(R.id.custom_spend)).addView(btConfirm);
 
-    	Button btNewAddress = new Button(getActivity());
-    	btNewAddress.setText("Add send address");
-    	btNewAddress.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-        btNewAddress.setOnClickListener(new Button.OnClickListener() {
-            public void onClick(View v) {
-
-            	BigInteger subtotal_amount = BigInteger.ZERO;
-                LinearLayout sending_layout = null;
-                LinearLayout p_layout = null;
-                EditText amount = null;
-
-            	for(int i = 0; i < layout_froms.getChildCount(); i++) {
-            		sending_layout = (LinearLayout)layout_froms.getChildAt(i);
-                	p_layout = (LinearLayout)sending_layout.findViewById(R.id.p3);
-                	amount = ((EditText)p_layout.getChildAt(0));
-
-                	if(amount.getText().toString() != null && amount.getText().toString().length() > 0 &&
-                			Double.parseDouble(amount.getText().toString()) > 0.0) {
-                		
-                		subtotal_amount = subtotal_amount.add(getBTCEnteredOutputValue(amount.getText().toString()));
-
-                	}
-
-            	}
-            	
-            	String enteredAmount = null;
-            	if(edAmount1.getText().toString().length() > 0) {
-            		enteredAmount = edAmount1.getText().toString();
-            	}
-            	else {
-            		enteredAmount = "0";
-            	}
-				BigInteger entered_amount = getBTCEnteredOutputValue(enteredAmount);
-            	BigInteger remaining_amount = entered_amount.subtract(subtotal_amount);
-            	String remainder = null;
-            	if(remaining_amount.compareTo(entered_amount) != -1) {
-            		remainder = "0.0000";
-            	}
-            	else {
-            		remainder = BlockchainUtil.formatBitcoin(remaining_amount);
-            	}
-
-            	addSendingAddress(displayAddresses, wallet, addresses, remainder);
-            }
-        });
-//    	((LinearLayout)layout_custom_spend.findViewById(R.id.custom_spend)).addView(btNewAddress);
-    	
-    	LinearLayout buttonsLayout = (LinearLayout)inflater.inflate(R.layout.layout_2, null);
-    	((LinearLayout)buttonsLayout.findViewById(R.id.p1)).addView(btNewAddress);
-    	((LinearLayout)buttonsLayout.findViewById(R.id.p2)).addView(btConfirm);
+    	LinearLayout buttonsLayout = (LinearLayout)inflater.inflate(R.layout.layout_ok, null);
+    	((LinearLayout)buttonsLayout.findViewById(R.id.p1)).addView(btConfirm);
     	((LinearLayout)layout_custom_spend.findViewById(R.id.custom_spend)).addView(buttonsLayout);
-
-//        LinearLayout container = ((LinearLayout)rootView.findViewById(R.id.custom_spend));
-//        sendViewToBack(container);
 
     }
 
@@ -2732,18 +2659,6 @@ public class SendFragment extends Fragment   {
     	((LinearLayout)layout_from2.findViewById(R.id.p3)).setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
     	((LinearLayout)layout_from2.findViewById(R.id.p3)).addView(edAmount);
 
-    	/*
-    	final ImageButton ibPlus = new ImageButton(getActivity());
-    	ibPlus.setImageResource(R.drawable.plus_icon);
-    	((LinearLayout)layout_from2.findViewById(R.id.plus)).addView(ibPlus);
-        ibPlus.setOnClickListener(new Button.OnClickListener() {
-            public void onClick(View v) {
-            	ibPlus.setVisibility(View.GONE);
-            	addSendingAddress(displayAddresses, wallet, addresses, remainder);
-            }
-        });
-        */
-
         tvCurrency = new TextView(getActivity());
         tvCurrency.setText("BTC");
         tvCurrency.setTextSize(12);
@@ -2765,7 +2680,6 @@ public class SendFragment extends Fragment   {
         });
 
     	spAddress.setOnItemSelectedListener(new OnItemSelectedListener()	{
-
     		public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3)	{
             	if(edAmount.getText().toString().length() > 0) {
             		if(arg2 != 0 && getBTCEnteredOutputValue(remainder).compareTo(wallet.getBalance(addresses.get(spAddress.getSelectedItemPosition()))) == 1) {
