@@ -2093,6 +2093,9 @@ public class SendFragment extends Fragment   {
 //        LinearLayout container = ((LinearLayout)rootView.findViewById(R.id.send_container));
 //        sendViewToBack(container);
     	CURRENT_SEND = SIMPLE_SEND;
+    	
+    	((LinearLayout)rootView.findViewById(R.id.custom_confirm)).setVisibility(View.GONE);
+
     }
 
     private void doCustomSend() {
@@ -2658,9 +2661,8 @@ public class SendFragment extends Fragment   {
             }
         });
 
-    	LinearLayout buttonsLayout = (LinearLayout)inflater.inflate(R.layout.layout_ok, null);
-    	((LinearLayout)buttonsLayout.findViewById(R.id.p1)).addView(btConfirm);
-    	((LinearLayout)layout_custom_spend.findViewById(R.id.custom_spend)).addView(buttonsLayout);
+    	((LinearLayout)rootView.findViewById(R.id.custom_confirm)).addView(btConfirm);
+    	((LinearLayout)rootView.findViewById(R.id.custom_confirm)).setVisibility(View.VISIBLE);
 
     }
 
