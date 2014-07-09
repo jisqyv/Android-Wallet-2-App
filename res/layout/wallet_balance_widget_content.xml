@@ -36,13 +36,14 @@
 			android:fadingEdge="horizontal"
 			android:fadingEdgeLength="12dp"
 			android:singleLine="true"
+			android:layout_marginBottom="-20dp"
 			android:textColor="@color/blockchain_grey"
 			android:textSize="40sp" />
 			    		    
 		<TextView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_marginLeft="12dp"
+			android:layout_marginLeft="108dp"
 			android:singleLine="true"
 			android:textColor="@color/blockchain_light_grey"
 			android:textSize="12sp"
