@@ -837,8 +837,7 @@ public class PinEntryActivity extends FragmentActivity {
 									public void onClick(DialogInterface dialog, int id) {
 										dialog.dismiss();
 
-										RequestPasswordDialog.show(
-												getSupportFragmentManager(),
+										RequestPasswordDialog.show(getSupportFragmentManager(),
 												new SuccessCallback() {  
 													public void onSuccess() {
 														Toast.makeText(PinEntryActivity.this, "Password correct", Toast.LENGTH_LONG).show();

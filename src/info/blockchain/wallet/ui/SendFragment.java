@@ -76,6 +76,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.ScrollView;
 import android.widget.ImageView;
+import android.widget.ImageButton;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Switch;
@@ -2174,15 +2175,27 @@ public class SendFragment extends Fragment   {
     	((LinearLayout)layout_from.findViewById(R.id.p3)).addView(edAmount);
 
     	/*
-    	ImageButton ibPlus = new ImageButton(getActivity());
+    	final ImageButton ibPlus = new ImageButton(getActivity());
     	ibPlus.setImageResource(R.drawable.plus_icon);
     	((LinearLayout)layout_from.findViewById(R.id.plus)).addView(ibPlus);
         ibPlus.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
-            	addSendingAddress();
+//            	ibPlus.setVisibility(View.GONE);
+            	addSendingAddress(displayAddresses, wallet, addresses, "0.0000");
             }
         });
         */
+        
+//    	final ImageButton ibPlus = new ImageButton(getActivity());
+//    	ibPlus.setImageResource(R.drawable.plus_icon);
+//    	ImageView ibPlus = ((ImageView)layout_from.findViewById(R.id.plus_icon)).addView(ibPlus);
+    	ImageView ibPlus = (ImageView)layout_from.findViewById(R.id.plus_icon);
+        ibPlus.setOnClickListener(new Button.OnClickListener() {
+            public void onClick(View v) {
+//            	ibPlus.setVisibility(View.GONE);
+            	addSendingAddress(displayAddresses, wallet, addresses, "0.0000");
+            }
+        });
 
         TextView tvCurrency = new TextView(getActivity());
         tvCurrency.setText("BTC");
@@ -2293,6 +2306,8 @@ public class SendFragment extends Fragment   {
     	((LinearLayout)layout_fee.findViewById(R.id.p4)).addView(tvCurrency);
 
     	layout_fee.setPadding(0, 10, 0, 0);
+    	ImageView ibPlusF = (ImageView)layout_fee.findViewById(R.id.plus_icon);
+    	ibPlusF.setVisibility(View.INVISIBLE);
     	((LinearLayout)layout_custom_spend.findViewById(R.id.custom_spend)).addView(layout_fee);
 
     	spFeeType.setOnItemSelectedListener(new OnItemSelectedListener()	{
@@ -2343,6 +2358,8 @@ public class SendFragment extends Fragment   {
     	((LinearLayout)layout_change.findViewById(R.id.p2)).setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
     	((LinearLayout)layout_change.findViewById(R.id.p2)).addView(spChangeAddress);
     	layout_change.setPadding(0, 10, 0, 0);
+    	ImageView ibPlusC = (ImageView)layout_change.findViewById(R.id.plus_icon);
+    	ibPlusC.setVisibility(View.INVISIBLE);
     	((LinearLayout)layout_custom_spend.findViewById(R.id.custom_spend)).addView(layout_change);
     	
     	Button btConfirm = new Button(getActivity());
@@ -2714,14 +2731,15 @@ public class SendFragment extends Fragment   {
         edAmount.setLayoutParams(layout_params);
     	((LinearLayout)layout_from2.findViewById(R.id.p3)).setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
     	((LinearLayout)layout_from2.findViewById(R.id.p3)).addView(edAmount);
-    	
+
     	/*
-    	ImageButton ibPlus = new ImageButton(getActivity());
+    	final ImageButton ibPlus = new ImageButton(getActivity());
     	ibPlus.setImageResource(R.drawable.plus_icon);
     	((LinearLayout)layout_from2.findViewById(R.id.plus)).addView(ibPlus);
         ibPlus.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
-            	addSendingAddress();
+            	ibPlus.setVisibility(View.GONE);
+            	addSendingAddress(displayAddresses, wallet, addresses, remainder);
             }
         });
         */
@@ -2785,6 +2803,9 @@ public class SendFragment extends Fragment   {
             }
         });
 
+    	ImageView ibPlus = (ImageView)layout_from2.findViewById(R.id.plus_icon);
+    	ibPlus.setVisibility(View.INVISIBLE);
+
         layout_from2.setOnLongClickListener(new View.OnLongClickListener() {
         	  public boolean onLongClick(View view) {
         	    ((LinearLayout)layout_custom_spend.findViewById(R.id.froms)).removeView(layout_from2);
@@ -2792,26 +2813,18 @@ public class SendFragment extends Fragment   {
         	  }
         });
 
-        spAddress.setOnLongClickListener(new View.OnLongClickListener() {
-        	  public boolean onLongClick(View view) {
-            	    ((LinearLayout)layout_custom_spend.findViewById(R.id.froms)).removeView(layout_from2);
-            	    return true;
-              }
-        });
+        layout_from2.setOnTouchListener(new SwipeDismissTouchListener(layout_from2, null,
+                new SwipeDismissTouchListener.DismissCallbacks() {
+                    @Override
+                    public boolean canDismiss(Object token) {
+                        return true;
+                    }
 
-        edAmount.setOnLongClickListener(new View.OnLongClickListener() {
-        	  public boolean onLongClick(View view) {
-        	    ((LinearLayout)layout_custom_spend.findViewById(R.id.froms)).removeView(layout_from2);
-        	    return true;
-        	  }
-        });
-
-        tvCurrency.setOnLongClickListener(new View.OnLongClickListener() {
-        	  public boolean onLongClick(View view) {
-            	    ((LinearLayout)layout_custom_spend.findViewById(R.id.froms)).removeView(layout_from2);
-            	    return true;
-              }
-        });
+                    @Override
+                    public void onDismiss(View view, Object token) {
+                	    ((LinearLayout)layout_custom_spend.findViewById(R.id.froms)).removeView(layout_from2);
+                    }
+                }));
 
     	((LinearLayout)layout_custom_spend.findViewById(R.id.froms)).addView(layout_from2);
     	lastSendingAddress = layout_from2;

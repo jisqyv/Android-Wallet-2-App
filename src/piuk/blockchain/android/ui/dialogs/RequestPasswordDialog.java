@@ -171,8 +171,8 @@ public final class RequestPasswordDialog extends DialogFragment {
 			public void onClick(View v) {
 
 				try {
-					if (passwordField.getText() == null)
-						return;
+					if (passwordField.getText() == null || passwordField.length() < 1)
+						callback.onFail();
 
 					MyRemoteWallet wallet = application.getRemoteWallet();
 
