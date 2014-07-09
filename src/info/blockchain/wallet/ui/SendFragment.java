@@ -1,5 +1,9 @@
 package info.blockchain.wallet.ui;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -36,6 +40,8 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.Bitmap.CompressFormat;
+import android.graphics.drawable.BitmapDrawable;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -66,10 +72,15 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.ScrollView;
 import android.widget.ImageView;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Switch;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.Spinner;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
@@ -84,6 +95,8 @@ import android.content.BroadcastReceiver;
 import android.content.pm.PackageManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.ContextThemeWrapper;
+import android.view.GestureDetector;
+import android.view.GestureDetector.OnGestureListener;
 import android.util.Log;
 import android.util.Pair;
 
@@ -151,6 +164,8 @@ public class SendFragment extends Fragment   {
     private View childIcons = null;
     private View childList = null;
     private ListView magicList = null;
+    
+    private Switch sendMode = null;
 
     private LinearLayout layoutAddresses = null;
     private LinearLayout layoutContacts = null;
@@ -1092,6 +1107,7 @@ public class SendFragment extends Fragment   {
             }
         });
 
+        /*
         final ImageView imgSimpleSend = ((ImageView)rootView.findViewById(R.id.simple));
         final ImageView imgCustomSend = ((ImageView)rootView.findViewById(R.id.custom));
 //        final ImageView imgSharedSend = ((ImageView)rootView.findViewById(R.id.shared));
@@ -1144,6 +1160,7 @@ public class SendFragment extends Fragment   {
                 return false;
             }
         });
+        */
 
         /*
         imgSharedSend.setOnTouchListener(new OnTouchListener() {
@@ -1164,6 +1181,20 @@ public class SendFragment extends Fragment   {
             }
         });
         */
+        
+        sendMode = (Switch)rootView.findViewById(R.id.mode);
+        sendMode.setChecked(false);
+        sendMode.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+        	@Override
+        	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        		if(isChecked)	{
+        			doCustomSend();
+        		}
+        		else	{
+        			doSimpleSend();
+        		}
+        	}
+        });
 
 		final int colorOn = 0xFF808080;
 		final int colorOff = 0xFFffffff;
@@ -1616,6 +1647,7 @@ public class SendFragment extends Fragment   {
     	return bitmap;
     }
 
+    /*
     public static void sendViewToBack(final View child) {
     	if(child != null) {
             final ViewGroup parent = (ViewGroup)child.getParent();
@@ -1625,6 +1657,7 @@ public class SendFragment extends Fragment   {
             }
     	}
     }
+    */
 
     private class MagicAdapter extends BaseAdapter {
     	
@@ -1986,8 +2019,8 @@ public class SendFragment extends Fragment   {
         adapter = new MagicAdapter();
         magicList.setAdapter(adapter);
 
-        LinearLayout container = ((LinearLayout)rootView.findViewById(R.id.send_container));
-        sendViewToBack(container);
+//        LinearLayout container = ((LinearLayout)rootView.findViewById(R.id.send_container));
+//        sendViewToBack(container);
         
 //	    parent.bringToFront();
 //	    parent.requestLayout();
@@ -2028,8 +2061,8 @@ public class SendFragment extends Fragment   {
 
     	simple_spend.setVisibility(View.VISIBLE);
     	custom_spend.setVisibility(View.GONE);
-        LinearLayout container = ((LinearLayout)rootView.findViewById(R.id.send_container));
-        sendViewToBack(container);
+//        LinearLayout container = ((LinearLayout)rootView.findViewById(R.id.send_container));
+//        sendViewToBack(container);
     	CURRENT_SEND = SIMPLE_SEND;
     }
 
@@ -2139,7 +2172,18 @@ public class SendFragment extends Fragment   {
         edAmount.setLayoutParams(layout_params);
     	((LinearLayout)layout_from.findViewById(R.id.p3)).setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
     	((LinearLayout)layout_from.findViewById(R.id.p3)).addView(edAmount);
-    	
+
+    	/*
+    	ImageButton ibPlus = new ImageButton(getActivity());
+    	ibPlus.setImageResource(R.drawable.plus_icon);
+    	((LinearLayout)layout_from.findViewById(R.id.plus)).addView(ibPlus);
+        ibPlus.setOnClickListener(new Button.OnClickListener() {
+            public void onClick(View v) {
+            	addSendingAddress();
+            }
+        });
+        */
+
         TextView tvCurrency = new TextView(getActivity());
         tvCurrency.setText("BTC");
         tvCurrency.setTextSize(12);
@@ -2476,6 +2520,7 @@ public class SendFragment extends Fragment   {
     									updateView();
     								}
     							});
+
     							return false;
     						}
     					}
@@ -2621,8 +2666,8 @@ public class SendFragment extends Fragment   {
     	((LinearLayout)buttonsLayout.findViewById(R.id.p2)).addView(btConfirm);
     	((LinearLayout)layout_custom_spend.findViewById(R.id.custom_spend)).addView(buttonsLayout);
 
-        LinearLayout container = ((LinearLayout)rootView.findViewById(R.id.custom_spend));
-        sendViewToBack(container);
+//        LinearLayout container = ((LinearLayout)rootView.findViewById(R.id.custom_spend));
+//        sendViewToBack(container);
 
     }
 
@@ -2630,9 +2675,9 @@ public class SendFragment extends Fragment   {
 
     	final LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-    	LinearLayout layout_custom_spend = (LinearLayout)rootView.findViewById(R.id.custom_spend);
+    	final LinearLayout layout_custom_spend = (LinearLayout)rootView.findViewById(R.id.custom_spend);
     	// additional 'sending address':
-        LinearLayout layout_from2 = (LinearLayout)inflater.inflate(R.layout.layout_custom_segment, layout_custom_spend, false);
+        final LinearLayout layout_from2 = (LinearLayout)inflater.inflate(R.layout.layout_custom_segment, layout_custom_spend, false);
 
         // second send address
         TextView tvSpend = new TextView(getActivity());
@@ -2669,6 +2714,17 @@ public class SendFragment extends Fragment   {
         edAmount.setLayoutParams(layout_params);
     	((LinearLayout)layout_from2.findViewById(R.id.p3)).setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
     	((LinearLayout)layout_from2.findViewById(R.id.p3)).addView(edAmount);
+    	
+    	/*
+    	ImageButton ibPlus = new ImageButton(getActivity());
+    	ibPlus.setImageResource(R.drawable.plus_icon);
+    	((LinearLayout)layout_from2.findViewById(R.id.plus)).addView(ibPlus);
+        ibPlus.setOnClickListener(new Button.OnClickListener() {
+            public void onClick(View v) {
+            	addSendingAddress();
+            }
+        });
+        */
 
         tvCurrency = new TextView(getActivity());
         tvCurrency.setText("BTC");
@@ -2691,7 +2747,8 @@ public class SendFragment extends Fragment   {
         });
 
     	spAddress.setOnItemSelectedListener(new OnItemSelectedListener()	{
-	    	public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3)	{
+
+    		public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3)	{
             	if(edAmount.getText().toString().length() > 0) {
             		if(arg2 != 0 && getBTCEnteredOutputValue(remainder).compareTo(wallet.getBalance(addresses.get(spAddress.getSelectedItemPosition()))) == 1) {
             			edAmount.setText(BlockchainUtil.formatBitcoin(wallet.getBalance(addresses.get(spAddress.getSelectedItemPosition()))));
@@ -2700,7 +2757,8 @@ public class SendFragment extends Fragment   {
             		}
             	}
 	    	}
-	        public void onNothingSelected(AdapterView<?> arg0) {
+
+	    	public void onNothingSelected(AdapterView<?> arg0) {
 	        	;
 	        }
     	});
@@ -2727,6 +2785,34 @@ public class SendFragment extends Fragment   {
             }
         });
 
+        layout_from2.setOnLongClickListener(new View.OnLongClickListener() {
+        	  public boolean onLongClick(View view) {
+        	    ((LinearLayout)layout_custom_spend.findViewById(R.id.froms)).removeView(layout_from2);
+        	    return true;
+        	  }
+        });
+
+        spAddress.setOnLongClickListener(new View.OnLongClickListener() {
+        	  public boolean onLongClick(View view) {
+            	    ((LinearLayout)layout_custom_spend.findViewById(R.id.froms)).removeView(layout_from2);
+            	    return true;
+              }
+        });
+
+        edAmount.setOnLongClickListener(new View.OnLongClickListener() {
+        	  public boolean onLongClick(View view) {
+        	    ((LinearLayout)layout_custom_spend.findViewById(R.id.froms)).removeView(layout_from2);
+        	    return true;
+        	  }
+        });
+
+        tvCurrency.setOnLongClickListener(new View.OnLongClickListener() {
+        	  public boolean onLongClick(View view) {
+            	    ((LinearLayout)layout_custom_spend.findViewById(R.id.froms)).removeView(layout_from2);
+            	    return true;
+              }
+        });
+
     	((LinearLayout)layout_custom_spend.findViewById(R.id.froms)).addView(layout_from2);
     	lastSendingAddress = layout_from2;
     }
@@ -2741,8 +2827,7 @@ public class SendFragment extends Fragment   {
     	startActivityForResult(intent, PICK_CONTACT);    	
     }
 
-	private void updateView()
-	{
+	private void updateView()	{
 		;
 	}
 
@@ -2846,6 +2931,8 @@ public class SendFragment extends Fragment   {
         
         ivClearInput.setVisibility(View.INVISIBLE);
         icon_row.setVisibility(View.VISIBLE);
+
+//        sendMode.setChecked(false);
 
     	LinearLayout layout_custom_spend = (LinearLayout)rootView.findViewById(R.id.custom_spend);
     	// all 'sending address' entries go here:
