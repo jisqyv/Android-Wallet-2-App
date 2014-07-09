@@ -16,5 +16,8 @@
     <color name="blockchain_grey">#FF808080</color>
     <color name="magiclist_bg_selected">#FF1B8AC7</color>
     <color name="magiclist_bg_unselected">#FFFFFFFF</color>
-	
+
+    <color name="blockchain_light_grey">#A6A6A6</color>
+    <color name="white">#FFFFFF</color>
+    	
 </resources>

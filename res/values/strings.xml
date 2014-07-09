@@ -355,6 +355,7 @@
     <string name="BTC">BTC</string>
     <string name="scan_button">scan button</string>
     <string name="refresh_button">refresh button</string>
-    <string name="send_button">send button</string>
+    <string name="merchant_directory_button">merchant directory button</string>
+    <string name="app_icon">app icon</string>
     
 </resources>
