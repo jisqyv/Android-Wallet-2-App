@@ -34,6 +34,7 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.Preference.OnPreferenceChangeListener;
+import android.text.InputType;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -143,6 +144,9 @@ public class SettingsActivity extends PreferenceActivity {
 
 		final EditText oldPassswordEditText = new EditText(SettingsActivity.this);
 		oldPassswordEditText.setHint(R.string.old_password);
+		oldPassswordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+
+
 		alert.setView(oldPassswordEditText);
 		
 		alert.setOnShowListener(new DialogInterface.OnShowListener() {
@@ -191,9 +195,11 @@ public class SettingsActivity extends PreferenceActivity {
 		layout.setOrientation(LinearLayout.VERTICAL);
 		final EditText passswordEditText = new EditText(SettingsActivity.this);
 		passswordEditText.setHint(R.string.password_hint);
+		passswordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
 		layout.addView(passswordEditText);
 		final EditText passswordConfirmEditText = new EditText(SettingsActivity.this);
 		passswordConfirmEditText.setHint(R.string.confirm_password_hint);
+		passswordConfirmEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
 		layout.addView(passswordConfirmEditText);
 		alert.setView(layout);
 		
