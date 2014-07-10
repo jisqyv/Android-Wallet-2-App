@@ -45,6 +45,7 @@ public class WalletBalanceWidgetProvider extends AppWidgetProvider {
 	final public static String ACTION_WIDGET_MERCHANT_DIRECTORY ="piuk.blockchain.android.intent.action.ACTION_WIDGET_MERCHANT_DIRECTORY";
 	final public static String ACTION_WIDGET_SCAN_RECEIVING ="piuk.blockchain.android.intent.action.ACTION_WIDGET_SCAN_RECEIVING";
 	final public static String ACTION_WIDGET_REFRESH_BALANCE ="piuk.blockchain.android.intent.action.ACTION_WIDGET_REFRESH_BALANCE";
+	final public static String ACTION_WIDGET_BALANCE_SCREEN ="piuk.blockchain.android.intent.action.ACTION_WIDGET_BALANCE_SCREEN";
 
 	private BigInteger balance = BigInteger.ZERO;
 	
@@ -77,6 +78,10 @@ public class WalletBalanceWidgetProvider extends AppWidgetProvider {
 
 		remoteViews.setOnClickPendingIntent(R.id.merchant_directory_button,
                 buildButtonPendingIntent(context, ACTION_WIDGET_MERCHANT_DIRECTORY));
+
+		remoteViews.setOnClickPendingIntent(R.id.logo_button,
+                buildButtonPendingIntent(context, ACTION_WIDGET_BALANCE_SCREEN));
+
 	}
 	
 	public void updateBalance(final Context context, final RemoteViews remoteViews) {
@@ -162,7 +167,20 @@ public class WalletBalanceWidgetProvider extends AppWidgetProvider {
                             PendingIntent.getActivity(context, 0, navigateIntent, 0));            
             navigateIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
             context.startActivity(navigateIntent);            
-		
+            
+		} else if (action.equals(WalletBalanceWidgetProvider.ACTION_WIDGET_BALANCE_SCREEN)) {
+			boolean isPassPinScreen = ((WalletApplication)context.getApplicationContext()).getIsPassedPinScreen();
+			final Intent navigateIntent;
+			if (isPassPinScreen) {
+				navigateIntent = new Intent(context, MainActivity.class);
+			} else {
+				navigateIntent = new Intent(context, PinEntryActivity.class);
+			}
+			
+            remoteViews.setOnClickPendingIntent(R.id.widget_frame,
+                            PendingIntent.getActivity(context, 0, navigateIntent, 0));            
+            navigateIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            context.startActivity(navigateIntent);    		
 		} else if (action.equals(WalletBalanceWidgetProvider.ACTION_WIDGET_REFRESH_BALANCE)) {
 			updateBalance(context, remoteViews);
 		} else if (action.equals(android.appwidget.AppWidgetManager.ACTION_APPWIDGET_DISABLED)) {

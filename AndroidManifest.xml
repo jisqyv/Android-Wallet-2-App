@@ -202,6 +202,7 @@
                 <action android:name="piuk.blockchain.android.intent.action.ACTION_WIDGET_MERCHANT_DIRECTORY" />
                 <action android:name="piuk.blockchain.android.intent.action.ACTION_WIDGET_SCAN_RECEIVING" />
                 <action android:name="piuk.blockchain.android.intent.action.ACTION_WIDGET_REFRESH_BALANCE" />
+                <action android:name="piuk.blockchain.android.intent.action.ACTION_WIDGET_BALANCE_SCREEN" />
             </intent-filter>
 
             <meta-data
