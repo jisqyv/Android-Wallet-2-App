@@ -22,7 +22,6 @@ import piuk.blockchain.android.Constants;
 import piuk.blockchain.android.R;
 import piuk.blockchain.android.WalletApplication;
 //import piuk.blockchain.android.service.BlockchainServiceImpl;
-import piuk.blockchain.android.ui.SendCoinsActivity;
 import piuk.blockchain.android.SuccessCallback;
 import piuk.blockchain.android.ui.dialogs.RequestPasswordDialog;
 import piuk.blockchain.android.util.WalletUtils;
@@ -213,6 +212,9 @@ public class SendFragment extends Fragment   {
 
 	private ProgressDialog sendingProgressDialog = null;
 
+	private static final Map<String, ECKey> temporaryPrivateKeys = new HashMap<String, ECKey>();
+	private static String scanPrivateKeyAddress = null;
+	
     protected BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -502,8 +504,8 @@ public class SendFragment extends Fragment   {
 
 				public ECKey onPrivateKeyMissing(final String address) {
 
-					if (SendCoinsActivity.temporaryPrivateKeys.containsKey(address)) {
-						return SendCoinsActivity.temporaryPrivateKeys.get(address);
+					if (SendFragment.temporaryPrivateKeys.containsKey(address)) {
+						return SendFragment.temporaryPrivateKeys.get(address);
 					}
 
 					handler.post(new Runnable() {
@@ -516,7 +518,7 @@ public class SendFragment extends Fragment   {
 							.setCancelable(false)
 							.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 								public void onClick(DialogInterface dialog, int id) {
-									SendCoinsActivity.scanPrivateKeyAddress = address;
+									SendFragment.scanPrivateKeyAddress = address;
 
 									Intent intent = new Intent(getActivity(), ZBarScannerActivity.class);
 									intent.putExtra(ZBarConstants.SCAN_MODES, new int[] { Symbol.QRCODE } );
@@ -526,8 +528,8 @@ public class SendFragment extends Fragment   {
 							.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
 								public void onClick(DialogInterface dialog, int id) {
 
-									synchronized (SendCoinsActivity.temporaryPrivateKeys) {
-										SendCoinsActivity.temporaryPrivateKeys.notify();
+									synchronized (SendFragment.temporaryPrivateKeys) {
+										SendFragment.temporaryPrivateKeys.notify();
 									}
 
 									dialog.cancel();
@@ -541,14 +543,14 @@ public class SendFragment extends Fragment   {
 					});
 
 					try {
-						synchronized (SendCoinsActivity.temporaryPrivateKeys) {
-							SendCoinsActivity.temporaryPrivateKeys.wait();
+						synchronized (SendFragment.temporaryPrivateKeys) {
+							SendFragment.temporaryPrivateKeys.wait();
 						}
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
 
-					return SendCoinsActivity.temporaryPrivateKeys.get(address);
+					return SendFragment.temporaryPrivateKeys.get(address);
 				}
 
 				@Override
@@ -2559,8 +2561,8 @@ public class SendFragment extends Fragment   {
 
     				public ECKey onPrivateKeyMissing(final String address) {
 
-    					if (SendCoinsActivity.temporaryPrivateKeys.containsKey(address)) {
-    						return SendCoinsActivity.temporaryPrivateKeys.get(address);
+    					if (SendFragment.temporaryPrivateKeys.containsKey(address)) {
+    						return SendFragment.temporaryPrivateKeys.get(address);
     					}
 
     					handler.post(new Runnable() {
@@ -2573,7 +2575,7 @@ public class SendFragment extends Fragment   {
     							.setCancelable(false)
     							.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
     								public void onClick(DialogInterface dialog, int id) {
-    									SendCoinsActivity.scanPrivateKeyAddress = address;
+    									SendFragment.scanPrivateKeyAddress = address;
 
     									Intent intent = new Intent(getActivity(), ZBarScannerActivity.class);
     									intent.putExtra(ZBarConstants.SCAN_MODES, new int[] { Symbol.QRCODE } );
@@ -2583,8 +2585,8 @@ public class SendFragment extends Fragment   {
     							.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
     								public void onClick(DialogInterface dialog, int id) {
 
-    									synchronized (SendCoinsActivity.temporaryPrivateKeys) {
-    										SendCoinsActivity.temporaryPrivateKeys.notify();
+    									synchronized (SendFragment.temporaryPrivateKeys) {
+    										SendFragment.temporaryPrivateKeys.notify();
     									}
 
     									dialog.cancel();
@@ -2598,14 +2600,14 @@ public class SendFragment extends Fragment   {
     					});
 
     					try {
-    						synchronized (SendCoinsActivity.temporaryPrivateKeys) {
-    							SendCoinsActivity.temporaryPrivateKeys.wait();
+    						synchronized (SendFragment.temporaryPrivateKeys) {
+    							SendFragment.temporaryPrivateKeys.wait();
     						}
     					} catch (InterruptedException e) {
     						e.printStackTrace();
     					}
 
-    					return SendCoinsActivity.temporaryPrivateKeys.get(address);
+    					return SendFragment.temporaryPrivateKeys.get(address);
     				}
 
 					@Override
@@ -2914,7 +2916,7 @@ public class SendFragment extends Fragment   {
 	public void handleScanPrivateKey(final String contents) throws Exception {
 		System.out.println("Scanned PK " + contents);
 
-		if (SendCoinsActivity.scanPrivateKeyAddress != null) {
+		if (SendFragment.scanPrivateKeyAddress != null) {
 			final String format = WalletUtils.detectPrivateKeyFormat(contents);
 
 			System.out.println("Scanned Private Key Format " + format);
@@ -2937,19 +2939,19 @@ public class SendFragment extends Fragment   {
 									ECKey key = pair.first;
 
 									if (!key.toAddress(Constants.NETWORK_PARAMETERS)
-											.toString().equals(SendCoinsActivity.scanPrivateKeyAddress)) {
+											.toString().equals(SendFragment.scanPrivateKeyAddress)) {
 										String scannedPrivateAddress = key.toAddress(Constants.NETWORK_PARAMETERS)
 												.toString();
 										throw new Exception(getString(R.string.wrong_private_key, scannedPrivateAddress));
 									} else {
 										//Success
-										SendCoinsActivity.temporaryPrivateKeys.put(SendCoinsActivity.scanPrivateKeyAddress, key);
+										SendFragment.temporaryPrivateKeys.put(SendFragment.scanPrivateKeyAddress, key);
 
-										synchronized (SendCoinsActivity.temporaryPrivateKeys) {
-											SendCoinsActivity.temporaryPrivateKeys.notify();
+										synchronized (SendFragment.temporaryPrivateKeys) {
+											SendFragment.temporaryPrivateKeys.notify();
 										}
 
-										SendCoinsActivity.scanPrivateKeyAddress = null;
+										SendFragment.scanPrivateKeyAddress = null;
 									}
 								} catch (Exception e) {
 									e.printStackTrace();
@@ -2973,21 +2975,21 @@ public class SendFragment extends Fragment   {
 				ECKey key = pair.first;
 
 				if (!key.toAddress(Constants.NETWORK_PARAMETERS)
-						.toString().equals(SendCoinsActivity.scanPrivateKeyAddress)) {
+						.toString().equals(SendFragment.scanPrivateKeyAddress)) {
 					String scannedPrivateAddress = key.toAddress(Constants.NETWORK_PARAMETERS)
 							.toString();
 					throw new Exception(getString(R.string.wrong_private_key, scannedPrivateAddress));
 				} else {
 					//Success
-					SendCoinsActivity.temporaryPrivateKeys.put(SendCoinsActivity.scanPrivateKeyAddress, key);
+					SendFragment.temporaryPrivateKeys.put(SendFragment.scanPrivateKeyAddress, key);
 					Toast.makeText(application, "Success. Private key temporary imported", Toast.LENGTH_LONG).show();
 				}
 
-				synchronized (SendCoinsActivity.temporaryPrivateKeys) {
-					SendCoinsActivity.temporaryPrivateKeys.notify();
+				synchronized (SendFragment.temporaryPrivateKeys) {
+					SendFragment.temporaryPrivateKeys.notify();
 				}
 
-				SendCoinsActivity.scanPrivateKeyAddress = null;
+				SendFragment.scanPrivateKeyAddress = null;
 			}
 		} else {
 			//updateSendCoinsFragment(contents, null);

@@ -208,7 +208,7 @@ public abstract class AbstractWalletActivity extends FragmentActivity {
 
 		@Override
 		public void onMultiAddrError() {
-			if (self instanceof SendCoinsActivity || self instanceof WalletActivity) {
+			if (self instanceof WalletActivity) {
 				if (lastDisplayedNetworkError > System.currentTimeMillis()-Constants.NetworkErrorDisplayThreshold)
 					return;
 
