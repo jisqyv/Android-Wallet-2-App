@@ -683,6 +683,9 @@ public class PinEntryActivity extends FragmentActivity {
 					if (decryptionKey != null) {	
 						application.didEncounterFatalPINServerError = false;
 
+						//PIN saved in memory so user can change password in account settings without re-entering pin
+						application.getRemoteWallet().setTemporyPIN(PIN);
+						
 						String password = MyWallet.decrypt(encrypted_password, decryptionKey, piuk.blockchain.android.ui.PinEntryActivity.PBKDF2Iterations);
 //						Toast.makeText(PinEntryActivity.this, password, Toast.LENGTH_SHORT).show();	
 

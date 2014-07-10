@@ -358,4 +358,15 @@
     <string name="merchant_directory_button">merchant directory button</string>
     <string name="app_icon">app icon</string>
     
+    <string name="change_password_title">Change Password</string>
+    <string name="enter_your_current_password">Enter your current password:</string>
+    <string name="enter_your_new_password">Enter your new password:</string>
+    <string name="password_hint">password</string>
+    <string name="confirm_password_hint">confirm password</string>
+    <string name="password_changed">Password changed</string>
+    <string name="password_change_error">Password change error</string>
+    <string name="incorrect_password">Incorrect password</string>
+    <string name="old_password">Old password</string>
+    <string name="enter">Enter</string>
+    
 </resources>

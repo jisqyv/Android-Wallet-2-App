@@ -32,10 +32,16 @@
         	        android:title="Backup wallet"
             	    android:summary="Backup wallet to media of your choice"
                 	android:key="backup"
-                	/>		        
+                	/>	
+		        
+		        <Preference
+        	        android:title="Change Password"
+            	    android:summary="Change your password"
+                	android:key="password"
+                	/>	                		        
 		        <Preference
         	        android:title="Unpair device"
             	    android:summary="Unpair this device to import a different wallet"
                 	android:key="unpair"
-                	/>
+                	/>	        
 </PreferenceScreen>

@@ -2,12 +2,19 @@ package info.blockchain.wallet.ui;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.security.SecureRandom;
 import java.util.Date;
+
+import org.json.simple.JSONObject;
+import org.spongycastle.util.encoders.Hex;
 
 import piuk.blockchain.android.MyRemoteWallet;
 import piuk.blockchain.android.Constants;
+import piuk.blockchain.android.MyWallet;
 import piuk.blockchain.android.R;
+import piuk.blockchain.android.SuccessCallback;
 import piuk.blockchain.android.WalletApplication;
 import piuk.blockchain.android.util.Iso8601Format;
 import android.app.Activity;
@@ -27,8 +34,12 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.Preference.OnPreferenceChangeListener;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 //import android.util.Log;
 import android.widget.Toast;
 
@@ -36,6 +47,8 @@ public class SettingsActivity extends PreferenceActivity {
 
 	private static final int DIALOG_EXPORT_KEYS = 1;
 
+	private WalletApplication application = null;
+	
     /** Called when the activity is first created. */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +58,7 @@ public class SettingsActivity extends PreferenceActivity {
 
         	SharedPreferences sp = getPreferenceScreen().getSharedPreferences();
 //        	final String guid = WalletUtil.getInstance(this, this).getRemoteWallet().getGUID();
-        	WalletApplication application = (WalletApplication)getApplication();
+        	application = (WalletApplication)getApplication();
         	final String guid = application.getRemoteWallet().getGUID();
 
         	Preference guidPref = (Preference) findPreference("guid");
@@ -78,13 +91,11 @@ public class SettingsActivity extends PreferenceActivity {
         			return true;
         		}
         	});
-        	
-        	final Activity setupActivity = this;
-        	
+        	        	
         	Preference unpairPref = (Preference) findPreference("unpair");
         	unpairPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
         		public boolean onPreferenceClick(Preference preference) {
-					AlertDialog.Builder builder = new AlertDialog.Builder(setupActivity);
+					AlertDialog.Builder builder = new AlertDialog.Builder(SettingsActivity.this);
 					builder.setMessage(R.string.ask_you_sure_unpair)
 					.setCancelable(false);
 
@@ -115,8 +126,147 @@ public class SettingsActivity extends PreferenceActivity {
         		}
         	});
         	
+        	Preference passwordPref = (Preference) findPreference("password");
+        	passwordPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+        		public boolean onPreferenceClick(Preference preference) {
+        			promptToEnterOldPasswordAndChangePassword();
+        			return true;
+        		}
+        	});
     }
 
+	private void promptToEnterOldPasswordAndChangePassword() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(SettingsActivity.this);
+		builder.setTitle(R.string.change_password_title);
+		builder.setMessage(R.string.enter_your_current_password);
+		final AlertDialog alert = builder.create();
+
+		final EditText oldPassswordEditText = new EditText(SettingsActivity.this);
+		oldPassswordEditText.setHint(R.string.old_password);
+		alert.setView(oldPassswordEditText);
+		
+		alert.setOnShowListener(new DialogInterface.OnShowListener() {
+		    @Override
+		    public void onShow(DialogInterface dialog) {
+		        Button b = alert.getButton(AlertDialog.BUTTON_POSITIVE);
+		        b.setOnClickListener(new View.OnClickListener() {
+
+		            @Override
+		            public void onClick(View view) {
+						String oldPasssword = oldPassswordEditText.getText().toString().trim();
+			   			if (! oldPasssword.equals(application.getRemoteWallet().getTemporyPassword())) {
+			   				Toast.makeText(SettingsActivity.this, R.string.incorrect_password, Toast.LENGTH_LONG).show();
+			   				return;
+			   			} 
+		   				promptToChangePassword();
+		   				alert.dismiss();		            	
+		            }
+		        });
+		    }
+		});
+
+		alert.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.enter), new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+			}
+		}); 
+
+		alert.setButton(AlertDialog.BUTTON_NEGATIVE, getString(R.string.cancel), new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				dialog.dismiss();
+			}
+		});
+		
+		alert.show();
+	}
+	
+	private void promptToChangePassword() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(SettingsActivity.this);
+		builder.setTitle(R.string.change_password_title);
+		builder.setMessage(R.string.enter_your_new_password)
+		.setCancelable(false);
+
+		final AlertDialog alert = builder.create();
+
+		LinearLayout layout = new LinearLayout(getBaseContext());
+		layout.setOrientation(LinearLayout.VERTICAL);
+		final EditText passswordEditText = new EditText(SettingsActivity.this);
+		passswordEditText.setHint(R.string.password_hint);
+		layout.addView(passswordEditText);
+		final EditText passswordConfirmEditText = new EditText(SettingsActivity.this);
+		passswordConfirmEditText.setHint(R.string.confirm_password_hint);
+		layout.addView(passswordConfirmEditText);
+		alert.setView(layout);
+		
+		alert.setOnShowListener(new DialogInterface.OnShowListener() {
+		    @Override
+		    public void onShow(DialogInterface dialog) {
+		        Button b = alert.getButton(AlertDialog.BUTTON_POSITIVE);
+		        b.setOnClickListener(new View.OnClickListener() {
+
+		            @Override
+		            public void onClick(View view) {
+		    			String pw1 = passswordEditText.getText().toString().trim();
+						String pw2 = passswordConfirmEditText.getText().toString().trim();
+			   			if(pw1.length() < 11 || pw1.length() > 255) {
+			   				Toast.makeText(SettingsActivity.this, R.string.new_account_password_length_error, Toast.LENGTH_LONG).show();
+			   				return;
+			   			}
+			   			if (! pw1.equals(pw2)) {
+			   				Toast.makeText(SettingsActivity.this, R.string.new_account_password_mismatch_error, Toast.LENGTH_LONG).show();
+			   				return;
+			   			}
+			   			
+			   			try {
+			   				application.getRemoteWallet().setTemporyPassword(pw1);
+							application.saveWallet(new SuccessCallback() {
+								@Override
+								public void onSuccess() {	
+									alert.dismiss();
+					   				Toast.makeText(SettingsActivity.this, R.string.password_changed, Toast.LENGTH_LONG).show();
+									String pinCode = application.getRemoteWallet().getTemporyPIN();
+					   				application.apiStoreKey(pinCode, new SuccessCallback() {
+
+										@Override
+										public void onSuccess() {
+								            Log.d("apiStoreKey", "apiStoreKey apiStoreKey onSuccess");				
+										}
+
+										@Override
+										public void onFail() {
+								            Log.d("apiStoreKey", "apiStoreKey apiStoreKey onFail");				
+										}
+					   				});
+								}
+
+								@Override
+								public void onFail() {
+									alert.dismiss();
+					   				Toast.makeText(SettingsActivity.this, R.string.password_change_error, Toast.LENGTH_LONG).show();
+								}
+							});
+						} catch (Exception e) {
+			   				Toast.makeText(SettingsActivity.this, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+							e.printStackTrace();
+						}	   	
+		            }
+		        });
+		    }
+		});
+		
+		alert.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.enter), new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+			}
+		}); 
+
+		alert.setButton(AlertDialog.BUTTON_NEGATIVE, getString(R.string.cancel), new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				dialog.dismiss();
+			}
+		});
+		
+		alert.show();
+	}
+	
 	private Dialog createExportKeysDialog()
 	{
 		final View view = getLayoutInflater().inflate(R.layout.export_keys_dialog, null);

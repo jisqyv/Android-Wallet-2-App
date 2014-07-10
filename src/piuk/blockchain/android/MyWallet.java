@@ -61,6 +61,7 @@ public class MyWallet {
 
 	public String temporyPassword;
 	public String temporySecondPassword;
+	public String temporyPIN;
 	public static final double SupportedEncryptionVersion = 2.0;
 
 	private static final NetworkParameters params = MainNetParams.get();
@@ -358,6 +359,14 @@ public class MyWallet {
 
 	public String getTemporySecondPassword() {
 		return temporySecondPassword;
+	}
+
+	public void setTemporyPIN(String PIN) {
+		this.temporyPIN = PIN;
+	}
+
+	public String getTemporyPIN() {
+		return temporyPIN;
 	}
 
 	public void setTemporySecondPassword(String secondPassword) {
