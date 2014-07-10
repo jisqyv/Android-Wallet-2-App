@@ -816,7 +816,7 @@ public class MyRemoteWallet extends MyWallet {
 		HashMap<String, BigInteger> receivingAddresses = new HashMap<String, BigInteger>();
 		receivingAddresses.put(toAddress, amount);
 
-		final String[] from = getNotWatchOnlyActiveAddresses();
+		final String[] from = getActiveAddresses();
 		HashMap<String, BigInteger> sendingAddresses = new HashMap<String, BigInteger>();
 		for(int i = 0; i < from.length; i++)
 			sendingAddresses.put(from[i], null);
