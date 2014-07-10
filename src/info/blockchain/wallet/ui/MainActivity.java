@@ -232,7 +232,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 		if (application.getRemoteWallet() != null) {
 			application.checkIfWalletHasUpdatedAndFetchTransactions(application.getRemoteWallet().getTemporyPassword());
 		}
-		
+/*	
 		application.sharedCoinGetInfo(new SuccessCallback() {
 
 			public void onSuccess() {			
@@ -255,7 +255,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 Log.d("SharedCoin", "SharedCoin getInfo getToken " + sharedCoin.getToken());
 
                 if (sharedCoin.isEnabled()) {
-/*		                	
+	                	
                     List<String> fromAddresses = new ArrayList<String>();
                     fromAddresses.add("1BrFyKUJ2tesPnwJQ2pSnBjxfwKbFhQNrS");
                     String toAddress = "1NYVmXwijjGq43qxLscMrZq4dYh1YYUDzn";
@@ -265,7 +265,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 	List<String> shared_coin_seeds = new ArrayList<String>();
             		shared_coin_seeds.add("sharedcoin-seed:a43790c285abb25bf80ed0008f1abbe1738f");	
             		//application.sharedCoinRecoverSeeds(shared_coin_seeds);
-//*/
                 }
 			}
 			
@@ -273,6 +272,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 Log.d("SharedCoin", "SharedCoin getInfo: onFail ");						
 			}
 		});            	
+//*/
+
 	}
 
 	@Override
