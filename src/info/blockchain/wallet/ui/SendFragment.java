@@ -210,7 +210,7 @@ public class SendFragment extends Fragment   {
 	private SendProgress csProgress = null;
 
 	public static final String ACTION_INTENT = "info.blockchain.wallet.ui.SendFragment.BTC_ADDRESS_SCAN";
-	
+
 	private ProgressDialog sendingProgressDialog = null;
 
     protected BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -239,7 +239,7 @@ public class SendFragment extends Fragment   {
 			btSend.setVisibility(View.GONE);
 	        summary3.setVisibility(View.VISIBLE);
 	        tvSentPrompt.setVisibility(View.VISIBLE);
-	        
+
 	        if(sendingProgressDialog != null) {
 		        sendingProgressDialog.dismiss();
 	        }
@@ -254,11 +254,11 @@ public class SendFragment extends Fragment   {
 		@Override
 		public void onTransactionsChanged() {
 		};
-		
+
 		@Override
 		public void onWalletDidChange() {
 		}
-		
+
 		@Override
 		public void onCurrencyChanged() {
 		};
@@ -394,7 +394,7 @@ public class SendFragment extends Fragment   {
 					handler.post(new Runnable() {
 						public void run() {
 							application.getRemoteWallet().setState(MyRemoteWallet.State.SENT);
-							
+
 					        if(sendingProgressDialog != null) {
 						        sendingProgressDialog.dismiss();
 					        }
@@ -936,7 +936,7 @@ public class SendFragment extends Fragment   {
 	 		            else {
 	 		            	tvAddressBis.setVisibility(View.GONE);
 	 		            }
-	 		            
+
 	 		            if(BitcoinAddressCheck.isValidAddress(edAddress.getText().toString())) {
 	 		            	tvAddressBis.setVisibility(View.GONE);
 	 		            }
@@ -1112,7 +1112,7 @@ public class SendFragment extends Fragment   {
 		        	if(isMagic) {
 		        		removeMagicList();
 		        	}
-		        	
+
 	                icon_row.setVisibility(View.GONE);
 
 	                InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -1885,7 +1885,7 @@ public class SendFragment extends Fragment   {
         parent = (LinearLayout)oldView.getParent();
         oldView.setVisibility(View.GONE);
 		childIcons = inflater.inflate(R.layout.magic, null);
-		
+
         final int color_contacts_selected = 0xff808080;
         final int color_contacts_unselected = 0xffe0e0e0;
 
@@ -1982,7 +1982,7 @@ public class SendFragment extends Fragment   {
 
         magicList.setOnItemClickListener(new OnItemClickListener() {
 	        public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3)	{
-	        	
+
                 HashMap<String, String> map = filteredDisplayList.get(position);
                 String labelOrAddress = map.get("labelOrAddress");
             	edAddress.setText(labelOrAddress);         	                	               
@@ -2094,8 +2094,6 @@ public class SendFragment extends Fragment   {
 //        sendViewToBack(container);
     	CURRENT_SEND = SIMPLE_SEND;
     	
-    	((LinearLayout)rootView.findViewById(R.id.custom_confirm)).setVisibility(View.GONE);
-
     }
 
     private void doCustomSend() {
@@ -2444,7 +2442,7 @@ public class SendFragment extends Fragment   {
 
 				final BigInteger entered_amount = getBTCEnteredOutputValue(edAmount1.getText().toString());
 				final WalletApplication application = (WalletApplication) getActivity().getApplication();
-				
+
 				MyRemoteWallet.FeePolicy feePolicy = MyRemoteWallet.FeePolicy.FeeOnlyIfNeeded;
 				BigInteger fee = cs.getFee();
 
@@ -2660,9 +2658,6 @@ public class SendFragment extends Fragment   {
 
             }
         });
-
-    	((LinearLayout)rootView.findViewById(R.id.custom_confirm)).addView(btConfirm);
-    	((LinearLayout)rootView.findViewById(R.id.custom_confirm)).setVisibility(View.VISIBLE);
 
     }
 
@@ -2933,7 +2928,7 @@ public class SendFragment extends Fragment   {
 
 							public void onSuccess() {
 								String password = RequestPasswordDialog.getPasswordResult();
-								
+
 								System.out.println("Password " + password);
 
 								try {
@@ -2949,7 +2944,7 @@ public class SendFragment extends Fragment   {
 									} else {
 										//Success
 										SendCoinsActivity.temporaryPrivateKeys.put(SendCoinsActivity.scanPrivateKeyAddress, key);
-										
+
 										synchronized (SendCoinsActivity.temporaryPrivateKeys) {
 											SendCoinsActivity.temporaryPrivateKeys.notify();
 										}
@@ -2958,7 +2953,7 @@ public class SendFragment extends Fragment   {
 									}
 								} catch (Exception e) {
 									e.printStackTrace();
-									
+
 									//longToast("Error Decrypting Private Key");
 									Toast.makeText(application, "Error Decrypting Private Key", Toast.LENGTH_LONG).show();
 									//updateSendCoinsFragment(contents, null);
