@@ -684,7 +684,8 @@ public class PinEntryActivity extends FragmentActivity {
 						application.didEncounterFatalPINServerError = false;
 
 						//PIN saved in memory so user can change password in account settings without re-entering pin
-						application.getRemoteWallet().setTemporyPIN(PIN);
+						/* *************** */
+//						application.getRemoteWallet().setTemporyPIN(PIN);
 						
 						String password = MyWallet.decrypt(encrypted_password, decryptionKey, piuk.blockchain.android.ui.PinEntryActivity.PBKDF2Iterations);
 //						Toast.makeText(PinEntryActivity.this, password, Toast.LENGTH_SHORT).show();	
@@ -694,7 +695,7 @@ public class PinEntryActivity extends FragmentActivity {
 							public void onSuccess() {
 								handler.post(new Runnable() {
 									public void run() {															
-										Toast.makeText(PinEntryActivity.this, "PIN Verified", Toast.LENGTH_SHORT).show();	
+//										Toast.makeText(PinEntryActivity.this, "PIN Verified", Toast.LENGTH_SHORT).show();	
 
 //										disableKeyPad(false);
 
@@ -775,7 +776,9 @@ public class PinEntryActivity extends FragmentActivity {
 
 						// "code" == 2 means the PIN is incorrect
 						if (!response.containsKey("code") || ((Number)response.get("code")).intValue() != 2) {
-//							clearPrefValues(application);
+							/* ****************
+							clearPrefValues(application);
+							*/
 
 							/*
 							Editor editor = PreferenceManager.getDefaultSharedPreferences(application).edit();

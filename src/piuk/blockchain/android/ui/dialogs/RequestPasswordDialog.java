@@ -171,8 +171,10 @@ public final class RequestPasswordDialog extends DialogFragment {
 			public void onClick(View v) {
 
 				try {
-					if (passwordField.getText() == null || passwordField.length() < 1)
+					if (passwordField.getText().toString().trim() == null || passwordField.getText().toString().trim().length() < 1) {
 						callback.onFail();
+						return;
+					}
 
 					MyRemoteWallet wallet = application.getRemoteWallet();
 
@@ -199,14 +201,12 @@ public final class RequestPasswordDialog extends DialogFragment {
 							@Override
 							public void onSuccess() {
 								dismiss();
-
 								callback.onSuccess();
 							}
 
 							@Override
 							public void onFail() {
 								dismiss();
-
 								callback.onFail();
 							}
 						});

@@ -931,6 +931,7 @@ public class WalletApplication extends Application {
 				} catch (Exception e) {
 					e.printStackTrace();
 
+					/* ******************
 					deleteLocalWallet();
 
 					try {
@@ -938,6 +939,7 @@ public class WalletApplication extends Application {
 					} catch (Exception e1) {
 						e1.printStackTrace();
 					}
+					*/
 
 					decryptionErrors++;
 

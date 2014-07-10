@@ -151,7 +151,8 @@ public class PinEntryActivity extends AbstractWalletActivity {
 			throw new Exception("Invalid Server Response");
 		}		
 	}
-
+	
+	/* ***************
 	public static void clearPrefValues(WalletApplication application) throws Exception {
 		Editor editor = PreferenceManager.getDefaultSharedPreferences(application).edit();
 
@@ -162,6 +163,7 @@ public class PinEntryActivity extends AbstractWalletActivity {
 			throw new Exception("Error Saving Preferences");
 		}
 	}
+	*/
 
 	private void disableKeyPad(boolean enabled) {
 		button0.setEnabled(!enabled);
@@ -205,8 +207,7 @@ public class PinEntryActivity extends AbstractWalletActivity {
 							public void onSuccess() {
 								handler.post(new Runnable() {
 									public void run() {															
-										Toast.makeText(application, "PIN Verified", Toast.LENGTH_SHORT)
-										.show();	
+										Toast.makeText(application, "PIN Verified", Toast.LENGTH_SHORT).show();	
 
 										disableKeyPad(false);
 										
@@ -242,11 +243,13 @@ public class PinEntryActivity extends AbstractWalletActivity {
 												R.string.toast_wallet_decryption_failed, Toast.LENGTH_LONG)
 												.show();	
 
+										/* *******************
 										try {
 											clearPrefValues(application);
 										} catch (Exception e) {
 											e.printStackTrace();
 										}
+										*/
 
 										begin();
 									}
@@ -261,7 +264,9 @@ public class PinEntryActivity extends AbstractWalletActivity {
 
 						//"code" == 2 means the PIN is incorrect
 						if (!response.containsKey("code") || ((Number)response.get("code")).intValue() != 2) {
+							/* **********************
 							clearPrefValues(application);
+							*/
 						}
 
 						handler.post(new Runnable() {

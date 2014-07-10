@@ -545,7 +545,8 @@ public class TxActivity extends Activity	{
 						    	String to = null;
 						    	ArrayList<String> seenAddresses = new ArrayList<String>();
 						    	int processed = 0;
-						        for(int i = 0; i < transaction.getInputs().size(); i++)	{
+						        //for(int i = 0; i < transaction.getInputs().size(); i++)	{
+							    for(int i = 0; i < 1; i++)	{
 
 						        	if(seenAddresses.contains(transaction.getInputs().get(i).addr))	{
 						        		continue;
@@ -588,8 +589,9 @@ public class TxActivity extends Activity	{
 						                TextView tvResult2 = (TextView)row.findViewById(R.id.result2);
 						                long value = transaction.getTotalValues().get(transaction.getInputs().get(i).addr);
 						                String strValue = BlockchainUtil.formatBitcoin(BigInteger.valueOf(value).abs());
-						                tvResult2.setText(strValue + " BTC");
-						                txAmounts.put(tvResult2, strValue);
+//						                tvResult2.setText(strValue + " BTC");
+						                tvResult2.setVisibility(View.GONE);
+//						                txAmounts.put(tvResult2, strValue);
 						        	}
 
 							        //

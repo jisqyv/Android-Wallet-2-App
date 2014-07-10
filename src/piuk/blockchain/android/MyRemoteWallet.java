@@ -534,7 +534,7 @@ public class MyRemoteWallet extends MyWallet {
 	}
 
 	public static synchronized String getBalances(String[] addresses, boolean notifications) throws Exception {
-		String url =  WebROOT + "multiaddr?active=" + StringUtils.join(addresses, "|")+"&simple=true&format=json";
+		String url =  WebROOT + "multiaddr?active=" + StringUtils.join(addresses, "|") + "&simple=true&format=json";
 
 		String response = fetchURL(url);
 		
@@ -542,7 +542,7 @@ public class MyRemoteWallet extends MyWallet {
 	}
 	
 	public synchronized String doMultiAddr(boolean notifications) throws Exception {
-		String url =  WebROOT + "multiaddr?active=" + StringUtils.join(getActiveAddresses(), "|")+"&symbol_btc="+btcCurrencyCode+"&symbol_local="+localCurrencyCode;
+		String url =  WebROOT + "multiaddr?active=" + StringUtils.join(getActiveAddresses(), "|") + "&symbol_btc="+btcCurrencyCode + "&symbol_local=" + localCurrencyCode;
 
 		String response = fetchURL(url);
 
@@ -555,7 +555,7 @@ public class MyRemoteWallet extends MyWallet {
 
 	public synchronized void doMultiAddr(boolean notifications, SuccessCallback callback) {
 		try {
-			String url =  WebROOT + "multiaddr?active=" + StringUtils.join(getActiveAddresses(), "|")+"&symbol_btc="+btcCurrencyCode+"&symbol_local="+localCurrencyCode;
+			String url =  WebROOT + "multiaddr?active=" + StringUtils.join(getActiveAddresses(), "|") + "&symbol_btc=" + btcCurrencyCode + "&symbol_local=" + localCurrencyCode;
 
 			String response = fetchURL(url);
 

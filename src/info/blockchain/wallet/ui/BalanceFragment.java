@@ -517,6 +517,16 @@ public class BalanceFragment extends Fragment   {
     public void onResume() {
     	super.onResume();
 
+    	//
+    	//
+    	//
+		try {
+    		WalletUtil.getInstance(getActivity(), getActivity()).getWalletApplication().doMultiAddr(false, null);
+		}
+		catch(Exception e) {
+    		Toast.makeText(getActivity(), e.toString(), Toast.LENGTH_SHORT).show();
+		}
+
         IntentFilter filter = new IntentFilter(ACTION_INTENT);
 //        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiver, filter);
 
