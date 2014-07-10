@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+
 //import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -71,9 +72,7 @@ public class AddressBookActivity extends Activity {
     private List<Map<String, Object>> addressBookMapList = null;
     private AddressManager addressManager = null;
     private int curSelection = -1;
-    
-    private Handler mHandler = new Handler();
-    
+        
     private static int QR_GENERATION = 1;
     private static int EDIT_LABEL = 2;
     private static int SCAN_WATCH_ONLY = 3;
@@ -81,6 +80,9 @@ public class AddressBookActivity extends Activity {
     private static int SCAN_PRIVATE_KEY = 5;
 	private String editLabelAddress = null;
 	
+	private final int color_spend_selected = 0xff808080;
+	private final int color_spend_unselected = 0xffa0a0a0;
+    
     private static enum DisplayedAddresses {
 		SendingAddresses,
 		ActiveAddresses,
@@ -224,9 +226,6 @@ public class AddressBookActivity extends Activity {
         final LinearLayout layoutActive = ((LinearLayout)findViewById(R.id.active_bg));
         final LinearLayout layoutSending = ((LinearLayout)findViewById(R.id.sending_bg));
         
-        final int color_spend_selected = 0xff808080;
-        final int color_spend_unselected = 0xffa0a0a0;
-        
     	imgArchived.setBackgroundColor(color_spend_unselected);
     	imgActive.setBackgroundColor(color_spend_selected);
     	imgSending.setBackgroundColor(color_spend_unselected);
@@ -300,6 +299,25 @@ public class AddressBookActivity extends Activity {
 		}
     }
 
+    
+	public void switchViewToActiveAddresses() {
+        final ImageView imgArchived = ((ImageView)findViewById(R.id.archived));
+        final ImageView imgActive = ((ImageView)findViewById(R.id.active));
+        final ImageView imgSending = ((ImageView)findViewById(R.id.sending));
+        final LinearLayout layoutArchived = ((LinearLayout)findViewById(R.id.archived_bg));
+        final LinearLayout layoutActive = ((LinearLayout)findViewById(R.id.active_bg));
+        final LinearLayout layoutSending = ((LinearLayout)findViewById(R.id.sending_bg));
+        
+		imgArchived.setBackgroundColor(color_spend_unselected);
+    	imgActive.setBackgroundColor(color_spend_selected);
+    	imgSending.setBackgroundColor(color_spend_unselected);
+    	layoutArchived.setBackgroundColor(color_spend_unselected);
+    	layoutActive.setBackgroundColor(color_spend_selected);
+    	layoutSending.setBackgroundColor(color_spend_unselected);
+
+    	initActiveList();
+	}
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.addressbook, menu);
@@ -311,18 +329,16 @@ public class AddressBookActivity extends Activity {
 	    switch (item.getItemId()) {
 	    	case R.id.new_address:
 	    		addressManager.newAddress(new AddAddressCallback() {
-
 	    			public void onSavedAddress(String address) {
-	    				Toast.makeText(AddressBookActivity.this, getString(R.string.toast_generated_address, address), Toast.LENGTH_LONG).show();
+	    	    		Toast.makeText(AddressBookActivity.this, R.string.toast_new_address_generated, Toast.LENGTH_LONG).show();
+	    	    		switchViewToActiveAddresses();
 	    			}
 
 	    			public void onError(String reason) {
 	    				Toast.makeText(AddressBookActivity.this, reason, Toast.LENGTH_LONG).show();
-
 	    			}
 	    		});
-	    		
-	    		Toast.makeText(AddressBookActivity.this, "generate new address", Toast.LENGTH_LONG).show();
+
 	    		return true;
 	    	case R.id.scan_watch_only:
 	    	 {
