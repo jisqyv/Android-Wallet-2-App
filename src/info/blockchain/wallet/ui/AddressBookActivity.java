@@ -88,6 +88,13 @@ public class AddressBookActivity extends Activity {
 	private final int color_spend_selected = 0xff808080;
 	private final int color_spend_unselected = 0xffa0a0a0;
     
+	private ImageView imgArchived;
+	private ImageView imgActive;
+	private ImageView imgContacts;
+	private LinearLayout layoutArchived;
+	private LinearLayout layoutActive;
+	private LinearLayout layoutContacts;
+    
     private static enum DisplayedAddresses {
 		ContactsAddresses,
 		ActiveAddresses,
@@ -224,12 +231,12 @@ public class AddressBookActivity extends Activity {
             }
         });
         
-        final ImageView imgArchived = ((ImageView)findViewById(R.id.archived));
-        final ImageView imgActive = ((ImageView)findViewById(R.id.active));
-        final ImageView imgContacts = ((ImageView)findViewById(R.id.contacts));
-        final LinearLayout layoutArchived = ((LinearLayout)findViewById(R.id.archived_bg));
-        final LinearLayout layoutActive = ((LinearLayout)findViewById(R.id.active_bg));
-        final LinearLayout layoutContacts = ((LinearLayout)findViewById(R.id.contacts_bg));
+        imgArchived = ((ImageView)findViewById(R.id.archived));
+        imgActive = ((ImageView)findViewById(R.id.active));
+        imgContacts = ((ImageView)findViewById(R.id.contacts));
+        layoutArchived = ((LinearLayout)findViewById(R.id.archived_bg));
+        layoutActive = ((LinearLayout)findViewById(R.id.active_bg));
+        layoutContacts = ((LinearLayout)findViewById(R.id.contacts_bg));
         
     	imgArchived.setBackgroundColor(color_spend_unselected);
     	imgActive.setBackgroundColor(color_spend_selected);
@@ -241,12 +248,12 @@ public class AddressBookActivity extends Activity {
         layoutArchived.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-				imgArchived.setBackgroundColor(color_spend_selected);
-            	imgActive.setBackgroundColor(color_spend_unselected);
-            	imgContacts.setBackgroundColor(color_spend_unselected);
-            	layoutArchived.setBackgroundColor(color_spend_selected);
-            	layoutActive.setBackgroundColor(color_spend_unselected);
-            	layoutContacts.setBackgroundColor(color_spend_unselected);
+            	AddressBookActivity.this.imgArchived.setBackgroundColor(color_spend_selected);
+            	AddressBookActivity.this.imgActive.setBackgroundColor(color_spend_unselected);
+            	AddressBookActivity.this.imgContacts.setBackgroundColor(color_spend_unselected);
+            	AddressBookActivity.this.layoutArchived.setBackgroundColor(color_spend_selected);
+            	AddressBookActivity.this.layoutActive.setBackgroundColor(color_spend_unselected);
+            	AddressBookActivity.this.layoutContacts.setBackgroundColor(color_spend_unselected);
             	
             	initArchivedList();
 
@@ -257,12 +264,12 @@ public class AddressBookActivity extends Activity {
         layoutActive.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-				imgArchived.setBackgroundColor(color_spend_unselected);
-            	imgActive.setBackgroundColor(color_spend_selected);
-            	imgContacts.setBackgroundColor(color_spend_unselected);
-            	layoutArchived.setBackgroundColor(color_spend_unselected);
-            	layoutActive.setBackgroundColor(color_spend_selected);
-            	layoutContacts.setBackgroundColor(color_spend_unselected);
+            	AddressBookActivity.this.imgArchived.setBackgroundColor(color_spend_unselected);
+            	AddressBookActivity.this.imgActive.setBackgroundColor(color_spend_selected);
+            	AddressBookActivity.this.imgContacts.setBackgroundColor(color_spend_unselected);
+            	AddressBookActivity.this.layoutArchived.setBackgroundColor(color_spend_unselected);
+            	AddressBookActivity.this.layoutActive.setBackgroundColor(color_spend_selected);
+            	AddressBookActivity.this.layoutContacts.setBackgroundColor(color_spend_unselected);
 
             	initActiveList();
 
@@ -273,12 +280,12 @@ public class AddressBookActivity extends Activity {
         layoutContacts.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-				imgArchived.setBackgroundColor(color_spend_unselected);
-            	imgActive.setBackgroundColor(color_spend_unselected);
-            	imgContacts.setBackgroundColor(color_spend_selected);
-            	layoutArchived.setBackgroundColor(color_spend_unselected);
-            	layoutActive.setBackgroundColor(color_spend_unselected);
-            	layoutContacts.setBackgroundColor(color_spend_selected);
+            	AddressBookActivity.this.imgArchived.setBackgroundColor(color_spend_unselected);
+            	AddressBookActivity.this.imgActive.setBackgroundColor(color_spend_unselected);
+            	AddressBookActivity.this.imgContacts.setBackgroundColor(color_spend_selected);
+            	AddressBookActivity.this.layoutArchived.setBackgroundColor(color_spend_unselected);
+            	AddressBookActivity.this.layoutActive.setBackgroundColor(color_spend_unselected);
+            	AddressBookActivity.this.layoutContacts.setBackgroundColor(color_spend_selected);
 
             	initContactsList();
 
@@ -293,26 +300,23 @@ public class AddressBookActivity extends Activity {
 		application.checkIfWalletHasUpdatedAndFetchTransactions(application.getRemoteWallet().getTemporyPassword());
 		
 		if(gotoContactsAddresses) {
-			imgArchived.setBackgroundColor(color_spend_unselected);
-        	imgActive.setBackgroundColor(color_spend_unselected);
-        	imgContacts.setBackgroundColor(color_spend_selected);
-        	layoutArchived.setBackgroundColor(color_spend_unselected);
-        	layoutActive.setBackgroundColor(color_spend_unselected);
-        	layoutContacts.setBackgroundColor(color_spend_selected);
-
-        	initContactsList();
+			gotoContactsAddresses();
 		}
     }
 
     
-	public void switchViewToActiveAddresses() {
-        final ImageView imgArchived = ((ImageView)findViewById(R.id.archived));
-        final ImageView imgActive = ((ImageView)findViewById(R.id.active));
-        final ImageView imgContacts = ((ImageView)findViewById(R.id.contacts));
-        final LinearLayout layoutArchived = ((LinearLayout)findViewById(R.id.archived_bg));
-        final LinearLayout layoutActive = ((LinearLayout)findViewById(R.id.active_bg));
-        final LinearLayout layoutContacts = ((LinearLayout)findViewById(R.id.contacts_bg));
-        
+	public void gotoContactsAddresses() {
+		imgArchived.setBackgroundColor(color_spend_unselected);
+    	imgActive.setBackgroundColor(color_spend_unselected);
+    	imgContacts.setBackgroundColor(color_spend_selected);
+    	layoutArchived.setBackgroundColor(color_spend_unselected);
+    	layoutActive.setBackgroundColor(color_spend_unselected);
+    	layoutContacts.setBackgroundColor(color_spend_selected);
+
+    	initContactsList();
+	}
+	
+	public void goToActiveAddresses() {
 		imgArchived.setBackgroundColor(color_spend_unselected);
     	imgActive.setBackgroundColor(color_spend_selected);
     	imgContacts.setBackgroundColor(color_spend_unselected);
@@ -336,7 +340,7 @@ public class AddressBookActivity extends Activity {
 	    		addressManager.newAddress(new AddAddressCallback() {
 	    			public void onSavedAddress(String address) {
 	    	    		Toast.makeText(AddressBookActivity.this, R.string.toast_new_address_generated, Toast.LENGTH_LONG).show();
-	    	    		switchViewToActiveAddresses();
+	    	    		goToActiveAddresses();
 	    			}
 
 	    			public void onError(String reason) {
@@ -435,9 +439,22 @@ public class AddressBookActivity extends Activity {
 		} else if(resultCode == Activity.RESULT_OK && requestCode == SCAN_CONTACTS_ADDRESS) {
 			String scanData = data.getStringExtra(ZBarConstants.SCAN_RESULT);
 			if (addressManager.canAddAddressBookEntry(scanData, "")) {
-				addressManager.handleAddAddressBookEntry(scanData, "");
+				addressManager.handleAddAddressBookEntry(scanData, "", new SuccessCallback() {
+
+					@Override
+					public void onSuccess() {
+		        		Toast.makeText(AddressBookActivity.this, R.string.success_contact_added, Toast.LENGTH_LONG).show();	
+		        		gotoContactsAddresses();
+					}
+
+					@Override
+					public void onFail() {
+		        		Toast.makeText(AddressBookActivity.this, R.string.wallet_sync_error, Toast.LENGTH_LONG).show();	
+					}
+					
+				});
 			} else {
-	    		Toast.makeText(AddressBookActivity.this, "Address already exist", Toast.LENGTH_LONG).show();
+	    		Toast.makeText(AddressBookActivity.this, R.string.address_already_exist, Toast.LENGTH_LONG).show();
 			}			
 		} else if(resultCode == Activity.RESULT_OK && requestCode == SCAN_PRIVATE_KEY) {
 			String scanData = data.getStringExtra(ZBarConstants.SCAN_RESULT);

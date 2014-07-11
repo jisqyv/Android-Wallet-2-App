@@ -71,13 +71,13 @@ public class AddressManager {
 			return false;
 	}
 	
-	public boolean handleAddAddressBookEntry(final String address, final String label) {
+	public boolean handleAddAddressBookEntry(final String address, final String label, final SuccessCallback callback) {
 		try {
 			if (blockchainWallet == null)
 				return true;
 
 			if (! BitcoinAddressCheck.isValidAddress(address)) {
-        		Toast.makeText(activity, "Invalid bitcoin address", Toast.LENGTH_LONG).show();
+        		Toast.makeText(activity, R.string.invalid_bitcoin_address, Toast.LENGTH_LONG).show();
 				return false;
 			}
 				
@@ -88,11 +88,13 @@ public class AddressManager {
 				public void onSuccess() {
 		    		Log.d("AddressManager", "AddressManager saveWallet onSuccess");			    		
 					EventListeners.invokeWalletDidChange();
+					callback.onSuccess();
 				}
 
 				@Override
 				public void onFail() {
-		    		Log.d("AddressManager", "AddressManager saveWallet onFail");			    		
+		    		Log.d("AddressManager", "AddressManager saveWallet onFail");
+		    		callback.onFail();
 				}
 			});
 			return true;

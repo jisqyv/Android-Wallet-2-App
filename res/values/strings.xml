@@ -373,4 +373,8 @@
     <string name="enter_bip38_passphrase">Enter BIP38 passphrase:</string>
     <string name="password_hint">Password</string>
     
+	<string name="wallet_sync_error">Wallet sync error</string>
+	<string name="success_contact_added">Success Contact added</string>
+	<string name="invalid_bitcoin_address">Invalid bitcoin address</string>
+    
 </resources>

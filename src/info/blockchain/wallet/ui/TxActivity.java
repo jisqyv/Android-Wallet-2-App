@@ -364,8 +364,18 @@ public class TxActivity extends Activity	{
 			public void onClick(DialogInterface dialog, int whichButton) {
 	   			  String label = input.getText().toString();
 	 				if (addressManager.canAddAddressBookEntry(address, label)) {
-						addressManager.handleAddAddressBookEntry(address, label);
-	         			Toast.makeText(TxActivity.this, R.string.added_to_address_book, Toast.LENGTH_LONG).show();
+						addressManager.handleAddAddressBookEntry(address, label, new SuccessCallback() {
+							@Override
+							public void onSuccess() {
+			         			Toast.makeText(TxActivity.this, R.string.added_to_address_book, Toast.LENGTH_LONG).show();
+							}
+
+							@Override
+							public void onFail() {
+				        		Toast.makeText(TxActivity.this, R.string.wallet_sync_error, Toast.LENGTH_LONG).show();							
+							}
+							
+						});
 	 				} else {
 	 		    		Toast.makeText(TxActivity.this, R.string.address_already_exist, Toast.LENGTH_LONG).show();
 	 				}			
