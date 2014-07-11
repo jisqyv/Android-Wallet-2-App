@@ -845,7 +845,6 @@ public class WalletApplication extends Application {
 
 						localWallet = readLocalWallet();
 
-						
 						//First try and restore the local cache
 						if (decryptLocalWallet(localWallet, password)) {	
 							if (callback != null)  {
@@ -1513,7 +1512,6 @@ public class WalletApplication extends Application {
 					final String value = new String(Hex.encode(bytes), "UTF-8");
 					final JSONObject response = piuk.blockchain.android.ui.PinEntryActivity.apiStoreKey(key, value, pin);
 					if (response.get("success") != null) {
-//*
 						edit.putString("pin_kookup_key", key);
 						edit.putString("encrypted_password", MyWallet.encrypt(application.getRemoteWallet().getTemporyPassword(), value, piuk.blockchain.android.ui.PinEntryActivity.PBKDF2Iterations));
 
@@ -1522,7 +1520,6 @@ public class WalletApplication extends Application {
 						}
 						else {
 						}
-//*/
 					}
 					else {
 						Toast.makeText(application, response.toString(), Toast.LENGTH_LONG).show();

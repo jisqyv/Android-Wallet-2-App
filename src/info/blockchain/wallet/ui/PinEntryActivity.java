@@ -2,12 +2,14 @@ package info.blockchain.wallet.ui;
 
 import java.security.SecureRandom;
 
+import piuk.blockchain.android.Constants;
 import piuk.blockchain.android.MyWallet;
 import piuk.blockchain.android.WalletApplication;
 import piuk.blockchain.android.SuccessCallback;
 import piuk.blockchain.android.R;
 //import piuk.blockchain.android.ui.dialogs.RekeyWalletDialog;
 import piuk.blockchain.android.ui.dialogs.RequestPasswordDialog;
+import piuk.blockchain.android.util.WalletUtils;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -43,6 +45,8 @@ import info.blockchain.api.ExchangeRates;
 import net.sourceforge.zbar.Symbol;
 
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.spongycastle.util.encoders.Hex;
 
 import com.dm.zbar.android.scanner.ZBarConstants;
@@ -83,7 +87,10 @@ public class PinEntryActivity extends FragmentActivity {
 	private boolean validating = true;
 	private boolean creating = false;
 	private String userInput = null;
-	
+
+	private static final String WebROOT = "https://" + Constants.BLOCKCHAIN_DOMAIN + "/pin-store";
+	public static final int PBKDF2Iterations = 2000;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -96,7 +103,7 @@ public class PinEntryActivity extends FragmentActivity {
         WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		
 		setContentView(R.layout.activity_pin_entry);
-		
+
         Bundle extras = getIntent().getExtras();
         if(extras != null)	{
             if(extras.getString("N") != null && extras.getString("N").equals("1"))	{
@@ -207,11 +214,13 @@ public class PinEntryActivity extends FragmentActivity {
 												final String key = new String(Hex.encode(bytes), "UTF-8");
 												random.nextBytes(bytes);
 												final String value = new String(Hex.encode(bytes), "UTF-8");
-												final JSONObject response = piuk.blockchain.android.ui.PinEntryActivity.apiStoreKey(key, value, userInput);
+//												final JSONObject response = piuk.blockchain.android.ui.PinEntryActivity.apiStoreKey(key, value, userInput);
+												final JSONObject response = apiStoreKey(key, value, userInput);
 												if (response.get("success") != null) {
 													
 													edit.putString("pin_kookup_key", key);
-													edit.putString("encrypted_password", MyWallet.encrypt(application.getRemoteWallet().getTemporyPassword(), value, piuk.blockchain.android.ui.PinEntryActivity.PBKDF2Iterations));
+//													edit.putString("encrypted_password", MyWallet.encrypt(application.getRemoteWallet().getTemporyPassword(), value, piuk.blockchain.android.ui.PinEntryActivity.PBKDF2Iterations));
+													edit.putString("encrypted_password", MyWallet.encrypt(application.getRemoteWallet().getTemporyPassword(), value, PBKDF2Iterations));
 
 													if (!edit.commit()) {
 														throw new Exception("Error Saving Preferences");
@@ -677,7 +686,8 @@ public class PinEntryActivity extends FragmentActivity {
 //				Toast.makeText(PinEntryActivity.this, "User entry:" + PIN, Toast.LENGTH_SHORT).show();	
 
 				try {
-					final JSONObject response = piuk.blockchain.android.ui.PinEntryActivity.apiGetValue(pin_lookup_key, PIN);
+//					final JSONObject response = piuk.blockchain.android.ui.PinEntryActivity.apiGetValue(pin_lookup_key, PIN);
+					final JSONObject response = apiGetValue(pin_lookup_key, PIN);
 
 					String decryptionKey = (String) response.get("success");
 					if (decryptionKey != null) {	
@@ -897,5 +907,45 @@ public class PinEntryActivity extends FragmentActivity {
 		super.onResume();
 		final WalletApplication application = (WalletApplication) getApplication();
 		application.setIsPassedPinScreen(false);
-	}	
+	}
+
+	public static JSONObject apiGetValue(String key, String pin) throws Exception {
+		StringBuilder args = new StringBuilder();
+
+		args.append("key=" + key);
+		args.append("&pin="+ pin);
+		args.append("&method=get");
+
+		String response = WalletUtils.postURL(WebROOT, args.toString());
+
+		if (response == null || response.length() == 0)
+			throw new Exception("Invalid Server Response");
+		
+		try {
+			return (JSONObject) new JSONParser().parse(response);
+		} catch (ParseException e) {
+			throw new Exception("Invalid Server Response");
+		}		
+	}
+
+	public static JSONObject apiStoreKey(String key, String value, String pin) throws Exception {
+		StringBuilder args = new StringBuilder();
+
+		args.append("key=" + key);
+		args.append("&value=" + value);
+		args.append("&pin="+pin);
+		args.append("&method=put");
+		
+		String response = WalletUtils.postURL(WebROOT, args.toString());
+
+		if (response == null || response.length() == 0)
+			throw new Exception("Invalid Server Response");
+
+		try {
+			return (JSONObject) new JSONParser().parse(response);
+		} catch (ParseException e) {
+			throw new Exception("Invalid Server Response");
+		}		
+	}
+
 }
