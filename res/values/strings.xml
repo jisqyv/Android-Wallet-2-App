@@ -336,7 +336,7 @@
     <string name="p2p_mode">Enter P2P mode</string>
     <string name="nearby_merchants">Locate nearby Bitcoin merchants</string>
     <string name="send_to_friends">Send Bitcoins to friends</string>
-    <string name="scan_sending_address">Scan sending address</string>
+    <string name="scan_contacts_address">Scan Contacts address</string>
     
     <string name="new_address">Generate new address</string>
     <string name="edit_label">Edit label</string>
@@ -362,7 +362,6 @@
     <string name="change_password_title">Change Password</string>
     <string name="enter_your_current_password">Enter your current password:</string>
     <string name="enter_your_new_password">Enter your new password:</string>
-    <string name="password_hint">password</string>
     <string name="confirm_password_hint">confirm password</string>
     <string name="password_changed">Password changed</string>
     <string name="password_change_error">Password change error</string>
@@ -373,6 +372,5 @@
     <string name="passphrase_required">Passphrase required</string>
     <string name="enter_bip38_passphrase">Enter BIP38 passphrase:</string>
     <string name="password_hint">Password</string>
-    <string name="enter">Enter</string>
     
 </resources>

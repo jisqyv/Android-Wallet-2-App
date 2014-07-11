@@ -15,7 +15,7 @@
 
     
     <LinearLayout 
-    android:id="@+id/sending_bg"
+    android:id="@+id/contacts_bg"
     android:layout_width="0dp"
     android:layout_weight="1"
     android:layout_height="90dp"
@@ -24,18 +24,18 @@
     android:gravity="center_vertical|center_horizontal" 
 	>
     <ImageView
-        android:id="@+id/sending"
+        android:id="@+id/contacts"
         android:src="@drawable/address_book"
         android:scaleType="centerInside"
         android:layout_width="40dp"
         android:layout_height="40dp"
     />
     <TextView 
-        android:id="@+id/sending_label"
+        android:id="@+id/contacts_label"
     	android:layout_width="wrap_content"
     	android:layout_height="wrap_content"
     	android:textSize="12sp"
-    	android:text="Sending"
+    	android:text="Contacts"
         android:gravity="center_horizontal|center_vertical"
         android:layout_gravity="center_horizontal|center_vertical"
         android:textAlignment="gravity"
