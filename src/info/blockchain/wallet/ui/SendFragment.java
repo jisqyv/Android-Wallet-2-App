@@ -126,7 +126,7 @@ public class SendFragment extends Fragment   {
     private static int SCAN_PRIVATE_KEY_FOR_SENDING = 1;
 	private static int PICK_CONTACT = 10;
 	private static int SELECT_INTL_PREFIX = 11;
-	public static int ZBAR_SCANNER_REQUEST = 2026;
+	private static int ZBAR_SCANNER_REQUEST = 2026;
 
 	private static int CURRENT_SEND = SIMPLE_SEND;
 
@@ -1273,7 +1273,7 @@ public class SendFragment extends Fragment   {
               		magic_qr.setBackgroundColor(colorOn);
               		Intent intent = new Intent(getActivity(), ZBarScannerActivity.class);
               		intent.putExtra(ZBarConstants.SCAN_MODES, new int[]{ Symbol.QRCODE } );
-              		startActivityForResult(intent, SCAN_PRIVATE_KEY_FOR_SENDING);
+              		startActivityForResult(intent, ZBAR_SCANNER_REQUEST);
               		break;
               	case android.view.MotionEvent.ACTION_UP:
               	case android.view.MotionEvent.ACTION_CANCEL:
@@ -1281,7 +1281,7 @@ public class SendFragment extends Fragment   {
               		break;
               	}
 
-              return true;
+              return false;
           }
         });
 

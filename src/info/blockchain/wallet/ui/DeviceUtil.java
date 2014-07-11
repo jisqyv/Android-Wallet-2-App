@@ -1,20 +1,10 @@
 package info.blockchain.wallet.ui;
 
-import java.math.BigInteger;
-import java.util.List;
-import java.util.Map;
-
-import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Bitmap.Config;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.Matrix;
-import android.util.Log;
 import android.content.res.Resources;
+import android.view.Display;
+import android.graphics.Point;
 //import android.util.Log;
 
 public class DeviceUtil {
@@ -48,6 +38,21 @@ public class DeviceUtil {
 
 	public boolean isHiRes() {
 		return (scale > REG_RES);
+	}
+	
+	public boolean isSmallScreen() {
+		 Display display = ((Activity)context).getWindowManager().getDefaultDisplay();
+		 Point size = new Point();
+		 display.getSize(size);
+//		 int width = size.x;
+		 int height = size.y;
+		 
+		 if(height <= 800) {
+			 return true;
+		 }
+		 else {
+			 return false;
+		 }
 	}
 
 }

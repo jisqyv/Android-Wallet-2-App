@@ -74,7 +74,12 @@ public class PinCreateActivity extends Activity {
 
 	    this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 //	    this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		setContentView(R.layout.activity_pin_create2);
+	    if(!DeviceUtil.getInstance(this).isSmallScreen()) {
+			setContentView(R.layout.activity_pin_create2);
+	    }
+	    else {
+			setContentView(R.layout.activity_pin_create_small);
+	    }
 
 	    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
