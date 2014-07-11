@@ -404,7 +404,7 @@ public class TxActivity extends Activity	{
 
 	public static JSONObject getTransactionSummary(long txIndex, String guid, long result) throws Exception {
 		final String WebROOT = "https://" + Constants.BLOCKCHAIN_DOMAIN + "/tx-summary";
-		String url = WebROOT + "/" + txIndex + "?guid="+guid+"&result=" + result + "&format=json";
+		String url = WebROOT + "/" + txIndex + "?guid=" + guid + "&result=" + result + "&format=json";
 
 		String response = WalletUtils.getURL(url);
 
@@ -527,7 +527,14 @@ public class TxActivity extends Activity	{
 						    	height = transaction.getHeight();
 
 						    	tvValueFee.setText(BlockchainUtil.formatBitcoin(BigInteger.valueOf(transaction.getFee())) + " BTC");
-						    	
+
+						    	/*
+			                    if(isSending)	{
+							    	String strUpdatedResult = BlockchainUtil.formatBitcoin(BigInteger.valueOf(Long.parseLong(strResult)).subtract(BigInteger.valueOf(transaction.getFee())));
+			                		tvResult.setText("SENT " + strUpdatedResult + " BTC");
+			                    }
+			                    */
+
 						    	((TextView)findViewById(R.id.link_label)).setOnTouchListener(new OnTouchListener() {
 						            @Override
 						            public boolean onTouch(View v, MotionEvent event) {

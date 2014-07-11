@@ -139,6 +139,14 @@ public class BalanceFragment extends Fragment   {
 	        ((ViewPager)getActivity().findViewById(R.id.pager)).setCurrentItem(1);
 			setAdapterContent();
 			sentTx = null;
+			
+    		try {
+        		WalletUtil.getInstance(getActivity(), getActivity()).getWalletApplication().doMultiAddr(false, null);
+    		}
+    		catch(Exception e) {
+        		Toast.makeText(getActivity(), e.toString(), Toast.LENGTH_SHORT).show();
+    		}
+
 			adapter.notifyDataSetChanged();
 		};
 

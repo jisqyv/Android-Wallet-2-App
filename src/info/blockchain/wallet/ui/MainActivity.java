@@ -176,7 +176,15 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
             @Override
             public boolean onTouch(View v, MotionEvent event) {
 				Toast.makeText(MainActivity.this, "Refreshing...", Toast.LENGTH_LONG).show();
-        		application.checkIfWalletHasUpdatedAndFetchTransactions(application.getRemoteWallet().getTemporyPassword());
+//        		application.checkIfWalletHasUpdatedAndFetchTransactions(application.getRemoteWallet().getTemporyPassword());
+        		
+        		try {
+            		WalletUtil.getInstance(MainActivity.this, MainActivity.this).getWalletApplication().doMultiAddr(false, null);
+        		}
+        		catch(Exception e) {
+            		Toast.makeText(MainActivity.this, e.toString(), Toast.LENGTH_SHORT).show();
+        		}
+
         		return false;
             }
         });

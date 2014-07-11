@@ -1274,6 +1274,7 @@ public class SendFragment extends Fragment   {
               		Intent intent = new Intent(getActivity(), ZBarScannerActivity.class);
               		intent.putExtra(ZBarConstants.SCAN_MODES, new int[]{ Symbol.QRCODE } );
               		startActivityForResult(intent, ZBAR_SCANNER_REQUEST);
+              		magic_qr.setBackgroundColor(colorOff);
               		break;
               	case android.view.MotionEvent.ACTION_UP:
               	case android.view.MotionEvent.ACTION_CANCEL:

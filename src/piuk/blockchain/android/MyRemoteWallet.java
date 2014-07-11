@@ -93,7 +93,6 @@ public class MyRemoteWallet extends MyWallet {
 	private String smsNumber = null;
 	private String email = null;
 
-
 	private Map<String, JSONObject> multiAddrBalancesRoot;
 	private JSONObject multiAddrRoot;
 
@@ -339,7 +338,7 @@ public class MyRemoteWallet extends MyWallet {
         }
         return notWatchOnlyActiveAddresses.toArray(new String[notWatchOnlyActiveAddresses.size()]);
 	}
-	
+
 	@Override
 	public synchronized boolean removeKey(ECKey key) {
 		boolean success = super.removeKey(key);
@@ -405,7 +404,7 @@ public class MyRemoteWallet extends MyWallet {
 		}
 		return null;
 	}
-	
+
 	public void parseMultiAddr(String response, boolean notifications) throws Exception {
 
 		transactions.clear();
@@ -537,10 +536,10 @@ public class MyRemoteWallet extends MyWallet {
 		String url =  WebROOT + "multiaddr?active=" + StringUtils.join(addresses, "|") + "&simple=true&format=json";
 
 		String response = fetchURL(url);
-		
+
 		return response;
 	}
-	
+
 	public synchronized String doMultiAddr(boolean notifications) throws Exception {
 		String url =  WebROOT + "multiaddr?active=" + StringUtils.join(getActiveAddresses(), "|") + "&symbol_btc="+btcCurrencyCode + "&symbol_local=" + localCurrencyCode;
 
@@ -762,11 +761,11 @@ public class MyRemoteWallet extends MyWallet {
 								keyCompressed = new ECKey(priv2, null, true);			
 								keyUnCompressed = new ECKey(priv2, null, false);												
 							}
-							
+
 							if (keyCompressed != null) {
 								wallet.addKey(keyCompressed);
 							}
-							
+
 							if (keyUnCompressed != null) {
 								wallet.addKey(keyUnCompressed);
 							}
@@ -952,11 +951,11 @@ public class MyRemoteWallet extends MyWallet {
 							keyCompressed = new ECKey(priv2, null, true);			
 							keyUnCompressed = new ECKey(priv2, null, false);												
 						}
-						
+
 						if (keyCompressed != null) {
 							wallet.addKey(keyCompressed);
 						}
-						
+
 						if (keyUnCompressed != null) {
 							wallet.addKey(keyUnCompressed);
 						}
