@@ -295,14 +295,17 @@ public class AddressManager {
 									ECKey key = blockchainWallet.getECKey(address);									
 									//TODO fix so address equality matches
 						    		Log.d("AddressManager", "AddressManager addKeyToWallet address1 " + address); // compressed address				    		
-						    		Log.d("AddressManager", "AddressManager addKeyToWallet address2 " + key.toAddress(MainNetParams.get()).toString());	// uncompressed address		    		
-									if (key != null && key.toAddress(MainNetParams.get()).toString().equals(address)) {
+						    		Log.d("AddressManager", "AddressManager addKeyToWallet address2 " + key.toAddress(MainNetParams.get()).toString());	// compressed address		    		
+						    		Log.d("AddressManager", "AddressManager addKeyToWallet address3 " + key.toAddressUnCompressed(MainNetParams.get()).toString());	    		
+						    		Log.d("AddressManager", "AddressManager addKeyToWallet address4 " + key.toAddressCompressed(MainNetParams.get()).toString());
+
+						    		if (key != null && (key.toAddressCompressed(MainNetParams.get()).toString().equals(address) ||
+						    				key.toAddressUnCompressed(MainNetParams.get()).toString().equals(address))) {
 										callback.onSavedAddress(address);
 									} else {
-										callback.onSavedAddress(address);
-										//blockchainWallet.removeKey(key);
+										blockchainWallet.removeKey(key);
 
-										//callback.onError("WARNING! Wallet saved but address doesn't seem to exist after re-read.");
+										callback.onError("WARNING! Wallet saved but address doesn't seem to exist after re-read.");
 									}
 								} catch (Exception e) {
 									blockchainWallet.removeKey(key);

@@ -1274,7 +1274,8 @@ public class WalletApplication extends Application {
 							public void onSuccess() {	
 								try {
 									ECKey key = blockchainWallet.getECKey(address);									
-									if (key != null && key.toAddress(MainNetParams.get()).toString().equals(address)) {
+						    		if (key != null && (key.toAddressCompressed(MainNetParams.get()).toString().equals(address) ||
+						    				key.toAddressUnCompressed(MainNetParams.get()).toString().equals(address))) {
 										callback.onSavedAddress(address);
 									} else {
 										blockchainWallet.removeKey(key);

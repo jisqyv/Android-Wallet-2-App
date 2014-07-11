@@ -435,10 +435,9 @@ public class WalletUtils {
 
 		String address = null;
 		if (compressed) {
-			//address = kp.toAddressCompressed(MainNetParams.get()).toString();
-			address = kp.toAddress(MainNetParams.get()).toString();
+			address = kp.toAddressCompressed(MainNetParams.get()).toString();
 		} else {
-			address = kp.toAddress(MainNetParams.get()).toString();
+			address = kp.toAddressUnCompressed(MainNetParams.get()).toString();
 		}
 
 		byte[] acs = hash (address.toString().getBytes ("US-ASCII"));
@@ -516,10 +515,9 @@ public class WalletUtils {
 
 		String address = null;
 		if (compressed) {
-			//address = kp.toAddressCompressed(MainNetParams.get()).toString();
-			address = kp.toAddress(MainNetParams.get()).toString();
+			address = kp.toAddressCompressed(MainNetParams.get()).toString();
 		} else {
-			address = kp.toAddress(MainNetParams.get()).toString();
+			address = kp.toAddressUnCompressed(MainNetParams.get()).toString();
 		}
 
 		byte[] acs = hash (address.getBytes ("US-ASCII"));
