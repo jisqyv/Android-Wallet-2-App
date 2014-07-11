@@ -73,17 +73,16 @@ public class WalletUtils {
 	private static final int DefaultRequestRetry = 2;
 	private static final int DefaultRequestTimeout = 60000;
 
-	public static Pair<ECKey, Boolean> parsePrivateKey(String format, String contents, String password) throws Exception { 
+	public static ECKey parsePrivateKey(String format, String contents, String password) throws Exception { 
 		if (format.equals("sipa") || format.equals("compsipa")) {
 			DumpedPrivateKey pk = new DumpedPrivateKey(MainNetParams.get(), contents);
-
-			return new Pair<ECKey, Boolean>(pk.getKey(), format.equals("compsipa"));
+			return pk.getKey();
 		} else if (format.equals("base58")) {
-			return new Pair<ECKey, Boolean>(MyWallet.decodeBase58PK(contents), false);
+			return MyWallet.decodeBase58PK(contents);
 		} else if (format.equals("base64")) {
-			return new Pair<ECKey, Boolean>(MyWallet.decodeBase64PK(contents), false);
+			return MyWallet.decodeBase64PK(contents);
 		} else if (format.equals("hex")) {
-			return new Pair<ECKey, Boolean>(MyWallet.decodeHexPK(contents), false);
+			return MyWallet.decodeHexPK(contents);
 		}else if (format.equals("bip38")) {
 			return parseBIP38 (contents, password);
 		} else {
@@ -346,7 +345,7 @@ public class WalletUtils {
 		return hash (data, 0, data.length);
 	}
 
-	public static Pair<ECKey, Boolean> parseBIP38 (String input, String password) throws Exception
+	public static ECKey parseBIP38 (String input, String password) throws Exception
 	{
 		byte[] store = Base58.decode(input);
 
@@ -405,11 +404,11 @@ public class WalletUtils {
 
 		if ( ec == false )
 		{
-			return new Pair<ECKey, Boolean>(parseBIP38NoEC (store, password, compressed), compressed);
+			return parseBIP38NoEC (store, password, compressed);
 		}
 		else
 		{
-			return new Pair<ECKey, Boolean>(parseBIP38EC (store, password, compressed, hasLot), compressed);
+			return parseBIP38EC (store, password, compressed, hasLot);
 		}
 	}
 
@@ -480,8 +479,7 @@ public class WalletUtils {
 
 		byte[] salt = new byte[12];
 		System.arraycopy (store, 3, salt, 0, 12);
-		//byte[] derived = SCrypt.generate (kp.getPubKeyCompressed(), salt, 1024, 1, 1, 64);
-		byte[] derived = SCrypt.generate (kp.getPubKey(), salt, 1024, 1, 1, 64);
+		byte[] derived = SCrypt.generate (kp.getPubKeyCompressed(), salt, 1024, 1, 1, 64);
 		byte[] aeskey = new byte[32];
 		System.arraycopy (derived, 32, aeskey, 0, 32);
 

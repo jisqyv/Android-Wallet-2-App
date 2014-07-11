@@ -1273,7 +1273,7 @@ public class SendFragment extends Fragment   {
               		magic_qr.setBackgroundColor(colorOn);
               		Intent intent = new Intent(getActivity(), ZBarScannerActivity.class);
               		intent.putExtra(ZBarConstants.SCAN_MODES, new int[]{ Symbol.QRCODE } );
-              		startActivityForResult(intent, ZBAR_SCANNER_REQUEST);
+              		startActivityForResult(intent, SCAN_PRIVATE_KEY_FOR_SENDING);
               		break;
               	case android.view.MotionEvent.ACTION_UP:
               	case android.view.MotionEvent.ACTION_CANCEL:
@@ -2934,16 +2934,19 @@ public class SendFragment extends Fragment   {
 								System.out.println("Password " + password);
 
 								try {
-									Pair<ECKey, Boolean> pair = WalletUtils.parsePrivateKey(format, contents, password);
+									ECKey key = WalletUtils.parsePrivateKey(format, contents, password);
 
-									ECKey key = pair.first;
-
-									if (!key.toAddress(Constants.NETWORK_PARAMETERS)
+									if (!key.toAddressCompressed(Constants.NETWORK_PARAMETERS)
+											.toString().equals(SendFragment.scanPrivateKeyAddress) &&
+											!key.toAddressUnCompressed(Constants.NETWORK_PARAMETERS)
 											.toString().equals(SendFragment.scanPrivateKeyAddress)) {
+										System.out.println("Scanned Password wrong_private_key");
+
 										String scannedPrivateAddress = key.toAddress(Constants.NETWORK_PARAMETERS)
 												.toString();
 										throw new Exception(getString(R.string.wrong_private_key, scannedPrivateAddress));
 									} else {
+										System.out.println("Scanned Password temporaryPrivateKeys");
 										//Success
 										SendFragment.temporaryPrivateKeys.put(SendFragment.scanPrivateKeyAddress, key);
 
@@ -2970,11 +2973,11 @@ public class SendFragment extends Fragment   {
 					}
 				}, 100);
 			} else {
-				Pair<ECKey, Boolean> pair = WalletUtils.parsePrivateKey(format, contents, null);
+				ECKey key = WalletUtils.parsePrivateKey(format, contents, null);
 
-				ECKey key = pair.first;
-
-				if (!key.toAddress(Constants.NETWORK_PARAMETERS)
+				if (!key.toAddressCompressed(Constants.NETWORK_PARAMETERS)
+						.toString().equals(SendFragment.scanPrivateKeyAddress) &&
+						!key.toAddressUnCompressed(Constants.NETWORK_PARAMETERS)
 						.toString().equals(SendFragment.scanPrivateKeyAddress)) {
 					String scannedPrivateAddress = key.toAddress(Constants.NETWORK_PARAMETERS)
 							.toString();

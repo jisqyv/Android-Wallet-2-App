@@ -423,11 +423,7 @@ public abstract class AbstractWalletActivity extends FragmentActivity {
 					.format(Constants.WEBMARKET_APP_URL, packageName))));
 	}
 
-	private void handleScanPrivateKeyPair(final Pair<ECKey, Boolean> pair) throws Exception {
-
-		final ECKey key = pair.first;
-		final Boolean compressed = pair.second;
-
+	private void handleScanPrivateKeyPair(final ECKey key) throws Exception {
 		final AlertDialog.Builder b = new AlertDialog.Builder(this);
 
 		b.setPositiveButton(R.string.sweep_text, null);
@@ -453,11 +449,10 @@ public abstract class AbstractWalletActivity extends FragmentActivity {
 			public void run() {
 				try {
 					final String address;
-					if (compressed) {
-						//address = key.toAddressCompressed(MainNetParams.get()).toString();
-						address = key.toAddress(MainNetParams.get()).toString();
+					if (key.isCompressed()) {
+						address = key.toAddressCompressed(MainNetParams.get()).toString();
 					} else {
-						address = key.toAddress(MainNetParams.get()).toString();
+						address = key.toAddressUnCompressed(MainNetParams.get()).toString();
 					}
 
 					System.out.println("Scanned PK Address " + address);
