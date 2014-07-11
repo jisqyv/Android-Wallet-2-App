@@ -3,11 +3,16 @@ package info.blockchain.wallet.ui;
 import java.math.BigInteger;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.Pair;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.bitcoin.core.Address;
@@ -146,38 +151,16 @@ public class AddressManager {
 		}
 	}
 	
-	public void handleScanPrivateKey(final String data) throws Exception {
-		handler.postDelayed(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					final String format = WalletUtils.detectPrivateKeyFormat(data);
-
-		    		Log.d("AddressManager", "AddressManager format " + format);			    		
-
-					handleScanPrivateKeyPair(WalletUtils.parsePrivateKey(format, data, null));
-
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}, 100);
-
-	}
-	
-	private void handleScanPrivateKeyPair(final Pair<ECKey, Boolean> pair) throws Exception {
-		final ECKey key = pair.first;
-		final Boolean compressed = pair.second;
+	public void handleScanPrivateKeyPair(final ECKey key) throws Exception {
 
 		new Thread() {
 			public void run() {
 				try {
 					final String address;
-					if (compressed) {
-						//address = key.toAddressCompressed(MainNetParams.get()).toString();
-						address = key.toAddress(MainNetParams.get()).toString();
+					if (key.isCompressed()) {
+						address = key.toAddressCompressed(MainNetParams.get()).toString();
 					} else {
-						address = key.toAddress(MainNetParams.get()).toString();
+						address = key.toAddressUnCompressed(MainNetParams.get()).toString();
 					}
 
 					application.addKeyToWallet(key, key.toAddress(MainNetParams.get()).toString(), null, 0,

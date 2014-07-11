@@ -29,10 +29,13 @@ import piuk.blockchain.android.MyRemoteWallet;
 import piuk.blockchain.android.R;
 import piuk.blockchain.android.WalletApplication;
 import piuk.blockchain.android.WalletApplication.AddAddressCallback;
+import piuk.blockchain.android.util.WalletUtils;
 import piuk.blockchain.android.SuccessCallback;
 import android.app.Activity;
 import android.app.ActionBar;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
@@ -55,6 +58,7 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -72,7 +76,8 @@ public class AddressBookActivity extends Activity {
     private List<Map<String, Object>> addressBookMapList = null;
     private AddressManager addressManager = null;
     private int curSelection = -1;
-        
+    WalletApplication application = null;
+    
     private static int QR_GENERATION = 1;
     private static int EDIT_LABEL = 2;
     private static int SCAN_WATCH_ONLY = 3;
@@ -281,7 +286,7 @@ public class AddressBookActivity extends Activity {
             }
         });
 
-		WalletApplication application = WalletUtil.getInstance(this, this).getWalletApplication();
+		application = WalletUtil.getInstance(this, this).getWalletApplication();
         addressManager = new AddressManager(remoteWallet, application, this);        
 		EventListeners.addEventListener(eventListener);
 		
@@ -366,6 +371,56 @@ public class AddressBookActivity extends Activity {
 	    }
 	}
 
+	public void handleScanPrivateKey(final String data) throws Exception {
+		application.getHandler().postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					final String format = WalletUtils.detectPrivateKeyFormat(data);
+
+					System.out.println("Scanned Private Key Format " + format);
+
+					if (format.equals("bip38")) {
+						AlertDialog.Builder builder = new AlertDialog.Builder(AddressBookActivity.this);
+						builder.setMessage(R.string.enter_bip38_passphrase)
+						.setCancelable(false);
+
+						AlertDialog alert = builder.create();
+						alert.setTitle(R.string.passphrase_required);
+
+						final EditText input = new EditText(AddressBookActivity.this);
+						input.setHint(R.string.password_hint);
+						alert.setView(input);
+						
+						alert.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.enter), new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int id) {
+								final String password = input.getText().toString();
+								
+								try {
+									addressManager.handleScanPrivateKeyPair(WalletUtils.parsePrivateKey(format, data, password));
+						    		Toast.makeText(AddressBookActivity.this, "parsePrivateKey success" , Toast.LENGTH_LONG).show();
+								} catch (Exception e) {
+						    		Toast.makeText(AddressBookActivity.this, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+								}
+							}}); 
+
+						alert.setButton(AlertDialog.BUTTON_NEGATIVE, getString(R.string.cancel), new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int id) {
+								dialog.dismiss();
+							}});
+
+						alert.show();
+					} else {
+						addressManager.handleScanPrivateKeyPair(WalletUtils.parsePrivateKey(format, data, null));
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}, 100);
+
+	}
+	
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
@@ -387,7 +442,7 @@ public class AddressBookActivity extends Activity {
 		} else if(resultCode == Activity.RESULT_OK && requestCode == SCAN_PRIVATE_KEY) {
 			String scanData = data.getStringExtra(ZBarConstants.SCAN_RESULT);
 			try {
-				addressManager.handleScanPrivateKey(scanData);
+				handleScanPrivateKey(scanData);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
