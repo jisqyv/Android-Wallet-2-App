@@ -746,17 +746,30 @@ public class MyRemoteWallet extends MyWallet {
 
 						Wallet wallet = new Wallet(MainNetParams.get());
 						for (TransactionInput input : tx.getInputs()) {
+							byte[] scriptBytes = input.getOutpoint().getConnectedPubKeyScript();
+							String address = new BitcoinScript(scriptBytes).getAddress().toString();
+							ECKey walletKey = getECKey(address);
 
-							try {
-								byte[] scriptBytes = input.getOutpoint().getConnectedPubKeyScript();
-
-								String address = new BitcoinScript(scriptBytes).getAddress().toString();
-
-								ECKey addKey = getECKey(address);
-								if (addKey != null) {
-									wallet.addKey(addKey);
-								}
-							} catch (Exception e) {}
+							ECKey keyCompressed;
+							ECKey keyUnCompressed;
+							BigInteger priv = new BigInteger(walletKey.getPrivKeyBytes());
+							if (priv.compareTo(BigInteger.ZERO) >= 0) {
+								keyCompressed = new ECKey(priv, null, true);
+								keyUnCompressed = new ECKey(priv, null, false);
+							} else {
+								byte[] appendZeroByte = ArrayUtils.addAll(new byte[1], walletKey.getPrivKeyBytes());
+								BigInteger priv2 = new BigInteger(appendZeroByte);
+								keyCompressed = new ECKey(priv2, null, true);			
+								keyUnCompressed = new ECKey(priv2, null, false);												
+							}
+							
+							if (keyCompressed != null) {
+								wallet.addKey(keyCompressed);
+							}
+							
+							if (keyUnCompressed != null) {
+								wallet.addKey(keyUnCompressed);
+							}
 						}
 
 						wallet.addKeys(tempKeys);
@@ -923,17 +936,30 @@ public class MyRemoteWallet extends MyWallet {
 
 					Wallet wallet = new Wallet(MainNetParams.get());
 					for (TransactionInput input : tx.getInputs()) {
+						byte[] scriptBytes = input.getOutpoint().getConnectedPubKeyScript();
+						String address = new BitcoinScript(scriptBytes).getAddress().toString();
+						ECKey walletKey = getECKey(address);
 
-						try {
-							byte[] scriptBytes = input.getOutpoint().getConnectedPubKeyScript();
-
-							String address = new BitcoinScript(scriptBytes).getAddress().toString();
-
-							ECKey key = getECKey(address);
-							if (key != null) {
-								wallet.addKey(key);
-							}
-						} catch (Exception e) {}
+						ECKey keyCompressed;
+						ECKey keyUnCompressed;
+						BigInteger priv = new BigInteger(walletKey.getPrivKeyBytes());
+						if (priv.compareTo(BigInteger.ZERO) >= 0) {
+							keyCompressed = new ECKey(priv, null, true);
+							keyUnCompressed = new ECKey(priv, null, false);
+						} else {
+							byte[] appendZeroByte = ArrayUtils.addAll(new byte[1], walletKey.getPrivKeyBytes());
+							BigInteger priv2 = new BigInteger(appendZeroByte);
+							keyCompressed = new ECKey(priv2, null, true);			
+							keyUnCompressed = new ECKey(priv2, null, false);												
+						}
+						
+						if (keyCompressed != null) {
+							wallet.addKey(keyCompressed);
+						}
+						
+						if (keyUnCompressed != null) {
+							wallet.addKey(keyUnCompressed);
+						}
 					}
 
 					wallet.addKeys(tempKeys);
