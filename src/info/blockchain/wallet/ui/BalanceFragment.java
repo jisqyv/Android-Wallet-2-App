@@ -220,16 +220,12 @@ public class BalanceFragment extends Fragment   {
         strCurrentFiatCode = prefs.getString("ccurrency", "USD");
         strCurrentFiatSymbol = prefs.getString(strCurrentFiatCode + "-SYM", "$");
 
-//		application = (WalletApplication)getActivity().getApplication();
-//		application = WalletUtil.getInstance(getActivity(),  getActivity()).getWalletApplication();
 		application = WalletUtil.getRefreshedInstance(getActivity(),  getActivity()).getWalletApplication();
 
 		if (application == null) {
 			return;
 		}
 
-//		MyRemoteWallet remoteWallet = application.getRemoteWallet();
-//		MyRemoteWallet remoteWallet = WalletUtil.getInstance(getActivity(), getActivity()).getRemoteWallet();
 		MyRemoteWallet remoteWallet = WalletUtil.getInstance(getActivity(), getActivity()).getRemoteWallet();
 		if (remoteWallet == null) {
 			return;
@@ -405,12 +401,12 @@ public class BalanceFragment extends Fragment   {
     	    	final LinearLayout balance_extLayout = (LinearLayout)view.findViewById(R.id.balance_ext);
     	    	final LinearLayout balance_extHiddenLayout = (LinearLayout)view.findViewById(R.id.balance_ext_hidden);
 
+	    		if(balance_extHiddenLayout.getChildCount() > 1) {
+    		        balance_extHiddenLayout.removeViews(1, balance_extHiddenLayout.getChildCount() - 1);
+	    		}
+
     	    	if(balance_extHiddenLayout.getVisibility() == View.VISIBLE) {
     	    		addressLabelTxsDisplayed[position] = false;
-
-    	    		if(balance_extHiddenLayout.getChildCount() > 1) {
-        		        balance_extHiddenLayout.removeViews(1, balance_extHiddenLayout.getChildCount() - 1);
-    	    		}
 
 			        if (isWatchOnlys[position])
 				        ((ImageView)view.findViewById(R.id.address_type)).setImageResource(R.drawable.address_watch_inactive);
@@ -524,18 +520,6 @@ public class BalanceFragment extends Fragment   {
     @Override
     public void onResume() {
     	super.onResume();
-
-    	//
-    	// tmp patch
-    	//
-    	/*
-		try {
-    		WalletUtil.getInstance(getActivity(), getActivity()).getWalletApplication().doMultiAddr(false, null);
-		}
-		catch(Exception e) {
-    		Toast.makeText(getActivity(), e.toString(), Toast.LENGTH_SHORT).show();
-		}
-		*/
 
         IntentFilter filter = new IntentFilter(ACTION_INTENT);
 //        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiver, filter);
@@ -782,8 +766,8 @@ public class BalanceFragment extends Fragment   {
 	        		String addr = transactionInput.getFromAddress().toString();
 	        		if(addr != null && addr.equals(address)) {
 	        			filteredTxList.add(transaction);
-	        			isPartOfTx = true;
 //	    				Log.d("TxBitmapPrep", transaction.getHashAsString() + " contains:" + addr);
+	        			isPartOfTx = true;
 	        			break;
 	        		}
 	            } catch (ScriptException e) {
