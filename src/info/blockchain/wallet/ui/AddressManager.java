@@ -133,19 +133,19 @@ public class AddressManager {
 		    		application.checkIfWalletHasUpdatedAndFetchTransactions(blockchainWallet.getTemporyPassword(), new SuccessCallback() {
 		    			@Override
 		    			public void onSuccess() {
-				    		Log.d("AddressManager", "AddressManager checkIfWalletHasUpdatedAndFetchTransactions onSuccess");			    		
+			        		Toast.makeText(activity, R.string.scanned_watch_only_address, Toast.LENGTH_LONG).show();
 
 		    			}
 		    			
 		    			public void onFail() {
-				    		Log.d("AddressManager", "AddressManager checkIfWalletHasUpdatedAndFetchTransactions onFail");			    		
+			        		Toast.makeText(activity, R.string.scanned_watch_only_address, Toast.LENGTH_LONG).show();
 		    			}
 		    		});
 				}
 
 				@Override
 				public void onFail() {
-		    		Log.d("AddressManager", "AddressManager onSavedAddress onFail");			    		
+	        		Toast.makeText(activity, R.string.error_scanning_address, Toast.LENGTH_LONG).show();
 				}
 			});
 		} catch (Exception e) {					
@@ -169,22 +169,21 @@ public class AddressManager {
 							new AddAddressCallback() {
 
 						public void onSavedAddress(String address) {
-				    		Log.d("AddressManager", "AddressManager addKeyToWallet onSavedAddress ");			    		
 				    		application.checkIfWalletHasUpdatedAndFetchTransactions(blockchainWallet.getTemporyPassword(), new SuccessCallback() {
 				    			@Override
 				    			public void onSuccess() {
-						    		Log.d("AddressManager", "AddressManager checkIfWalletHasUpdatedAndFetchTransactions onSuccess");			    		
+					        		Toast.makeText(activity, R.string.scanned_private_key, Toast.LENGTH_LONG).show();
 				    			}
 				    			
 				    			public void onFail() {
-						    		Log.d("AddressManager", "AddressManager checkIfWalletHasUpdatedAndFetchTransactions onFail");			    		
+					        		Toast.makeText(activity, R.string.scanned_private_key, Toast.LENGTH_LONG).show();
 				    			}
 				    		});
 				    						    			
 						}
 
 						public void onError(String reason) {
-				    		Log.d("AddressManager", "AddressManager addKeyToWallet onError ");			    		
+			        		Toast.makeText(activity, R.string.error_scanning_private_key, Toast.LENGTH_LONG).show();
 						}
 					});
 				} catch (final Exception e) {

@@ -376,5 +376,9 @@
 	<string name="wallet_sync_error">Wallet sync error</string>
 	<string name="success_contact_added">Success Contact added</string>
 	<string name="invalid_bitcoin_address">Invalid bitcoin address</string>
-    
+	<string name="scanned_watch_only_address">Scanned watch only address</string>
+	<string name="error_scanning_address">Error scanning address</string>
+	<string name="scanned_private_key">Scanned private key</string>
+	<string name="error_scanning_private_key">Error scanning private key</string>
+			
 </resources>

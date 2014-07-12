@@ -402,7 +402,6 @@ public class AddressBookActivity extends Activity {
 								
 								try {
 									addressManager.handleScanPrivateKeyPair(WalletUtils.parsePrivateKey(format, data, password));
-						    		Toast.makeText(AddressBookActivity.this, "parsePrivateKey success" , Toast.LENGTH_LONG).show();
 								} catch (Exception e) {
 						    		Toast.makeText(AddressBookActivity.this, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
 								}
