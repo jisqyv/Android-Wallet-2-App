@@ -53,6 +53,10 @@ import piuk.blockchain.android.R;
 import piuk.blockchain.android.SharedCoin;
 import piuk.blockchain.android.WalletApplication;
 import piuk.blockchain.android.SuccessCallback;
+import net.hockeyapp.android.CrashManager;
+import net.hockeyapp.android.FeedbackManager;
+import net.hockeyapp.android.Tracking;
+import net.hockeyapp.android.UpdateManager;
 
 @SuppressLint("NewApi")
 public class MainActivity extends FragmentActivity implements ActionBar.TabListener, SendFragment.OnCompleteListener {
@@ -283,11 +287,21 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 		});            	
 //*/
 
+		   checkForUpdates();
 	}
 
+	public void showFeedbackActivity() {
+		  FeedbackManager.register(this, getHockeyAppID(), null);
+		  FeedbackManager.showFeedbackActivity(this);
+	}
+	
 	@Override
 	public void onComplete() {
 		handleNavigateTo();		
+	}
+	
+	public String getHockeyAppID() {
+		return "44b8c28075f744024dd98e3774bef41f";
 	}
 	
 	void handleNavigateTo() {
@@ -303,11 +317,29 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 			}
 		}
 	}
-	  
+	 
+	private void checkForCrashes() {
+		CrashManager.register(this, getHockeyAppID());
+	}
+
+	private void checkForUpdates() {
+		// Remove this for store builds!
+		UpdateManager.register(this, getHockeyAppID());
+	}	
+	 
+	@Override
+	protected void onPause() {
+		Tracking.stopUsage(this);                 
+		super.onPause();
+	}
+	
 	@Override
 	protected void onResume() {
 		super.onResume();
+		Tracking.startUsage(this);
 		application.setIsPassedPinScreen(true);
+		checkForCrashes();
+	    checkForUpdates();
 	}
 	
 	@Override
@@ -339,7 +371,10 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     	case R.id.action_about:
     		doAbout();
     		return true;
-	    default:
+    	case R.id.action_feedback:
+    		showFeedbackActivity();
+    		return true;
+    	default:
 	        return super.onOptionsItemSelected(item);
 	    }
 	}
