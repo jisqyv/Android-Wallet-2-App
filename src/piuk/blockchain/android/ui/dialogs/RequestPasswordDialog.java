@@ -18,12 +18,14 @@
 package piuk.blockchain.android.ui.dialogs;
 
 import java.lang.ref.WeakReference;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -32,13 +34,16 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.text.InputType;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.View.OnClickListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
+import android.view.Gravity;
 import android.widget.Toast;
 import piuk.blockchain.android.MyRemoteWallet;
 import piuk.blockchain.android.R;
@@ -50,8 +55,7 @@ import piuk.blockchain.android.SuccessCallback;
  * @author Andreas Schildbach
  */
 public final class RequestPasswordDialog extends DialogFragment {
-	private static final String FRAGMENT_TAG = RequestPasswordDialog.class
-			.getName();
+	private static final String FRAGMENT_TAG = RequestPasswordDialog.class.getName();
 	private SuccessCallback callback = null;
 	private static List<WeakReference<RequestPasswordDialog>> fragmentRefs = new ArrayList<WeakReference<RequestPasswordDialog>>();
 
@@ -85,11 +89,10 @@ public final class RequestPasswordDialog extends DialogFragment {
 			}
 		}
 	}
-	public static DialogFragment show(final FragmentManager fm,
-			SuccessCallback callback, int passwordType) {
 
-		final DialogFragment prev = (DialogFragment) fm
-				.findFragmentById(R.layout.password_dialog);
+	public static DialogFragment show(final FragmentManager fm, SuccessCallback callback, int passwordType) {
+
+		final DialogFragment prev = (DialogFragment) fm.findFragmentById(R.layout.password_dialog);
 
 		final FragmentTransaction ft = fm.beginTransaction();
 
@@ -112,7 +115,7 @@ public final class RequestPasswordDialog extends DialogFragment {
 		newFragment.passwordType = passwordType;
 
 		newFragment.callback = callback;
-
+		
 		return newFragment;
 	}
 
@@ -151,11 +154,9 @@ public final class RequestPasswordDialog extends DialogFragment {
 
 		dialog.setView(view);
 
-		final TextView passwordField = (TextView) view
-				.findViewById(R.id.password_field);
+		final TextView passwordField = (TextView) view.findViewById(R.id.password_field);
 
-		final TextView titleTextView = (TextView) view
-				.findViewById(R.id.title_text_view);
+		final TextView titleTextView = (TextView) view.findViewById(R.id.title_text_view);
 
 		if (passwordType == PasswordTypeSecond)
 			titleTextView.setText(R.string.second_password_text);
@@ -164,8 +165,7 @@ public final class RequestPasswordDialog extends DialogFragment {
 		else
 			titleTextView.setText(R.string.main_password_text);
 
-		final Button continueButton = (Button) view
-				.findViewById(R.id.password_continue);
+		final Button continueButton = (Button) view.findViewById(R.id.password_continue);
 
 		continueButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
@@ -230,7 +230,8 @@ public final class RequestPasswordDialog extends DialogFragment {
 		lp.dimAmount = 0;
 		lp.width = WindowManager.LayoutParams.FILL_PARENT;
 		lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-
+//		lp.gravity = Gravity.BOTTOM;
+		
 		d.show();
 
 		d.getWindow().setAttributes(lp);

@@ -138,9 +138,7 @@ public class PinEntryActivity extends FragmentActivity {
 		buttonForgot = (Button) findViewById(R.id.buttonForgot);
 		buttonForgot.setOnClickListener(new View.OnClickListener() {
 		    public void onClick(View v) {
-		    	
 		    	;
-
 		    }
 		});
 		buttonForgot.setTypeface(typeface);
@@ -225,7 +223,6 @@ public class PinEntryActivity extends FragmentActivity {
 												if (response.get("success") != null) {
 													
 													edit.putString("pin_kookup_key", key);
-//													edit.putString("encrypted_password", MyWallet.encrypt(application.getRemoteWallet().getTemporyPassword(), value, piuk.blockchain.android.ui.PinEntryActivity.PBKDF2Iterations));
 													edit.putString("encrypted_password", MyWallet.encrypt(application.getRemoteWallet().getTemporyPassword(), value, PBKDF2Iterations));
 
 													if (!edit.commit()) {
@@ -688,9 +685,6 @@ public class PinEntryActivity extends FragmentActivity {
 				String pin_lookup_key = PreferenceManager.getDefaultSharedPreferences(application).getString("pin_kookup_key", null);
 				String encrypted_password = PreferenceManager.getDefaultSharedPreferences(application).getString("encrypted_password", null);
 
-//				Toast.makeText(PinEntryActivity.this, "PIN lookup key:" + pin_lookup_key, Toast.LENGTH_SHORT).show();	
-//				Toast.makeText(PinEntryActivity.this, "User entry:" + PIN, Toast.LENGTH_SHORT).show();	
-
 				try {
 //					final JSONObject response = piuk.blockchain.android.ui.PinEntryActivity.apiGetValue(pin_lookup_key, PIN);
 					final JSONObject response = apiGetValue(pin_lookup_key, PIN);
@@ -699,10 +693,6 @@ public class PinEntryActivity extends FragmentActivity {
 					if (decryptionKey != null) {	
 						application.didEncounterFatalPINServerError = false;
 
-						//PIN saved in memory so user can change password in account settings without re-entering pin
-						/* *************** */
-//						application.getRemoteWallet().setTemporyPIN(PIN);
-						
 						String password = MyWallet.decrypt(encrypted_password, decryptionKey, piuk.blockchain.android.ui.PinEntryActivity.PBKDF2Iterations);
 //						Toast.makeText(PinEntryActivity.this, password, Toast.LENGTH_SHORT).show();	
 
@@ -711,31 +701,7 @@ public class PinEntryActivity extends FragmentActivity {
 							public void onSuccess() {
 								handler.post(new Runnable() {
 									public void run() {															
-//										Toast.makeText(PinEntryActivity.this, "PIN Verified", Toast.LENGTH_SHORT).show();	
 
-//										disableKeyPad(false);
-
-										/*
-										if (application.needsWalletRekey()) {
-											
-//											Toast.makeText(PinEntryActivity.this, "Rekey needed:" + response.toString(), Toast.LENGTH_SHORT).show();	
-
-											RekeyWalletDialog.show(getSupportFragmentManager(), application, new SuccessCallback() {
-												@Override
-												public void onSuccess() {													
-//													finish();
-												}
-
-												@Override
-												public void onFail() {													
-//													finish();
-												}
-											});
-										} else {
-//											finish();
-										}
-										*/
-										
 										Editor edit = PreferenceManager.getDefaultSharedPreferences(PinEntryActivity.this).edit();
 										edit.putBoolean("verified", true);
 										edit.commit();
@@ -755,29 +721,9 @@ public class PinEntryActivity extends FragmentActivity {
 							public void onFail() {
 								handler.post(new Runnable() {
 									public void run() {
-//										disableKeyPad(false);
 
 										Toast.makeText(PinEntryActivity.this, piuk.blockchain.android.R.string.toast_wallet_decryption_failed, Toast.LENGTH_LONG).show();	
 
-										try {
-//											clearPrefValues(application);
-
-											/*
-											Editor editor = PreferenceManager.getDefaultSharedPreferences(application).edit();
-
-											editor.remove("pin_kookup_key");
-											editor.remove("encrypted_password");
-
-											if (!editor.commit()) {
-												throw new Exception("Error Saving Preferences");
-											}
-											*/
-
-										} catch (Exception e) {
-											e.printStackTrace();
-										}
-
-//										begin();
 									}
 								});
 							}
@@ -786,36 +732,13 @@ public class PinEntryActivity extends FragmentActivity {
 
 						Toast.makeText(PinEntryActivity.this, response.toString(), Toast.LENGTH_SHORT).show();	
 
-						// Even though we received an error it is a valid response
-						// So no fatal
 						application.didEncounterFatalPINServerError = false;
-
-						// "code" == 2 means the PIN is incorrect
-						if (!response.containsKey("code") || ((Number)response.get("code")).intValue() != 2) {
-							/* ****************
-							clearPrefValues(application);
-							*/
-
-							/*
-							Editor editor = PreferenceManager.getDefaultSharedPreferences(application).edit();
-
-							editor.remove("pin_kookup_key");
-							editor.remove("encrypted_password");
-
-							if (!editor.commit()) {
-								throw new Exception("Error Saving Preferences");
-							}
-							*/
-
-						}
 
 						handler.post(new Runnable() {
 							public void run() {
-//								disableKeyPad(false);
 
 								Toast.makeText(PinEntryActivity.this, (String)response.get("error"), Toast.LENGTH_SHORT).show();	
 
-//								begin();
 							}
 						});
 					} else {
@@ -831,7 +754,6 @@ public class PinEntryActivity extends FragmentActivity {
 							
 
 							try {
-//								disableKeyPad(false);
 
 								AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 
@@ -850,9 +772,6 @@ public class PinEntryActivity extends FragmentActivity {
 										intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
 							    		startActivity(intent);
 
-//										dialog.dismiss();
-
-//										begin();
 									}
 								});
 								builder.setNegativeButton(piuk.blockchain.android.R.string.pin_server_error_enter_password_manually, new DialogInterface.OnClickListener() {
@@ -870,8 +789,6 @@ public class PinEntryActivity extends FragmentActivity {
 														intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
 											    		startActivity(intent);
 
-//														finish();
-													
 													}
 													public void onFail() {	
 														Toast.makeText(PinEntryActivity.this, piuk.blockchain.android.R.string.password_incorrect, Toast.LENGTH_LONG).show();
@@ -880,7 +797,6 @@ public class PinEntryActivity extends FragmentActivity {
 														intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
 											    		startActivity(intent);
 
-//														begin();
 													}
 												}, RequestPasswordDialog.PasswordTypeMain);
 
@@ -919,7 +835,7 @@ public class PinEntryActivity extends FragmentActivity {
 		StringBuilder args = new StringBuilder();
 
 		args.append("key=" + key);
-		args.append("&pin="+ pin);
+		args.append("&pin=" + pin);
 		args.append("&method=get");
 
 		String response = WalletUtils.postURL(WebROOT, args.toString());
@@ -939,7 +855,7 @@ public class PinEntryActivity extends FragmentActivity {
 
 		args.append("key=" + key);
 		args.append("&value=" + value);
-		args.append("&pin="+pin);
+		args.append("&pin=" + pin);
 		args.append("&method=put");
 		
 		String response = WalletUtils.postURL(WebROOT, args.toString());

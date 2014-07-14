@@ -110,12 +110,7 @@ public class BalanceFragment extends Fragment   {
         public void onReceive(Context context, Intent intent) {
             if(ACTION_INTENT.equals(intent.getAction())) {
 
-        		try {
-            		WalletUtil.getInstance(getActivity(), getActivity()).getWalletApplication().doMultiAddr(false, null);
-        		}
-        		catch(Exception e) {
-            		Toast.makeText(getActivity(), e.toString(), Toast.LENGTH_SHORT).show();
-        		}
+        		refreshPayload();
 
         		ExchangeRates fxRates = new ExchangeRates();
                 DownloadFXRatesTask task = new DownloadFXRatesTask(context, fxRates);
@@ -337,7 +332,7 @@ public class BalanceFragment extends Fragment   {
 	
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    	
+
         IntentFilter filter = new IntentFilter(ACTION_INTENT);
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiver, filter);
 
@@ -495,6 +490,8 @@ public class BalanceFragment extends Fragment   {
 
 		EventListeners.addEventListener(eventListener);
 		
+		refreshPayload();
+
         return rootView;
     }
 
@@ -685,8 +682,7 @@ public class BalanceFragment extends Fragment   {
     	final LinearLayout balance_extLayout = (LinearLayout)view.findViewById(R.id.balance_ext);
     	final LinearLayout balance_extHiddenLayout = (LinearLayout)view.findViewById(R.id.balance_ext_hidden);
 
-//    	MyRemoteWallet remoteWallet = application.getRemoteWallet();
-    	MyRemoteWallet remoteWallet = WalletUtil.getInstance(getActivity(), getActivity()).getRemoteWallet();
+    	MyRemoteWallet remoteWallet = application.getRemoteWallet();
 		if (remoteWallet == null) {
 			return;
 		}
@@ -714,7 +710,6 @@ public class BalanceFragment extends Fragment   {
         });
 
 		final Map<String, JSONObject> multiAddrBalancesRoot = remoteWallet.getMultiAddrBalancesRoot();
-
 		final JSONObject addressRoot = multiAddrBalancesRoot.get(address);
 	    final BigInteger totalReceived = BigInteger.valueOf(((Number)addressRoot.get("total_received")).longValue());
 	    final BigInteger totalSent = BigInteger.valueOf(((Number)addressRoot.get("total_sent")).longValue());
@@ -984,6 +979,19 @@ public class BalanceFragment extends Fragment   {
         }
     	
     	return bitmap;
+    }
+    
+    public boolean refreshPayload() {
+		Toast.makeText(getActivity(), "Refreshing...", Toast.LENGTH_LONG).show();
+
+		try {
+    		WalletUtil.getRefreshedInstance(getActivity(), getActivity()).getWalletApplication().doMultiAddr(false, null);
+		}
+		catch(Exception e) {
+    		Toast.makeText(getActivity(), e.toString(), Toast.LENGTH_SHORT).show();
+		}
+
+		return false;
     }
 
 }

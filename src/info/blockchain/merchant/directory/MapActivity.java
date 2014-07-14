@@ -9,8 +9,10 @@ import java.util.HashMap;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
@@ -21,6 +23,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -484,6 +487,20 @@ public class MapActivity extends Activity implements LocationListener	{
 	        return super.onOptionsItemSelected(item);
 	    }
 	}
+
+	@Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) { 
+        if(keyCode == KeyEvent.KEYCODE_BACK) {
+        	if(infoLayout.getVisibility() == View.VISIBLE) {
+        		infoLayout.setVisibility(View.GONE);
+        	}
+        	else {
+        		finish();
+        	}
+        }
+
+        return false;
+    }
 
     private void drawData(final boolean fetch) {
     	

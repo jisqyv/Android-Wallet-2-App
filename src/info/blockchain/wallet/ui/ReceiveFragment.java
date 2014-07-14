@@ -139,6 +139,7 @@ public class ReceiveFragment extends Fragment   {
         ivReceivingQR = (ImageView)rootView.findViewById(R.id.qr);
         ivReceivingQR.setVisibility(View.INVISIBLE);
         
+	    String tmp = getActivity().getCacheDir() + File.separator + "qr.png";
         
         ivReceivingQR.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -282,6 +283,12 @@ public class ReceiveFragment extends Fragment   {
 		    @Override
 		    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 		        if(actionId == EditorInfo.IME_ACTION_DONE) {
+		        	
+		        	if(edAddress.getText().toString() == null || edAddress.getText().toString().length() < 1) {
+						Toast.makeText(getActivity(), "Include a Bitcoin receiving address", Toast.LENGTH_LONG).show();
+		        		return false;
+		        	}
+
 		        	tvAddress.setVisibility(View.VISIBLE);
 		        	tvAddressBis.setVisibility(View.VISIBLE);
 		        	ivReceivingQR.setVisibility(View.VISIBLE);
@@ -488,6 +495,13 @@ public class ReceiveFragment extends Fragment   {
 		    @Override
 		    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 		        if(actionId == EditorInfo.IME_ACTION_NEXT) {
+
+		        	if(labels.get(edAddress.getText().toString()) == null) {
+	 		            if(!BitcoinAddressCheck.isValidAddress(edAddress.getText().toString())) {
+							Toast.makeText(getActivity(), edAddress.getText().toString() + " is not a valid Bitcoin address", Toast.LENGTH_LONG).show();
+	 		            	return false;
+	 		            }
+		        	}
 
 		        	if(isMagic) {
 		        		removeMagicList();

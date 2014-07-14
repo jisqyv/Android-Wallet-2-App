@@ -94,7 +94,7 @@ public class WebsocketService extends android.app.Service
 				final MyTransactionOutput output = (MyTransactionOutput) tx.getOutputs().get(0);
 				final Address to = output.getToAddress();
 
-				notifyCoinsSent(to, BigInteger.valueOf(result));
+				notifyCoinsSent(to, BigInteger.valueOf(result).abs());
 
 				notifyWidgets();
 			} catch (Exception e) {

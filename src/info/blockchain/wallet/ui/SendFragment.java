@@ -912,12 +912,18 @@ public class SendFragment extends Fragment   {
 		    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 		        if(actionId == EditorInfo.IME_ACTION_DONE) {
 
+		        	if(edAddress.getText().toString() == null || edAddress.getText().toString().length() < 1) {
+						Toast.makeText(getActivity(), "Include a Bitcoin sending address", Toast.LENGTH_LONG).show();
+		        		return false;
+		        	}
+
 		        	if(sendType == SendTypeCustomSend) {
 
 		        		doCustomSend();
 
 		        	}
 		        	else {
+
 			        	summary2.setVisibility(View.VISIBLE);
 			        	tvAddress.setVisibility(View.VISIBLE);
 			        	tvAddressBis.setVisibility(View.VISIBLE);
@@ -1110,6 +1116,13 @@ public class SendFragment extends Fragment   {
 		    @Override
 		    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 		        if(actionId == EditorInfo.IME_ACTION_NEXT) {
+
+		        	if(labels.get(edAddress.getText().toString()) == null) {
+	 		            if(!BitcoinAddressCheck.isValidAddress(edAddress.getText().toString())) {
+							Toast.makeText(getActivity(), edAddress.getText().toString() + " is not a valid Bitcoin address", Toast.LENGTH_LONG).show();
+	 		            	return false;
+	 		            }
+		        	}
 
 		        	if(isMagic) {
 		        		removeMagicList();
