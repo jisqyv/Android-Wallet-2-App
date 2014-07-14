@@ -2,41 +2,32 @@ package info.blockchain.wallet.ui;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.io.UnsupportedEncodingException;
 import java.io.Writer;
-import java.security.SecureRandom;
 import java.util.Date;
 
-import org.json.simple.JSONObject;
-import org.spongycastle.util.encoders.Hex;
 
-import piuk.blockchain.android.MyRemoteWallet;
+
 import piuk.blockchain.android.Constants;
-import piuk.blockchain.android.MyWallet;
 import piuk.blockchain.android.R;
 import piuk.blockchain.android.SuccessCallback;
 import piuk.blockchain.android.WalletApplication;
 import piuk.blockchain.android.util.Iso8601Format;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.net.Uri;
 import android.os.Bundle;
-import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.preference.Preference;
-import android.preference.CheckBoxPreference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.preference.Preference.OnPreferenceClickListener;
-import android.preference.Preference.OnPreferenceChangeListener;
+import android.text.InputFilter;
 import android.text.InputType;
+import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -134,8 +125,94 @@ public class SettingsActivity extends PreferenceActivity {
         			return true;
         		}
         	});
+        	
+        	Preference pinPref = (Preference) findPreference("pin");
+        	pinPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+        		public boolean onPreferenceClick(Preference preference) {
+        			promptToChangePIN();
+        			return true;
+        		}
+        	});
     }
 
+	private void promptToChangePIN() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(SettingsActivity.this);
+		builder.setTitle(R.string.change_pin_title);
+		builder.setMessage(R.string.enter_your_new_pin)
+		.setCancelable(false);
+
+		final AlertDialog alert = builder.create();
+
+		InputFilter[] filterArray = new InputFilter[1];
+		filterArray[0] = new InputFilter.LengthFilter(4);
+		
+		LinearLayout layout = new LinearLayout(getBaseContext());
+		layout.setOrientation(LinearLayout.VERTICAL);
+		final EditText PINEditText = new EditText(SettingsActivity.this);
+		PINEditText.setHint(R.string.pin_hint);
+		PINEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
+		PINEditText.setTransformationMethod(PasswordTransformationMethod.getInstance());
+		PINEditText.setFilters(filterArray);
+		layout.addView(PINEditText);
+		final EditText PINConfirmEditText = new EditText(SettingsActivity.this);
+		PINConfirmEditText.setHint(R.string.confirm_pin_hint);
+		PINConfirmEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
+		PINConfirmEditText.setTransformationMethod(PasswordTransformationMethod.getInstance());
+		layout.addView(PINConfirmEditText);
+		PINConfirmEditText.setFilters(filterArray);
+		alert.setView(layout);
+		
+		alert.setOnShowListener(new DialogInterface.OnShowListener() {
+		    @Override
+		    public void onShow(DialogInterface dialog) {
+		        Button b = alert.getButton(AlertDialog.BUTTON_POSITIVE);
+		        b.setOnClickListener(new View.OnClickListener() {
+
+		            @Override
+		            public void onClick(View view) {
+		    			String pin1 = PINEditText.getText().toString().trim();
+						String pin2 = PINConfirmEditText.getText().toString().trim();
+			   			if(pin1.matches("[0-9]+") && pin1.length() != 4) {
+			   				Toast.makeText(SettingsActivity.this, R.string.invalid_pin_error, Toast.LENGTH_LONG).show();
+			   				return;
+			   			}
+			   			if (! pin1.equals(pin2)) {
+			   				Toast.makeText(SettingsActivity.this, R.string.pin_mismatch_error, Toast.LENGTH_LONG).show();
+			   				return;
+			   			}
+			   			
+		   				application.apiStoreKey(pin1, new SuccessCallback() {
+
+							@Override
+							public void onSuccess() {
+								alert.dismiss();
+				   				Toast.makeText(SettingsActivity.this, R.string.change_pin_success, Toast.LENGTH_LONG).show();
+							}
+
+							@Override
+							public void onFail() {
+								alert.dismiss();
+							}
+		   				});   	
+		            }
+		        });
+		    }
+		});
+		
+		alert.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.enter), new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+			}
+		}); 
+
+		alert.setButton(AlertDialog.BUTTON_NEGATIVE, getString(R.string.cancel), new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				dialog.dismiss();
+			}
+		});
+		
+		alert.show();
+	}
+	
 	private void promptToEnterOldPasswordAndChangePassword() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(SettingsActivity.this);
 		builder.setTitle(R.string.change_password_title);

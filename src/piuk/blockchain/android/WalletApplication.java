@@ -1652,6 +1652,7 @@ public class WalletApplication extends Application {
 					final String value = new String(Hex.encode(bytes), "UTF-8");
 					final JSONObject response = piuk.blockchain.android.ui.PinEntryActivity.apiStoreKey(key, value, pin);
 					if (response.get("success") != null) {
+						callback.onSuccess();
 						edit.putString("pin_kookup_key", key);
 						edit.putString("encrypted_password", MyWallet.encrypt(application.getRemoteWallet().getTemporyPassword(), value, piuk.blockchain.android.ui.PinEntryActivity.PBKDF2Iterations));
 

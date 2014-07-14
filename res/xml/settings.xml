@@ -33,7 +33,11 @@
             	    android:summary="Backup wallet to media of your choice"
                 	android:key="backup"
                 	/>	
-		        
+		        <Preference
+        	        android:title="Change PIN"
+            	    android:summary="Change your PIN"
+                	android:key="pin"
+                	/>		        
 		        <Preference
         	        android:title="Change Password"
             	    android:summary="Change your password"
