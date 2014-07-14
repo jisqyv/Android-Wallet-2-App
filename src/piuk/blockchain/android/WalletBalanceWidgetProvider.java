@@ -139,12 +139,17 @@ public class WalletBalanceWidgetProvider extends AppWidgetProvider {
 		RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.wallet_balance_widget_content);
 
 		if (action.equals(WalletBalanceWidgetProvider.ACTION_WIDGET_MERCHANT_DIRECTORY)) {
-			boolean isPassPinScreen = ((WalletApplication)context.getApplicationContext()).getIsPassedPinScreen();
+			WalletApplication application = (WalletApplication)context.getApplicationContext();
+			boolean isPassPinScreen = application.getIsPassedPinScreen();
 			final Intent navigateIntent;
 			if (isPassPinScreen) {
 				navigateIntent = new Intent(context, MainActivity.class);
 			} else {
-				navigateIntent = new Intent(context, PinEntryActivity.class);
+				if (application.isGeoEnabled()) {
+					navigateIntent = new Intent(context, info.blockchain.merchant.directory.MapActivity.class);					
+				} else {
+					navigateIntent = new Intent(context, PinEntryActivity.class);					
+				}
 			}
 			
             navigateIntent.putExtra("navigateTo", "merchantDirectory");            

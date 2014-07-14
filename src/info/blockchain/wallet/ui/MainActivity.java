@@ -475,10 +475,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     }
 
     private void doMerchantDirectory()	{
-    	LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
-    	boolean geoEnabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
-
-    	if (!geoEnabled) {
+    	if (!application.isGeoEnabled()) {
     		EnableGeo.displayGPSPrompt(this);
     	}
     	else {

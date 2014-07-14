@@ -27,6 +27,7 @@ import android.content.*;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.os.Handler;
 import android.os.Looper;
@@ -153,6 +154,11 @@ public class WalletApplication extends Application {
 		return handler;
 	}
 	
+	public boolean isGeoEnabled() {
+    	LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
+    	return lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+	}
+
 	public void clearWallet() {
 
 		if (this.isInP2PFallbackMode())
