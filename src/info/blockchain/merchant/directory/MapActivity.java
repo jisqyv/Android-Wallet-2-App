@@ -4,6 +4,7 @@ import info.blockchain.wallet.ui.OnSwipeTouchListener;
 import info.blockchain.wallet.ui.TypefaceUtil;
 
 import java.text.DecimalFormat;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -51,6 +52,7 @@ import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.LatLngBounds;
 //import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
 //import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
@@ -111,10 +113,8 @@ public class MapActivity extends Activity implements LocationListener	{
 
 	private ProgressDialog progress = null;
 	
-//	private double selfLat = 0.0;
-//	private double selfLng = 0.0;
-	
 	private HashMap<String,BTCBusiness> markerValues = null;
+    private LatLngBounds bounds = null;
 	
 	private String strJSONData = null;
 	public static ArrayList<BTCBusiness> btcb = null;
@@ -145,19 +145,6 @@ public class MapActivity extends Activity implements LocationListener	{
 		locationManager.requestLocationUpdates(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ? LocationManager.GPS_PROVIDER : LocationManager.NETWORK_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
 		
 		infoLayout = ((LinearLayout)findViewById(R.id.info));
-		/*
-        infoLayout.setOnTouchListener(new OnTouchListener(){
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-            	
-            	if(infoLayout.getVisibility() == View.VISIBLE) {
-            		infoLayout.setVisibility(View.GONE);
-            	}
-
-                return true;
-            }
-        });
-        */
 		infoLayout.setOnTouchListener(new OnSwipeTouchListener(this) {
 		    public void onSwipeBottom() {
             	if(infoLayout.getVisibility() == View.VISIBLE) {
@@ -166,7 +153,6 @@ public class MapActivity extends Activity implements LocationListener	{
             	}
 		    }
 		});
-
 		infoLayout.setVisibility(View.GONE);
 		
         tvName = (TextView)findViewById(R.id.tv_name);
@@ -184,51 +170,6 @@ public class MapActivity extends Activity implements LocationListener	{
 
 		map = ((MapFragment)getFragmentManager().findFragmentById(R.id.map)).getMap();
 		map.setMyLocationEnabled(true);
-		/*
-        map.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
-            @Override
-            public void onInfoWindowClick(final Marker marker) {
-
-     			AlertDialog.Builder alert = new AlertDialog.Builder(MapActivity.this);
-                alert.setTitle("Merchant Info");
-                alert.setPositiveButton("Directions",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface arg0, int arg1) {
-                     			Intent intent = new Intent(Intent.ACTION_VIEW);
-                     			// http://maps.google.com/?saddr=34.052222,-118.243611&daddr=37.322778,-122.031944
-                     			intent.setData(Uri.parse("http://maps.google.com/?saddr=" +
-                     					mSelf.getPosition().latitude + "," + mSelf.getPosition().longitude +
-                     					"&daddr=" + markerValues.get(marker.getId()).lat + "," + markerValues.get(marker.getId()).lon
-                     					));
-                     			startActivity(intent);
-                            }
-                        });
-                if(markerValues.get(marker.getId()).tel != null) {
-                    alert.setNeutralButton("Call",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface arg0, int arg1) {
-                                	Intent intent = new Intent(Intent.ACTION_DIAL);
-                                	intent.setData(Uri.parse("tel:" + markerValues.get(marker.getId()).tel));
-                                	startActivity(intent);
-                                }
-                            });
-                }
-//                if(markerValues.get(marker.getId()).web != null) {
-//                    alert.setNegativeButton("Web",
-//                            new DialogInterface.OnClickListener() {
-//                                public void onClick(DialogInterface arg0, int arg1) {
-//                         			Intent intent = new Intent(Intent.ACTION_VIEW);
-//                         			intent.setData(Uri.parse(markerValues.get(marker.getId()).web));
-//                         			startActivity(intent);
-//                                }
-//                            });
-//                }
-                alert.show();
-
-            }
-        });
-        */
-
         map.setOnMarkerClickListener(new OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(final Marker marker) {
@@ -325,6 +266,23 @@ public class MapActivity extends Activity implements LocationListener	{
             	return true;
             }
         });
+        /*
+        map.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+            @Override
+            public void onMapLoaded() {
+                LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                for (BTCBusiness b : btcb)
+                {
+                    builder.include(new LatLng(Double.parseDouble(b.lat), Double.parseDouble(b.lon)));
+                }
+                bounds = builder.build();
+                int padding = 30; // offset from edges of the map in pixels
+                CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+                map.moveCamera(cu);
+                map.animateCamera(cu);
+            }
+        });
+        */
 
 	    imgCafe = ((ImageView)findViewById(R.id.cafe));
 	    layoutCafe = ((LinearLayout)findViewById(R.id.layout_cafe));
@@ -430,12 +388,7 @@ public class MapActivity extends Activity implements LocationListener	{
         }
 
 		map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currLocation.getLatitude(), currLocation.getLongitude()), Z00M_LEVEL_DEFAULT));
-
 		drawData(true);
-
-//		mSelf = map.addMarker(new MarkerOptions().position(new LatLng(currLocation.getLatitude(), currLocation.getLongitude())).title("You are here").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-//		mSelf.setVisible(false);
-		
 	}
 
 	@Override
@@ -443,16 +396,13 @@ public class MapActivity extends Activity implements LocationListener	{
 
 		LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
 
-//		mSelf.setPosition(latLng);
-//		selfLat = mSelf.getPosition().latitude;
-//		selfLng = mSelf.getPosition().longitude;
-
 		currLocation = location;
 		CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, map.getCameraPosition().zoom);
 		map.animateCamera(cameraUpdate);
 		locationManager.removeUpdates(this);
 		
 		drawData(true);
+		setProperZoomLevel(latLng, 7, 1);
 
 	}
 
@@ -481,7 +431,12 @@ public class MapActivity extends Activity implements LocationListener	{
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    switch (item.getItemId()) {
     	case R.id.list_view:
-    		doListView();
+//    		if(Double.parseDouble(MapActivity.btcb.get(0).distance) < 50.0) {
+        		doListView();
+//    		}
+//    		else {
+//		        Toast.makeText(MapActivity.this, "There are no nearby Bitcoin merchants to list.", Toast.LENGTH_SHORT).show();
+//    		}
     		return true;
 	    default:
 	        return super.onOptionsItemSelected(item);
@@ -617,7 +572,9 @@ public class MapActivity extends Activity implements LocationListener	{
 							} catch (Exception e) {
 								e.printStackTrace();
 							}
-							
+
+							setProperZoomLevel(new LatLng(currLocation.getLatitude(), currLocation.getLongitude()), 40000, 1);
+
 						}
 					});
 				} catch (Exception e) {
@@ -629,6 +586,60 @@ public class MapActivity extends Activity implements LocationListener	{
 			}
 		}).start();
 	}
+
+	void setProperZoomLevel(LatLng loc, int radius, int nbPoi) {
+
+        float currentZoomLevel = 21;
+        int currentFoundPoi = 0;
+        LatLngBounds bounds = null;
+        List<LatLng> found = new ArrayList<LatLng>();
+        Location location = new Location("");
+        location.setLatitude(loc.latitude);
+        location.setLongitude(loc.longitude);
+        
+        boolean continueZooming = true;
+        boolean continueSearchingInsideRadius = true;
+
+        while (continueZooming) {
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(loc, currentZoomLevel--));
+            bounds = map.getProjection().getVisibleRegion().latLngBounds;
+            Location swLoc = new Location("");
+            swLoc.setLatitude(bounds.southwest.latitude);
+            swLoc.setLongitude(bounds.southwest.longitude);
+            continueSearchingInsideRadius = (Math.round(location.distanceTo(swLoc) / 100) > radius) ? false : true;
+            
+            for (BTCBusiness b : btcb) {
+            	
+            	LatLng pos = new LatLng(Double.parseDouble(b.lat), Double.parseDouble(b.lon));
+
+            	if (bounds.contains(pos)) {
+                    if (!found.contains(pos)) {
+                        currentFoundPoi++;
+                        found.add(pos);
+//                		Toast.makeText(MapActivity.this, "Found position", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                if (continueSearchingInsideRadius) {
+                    if (currentFoundPoi > nbPoi) {
+                    	continueZooming = false;
+                        break;
+                    }
+                }
+                else if (currentFoundPoi > 0) {
+                	continueZooming = false;
+                    break;
+                }
+                else if (currentZoomLevel < 3) {
+                	continueZooming = false;
+                    break;
+                }
+
+            }
+            continueZooming = ((currentZoomLevel > 0) && continueZooming) ? true : false;
+
+        }
+    }
 
     private void doListView() {
     	Intent intent = new Intent(MapActivity.this, ListActivity.class);

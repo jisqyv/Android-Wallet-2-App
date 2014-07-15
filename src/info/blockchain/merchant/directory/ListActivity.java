@@ -124,9 +124,9 @@ public class ListActivity extends Activity {
 		businesses.clear();
 		
 		for(int i = 0; i < MapActivity.btcb.size(); i++) {
-//			if(Double.parseDouble(MainActivity.btcb.get(i).distance) < 10.0) {
+			if(Double.parseDouble(MapActivity.btcb.get(i).distance) < 10.0) {
 				businesses.add(MapActivity.btcb.get(i));
-//			}
+			}
 		}
 
 		adapter.notifyDataSetChanged();

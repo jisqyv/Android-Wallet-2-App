@@ -832,10 +832,12 @@ public class WalletApplication extends Application {
 			}
 		}).start();
 	}
-/*
+
+	/*
+	// ko
 	public synchronized void checkIfWalletHasUpdated(final String password, final String guid, final String sharedKey, final boolean fetchTransactions, final SuccessCallback callbackFinal) {
 
-		System.out.println("checkIfWalletHasUpdated: password == " + password);
+		System.out.println("checkIfWalletHasUpdated: password");
 
 		final WalletApplication application = this;
 
@@ -996,6 +998,7 @@ public class WalletApplication extends Application {
 	}
 */
 
+	// ok
 	public synchronized void checkIfWalletHasUpdated(final String password, final String guid, final String sharedKey, final boolean fetchTransactions, final SuccessCallback callbackFinal) {
 
 		System.out.println("checkIfWalletHasUpdated: password");

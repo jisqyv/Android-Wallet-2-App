@@ -139,8 +139,6 @@ public class ReceiveFragment extends Fragment   {
         ivReceivingQR = (ImageView)rootView.findViewById(R.id.qr);
         ivReceivingQR.setVisibility(View.INVISIBLE);
         
-	    String tmp = getActivity().getCacheDir() + File.separator + "qr.png";
-        
         ivReceivingQR.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -160,9 +158,18 @@ public class ReceiveFragment extends Fragment   {
         ivReceivingQR.setOnLongClickListener(new View.OnLongClickListener() {
       	  public boolean onLongClick(View view) {
     			
-    		    String strFileName = getActivity().getCacheDir() + File.separator + "qr.png";
-    		    File file = new File(strFileName);
-    		    file.setReadable(true, false);
+      		  String strFileName = getActivity().getCacheDir() + File.separator + "qr.png";
+      		  File file = new File(strFileName);
+      		  if(!file.exists()) {
+      			  try {
+          			  file.createNewFile();
+      			  }
+      			  catch(Exception e) {
+						Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
+      			  }
+      		  }
+      		  file.setReadable(true,  false);
+
     			FileOutputStream fos = null;
     			try {
         			fos = new FileOutputStream(file);
@@ -335,8 +342,9 @@ public class ReceiveFragment extends Fragment   {
 		        		Log.d("currentSelectedAddress", "currentSelectedAddress " + currentSelectedAddress);
 			            ivReceivingQR.setImageBitmap(generateQRCode(BitcoinURI.convertToBitcoinURI(currentSelectedAddress, BigInteger.valueOf(btcValue), "", "")));		        		
 		        	} else {
-		        		Log.d("currentSelectedAddress", "currentSelectedAddress:" + edAddress.getText().toString());
-			            ivReceivingQR.setImageBitmap(generateQRCode(BitcoinURI.convertToBitcoinURI(edAddress.getText().toString(), BigInteger.valueOf(btcValue), "", "")));		        		
+						Toast.makeText(getActivity(), "Include a valid Bitcoin receiving address", Toast.LENGTH_LONG).show();
+						clearReceive();
+		        		return false;
 		        	}
 
 		        	edAmount1.clearFocus();
@@ -996,13 +1004,6 @@ public class ReceiveFragment extends Fragment   {
                 InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(edAddress.getWindowToken(), 0);
 
-                /*
-                HashMap<String, String> map = filteredDisplayList.get(position);
-                String labelOrAddress = map.get("labelOrAddress");
-            	edAddress.setText(labelOrAddress);            	                	               
-            	currentSelectedAddress = map.get("address");
-            	*/
-            	
 				ivReceivingQR.setVisibility(View.VISIBLE);
 				ivReceivingQR.setImageBitmap(generateQRCode(BitcoinURI.convertToBitcoinURI(currentSelectedAddress, null, "", "")));		        		
                 removeMagicList();
