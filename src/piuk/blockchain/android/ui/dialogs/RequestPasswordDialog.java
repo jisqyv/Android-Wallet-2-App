@@ -45,6 +45,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.view.Gravity;
 import android.widget.Toast;
+import piuk.blockchain.android.EventListeners;
 import piuk.blockchain.android.MyRemoteWallet;
 import piuk.blockchain.android.R;
 import piuk.blockchain.android.WalletApplication;
@@ -175,6 +176,12 @@ public final class RequestPasswordDialog extends DialogFragment {
 						callback.onFail();
 						return;
 					}
+					
+					String localWallet = application.readLocalWallet();
+					if (!application.decryptLocalWallet(localWallet, passwordField.getText().toString().trim())) {
+						callback.onFail();
+						return;
+					}
 
 					MyRemoteWallet wallet = application.getRemoteWallet();
 
@@ -240,4 +247,5 @@ public final class RequestPasswordDialog extends DialogFragment {
 
 		return d;
 	}
+	
 }

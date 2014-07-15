@@ -8,44 +8,16 @@
         android:id="@+id/address_book"
         android:showAsAction="never"
         android:title="@string/address_book"/>
-<!-- <item
-        android:id="@+id/scan_private_key"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="@string/scan_private_key"/>
-    <item
-        android:id="@+id/scan_watch_only"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="@string/scan_watch_only"/>
--->        
     <item
         android:id="@+id/nearby_merchants"
         android:showAsAction="never"
         android:title="@string/nearby_merchants"/>
-    <!--
-    <item
-        android:id="@+id/p2p_mode"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="@string/p2p_mode"/>
-    <item
-        android:id="@+id/nearby_merchants"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="@string/nearby_merchants"/>
-    <item
-        android:id="@+id/send_to_friends"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="@string/send_to_friends"/>
-    -->
-    <item
-        android:id="@+id/action_about"
-        android:showAsAction="never"
-        android:title="@string/about_us"/>
     <item
         android:id="@+id/action_feedback"
         android:showAsAction="never"
         android:title="@string/feedback"/>    
+    <item
+        android:id="@+id/action_about"
+        android:showAsAction="never"
+        android:title="@string/about_us"/>
 </menu>
