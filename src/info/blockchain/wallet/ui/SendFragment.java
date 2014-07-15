@@ -2392,7 +2392,7 @@ public class SendFragment extends Fragment   {
     	((LinearLayout)layout_custom_spend.findViewById(R.id.custom_spend)).addView(layout_change);
     	
     	Button btConfirm = new Button(getActivity());
-    	btConfirm.setText("Send money");
+    	btConfirm.setText("Send");
     	btConfirm.setTextSize(22);
     	btConfirm.setBackgroundResource(R.color.blockchain_blue);
     	btConfirm.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
@@ -2908,7 +2908,7 @@ public class SendFragment extends Fragment   {
         tvAddressBis.setText("");
         tvAddressBis.setVisibility(View.INVISIBLE);
 
-        btSend.setText("Send money");
+        btSend.setText("Send");
         btSend.setVisibility(View.INVISIBLE);
 
         summary3.setVisibility(View.GONE);
