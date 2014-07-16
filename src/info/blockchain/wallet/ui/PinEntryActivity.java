@@ -109,7 +109,6 @@ public class PinEntryActivity extends FragmentActivity {
 			setContentView(R.layout.activity_pin_entry_small);
 	    }
 
-
         Bundle extras = getIntent().getExtras();
         if(extras != null)	{
             if(extras.getString("N") != null && extras.getString("N").equals("1"))	{
@@ -700,7 +699,9 @@ public class PinEntryActivity extends FragmentActivity {
 							@Override
 							public void onSuccess() {
 								handler.post(new Runnable() {
-									public void run() {															
+									public void run() {
+										
+										TimeOutUtil.getInstance(PinEntryActivity.this).updatePin();
 
 										Editor edit = PreferenceManager.getDefaultSharedPreferences(PinEntryActivity.this).edit();
 										edit.putBoolean("verified", true);

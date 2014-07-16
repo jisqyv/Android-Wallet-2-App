@@ -490,8 +490,6 @@ public class BalanceFragment extends Fragment   {
 
 		EventListeners.addEventListener(eventListener);
 		
-//		refreshPayload();
-
         return rootView;
     }
 

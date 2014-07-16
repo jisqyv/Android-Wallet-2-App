@@ -1016,6 +1016,7 @@ public class SendFragment extends Fragment   {
         	public void onTextChanged(CharSequence s, int start, int before, int count)	{ ; }
         });
 
+        /*
         edAmount1.setOnFocusChangeListener(new OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -1032,6 +1033,7 @@ public class SendFragment extends Fragment   {
                 }
             }
         });
+        */
 
         edAddress = ((EditText)rootView.findViewById(R.id.address));
         edAddress.setHint(R.string.send_payment_hint);
