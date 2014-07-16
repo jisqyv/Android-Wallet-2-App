@@ -289,8 +289,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 			}
 		});            	
 //*/
-
-		   checkForUpdates();
+		checkForCrashes();
+	    checkForUpdates();
 	}
 
 	public void showFeedbackActivity() {
@@ -341,8 +341,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 		super.onResume();
 		Tracking.startUsage(this);
 		application.setIsPassedPinScreen(true);
-		checkForCrashes();
-	    checkForUpdates();
+
 	    
 		if(!returningFromActivity) {
 			if(TimeOutUtil.getInstance().isTimedOut()) {
