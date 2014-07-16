@@ -701,7 +701,7 @@ public class PinEntryActivity extends FragmentActivity {
 								handler.post(new Runnable() {
 									public void run() {
 										
-										TimeOutUtil.getInstance(PinEntryActivity.this).updatePin();
+										TimeOutUtil.getInstance().updatePin();
 
 										Editor edit = PreferenceManager.getDefaultSharedPreferences(PinEntryActivity.this).edit();
 										edit.putBoolean("verified", true);

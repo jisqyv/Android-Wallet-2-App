@@ -345,7 +345,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 	    checkForUpdates();
 	    
 		if(!returningFromActivity) {
-			if(TimeOutUtil.getInstance(this).isTimedOut()) {
+			if(TimeOutUtil.getInstance().isTimedOut()) {
 	        	Intent intent = new Intent(MainActivity.this, PinEntryActivity.class);
 				String navigateTo = getIntent().getStringExtra("navigateTo");
 				intent.putExtra("navigateTo", navigateTo);   
@@ -354,7 +354,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 	    		startActivity(intent);
 			}
 			else {
-				TimeOutUtil.getInstance(this).updatePin();
+				TimeOutUtil.getInstance().updatePin();
 			}
 		}
 		else {
