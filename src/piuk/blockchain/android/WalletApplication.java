@@ -832,8 +832,7 @@ public class WalletApplication extends Application {
 			}
 		}).start();
 	}
-
-	/*
+/*
 	// ko
 	public synchronized void checkIfWalletHasUpdated(final String password, final String guid, final String sharedKey, final boolean fetchTransactions, final SuccessCallback callbackFinal) {
 
@@ -998,9 +997,10 @@ public class WalletApplication extends Application {
 	}
 */
 
-	// ok
 	public synchronized void checkIfWalletHasUpdated(final String password, final String guid, final String sharedKey, final boolean fetchTransactions, final SuccessCallback callbackFinal) {
 
+		final boolean fetchTx = true;
+		
 		System.out.println("checkIfWalletHasUpdated: password");
 
 		final WalletApplication application = this;
@@ -1010,6 +1010,7 @@ public class WalletApplication extends Application {
 				JSONObject walletPayloadObj = null;
 				SuccessCallback callback = callbackFinal;
 
+				/*
 				String localWallet = null;
 
 				try {
@@ -1052,7 +1053,7 @@ public class WalletApplication extends Application {
 							callback = null;
 						}
 
-						if (fetchTransactions && !blockchainWallet.isUptoDate(Constants.MultiAddrTimeThreshold)) {
+						if (fetchTx && !blockchainWallet.isUptoDate(Constants.MultiAddrTimeThreshold)) {
 							doMultiAddr(true);
 						} 
 
@@ -1061,7 +1062,9 @@ public class WalletApplication extends Application {
 				} catch (final Exception e) {
 					e.printStackTrace();
 				}
+				*/
 
+				/*
 				if (walletPayloadObj == null) {
 					if (callback != null)  {
 						handler.post(new Runnable() {
@@ -1072,10 +1075,32 @@ public class WalletApplication extends Application {
 						callback = null;
 					}
 
-					if (fetchTransactions && blockchainWallet != null) {
+					if (fetchTx && blockchainWallet != null) {
 						doMultiAddr(true);
 					}
 
+					return;
+				}
+				*/
+				
+				try {
+					walletPayloadObj = MyRemoteWallet.getWalletPayload(guid, sharedKey);
+				}
+				catch(Exception e) {
+					handler.post(new Runnable() {
+						public void run() {
+							callbackFinal.onFail();
+						};
+					});
+				}
+				
+				if(walletPayloadObj == null) {
+					handler.post(new Runnable() {
+						public void run() {
+							callbackFinal.onFail();
+							return;
+						};
+					});
 					return;
 				}
 
@@ -1086,7 +1111,7 @@ public class WalletApplication extends Application {
 						doMultiAddr(false, null);
 					} else {						
 						System.out.println("8:blockchainWallet setTemporaryPassword:");
-						blockchainWallet.setTemporyPassword(password);
+//						blockchainWallet.setTemporyPassword(password);
 						blockchainWallet.setPayload(walletPayloadObj);
 					}
 
@@ -1137,7 +1162,7 @@ public class WalletApplication extends Application {
 
 				try {
 					// Get the balance and transaction
-					if (fetchTransactions)
+					if (fetchTx)
 						doMultiAddr(true);
 
 				} catch (Exception e) {

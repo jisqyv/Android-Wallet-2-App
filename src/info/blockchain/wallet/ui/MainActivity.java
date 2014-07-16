@@ -65,6 +65,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     private static int PICK_CONTACT 		= 2;
     private static int SETTINGS_ACTIVITY	= 3;
     private static int ADDRESSBOOK_ACTIVITY	= 4;
+    private static int MERCHANT_ACTIVITY	= 5;
 
 	private ViewPager viewPager;
     private TabsPagerAdapter mAdapter;
@@ -480,7 +481,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     	}
     	else {
         	Intent intent = new Intent(MainActivity.this, info.blockchain.merchant.directory.MapActivity.class);
-    		startActivity(intent);
+    		startActivityForResult(intent, MERCHANT_ACTIVITY);
     	}
     }
 
