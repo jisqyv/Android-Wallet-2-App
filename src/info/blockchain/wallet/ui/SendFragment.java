@@ -17,7 +17,9 @@ import java.util.Set;
 import net.sourceforge.zbar.Symbol;
 import piuk.blockchain.android.EventListeners;
 import piuk.blockchain.android.MyRemoteWallet;
+import piuk.blockchain.android.MyRemoteWallet.FeePolicy;
 import piuk.blockchain.android.MyRemoteWallet.SendProgress;
+import piuk.blockchain.android.WalletApplication.AddAddressCallback;
 import piuk.blockchain.android.Constants;
 import piuk.blockchain.android.R;
 import piuk.blockchain.android.WalletApplication;
@@ -106,6 +108,7 @@ import com.google.bitcoin.core.Address;
 import com.google.bitcoin.core.ECKey;
 import com.google.bitcoin.core.Transaction;
 import com.google.bitcoin.core.TransactionOutput;
+import com.google.bitcoin.params.MainNetParams;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
@@ -207,7 +210,7 @@ public class SendFragment extends Fragment   {
 
 	private CustomSend cs = null;
 	private SendProgress csProgress = null;
-
+	private Button btConfirm = null;
 	public static final String ACTION_INTENT = "info.blockchain.wallet.ui.SendFragment.BTC_ADDRESS_SCAN";
 
 	private ProgressDialog sendingProgressDialog = null;
@@ -287,7 +290,6 @@ public class SendFragment extends Fragment   {
 		final MainActivity activity = (MainActivity) getActivity();
 		application = (WalletApplication) activity.getApplication();
 		//activity.bindService(new Intent(activity, BlockchainServiceImpl.class), serviceConnection, Context.BIND_AUTO_CREATE);
-    	sendType = SendTypeQuickSend;
     	sendViaEmail = false;
     	sentViaSMS = false;
     	
@@ -302,6 +304,7 @@ public class SendFragment extends Fragment   {
     	custom_spend.setVisibility(View.GONE);
     	
     	CURRENT_SEND = SIMPLE_SEND;
+    	sendType = SendTypeQuickSend;
 
         tvAmount = (TextView)rootView.findViewById(R.id.amount);
         tvAmount.setVisibility(View.INVISIBLE);
@@ -648,7 +651,6 @@ public class SendFragment extends Fragment   {
 			};
 
 			public void makeTransaction(MyRemoteWallet.FeePolicy feePolicy) {
-
 				if (application.getRemoteWallet() == null)
 					return;
 
@@ -658,6 +660,9 @@ public class SendFragment extends Fragment   {
 					BigInteger baseFee = wallet.getBaseFee();
 
 					BigInteger fee = null;
+
+					if (sendType != null && sendType.equals(SendTypeCustomSend))
+						btConfirm.performClick();
 
 					if (feePolicy == MyRemoteWallet.FeePolicy.FeeNever) {
 						fee = BigInteger.ZERO;
@@ -670,45 +675,10 @@ public class SendFragment extends Fragment   {
 						fee = (wallet.getFeePolicy() == 1) ? baseFee : BigInteger.ZERO;
 					}
 
-					final BigInteger finalFee = fee;
-					final MyRemoteWallet.FeePolicy finalFeePolicy = feePolicy;
-
 					if (sendType != null && sendType.equals(SendTypeSharedCoin)) {
 
-						new Thread(new Runnable() {
-							@Override
-							public void run() {
-								try {
-									final String addressString = MyRemoteWallet.generateSharedAddress(application.getRemoteWallet().getToAddress(edAddress.getText().toString()));
-
-									handler.post(new Runnable() {
-										@Override
-										public void run() {
-											try {
-												sharedSend(new Address(Constants.NETWORK_PARAMETERS, addressString), finalFee, finalFeePolicy);
-											} catch (Exception e) {
-												e.printStackTrace();
-
-												Toast.makeText(application, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-											}
-										}
-									});
-								} catch (final Exception e) {
-									handler.post(new Runnable() {
-
-										@Override
-										public void run() {
-											e.printStackTrace();
-
-											Toast.makeText(application, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-										}
-									});
-								}
-							}
-
-						}).start();
-
 					} else {
+
 						String addressString = application.getRemoteWallet().getToAddress(edAddress.getText().toString());
 
 						Address receivingAddress = new Address(Constants.NETWORK_PARAMETERS, addressString);
@@ -716,7 +686,9 @@ public class SendFragment extends Fragment   {
 						if (sendType != null && sendType == SendTypeQuickSend) {
 							quickSend(receivingAddress, fee, feePolicy);
 						} else if (sendType != null && sendType == SendTypeCustomSend) {
-							customSend(receivingAddress, fee, feePolicy);
+							if (isCustomSendInputsCorrect()) {
+								customSend(receivingAddress, fee, feePolicy);
+							}
 						}
 					}
 				} catch (Exception e) {
@@ -808,25 +780,6 @@ public class SendFragment extends Fragment   {
 				final WalletApplication application = (WalletApplication) getActivity().getApplication();
 
 				application.getRemoteWallet().sendCoinsAsync(cs.getSendingAddresses(), receivingAddress.toString(), amount, feePolicy, fee, cs.getChangeAddress(), progress);
-
-			}
-
-			public void sharedSend(Address receivingAddress, BigInteger fee, MyRemoteWallet.FeePolicy feePolicy) {
-				if (application.getRemoteWallet() == null)
-					return;
-
-				if (sendType != null && !sendType.equals(SendTypeQuickSend) && application.isInP2PFallbackMode()) {
-		            Toast.makeText(getActivity(), R.string.only_quick_supported, Toast.LENGTH_LONG).show();
-					return;
-				}
-				String[] from = application.getRemoteWallet().getActiveAddresses();
-
-				BigDecimal amountDecimal = BigDecimal.valueOf(getBTCEnteredOutputValue(edAmount1.getText().toString()).doubleValue());
-				//Add the fee
-				final BigInteger amount = amountDecimal.add(amountDecimal.divide(BigDecimal.valueOf(100)).multiply(BigDecimal.valueOf(application.getRemoteWallet().getSharedFee()))).toBigInteger();
-
-				//application.getRemoteWallet().sendCoinsAsync(from, receivingAddress.toString(), amount, feePolicy, fee, progress);
-
 			}
 
             public void onClick(View v) {
@@ -836,7 +789,9 @@ public class SendFragment extends Fragment   {
 				final MyRemoteWallet remoteWallet = application.getRemoteWallet();
 
 				final MyRemoteWallet.FeePolicy feePolicy;
+
 				if (sendType != null && sendType == SendTypeQuickSend) {
+					
 					feePolicy = MyRemoteWallet.FeePolicy.FeeForce;
 				} else {
 					feePolicy = MyRemoteWallet.FeePolicy.FeeOnlyIfNeeded;
@@ -916,13 +871,13 @@ public class SendFragment extends Fragment   {
 						Toast.makeText(getActivity(), "Include a Bitcoin sending address", Toast.LENGTH_LONG).show();
 		        		return false;
 		        	}
-
+		        	
 		        	if(sendType == SendTypeCustomSend) {
-
-		        		doCustomSend();
-
-		        	}
-		        	else {
+                        //doCustomSend();
+		            }
+		        	
+		        	
+		        	
 
 			        	summary2.setVisibility(View.VISIBLE);
 			        	tvAddress.setVisibility(View.VISIBLE);
@@ -979,7 +934,7 @@ public class SendFragment extends Fragment   {
 		                InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 		                imm.hideSoftInputFromWindow(edAmount1.getWindowToken(), 0);
 
-		        	}
+		        	
 
 		        }
 		        return false;
@@ -2111,7 +2066,7 @@ public class SendFragment extends Fragment   {
 //        LinearLayout container = ((LinearLayout)rootView.findViewById(R.id.send_container));
 //        sendViewToBack(container);
     	CURRENT_SEND = SIMPLE_SEND;
-    	
+    	sendType = SendTypeQuickSend;
     }
 
     private void doCustomSend() {
@@ -2157,6 +2112,7 @@ public class SendFragment extends Fragment   {
     	simple_spend.setVisibility(View.GONE);
     	custom_spend.setVisibility(View.VISIBLE);
     	CURRENT_SEND = CUSTOM_SEND;
+    	sendType = SendTypeCustomSend;
     	
     	lastSendingAddress = null;
 
@@ -2393,7 +2349,7 @@ public class SendFragment extends Fragment   {
     	ibPlusC.setVisibility(View.INVISIBLE);
     	((LinearLayout)layout_custom_spend.findViewById(R.id.custom_spend)).addView(layout_change);
     	
-    	Button btConfirm = new Button(getActivity());
+    	btConfirm = new Button(getActivity());
     	btConfirm.setText("Send");
     	btConfirm.setTextSize(22);
     	btConfirm.setBackgroundResource(R.color.blockchain_blue);
@@ -2441,244 +2397,224 @@ public class SendFragment extends Fragment   {
             	if(spChangeAddress.getSelectedItemPosition() != 0) {
             		cs.setChangeAddress(addresses.get(spChangeAddress.getSelectedItemPosition()));
             	}
-
-            	//
-            	//
-            	//
-//        		Toast.makeText(getActivity(), "Sending addresses:" + cs.getSendingAddresses().size(), Toast.LENGTH_SHORT).show();
-
-            	BigInteger total_amount = BigInteger.ZERO;
-            	HashMap<String, BigInteger> addresses = cs.getSendingAddresses();
-            	Set<String> keys = addresses.keySet();
-            	for (Iterator iterator = keys.iterator(); iterator.hasNext();) {
-                    String s = (String)iterator.next();
-                    total_amount = total_amount.add(addresses.get(s));
-                }
-        		//
-        		//
-        		//
-
-				final BigInteger entered_amount = getBTCEnteredOutputValue(edAmount1.getText().toString());
-				final WalletApplication application = (WalletApplication) getActivity().getApplication();
-
-				MyRemoteWallet.FeePolicy feePolicy = MyRemoteWallet.FeePolicy.FeeOnlyIfNeeded;
-				BigInteger fee = cs.getFee();
-
-				if (application.getRemoteWallet() == null)
-					return;
-
-    			csProgress = new SendProgress() {
-    				public void onSend(final Transaction tx, final String message) {
-    					handler.post(new Runnable() {
-    						public void run() {
-    							application.getRemoteWallet().setState(MyRemoteWallet.State.SENT);
-    					        if(sendingProgressDialog != null) {
-    						        sendingProgressDialog.dismiss();
-    					        }
-			            		Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
-    						}
-    					});
-
-    					try {
-    						Thread.sleep(2000);
-    					} catch (InterruptedException e) {
-    						e.printStackTrace();
-    					}
-
-    					application.doMultiAddr(true);
-    				}
-
-    				public void onError(final String message) {
-    					handler.post(new Runnable() {
-    						public void run() {
-
-    							System.out.println("On Error");
-
-    					        if(sendingProgressDialog != null) {
-    						        sendingProgressDialog.dismiss();
-    					        }
-    							if (message != null)
-    			            		Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
-
-    							application.getRemoteWallet().setState(MyRemoteWallet.State.INPUT);
-    						}
-    					});
-    				}
-
-    				public void onProgress(final String message) {
-    					handler.post(new Runnable() {
-    						public void run() {
-    							application.getRemoteWallet().setState(MyRemoteWallet.State.SENDING);
-    						}
-    					});
-    				}
-
-    				public boolean onReady(Transaction tx, BigInteger fee, MyRemoteWallet.FeePolicy feePolicy, long priority) {
-
-    					boolean containsOutputLessThanThreshold = false;
-    					for (TransactionOutput output : tx.getOutputs()) {
-    						if (output.getValue().compareTo(Constants.FEE_THRESHOLD_MIN) < 0) {
-    							containsOutputLessThanThreshold = true;
-    							break;
-    						}
-    					}
-
-    					if (feePolicy != MyRemoteWallet.FeePolicy.FeeNever && fee.compareTo(BigInteger.ZERO) == 0) {
-    						if (tx.bitcoinSerialize().length > 1000 || containsOutputLessThanThreshold) {
-//    							makeTransaction(MyRemoteWallet.FeePolicy.FeeForce);
-    							return false;
-    						} else if (priority < 97600000L) {
-    							handler.post(new Runnable() {
-    								public void run() {
-    							        if(sendingProgressDialog != null) {
-    								        sendingProgressDialog.dismiss();
-    							        }
-    							        
-    									AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-    									builder.setMessage(R.string.ask_for_fee)
-    									.setCancelable(false);
-
-    									AlertDialog alert = builder.create();
-
-    									alert.setButton(AlertDialog.BUTTON_NEUTRAL, getString(R.string.continue_without_fee), new DialogInterface.OnClickListener() {
-    										public void onClick(DialogInterface dialog, int id) {
-//    											makeTransaction(MyRemoteWallet.FeePolicy.FeeNever);
-    											dialog.dismiss();
-    										} }); 
-
-    									alert.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.add_fee), new DialogInterface.OnClickListener() {
-    										public void onClick(DialogInterface dialog, int id) {
-//    											makeTransaction(MyRemoteWallet.FeePolicy.FeeForce);
-
-    											dialog.dismiss();
-    										}}); 
-
-    									alert.setButton(AlertDialog.BUTTON_NEGATIVE, getString(R.string.cancel), new DialogInterface.OnClickListener() {
-    										public void onClick(DialogInterface dialog, int id) {
-    											dialog.dismiss();
-    										}});
-
-    									alert.show();
-    								}
-    							});
-
-    							handler.post(new Runnable() {
-    								public void run() {
-    									application.getRemoteWallet().setState(MyRemoteWallet.State.INPUT);
-    								}
-    							});
-
-    							return false;
-    						}
-    					}
-
-    					return true;
-    				}
-
-    				public ECKey onPrivateKeyMissing(final String address) {
-
-    					if (SendFragment.temporaryPrivateKeys.containsKey(address)) {
-    						return SendFragment.temporaryPrivateKeys.get(address);
-    					}
-
-    					handler.post(new Runnable() {
-    						public void run() {
-    					        if(sendingProgressDialog != null) {
-    						        sendingProgressDialog.dismiss();
-    					        }
-    							AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-    							builder.setMessage(getString(R.string.ask_for_private_key, address))
-    							.setCancelable(false)
-    							.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-    								public void onClick(DialogInterface dialog, int id) {
-    									SendFragment.scanPrivateKeyAddress = address;
-
-    									Intent intent = new Intent(getActivity(), ZBarScannerActivity.class);
-    									intent.putExtra(ZBarConstants.SCAN_MODES, new int[] { Symbol.QRCODE } );
-    					        		startActivityForResult(intent, SCAN_PRIVATE_KEY_FOR_SENDING);	    		
-    								}
-    							})
-    							.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-    								public void onClick(DialogInterface dialog, int id) {
-
-    									synchronized (SendFragment.temporaryPrivateKeys) {
-    										SendFragment.temporaryPrivateKeys.notify();
-    									}
-
-    									dialog.cancel();
-    								}
-    							});
-
-    							AlertDialog alert = builder.create();
-
-    							alert.show();
-    						}
-    					});
-
-    					try {
-    						synchronized (SendFragment.temporaryPrivateKeys) {
-    							SendFragment.temporaryPrivateKeys.wait();
-    						}
-    					} catch (InterruptedException e) {
-    						e.printStackTrace();
-    					}
-
-    					return SendFragment.temporaryPrivateKeys.get(address);
-    				}
-
-					@Override
-					public void onStart() {
-						handler.post(new Runnable() {
-    						public void run() {
-    					    	SendFragment.this.sendingProgressDialog = new ProgressDialog(getActivity());
-    					    	SendFragment.this.sendingProgressDialog.setCancelable(true);
-    					    	SendFragment.this.sendingProgressDialog.setIndeterminate(true);
-    					    	SendFragment.this.sendingProgressDialog.setTitle("Sending...");
-    					    	SendFragment.this.sendingProgressDialog.setMessage("Please wait");
-    					    	SendFragment.this.sendingProgressDialog.show();
-    						}
-						});
-					}
-    			};
-    			
-    			//
-    			//
-    			//
-    			if(total_amount.compareTo(entered_amount) != 0) {
-            		Toast.makeText(getActivity(), "The sum of the amounts for all sending addresses must be equal to the amount specified on the top of the screen.", Toast.LENGTH_LONG).show();
-    			}
-    			else if(cs.getFee().compareTo(BigInteger.ZERO) == 0) {
-
-    				final MyRemoteWallet.FeePolicy fee_policy = feePolicy;
-    				final BigInteger fee_amount = fee;
-    				
-        			new AlertDialog.Builder(getActivity())
-                    .setIcon(R.drawable.ic_launcher).setTitle("Custom spend")
-                    .setMessage("This transaction will include a fee of 0.00 BTC. Are you sure you want to initiate this spend with a zero fee?")
-                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-//                      @Override
-                      public void onClick(DialogInterface dialog, int which) {
-                    	  application.getRemoteWallet().sendCoinsAsync(cs.getSendingAddresses(), currentSelectedAddress, entered_amount, fee_policy, fee_amount, cs.getChangeAddress(), csProgress);
-                      }
-                   })
-                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
-//                      @Override
-                      public void onClick(DialogInterface dialog, int which) {
-                    	  ;
-                      }
-                    }
-                    ).show();
-
-    			}
-    			else {
-    				application.getRemoteWallet().sendCoinsAsync(cs.getSendingAddresses(), currentSelectedAddress, entered_amount, feePolicy, fee, cs.getChangeAddress(), csProgress);
-    			}
-
+            	
+            	//doBeforeCustomSend();
             }
         });
 
     }
+    private boolean isCustomSendInputsCorrect() {
+    	//
+    	//
+    	//
+//		Toast.makeText(getActivity(), "Sending addresses:" + cs.getSendingAddresses().size(), Toast.LENGTH_SHORT).show();
 
+    	BigInteger total_amount = BigInteger.ZERO;
+    	HashMap<String, BigInteger> addresses = cs.getSendingAddresses();
+    	Set<String> keys = addresses.keySet();
+    	for (Iterator iterator = keys.iterator(); iterator.hasNext();) {
+            String s = (String)iterator.next();
+            total_amount = total_amount.add(addresses.get(s));
+        }
+		//
+		//
+		//
+
+		final BigInteger entered_amount = getBTCEnteredOutputValue(edAmount1.getText().toString());
+		final WalletApplication application = (WalletApplication) getActivity().getApplication();
+
+		MyRemoteWallet.FeePolicy feePolicy = MyRemoteWallet.FeePolicy.FeeOnlyIfNeeded;
+		BigInteger fee = cs.getFee();
+
+		if (application.getRemoteWallet() == null)
+			return false;
+
+		csProgress = new SendProgress() {
+			public void onSend(final Transaction tx, final String message) {
+				handler.post(new Runnable() {
+					public void run() {
+						application.getRemoteWallet().setState(MyRemoteWallet.State.SENT);
+				        if(sendingProgressDialog != null) {
+					        sendingProgressDialog.dismiss();
+				        }
+	            		Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
+					}
+				});
+
+				try {
+					Thread.sleep(2000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+
+				application.doMultiAddr(true);
+			}
+
+			public void onError(final String message) {
+				handler.post(new Runnable() {
+					public void run() {
+
+						System.out.println("On Error");
+
+				        if(sendingProgressDialog != null) {
+					        sendingProgressDialog.dismiss();
+				        }
+						if (message != null)
+		            		Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
+
+						application.getRemoteWallet().setState(MyRemoteWallet.State.INPUT);
+					}
+				});
+			}
+
+			public void onProgress(final String message) {
+				handler.post(new Runnable() {
+					public void run() {
+						application.getRemoteWallet().setState(MyRemoteWallet.State.SENDING);
+					}
+				});
+			}
+
+			public boolean onReady(Transaction tx, BigInteger fee, MyRemoteWallet.FeePolicy feePolicy, long priority) {
+
+				boolean containsOutputLessThanThreshold = false;
+				for (TransactionOutput output : tx.getOutputs()) {
+					if (output.getValue().compareTo(Constants.FEE_THRESHOLD_MIN) < 0) {
+						containsOutputLessThanThreshold = true;
+						break;
+					}
+				}
+
+				if (feePolicy != MyRemoteWallet.FeePolicy.FeeNever && fee.compareTo(BigInteger.ZERO) == 0) {
+					if (tx.bitcoinSerialize().length > 1000 || containsOutputLessThanThreshold) {
+//						makeTransaction(MyRemoteWallet.FeePolicy.FeeForce);
+						return false;
+					} else if (priority < 97600000L) {
+						handler.post(new Runnable() {
+							public void run() {
+						        if(sendingProgressDialog != null) {
+							        sendingProgressDialog.dismiss();
+						        }
+						        
+								AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+								builder.setMessage(R.string.ask_for_fee)
+								.setCancelable(false);
+
+								AlertDialog alert = builder.create();
+
+								alert.setButton(AlertDialog.BUTTON_NEUTRAL, getString(R.string.continue_without_fee), new DialogInterface.OnClickListener() {
+									public void onClick(DialogInterface dialog, int id) {
+//										makeTransaction(MyRemoteWallet.FeePolicy.FeeNever);
+										dialog.dismiss();
+									} }); 
+
+								alert.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.add_fee), new DialogInterface.OnClickListener() {
+									public void onClick(DialogInterface dialog, int id) {
+//										makeTransaction(MyRemoteWallet.FeePolicy.FeeForce);
+
+										dialog.dismiss();
+									}}); 
+
+								alert.setButton(AlertDialog.BUTTON_NEGATIVE, getString(R.string.cancel), new DialogInterface.OnClickListener() {
+									public void onClick(DialogInterface dialog, int id) {
+										dialog.dismiss();
+									}});
+
+								alert.show();
+							}
+						});
+
+						handler.post(new Runnable() {
+							public void run() {
+								application.getRemoteWallet().setState(MyRemoteWallet.State.INPUT);
+							}
+						});
+
+						return false;
+					}
+				}
+
+				return true;
+			}
+
+			public ECKey onPrivateKeyMissing(final String address) {
+
+				if (SendFragment.temporaryPrivateKeys.containsKey(address)) {
+					return SendFragment.temporaryPrivateKeys.get(address);
+				}
+
+				handler.post(new Runnable() {
+					public void run() {
+				        if(sendingProgressDialog != null) {
+					        sendingProgressDialog.dismiss();
+				        }
+						AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+						builder.setMessage(getString(R.string.ask_for_private_key, address))
+						.setCancelable(false)
+						.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int id) {
+								SendFragment.scanPrivateKeyAddress = address;
+
+								Intent intent = new Intent(getActivity(), ZBarScannerActivity.class);
+								intent.putExtra(ZBarConstants.SCAN_MODES, new int[] { Symbol.QRCODE } );
+				        		startActivityForResult(intent, SCAN_PRIVATE_KEY_FOR_SENDING);	    		
+							}
+						})
+						.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int id) {
+
+								synchronized (SendFragment.temporaryPrivateKeys) {
+									SendFragment.temporaryPrivateKeys.notify();
+								}
+
+								dialog.cancel();
+							}
+						});
+
+						AlertDialog alert = builder.create();
+
+						alert.show();
+					}
+				});
+
+				try {
+					synchronized (SendFragment.temporaryPrivateKeys) {
+						SendFragment.temporaryPrivateKeys.wait();
+					}
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+
+				return SendFragment.temporaryPrivateKeys.get(address);
+			}
+
+			@Override
+			public void onStart() {
+				handler.post(new Runnable() {
+					public void run() {
+				    	SendFragment.this.sendingProgressDialog = new ProgressDialog(getActivity());
+				    	SendFragment.this.sendingProgressDialog.setCancelable(true);
+				    	SendFragment.this.sendingProgressDialog.setIndeterminate(true);
+				    	SendFragment.this.sendingProgressDialog.setTitle("Sending...");
+				    	SendFragment.this.sendingProgressDialog.setMessage("Please wait");
+				    	SendFragment.this.sendingProgressDialog.show();
+					}
+				});
+			}
+		};
+		
+		//
+		//
+		//
+		if(total_amount.compareTo(entered_amount) != 0) {
+    		Toast.makeText(getActivity(), "The sum of the amounts for all sending addresses must be equal to the amount specified on the top of the screen.", Toast.LENGTH_LONG).show();
+			return false;
+		}
+		else {
+			return true;
+		}
+    }
+    
     private void addSendingAddress(final List<String> displayAddresses, final MyRemoteWallet wallet, final List<String> addresses, final String remainder) {
 
     	final LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -2810,6 +2746,7 @@ public class SendFragment extends Fragment   {
 
     private void doSharedCoin() {
     	CURRENT_SEND = SHARED_SEND;
+    	sendType = SendTypeSharedCoin;
     }
 
     private void doSend2Friends() throws Exception	{

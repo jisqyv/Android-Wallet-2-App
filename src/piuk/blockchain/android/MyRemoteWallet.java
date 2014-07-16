@@ -1133,6 +1133,7 @@ public class MyRemoteWallet extends MyWallet {
 			outputValueSum = outputValueSum.add(amount);
 			//Add the output
 			BitcoinScript toOutputScript = BitcoinScript.createSimpleOutBitoinScript(new BitcoinAddress(toAddress));
+			Log.d("MyRemoteWallet", "MyRemoteWallet makeTransactionCustom toAddress: " + toAddress + "amount: " + amount);
 
 			TransactionOutput output = new TransactionOutput(getParams(), null, amount, toOutputScript.getProgram());
 			tx.addOutput(output);
@@ -1170,6 +1171,7 @@ public class MyRemoteWallet extends MyWallet {
 			MyTransactionInput input = new MyTransactionInput(getParams(), null, new byte[0], outPoint);
 
 			input.outpoint = outPoint;
+			Log.d("MyRemoteWallet", "MyRemoteWallet makeTransactionCustom fromAddress: " + address + "amount: " + outPoint.value);
 
 			tx.addInput(input);
 
@@ -1213,6 +1215,7 @@ public class MyRemoteWallet extends MyWallet {
 	        	if (addressChangeAmount.compareTo(BigInteger.ZERO) > 0) {
 	    			//Add the output
 	    			BitcoinScript toOutputScript = BitcoinScript.createSimpleOutBitoinScript(new BitcoinAddress(address));
+	    			Log.d("MyRemoteWallet", "MyRemoteWallet makeTransactionCustom toAddress: " + address + "addressChangeAmount: " + addressChangeAmount);
 
 	    			TransactionOutput output = new TransactionOutput(getParams(), null, addressChangeAmount, toOutputScript.getProgram());
 
