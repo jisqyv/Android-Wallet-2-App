@@ -171,12 +171,12 @@ public final class RequestPasswordDialog extends DialogFragment {
 			public void onClick(View v) {
 				
 				try {
-					if (passwordField.getText() == null)
-						return;
-
-					MyRemoteWallet wallet = application.getRemoteWallet();
-
 					if (passwordType == PasswordTypeSecond) {
+						if (passwordField.getText() == null)
+							return;
+
+						MyRemoteWallet wallet = application.getRemoteWallet();
+						
 						String secondPassword = passwordField.getText().toString();
 
 						if (wallet == null) {
@@ -193,6 +193,16 @@ public final class RequestPasswordDialog extends DialogFragment {
 							Toast.makeText(activity.getApplication(), R.string.password_incorrect, Toast.LENGTH_SHORT).show();
 						}
 					} else if (passwordType == PasswordTypeMain) {
+						if (passwordField.getText().toString().trim() == null || passwordField.getText().toString().trim().length() < 1) {
+	 						callback.onFail();
+						}
+						
+	 					String localWallet = application.readLocalWallet();
+	 					if (!application.decryptLocalWallet(localWallet, passwordField.getText().toString().trim())) {
+	 						callback.onFail();
+	 						return;
+	 					}
+	 					
 						String password = passwordField.getText().toString();
 
 						application.checkIfWalletHasUpdatedAndFetchTransactions(password, new SuccessCallback() {
@@ -209,6 +219,16 @@ public final class RequestPasswordDialog extends DialogFragment {
 							}
 						});
 					} else {
+						if (passwordField.getText().toString().trim() == null || passwordField.getText().toString().trim().length() < 1) {
+	 						callback.onFail();
+						}
+						
+	 					String localWallet = application.readLocalWallet();
+	 					if (!application.decryptLocalWallet(localWallet, passwordField.getText().toString().trim())) {
+	 						callback.onFail();
+	 						return;
+	 					}
+	 					
 						passwordResult = passwordField.getText().toString();
 
 						dismiss();
