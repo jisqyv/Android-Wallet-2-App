@@ -18,7 +18,6 @@
 package piuk.blockchain.android.ui.dialogs;
 
 import java.lang.ref.WeakReference;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -170,18 +169,10 @@ public final class RequestPasswordDialog extends DialogFragment {
 
 		continueButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-
+				
 				try {
-					if (passwordField.getText().toString().trim() == null || passwordField.getText().toString().trim().length() < 1) {
-						callback.onFail();
+					if (passwordField.getText() == null)
 						return;
-					}
-					
-					String localWallet = application.readLocalWallet();
-					if (!application.decryptLocalWallet(localWallet, passwordField.getText().toString().trim())) {
-						callback.onFail();
-						return;
-					}
 
 					MyRemoteWallet wallet = application.getRemoteWallet();
 
