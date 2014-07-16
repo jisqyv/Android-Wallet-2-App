@@ -903,34 +903,36 @@ public class ReceiveFragment extends Fragment   {
 
         layoutAddresses = (LinearLayout)childIcons.findViewById(R.id.addresses_bg);
         layoutContacts = (LinearLayout)childIcons.findViewById(R.id.contacts_bg);
+        layoutContacts.setVisibility(View.GONE);
         layoutPhoneContacts = (LinearLayout)childIcons.findViewById(R.id.phone_contacts_bg);
-        layoutPhoneContacts.setVisibility(View.INVISIBLE);
+        layoutPhoneContacts.setVisibility(View.GONE);
         tvAddresses = (TextView)childIcons.findViewById(R.id.addresses);
         tvContacts = (TextView)childIcons.findViewById(R.id.contacts);
         tvPhoneContacts = (TextView)childIcons.findViewById(R.id.phone_contacts);
 
 		layoutAddresses.setBackgroundColor(color_contacts_selected);
 		tvAddresses.setTextColor(0xFFffffff);
-		layoutContacts.setBackgroundColor(color_contacts_unselected);
-		tvContacts.setTextColor(0xFF000000);
+//		layoutContacts.setBackgroundColor(color_contacts_unselected);
+//		tvContacts.setTextColor(0xFF000000);
 
         addressesOn = true;
-        contactsOn = false;
+//        contactsOn = false;
         layoutAddresses.setOnClickListener(new View.OnClickListener() {        
             @Override
                 public void onClick(View view) {
             		if(!addressesOn) {
             			addressesOn = true;
-            			contactsOn = false;
+//            			contactsOn = false;
             			layoutAddresses.setBackgroundColor(color_contacts_selected);
             			tvAddresses.setTextColor(0xFFffffff);
-            			layoutContacts.setBackgroundColor(color_contacts_unselected);
-            			tvContacts.setTextColor(0xFF000000);
+//            			layoutContacts.setBackgroundColor(color_contacts_unselected);
+//            			tvContacts.setTextColor(0xFF000000);
             		}
             		initMagicList();
             		adapter.notifyDataSetChanged();                            		
                 }
         });
+        /*
         layoutContacts.setOnClickListener(new View.OnClickListener() {        
             @Override
                 public void onClick(View view) {
@@ -946,6 +948,7 @@ public class ReceiveFragment extends Fragment   {
             		adapter.notifyDataSetChanged();                            		
                 }
         });
+        */
 
         //	    parent.addView(child, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 	    parent.addView(childIcons);

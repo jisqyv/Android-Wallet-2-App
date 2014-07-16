@@ -21,7 +21,8 @@ public class TimeOutUtil {
 	}
 
 	public boolean isTimedOut() {
-		return (System.currentTimeMillis() - lastPin) > (1000 * 60 * 5);
+//		return (System.currentTimeMillis() - lastPin) > (1000 * 60 * 5);
+		return false;
 	}
 
 }
