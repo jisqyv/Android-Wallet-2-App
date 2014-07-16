@@ -286,6 +286,13 @@ public class MyRemoteWallet extends MyWallet {
 	}
 
 	public static String postURL(String request, String urlParameters) throws Exception {
+        if (urlParameters.length() > 0) {
+            urlParameters += "&";
+        }
+        
+        //Include the Android API Code in POST requests
+        urlParameters += "api_code="+ApiCode;
+        
 		return WalletUtils.postURL(request, urlParameters);
 	}
 
@@ -1597,11 +1604,6 @@ public class MyRemoteWallet extends MyWallet {
 
 		args.append("&device=");
 		args.append("android");
-
-		if (_isNew) {
-			args.append("&api_code=");
-			args.append(ApiCode);
-		}
 
 		if (old_checksum != null && old_checksum.length() > 0)
 		{
