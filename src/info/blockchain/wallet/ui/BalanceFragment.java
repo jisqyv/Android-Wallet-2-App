@@ -749,7 +749,8 @@ public class BalanceFragment extends Fragment   {
         //
         // check for txs that include selected address
         //
-		for (Iterator<MyTransaction> it = transactionsList.iterator(); it.hasNext();) {
+        List<MyTransaction> transactionsListClone = transactionsList;
+		for (Iterator<MyTransaction> it = transactionsListClone.iterator(); it.hasNext();) {
 			MyTransaction transaction = it.next();
 	    	List<TransactionOutput> transactionOutputs = transaction.getOutputs();
 	    	List<TransactionInput> transactionInputs = transaction.getInputs();
