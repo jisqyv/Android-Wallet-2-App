@@ -642,10 +642,25 @@ public class MapActivity extends Activity implements LocationListener	{
     }
 
     private void doListView() {
-    	Intent intent = new Intent(MapActivity.this, ListActivity.class);
-    	intent.putExtra("ULAT", Double.toString(currLocation.getLatitude()));
-    	intent.putExtra("ULON", Double.toString(currLocation.getLongitude()));
-		startActivity(intent);
+
+		boolean doList = false;
+
+    	for(int i = 0; i < btcb.size(); i++) {
+			if(Double.parseDouble(btcb.get(i).distance) < 15.0) {
+				doList = true;
+				break;
+			}
+		}
+
+    	if(doList) {
+        	Intent intent = new Intent(MapActivity.this, ListActivity.class);
+        	intent.putExtra("ULAT", Double.toString(currLocation.getLatitude()));
+        	intent.putExtra("ULON", Double.toString(currLocation.getLongitude()));
+    		startActivity(intent);
+    	}
+    	else {
+ 			Toast.makeText(MapActivity.this, "There are no Bitcoin businesses within range for listing.", Toast.LENGTH_LONG).show();
+    	}
     }
 
 }
