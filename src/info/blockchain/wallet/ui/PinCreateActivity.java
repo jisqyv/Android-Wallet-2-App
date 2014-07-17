@@ -743,6 +743,8 @@ public class PinCreateActivity extends Activity {
         																		throw new Exception("Error Saving Preferences");
         																	}
         																	else {
+        																		TimeOutUtil.getInstance().updatePin();
+
 //        																		Toast.makeText(application, R.string.toast_pin_saved, Toast.LENGTH_SHORT).show();
         															        	Intent intent = new Intent(PinCreateActivity.this, SecureWallet.class);
         																		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);

@@ -228,6 +228,8 @@ public class PinEntryActivity extends FragmentActivity {
 														throw new Exception("Error Saving Preferences");
 													}
 													else {
+														TimeOutUtil.getInstance().updatePin();
+
 														Toast.makeText(PinEntryActivity.this, "PIN saved", Toast.LENGTH_SHORT).show();	
 											        	Intent intent = new Intent(PinEntryActivity.this, MainActivity.class);
 														intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
