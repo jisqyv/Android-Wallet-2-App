@@ -221,8 +221,8 @@ public class SettingsActivity extends PreferenceActivity {
 
 		            @Override
 		            public void onClick(View view) {
-		    			String pin1 = PINEditText.getText().toString().trim();
-						String pin2 = PINConfirmEditText.getText().toString().trim();
+		    			final String pin1 = PINEditText.getText().toString().trim();
+		    			final String pin2 = PINConfirmEditText.getText().toString().trim();
 			   			if(pin1.matches("[0-9]+") && pin1.length() != 4) {
 			   				Toast.makeText(SettingsActivity.this, R.string.invalid_pin_error, Toast.LENGTH_LONG).show();
 			   				return;
@@ -238,6 +238,7 @@ public class SettingsActivity extends PreferenceActivity {
 							public void onSuccess() {
 								alert.dismiss();
 				   				Toast.makeText(SettingsActivity.this, R.string.change_pin_success, Toast.LENGTH_LONG).show();
+				   				application.getRemoteWallet().setTemporyPIN(pin1);
 							}
 
 							@Override
