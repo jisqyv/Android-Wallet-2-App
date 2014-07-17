@@ -563,12 +563,15 @@ public class SendFragment extends Fragment   {
 				public void onStart() {
 					handler.post(new Runnable() {
 						public void run() {
-					    	SendFragment.this.sendingProgressDialog = new ProgressDialog(getActivity());
-					    	SendFragment.this.sendingProgressDialog.setCancelable(true);
-					    	SendFragment.this.sendingProgressDialog.setIndeterminate(true);
-					    	SendFragment.this.sendingProgressDialog.setTitle("Sending...");
-					    	SendFragment.this.sendingProgressDialog.setMessage("Please wait");
-					    	SendFragment.this.sendingProgressDialog.show();
+							if (SendFragment.this.sendingProgressDialog == null || (SendFragment.this.sendingProgressDialog != null
+									&& !SendFragment.this.sendingProgressDialog.isShowing())) {
+						    	SendFragment.this.sendingProgressDialog = new ProgressDialog(getActivity());
+						    	SendFragment.this.sendingProgressDialog.setCancelable(true);
+						    	SendFragment.this.sendingProgressDialog.setIndeterminate(true);
+						    	SendFragment.this.sendingProgressDialog.setTitle("Sending...");
+						    	SendFragment.this.sendingProgressDialog.setMessage("Please wait");
+						    	SendFragment.this.sendingProgressDialog.show();
+							}
 						}
 					});					
 				}
@@ -642,12 +645,15 @@ public class SendFragment extends Fragment   {
 				public void onStart() {
 					handler.post(new Runnable() {
 						public void run() {
-					    	SendFragment.this.sendingProgressDialog = new ProgressDialog(getActivity());
-					    	SendFragment.this.sendingProgressDialog.setCancelable(true);
-					    	SendFragment.this.sendingProgressDialog.setIndeterminate(true);
-					    	SendFragment.this.sendingProgressDialog.setTitle("Sending...");
-					    	SendFragment.this.sendingProgressDialog.setMessage("Please wait");
-					    	SendFragment.this.sendingProgressDialog.show();
+							if (SendFragment.this.sendingProgressDialog == null || (SendFragment.this.sendingProgressDialog != null
+									&& !SendFragment.this.sendingProgressDialog.isShowing())) {
+						    	SendFragment.this.sendingProgressDialog = new ProgressDialog(getActivity());
+						    	SendFragment.this.sendingProgressDialog.setCancelable(true);
+						    	SendFragment.this.sendingProgressDialog.setIndeterminate(true);
+						    	SendFragment.this.sendingProgressDialog.setTitle("Sending...");
+						    	SendFragment.this.sendingProgressDialog.setMessage("Please wait");
+						    	SendFragment.this.sendingProgressDialog.show();
+							}
 						}
 					});	
 				}
@@ -2654,7 +2660,8 @@ public class SendFragment extends Fragment   {
 			public void onStart() {
 				handler.post(new Runnable() {
 					public void run() {
-						if (SendFragment.this.sendingProgressDialog == null || (SendFragment.this.sendingProgressDialog != null && !SendFragment.this.sendingProgressDialog.isShowing())) {
+						if (SendFragment.this.sendingProgressDialog == null || (SendFragment.this.sendingProgressDialog != null
+								&& !SendFragment.this.sendingProgressDialog.isShowing())) {
 					    	SendFragment.this.sendingProgressDialog = new ProgressDialog(getActivity());
 					    	SendFragment.this.sendingProgressDialog.setCancelable(true);
 					    	SendFragment.this.sendingProgressDialog.setIndeterminate(true);
