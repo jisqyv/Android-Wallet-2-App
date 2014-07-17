@@ -588,11 +588,13 @@ public class AddressBookActivity extends Activity {
         addressBookMapList = remoteWallet.getAddressBookMap();
 
 		allAddresses = new ArrayList<String>();
-	    for (Iterator<Map<String, Object>> iti = addressBookMapList.iterator(); iti.hasNext();) {
-	    	Map<String, Object> addressBookMap = iti.next();
-	    	String address = (String)addressBookMap.get("addr");
-	    	allAddresses.add("S" + address);
-	    }
+		if(addressBookMapList != null) {
+		    for (Iterator<Map<String, Object>> iti = addressBookMapList.iterator(); iti.hasNext();) {
+		    	Map<String, Object> addressBookMap = iti.next();
+		    	String address = (String)addressBookMap.get("addr");
+		    	allAddresses.add("S" + address);
+		    }
+		}
 
 		labelMap = remoteWallet.getLabelMap();
 		adapter.notifyDataSetChanged();
