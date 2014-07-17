@@ -122,6 +122,9 @@ public class SendFragment extends Fragment   {
 	private static final String SendTypeCustomSend = "Custom Send";
 	private static final String SendTypeSharedCoin = "Shared Coin";
 
+	private static final String NEW_ADDRESS = "New address";
+	private static final String SELECT_ADDRESS = "Select address";
+
 	private static int SIMPLE_SEND = 1;
 	private static int CUSTOM_SEND = 2;
 	private static int SHARED_SEND = 3;
@@ -777,11 +780,40 @@ public class SendFragment extends Fragment   {
 				}
 
 				final BigInteger amount = getBTCEnteredOutputValue(edAmount1.getText().toString());
-				final WalletApplication application = (WalletApplication) getActivity().getApplication();
 
-				application.getRemoteWallet().sendCoinsAsync(cs.getSendingAddresses(), receivingAddress.toString(), amount, feePolicy, fee, cs.getChangeAddress(), progress);
+				customSendCoinsAsync(cs.getSendingAddresses(), receivingAddress.toString(), amount, feePolicy, fee, progress);
 			}
 
+			
+		    private void customSendCoinsAsync(final HashMap<String, BigInteger> sendingAddresses, final String toAddress, final BigInteger amount, final FeePolicy feePolicy, final BigInteger fee, final SendProgress progress) {
+				String changeAddress = cs.getChangeAddress();
+				Log.d("MyRemoteWallet", "MyRemoteWallet customSendCoinsAsync changeAddress: " + changeAddress);
+				
+				if (changeAddress == null || changeAddress.equals(SELECT_ADDRESS)) {
+					
+					application.getRemoteWallet().sendCoinsAsync(cs.getSendingAddresses(), currentSelectedAddress, amount, feePolicy, fee, null, csProgress);
+					
+				} else if (! changeAddress.equals(NEW_ADDRESS)) {
+					
+					application.getRemoteWallet().sendCoinsAsync(cs.getSendingAddresses(), currentSelectedAddress, amount, feePolicy, fee, changeAddress, csProgress);
+					
+				} else {
+					progress.onStart();
+		        	final ECKey key = application.getRemoteWallet().generateECKey();			
+		    		application.addKeyToWallet(key, key.toAddress(MainNetParams.get()).toString(), null, 0, new AddAddressCallback() {
+		    			public void onSavedAddress(String address) {
+		    				application.getRemoteWallet().sendCoinsAsync(cs.getSendingAddresses(), currentSelectedAddress, amount, feePolicy, fee, address, csProgress);
+		    			}
+
+		    			public void onError(String reason) {
+		    				Toast.makeText(getActivity(), reason, Toast.LENGTH_LONG).show();
+							progress.onError(reason);
+		    			}
+		    		});
+		    	}
+				
+		    }
+		    
             public void onClick(View v) {
 				if (application.getRemoteWallet() == null)
 					return;
@@ -2078,16 +2110,18 @@ public class SendFragment extends Fragment   {
 
 		final WalletApplication application = (WalletApplication)getActivity().getApplication();
 		final MyRemoteWallet wallet = application.getRemoteWallet();
-		final List<String> addresses = new ArrayList<String>();
-		addresses.add("");
-		addresses.addAll(Arrays.asList(wallet.getActiveAddresses()));
-		final List<String> displayAddresses = new ArrayList<String>();
-		displayAddresses.add("Select address");
+
 		Map<String,String> labels = wallet.getLabelMap();
-        for(int i = 1; i < addresses.size(); i++) {
-	        String label = labels.get(addresses.get(i));
+
+		final List<String> fromAddresses = new ArrayList<String>();
+		fromAddresses.add("");
+		fromAddresses.addAll(Arrays.asList(wallet.getActiveAddresses()));
+		final List<String> displayFromAddresses = new ArrayList<String>();
+		displayFromAddresses.add(SELECT_ADDRESS);
+        for(int i = 1; i < fromAddresses.size(); i++) {
+	        String label = labels.get(fromAddresses.get(i));
 	        String amount = null;
-		    BigInteger finalBalance = wallet.getBalance(addresses.get(i));
+		    BigInteger finalBalance = wallet.getBalance(fromAddresses.get(i));
 
 		    if(finalBalance != null) {
 		    	amount = ", " + BlockchainUtil.formatBitcoin(finalBalance) + "BTC";
@@ -2097,9 +2131,36 @@ public class SendFragment extends Fragment   {
 		    }
 
 	        if (label != null) {
-	        	displayAddresses.add(label + amount);
+	        	displayFromAddresses.add(label + amount);
 	        } else {
-	        	displayAddresses.add(addresses.get(i).substring(0,  15) + "..." + amount);
+	        	displayFromAddresses.add(fromAddresses.get(i).substring(0,  15) + "..." + amount);
+	        }
+        }
+        
+		final List<String> changeAddresses = new ArrayList<String>();
+		changeAddresses.add(SELECT_ADDRESS);
+		changeAddresses.add(NEW_ADDRESS);
+		changeAddresses.addAll(Arrays.asList(wallet.getActiveAddresses()));
+
+		final List<String> displayChangeAddresses = new ArrayList<String>();
+		displayChangeAddresses.add(SELECT_ADDRESS);
+		displayChangeAddresses.add(NEW_ADDRESS);
+        for(int i = 2; i < changeAddresses.size(); i++) {
+	        String label = labels.get(changeAddresses.get(i));
+	        String amount = null;
+		    BigInteger finalBalance = wallet.getBalance(changeAddresses.get(i));
+
+		    if(finalBalance != null) {
+		    	amount = ", " + BlockchainUtil.formatBitcoin(finalBalance) + "BTC";
+		    }
+		    else {
+		    	amount = "";
+		    }
+
+	        if (label != null) {
+	        	displayChangeAddresses.add(label + amount);
+	        } else {
+	        	displayChangeAddresses.add(changeAddresses.get(i).substring(0,  15) + "..." + amount);
 	        }
         }
 
@@ -2154,9 +2215,9 @@ public class SendFragment extends Fragment   {
     	((LinearLayout)layout_from.findViewById(R.id.p1)).addView(tvSpend);
 
     	final Spinner spAddress = new Spinner(getActivity());
-        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.layout_spinner_item, displayAddresses);
-        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spAddress.setAdapter(spinnerArrayAdapter);
+        ArrayAdapter<String> fromAddressSpinnerArrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.layout_spinner_item, displayFromAddresses);
+        fromAddressSpinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spAddress.setAdapter(fromAddressSpinnerArrayAdapter);
         spAddress.setSelection(0);
         spAddress.setPadding(5, 5, 5, 5);
         spAddress.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
@@ -2180,7 +2241,7 @@ public class SendFragment extends Fragment   {
     	ImageView ibPlus = (ImageView)layout_from.findViewById(R.id.plus_icon);
         ibPlus.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
-            	addSendingAddress(displayAddresses, wallet, addresses, "0.0000");
+            	addSendingAddress(displayFromAddresses, wallet, fromAddresses, "0.0000");
             }
         });
 
@@ -2208,10 +2269,10 @@ public class SendFragment extends Fragment   {
 	    	public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3)	{
 
             	if(edAmount.getText().toString().length() > 0) {
-            		if(getBTCEnteredOutputValue(edAmount.getText().toString()).compareTo(wallet.getBalance(addresses.get(spAddress.getSelectedItemPosition()))) == 1) {
-            			edAmount.setText(BlockchainUtil.formatBitcoin(wallet.getBalance(addresses.get(spAddress.getSelectedItemPosition()))));
-            			BigInteger remainder = getBTCEnteredOutputValue(edAmount1.getText().toString()).subtract(wallet.getBalance(addresses.get(spAddress.getSelectedItemPosition())));
-            			addSendingAddress(displayAddresses, wallet, addresses, BlockchainUtil.formatBitcoin(remainder));
+            		if(getBTCEnteredOutputValue(edAmount.getText().toString()).compareTo(wallet.getBalance(fromAddresses.get(spAddress.getSelectedItemPosition()))) == 1) {
+            			edAmount.setText(BlockchainUtil.formatBitcoin(wallet.getBalance(fromAddresses.get(spAddress.getSelectedItemPosition()))));
+            			BigInteger remainder = getBTCEnteredOutputValue(edAmount1.getText().toString()).subtract(wallet.getBalance(fromAddresses.get(spAddress.getSelectedItemPosition())));
+            			addSendingAddress(displayFromAddresses, wallet, fromAddresses, BlockchainUtil.formatBitcoin(remainder));
             		}
             	}
 
@@ -2230,11 +2291,11 @@ public class SendFragment extends Fragment   {
                         	edAmount.setText(BlockchainUtil.formatBitcoin(getBTCEnteredOutputValue(edAmount1.getText().toString())));
                 		}
                 		else {
-                    		if(getBTCEnteredOutputValue(edAmount1.getText().toString()).compareTo(wallet.getBalance(addresses.get(spAddress.getSelectedItemPosition()))) == 1) {
-                    			edAmount.setText(BlockchainUtil.formatBitcoin(wallet.getBalance(addresses.get(spAddress.getSelectedItemPosition()))));
+                    		if(getBTCEnteredOutputValue(edAmount1.getText().toString()).compareTo(wallet.getBalance(fromAddresses.get(spAddress.getSelectedItemPosition()))) == 1) {
+                    			edAmount.setText(BlockchainUtil.formatBitcoin(wallet.getBalance(fromAddresses.get(spAddress.getSelectedItemPosition()))));
                     		}
                     		else {
-                    			BigInteger remainder = getBTCEnteredOutputValue(edAmount1.getText().toString()).subtract(wallet.getBalance(addresses.get(spAddress.getSelectedItemPosition())));
+                    			BigInteger remainder = getBTCEnteredOutputValue(edAmount1.getText().toString()).subtract(wallet.getBalance(fromAddresses.get(spAddress.getSelectedItemPosition())));
                     			edAmount.setText(BlockchainUtil.formatBitcoin(remainder));
                     		}
                 		}
@@ -2334,9 +2395,12 @@ public class SendFragment extends Fragment   {
     	((LinearLayout)layout_change.findViewById(R.id.divider1)).setBackgroundColor(0xFF808080);
     	((LinearLayout)layout_change.findViewById(R.id.p1)).setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
     	((LinearLayout)layout_change.findViewById(R.id.p1)).addView(tvChange);
+
     	final Spinner spChangeAddress = new Spinner(getActivity());
-        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spChangeAddress.setAdapter(spinnerArrayAdapter);
+        ArrayAdapter<String> changeAddressSpinnerArrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.layout_spinner_item, displayChangeAddresses);
+        changeAddressSpinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spChangeAddress.setAdapter(changeAddressSpinnerArrayAdapter);
+
         spChangeAddress.setSelection(0);
         spChangeAddress.setPadding(5, 5, 5, 5);
         spChangeAddress.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
@@ -2365,7 +2429,7 @@ public class SendFragment extends Fragment   {
             	if(spAddress.getSelectedItemPosition() != 0 &&
             			edAmount.getText().toString() != null && edAmount.getText().toString().length() > 0 &&
             			Double.parseDouble(edAmount.getText().toString()) > 0.0) {
-            		cs.addSendingAddress(addresses.get(spAddress.getSelectedItemPosition()), getBTCEnteredOutputValue(edAmount.getText().toString()));
+            		cs.addSendingAddress(fromAddresses.get(spAddress.getSelectedItemPosition()), getBTCEnteredOutputValue(edAmount.getText().toString()));
             	}
 
                 LinearLayout sending_layout = null;
@@ -2382,7 +2446,7 @@ public class SendFragment extends Fragment   {
                 	if(selected_address.getSelectedItemPosition() != 0 &&
                 			amount.getText().toString() != null && amount.getText().toString().length() > 0 &&
                 			Double.parseDouble(amount.getText().toString()) > 0.0) {
-                		cs.addSendingAddress(addresses.get(selected_address.getSelectedItemPosition()), getBTCEnteredOutputValue(amount.getText().toString()));
+                		cs.addSendingAddress(fromAddresses.get(selected_address.getSelectedItemPosition()), getBTCEnteredOutputValue(amount.getText().toString()));
                 	}
 
             	}
@@ -2394,9 +2458,7 @@ public class SendFragment extends Fragment   {
             		cs.setFee(getBTCEnteredOutputValue("0.00"));
             	}
 
-            	if(spChangeAddress.getSelectedItemPosition() != 0) {
-            		cs.setChangeAddress(addresses.get(spChangeAddress.getSelectedItemPosition()));
-            	}
+        		cs.setChangeAddress(changeAddresses.get(spChangeAddress.getSelectedItemPosition()));
             	
             	//doBeforeCustomSend();
             }
@@ -2592,12 +2654,14 @@ public class SendFragment extends Fragment   {
 			public void onStart() {
 				handler.post(new Runnable() {
 					public void run() {
-				    	SendFragment.this.sendingProgressDialog = new ProgressDialog(getActivity());
-				    	SendFragment.this.sendingProgressDialog.setCancelable(true);
-				    	SendFragment.this.sendingProgressDialog.setIndeterminate(true);
-				    	SendFragment.this.sendingProgressDialog.setTitle("Sending...");
-				    	SendFragment.this.sendingProgressDialog.setMessage("Please wait");
-				    	SendFragment.this.sendingProgressDialog.show();
+						if (! SendFragment.this.sendingProgressDialog.isShowing()) {
+					    	SendFragment.this.sendingProgressDialog = new ProgressDialog(getActivity());
+					    	SendFragment.this.sendingProgressDialog.setCancelable(true);
+					    	SendFragment.this.sendingProgressDialog.setIndeterminate(true);
+					    	SendFragment.this.sendingProgressDialog.setTitle("Sending...");
+					    	SendFragment.this.sendingProgressDialog.setMessage("Please wait");
+					    	SendFragment.this.sendingProgressDialog.show();
+						}
 					}
 				});
 			}

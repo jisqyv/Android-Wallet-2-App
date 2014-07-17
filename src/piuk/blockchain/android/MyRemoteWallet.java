@@ -975,9 +975,9 @@ public class MyRemoteWallet extends MyWallet {
 
 					progress.onProgress("Broadcasting Transaction");
 
-					String response = pushTx(tx);
+					//String response = pushTx(tx);
 
-					progress.onSend(tx, response);
+					progress.onSend(tx, "don");
 
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -1222,7 +1222,7 @@ public class MyRemoteWallet extends MyWallet {
 	        	if (addressChangeAmount.compareTo(BigInteger.ZERO) > 0) {
 	    			//Add the output
 	    			BitcoinScript toOutputScript = BitcoinScript.createSimpleOutBitoinScript(new BitcoinAddress(address));
-	    			Log.d("MyRemoteWallet", "MyRemoteWallet makeTransactionCustom toAddress: " + address + "addressChangeAmount: " + addressChangeAmount);
+	    			Log.d("MyRemoteWallet", "MyRemoteWallet makeTransactionCustom changeAddress == null: " + address + "addressChangeAmount: " + addressChangeAmount);
 
 	    			TransactionOutput output = new TransactionOutput(getParams(), null, addressChangeAmount, toOutputScript.getProgram());
 
@@ -1245,6 +1245,7 @@ public class MyRemoteWallet extends MyWallet {
     			BitcoinScript toOutputScript = BitcoinScript.createSimpleOutBitoinScript(new BitcoinAddress(changeAddress));
 
     			TransactionOutput output = new TransactionOutput(getParams(), null, addressChangeAmountSum.subtract(fee), toOutputScript.getProgram());
+    			Log.d("MyRemoteWallet", "MyRemoteWallet makeTransactionCustom changeAddress != null: " + changeAddress + "addressChangeAmount: " + output.getValue());
     			tx.addOutput(output);        		
         	}
 		}
