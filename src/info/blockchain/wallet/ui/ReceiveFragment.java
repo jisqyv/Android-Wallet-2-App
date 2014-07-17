@@ -1031,10 +1031,10 @@ public class ReceiveFragment extends Fragment   {
         adapter = new MagicAdapter();
         magicList.setAdapter(adapter);
 
-        LinearLayout container = ((LinearLayout)rootView.findViewById(R.id.qr_container));
-        sendViewToBack(container);
+//        LinearLayout container = ((LinearLayout)rootView.findViewById(R.id.qr_container));
+//        sendViewToBack(container);
         
-	    parent.bringToFront();
+//	    parent.bringToFront();
 	    parent.requestLayout();
 	    parent.invalidate();
     }

@@ -80,7 +80,6 @@ public class PinCreateActivity extends Activity {
 	    else {
 			setContentView(R.layout.activity_pin_create_small);
 	    }
-
 	    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         cbAccept = (CheckBox)findViewById(R.id.tos_accept);

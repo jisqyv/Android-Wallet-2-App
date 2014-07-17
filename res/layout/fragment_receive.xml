@@ -1,206 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<RelativeLayout 
+<LinearLayout 
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent" 
     android:layout_height="fill_parent"
+    android:orientation="vertical"
     android:background="#FFf3f3f3"
+    android:id="@+id/SendFragment"
     >
 
-<RelativeLayout 
+<LinearLayout 
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:layout_centerHorizontal="true"
     android:orientation="horizontal" 
     android:gravity="top"
-    android:layout_alignParentTop="true"
     android:background="@drawable/container_dropshadow"
 	>
     
 <include android:layout_width="fill_parent" layout="@layout/magic_input" />
 
-</RelativeLayout>
+</LinearLayout>
 
 <LinearLayout
     android:id="@+id/qr_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_centerHorizontal="true"
     android:orientation="vertical" 
-    android:layout_marginTop="20dp"
     android:padding="0dp"
-    android:layout_centerInParent="true"
 	>
 
-<!--    
-            	<LinearLayout
-		        android:id="@+id/summary"
-		    	android:layout_width="fill_parent"
-	    		android:layout_height="match_parent"
-    			android:orientation="horizontal"
-		        android:gravity="center_horizontal|center_vertical"
-			    android:layout_marginTop="120dp"
-			    android:layout_marginBottom="10dp"
-				>
-
-        	    	<LinearLayout
-		    		android:layout_width="0dp"
-		    		android:layout_weight="1"
-	    			android:layout_height="1dp"
-    				android:orientation="horizontal"
-		        	android:gravity="center_horizontal|center_vertical"
-		        	android:background="#FFd6d0d0"
-		        	android:layout_marginRight="5dp"
-					/>
-
-	                	    <TextView
-					        android:id="@+id/summary_label"
-	                	    android:text="Summary"
-    						android:layout_width="0dp"
-    						android:layout_weight="1"
-    						android:layout_height="wrap_content"
-    						android:textSize="18sp"
-					        android:gravity="center_horizontal|center_vertical"
-					        android:layout_gravity="center_horizontal|center_vertical"
-        					android:textAlignment="gravity"
-		        			android:textColor="#FF858585"
-    						/>
-	               
-	                <LinearLayout
-		    		android:layout_width="0dp"
-		    		android:layout_weight="1"
-	    			android:layout_height="1dp"
-    				android:orientation="horizontal"
-		        	android:gravity="center_horizontal|center_vertical"
-		        	android:background="#FFd6d0d0"
-		        	android:layout_marginLeft="5dp"
-					/>
-	                	    
-	                
-	            </LinearLayout>
-    
-    
-    
-    <LinearLayout
-        android:id="@+id/summary2"
-    	android:layout_width="match_parent"
-	    android:layout_height="match_parent"
-    	android:orientation="horizontal"
-	    android:background="@drawable/container_dropshadow"
-		>
-
-	    <LinearLayout
-    	android:layout_width="0dp"
-	    android:layout_height="match_parent"
-	    android:layout_weight="2"
-    	android:orientation="vertical"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="20dp"
-        android:gravity="center_horizontal|center_vertical"
-		>
-
-	    <TextView 
-        android:id="@+id/amount"
-    	android:layout_width="wrap_content"
-    	android:layout_height="wrap_content"
-    	android:textSize="28sp"
-        android:gravity="center_horizontal"
-        android:layout_gravity="center_horizontal"
-        android:textAlignment="gravity"
-        android:textColor="@color/blockchain_green"
-        android:paddingLeft="5dp"
-    	/>
-
-	    <TextView 
-        android:id="@+id/amount_bis"
-    	android:layout_width="wrap_content"
-    	android:layout_height="wrap_content"
-    	android:textSize="16sp"
-        android:gravity="center_horizontal"
-        android:layout_gravity="center_horizontal"
-        android:textAlignment="gravity"
-        android:textColor="#FF808080"
-    	/>
-
-	    </LinearLayout>
-
-	    <LinearLayout
-    	android:layout_width="0dp"
-	    android:layout_height="match_parent"
-	    android:layout_weight="1"
-    	android:orientation="vertical"
-        android:gravity="center_horizontal|center_vertical"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="20dp"
-		>
-    
-	    <TextView 
-        android:id="@+id/arrow"
-    	android:layout_width="match_parent"
-    	android:layout_height="match_parent"
-    	android:textSize="28sp"
-    	android:textStyle="bold"
-        android:gravity="center_horizontal|center_vertical"
-        android:layout_gravity="center_horizontal|center_vertical"
-        android:textAlignment="gravity"
-        android:textColor="@color/blockchain_green"
-    	/>
-
-	    </LinearLayout>
-	    
-	    <LinearLayout
-    	android:layout_width="0dp"
-	    android:layout_height="match_parent"
-	    android:layout_weight="4"
-    	android:orientation="vertical"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="20dp"
-        android:gravity="center_horizontal|center_vertical"
-		>
-    
-        <TextView 
-        android:id="@+id/receiving_address"
-    	android:layout_width="wrap_content"
-    	android:layout_height="wrap_content"
-    	android:textSize="18sp"
-        android:gravity="center_horizontal|center_vertical"
-        android:layout_gravity="center_horizontal|center_vertical"
-        android:textAlignment="gravity"
-        android:textColor="#FF808080"
-    	/>
-
-        <TextView 
-        android:id="@+id/receiving_address_bis"
-    	android:layout_width="wrap_content"
-    	android:layout_height="wrap_content"
-    	android:textSize="12sp"
-        android:gravity="center_horizontal|center_vertical"
-        android:layout_gravity="center_horizontal|center_vertical"
-        android:textAlignment="gravity"
-        android:textColor="#FFa0a0a0"
-        />
-        
-	    </LinearLayout>
-
-	    </LinearLayout>
--->
-    
     <LinearLayout 
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical" 
     android:layout_gravity="center_vertical|center_horizontal"
     android:gravity="center_vertical|center_horizontal"
-    android:layout_marginTop="80dp"
 	>
-    
+
     <ImageView
         	android:id="@+id/qr"
         	android:layout_width="280dp"
         	android:layout_height="280dp"
         	android:layout_gravity="center_vertical|center_horizontal"
         	android:gravity="center_vertical|center_horizontal"
-        	android:layout_marginBottom="20dp"
+        	android:layout_marginBottom="5dp"
     	/>
 
             <TextView 
@@ -226,10 +68,7 @@
         />
     
     </LinearLayout>
-    
-    
+
 </LinearLayout>
 
-
-
-</RelativeLayout>
+</LinearLayout>

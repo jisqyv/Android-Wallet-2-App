@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences.Editor;
+import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.text.InputType;
@@ -108,6 +109,7 @@ public class PinEntryActivity extends FragmentActivity {
 	    else {
 			setContentView(R.layout.activity_pin_entry_small);
 	    }
+	    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         Bundle extras = getIntent().getExtras();
         if(extras != null)	{
