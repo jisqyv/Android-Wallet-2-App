@@ -377,6 +377,9 @@
     <string name="invalid_pin_error">PIN must be 4 numberic numbers</string>
     <string name="pin_mismatch_error">PINs do not match</string>
     <string name="change_pin_success">Change pin success</string>
+    <string name="incorrect_pin">Incorrect PIN</string>
+    <string name="old_pin">Old PIN</string>
+    <string name="enter_your_current_pin">Enter your current PIN:</string>
     
     <string name="passphrase_required">Passphrase required</string>
     <string name="enter_bip38_passphrase">Enter BIP38 passphrase:</string>
