@@ -129,12 +129,63 @@ public class SettingsActivity extends PreferenceActivity {
         	Preference pinPref = (Preference) findPreference("pin");
         	pinPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
         		public boolean onPreferenceClick(Preference preference) {
-        			promptToChangePIN();
+        			promptToEnterOldPINAndChangePIN();
         			return true;
         		}
         	});
     }
 
+	private void promptToEnterOldPINAndChangePIN() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(SettingsActivity.this);
+		builder.setTitle(R.string.change_pin_title);
+		builder.setMessage(R.string.enter_your_current_pin);
+		final AlertDialog alert = builder.create();
+
+		InputFilter[] filterArray = new InputFilter[1];
+		filterArray[0] = new InputFilter.LengthFilter(4);
+		
+		final EditText oldPINEditText = new EditText(SettingsActivity.this);
+		oldPINEditText.setHint(R.string.old_pin);
+		oldPINEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
+		oldPINEditText.setTransformationMethod(PasswordTransformationMethod.getInstance());
+		oldPINEditText.setFilters(filterArray);
+
+		alert.setView(oldPINEditText);
+		
+		alert.setOnShowListener(new DialogInterface.OnShowListener() {
+		    @Override
+		    public void onShow(DialogInterface dialog) {
+		        Button b = alert.getButton(AlertDialog.BUTTON_POSITIVE);
+		        b.setOnClickListener(new View.OnClickListener() {
+
+		            @Override
+		            public void onClick(View view) {
+						String oldPIN = oldPINEditText.getText().toString().trim();
+			   			if (! oldPIN.equals(application.getRemoteWallet().getTemporyPIN())) {
+			   				Toast.makeText(SettingsActivity.this, R.string.incorrect_pin, Toast.LENGTH_LONG).show();
+			   				return;
+			   			} 
+			   			promptToChangePIN();
+		   				alert.dismiss();		            	
+		            }
+		        });
+		    }
+		});
+
+		alert.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.enter), new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+			}
+		}); 
+
+		alert.setButton(AlertDialog.BUTTON_NEGATIVE, getString(R.string.cancel), new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				dialog.dismiss();
+			}
+		});
+		
+		alert.show();
+	}
+	
 	private void promptToChangePIN() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(SettingsActivity.this);
 		builder.setTitle(R.string.change_pin_title);
