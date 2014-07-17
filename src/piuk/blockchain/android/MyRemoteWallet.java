@@ -754,8 +754,13 @@ public class MyRemoteWallet extends MyWallet {
 						for (TransactionInput input : tx.getInputs()) {
 							byte[] scriptBytes = input.getOutpoint().getConnectedPubKeyScript();
 							String address = new BitcoinScript(scriptBytes).getAddress().toString();
-							ECKey walletKey = getECKey(address);
-
+							final ECKey walletKey;
+							try {
+								walletKey = getECKey(address);
+							} catch (Exception e) {
+								// skip add Watch Only Bitcoin Address key because already accounted for  later with tempKeys
+								continue;
+							}
 							ECKey keyCompressed;
 							ECKey keyUnCompressed;
 							BigInteger priv = new BigInteger(walletKey.getPrivKeyBytes());
@@ -944,8 +949,13 @@ public class MyRemoteWallet extends MyWallet {
 					for (TransactionInput input : tx.getInputs()) {
 						byte[] scriptBytes = input.getOutpoint().getConnectedPubKeyScript();
 						String address = new BitcoinScript(scriptBytes).getAddress().toString();
-						ECKey walletKey = getECKey(address);
-
+						final ECKey walletKey;
+						try {
+							walletKey = getECKey(address);
+						} catch (Exception e) {
+							// skip add Watch Only Bitcoin Address key because already accounted for  later with tempKeys
+							continue;
+						}
 						ECKey keyCompressed;
 						ECKey keyUnCompressed;
 						BigInteger priv = new BigInteger(walletKey.getPrivKeyBytes());
