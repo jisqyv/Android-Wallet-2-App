@@ -109,7 +109,8 @@ public class TxBitmap {
 		int bottomPadding = (scale <= REG_RES) ? 10 : 20;
 
 		final int branches = addressValueEntryList.size();
-    	Bitmap bm = Bitmap.createBitmap(resources.getDisplayMetrics(), width, ((int)(vOffset * branches)) + bottomPadding, Config.ARGB_8888);
+//    	Bitmap bm = Bitmap.createBitmap(resources.getDisplayMetrics(), width, ((int)(vOffset * branches)) + bottomPadding, Config.ARGB_8888);
+    	Bitmap bm = Bitmap.createBitmap(width, ((int)(vOffset * branches)) + bottomPadding, Config.ARGB_8888);
     	Canvas canvas = new Canvas(bm);
 
     	Paint paintAddressLabel = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -161,7 +162,8 @@ public class TxBitmap {
 		float vOffset = (scale <= REG_RES) ? 80.0f : 88.0f;	// down step
 		int bottomPadding = (scale <= REG_RES) ? 10 : 20;
 
-    	Bitmap bm = Bitmap.createBitmap(resources.getDisplayMetrics(), width, ((int)(vOffset * branches)) + bottomPadding, Config.ARGB_8888);
+//    	Bitmap bm = Bitmap.createBitmap(resources.getDisplayMetrics(), width, ((int)(vOffset * branches)) + bottomPadding, Config.ARGB_8888);
+    	Bitmap bm = Bitmap.createBitmap(width, ((int)(vOffset * branches)) + bottomPadding, Config.ARGB_8888);
     	Canvas canvas = new Canvas(bm);
     	
     	Paint paint = new Paint();
