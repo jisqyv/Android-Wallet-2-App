@@ -2654,7 +2654,7 @@ public class SendFragment extends Fragment   {
 			public void onStart() {
 				handler.post(new Runnable() {
 					public void run() {
-						if (! SendFragment.this.sendingProgressDialog.isShowing()) {
+						if (SendFragment.this.sendingProgressDialog == null || (SendFragment.this.sendingProgressDialog != null && !SendFragment.this.sendingProgressDialog.isShowing())) {
 					    	SendFragment.this.sendingProgressDialog = new ProgressDialog(getActivity());
 					    	SendFragment.this.sendingProgressDialog.setCancelable(true);
 					    	SendFragment.this.sendingProgressDialog.setIndeterminate(true);
