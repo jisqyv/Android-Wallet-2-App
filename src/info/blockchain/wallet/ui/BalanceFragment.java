@@ -210,7 +210,9 @@ public class BalanceFragment extends Fragment   {
 	}
 
 	public void setAdapterContent() {
-
+		if (getActivity() == null)
+			return;
+		
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         strCurrentFiatCode = prefs.getString("ccurrency", "USD");
         strCurrentFiatSymbol = prefs.getString(strCurrentFiatCode + "-SYM", "$");
