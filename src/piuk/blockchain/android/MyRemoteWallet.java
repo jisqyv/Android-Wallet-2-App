@@ -975,9 +975,9 @@ public class MyRemoteWallet extends MyWallet {
 
 					progress.onProgress("Broadcasting Transaction");
 
-					//String response = pushTx(tx);
+					String response = pushTx(tx);
 
-					progress.onSend(tx, "don");
+					progress.onSend(tx, response);
 
 				} catch (Exception e) {
 					e.printStackTrace();
