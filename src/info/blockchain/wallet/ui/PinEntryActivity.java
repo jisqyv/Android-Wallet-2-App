@@ -694,7 +694,7 @@ public class PinEntryActivity extends FragmentActivity {
 
 					String decryptionKey = (String) response.get("success");
 					if (decryptionKey != null) {	
-						application.getRemoteWallet().setTemporyPIN(PIN);
+						application.setTemporyPIN(PIN);
 						application.didEncounterFatalPINServerError = false;
 
 						String password = MyWallet.decrypt(encrypted_password, decryptionKey, piuk.blockchain.android.ui.PinEntryActivity.PBKDF2Iterations);

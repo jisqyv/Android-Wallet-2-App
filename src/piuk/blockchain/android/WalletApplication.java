@@ -103,6 +103,15 @@ public class WalletApplication extends Application {
 	private volatile boolean checkWalletStatusScheduled = false;
     private boolean isPassedPinScreen = false;
     private boolean isScanning = false;
+    private String temporyPIN = null;
+
+	public void setTemporyPIN(String PIN) {
+		this.temporyPIN = PIN;
+	}
+
+	public String getTemporyPIN() {
+		return temporyPIN;
+	}
 
     public boolean getIsScanning(){
         return isScanning;

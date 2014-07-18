@@ -161,7 +161,7 @@ public class SettingsActivity extends PreferenceActivity {
 		            @Override
 		            public void onClick(View view) {
 						String oldPIN = oldPINEditText.getText().toString().trim();
-			   			if (! oldPIN.equals(application.getRemoteWallet().getTemporyPIN())) {
+			   			if (! oldPIN.equals(application.getTemporyPIN())) {
 			   				Toast.makeText(SettingsActivity.this, R.string.incorrect_pin, Toast.LENGTH_LONG).show();
 			   				return;
 			   			} 
@@ -238,7 +238,7 @@ public class SettingsActivity extends PreferenceActivity {
 							public void onSuccess() {
 								alert.dismiss();
 				   				Toast.makeText(SettingsActivity.this, R.string.change_pin_success, Toast.LENGTH_LONG).show();
-				   				application.getRemoteWallet().setTemporyPIN(pin1);
+				   				application.setTemporyPIN(pin1);
 							}
 
 							@Override
@@ -358,7 +358,7 @@ public class SettingsActivity extends PreferenceActivity {
 								public void onSuccess() {	
 									alert.dismiss();
 					   				Toast.makeText(SettingsActivity.this, R.string.password_changed, Toast.LENGTH_LONG).show();
-									String pinCode = application.getRemoteWallet().getTemporyPIN();
+									String pinCode = application.getTemporyPIN();
 					   				application.apiStoreKey(pinCode, new SuccessCallback() {
 
 										@Override
