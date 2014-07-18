@@ -2928,13 +2928,15 @@ public class SendFragment extends Fragment   {
         ivClearInput.setVisibility(View.INVISIBLE);
         icon_row.setVisibility(View.VISIBLE);
 
-//        sendMode.setChecked(false);
-
     	LinearLayout layout_custom_spend = (LinearLayout)rootView.findViewById(R.id.custom_spend);
     	// all 'sending address' entries go here:
     	LinearLayout layout_froms = (LinearLayout)layout_custom_spend.findViewById(R.id.froms);
     	layout_froms.removeAllViews();
     	layout_custom_spend.removeViews(1, layout_custom_spend.getChildCount() - 1);
+    	
+    	if(sendMode.isChecked()) {
+    		doCustomSend();
+    	}
 
     }
     
