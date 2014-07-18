@@ -402,9 +402,9 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
+		application.setIsScanning(false);
 
 		if(resultCode == Activity.RESULT_OK && requestCode == ZBAR_SCANNER_REQUEST)	{
-
 			String strResult = data.getStringExtra(ZBarConstants.SCAN_RESULT);
 
         	if(strResult != null) {

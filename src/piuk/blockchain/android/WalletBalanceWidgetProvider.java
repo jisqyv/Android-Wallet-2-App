@@ -160,19 +160,21 @@ public class WalletBalanceWidgetProvider extends AppWidgetProvider {
             
 		} else if (action.equals(WalletBalanceWidgetProvider.ACTION_WIDGET_SCAN_RECEIVING)) {
 			boolean isPassPinScreen = ((WalletApplication)context.getApplicationContext()).getIsPassedPinScreen();
-			final Intent navigateIntent;
-			if (isPassPinScreen) {
-				navigateIntent = new Intent(context, MainActivity.class);
-			} else {
-				navigateIntent = new Intent(context, PinEntryActivity.class);
-			}
-			
-            navigateIntent.putExtra("navigateTo", "scanReceiving");            
-            remoteViews.setOnClickPendingIntent(R.id.widget_frame,
-                            PendingIntent.getActivity(context, 0, navigateIntent, 0));            
-            navigateIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            context.startActivity(navigateIntent);            
-            
+			boolean isScanning = ((WalletApplication)context.getApplicationContext()).getIsScanning();
+			if (! isScanning) {
+				final Intent navigateIntent;
+				if (isPassPinScreen) {
+					navigateIntent = new Intent(context, MainActivity.class);
+				} else {
+					navigateIntent = new Intent(context, PinEntryActivity.class);
+				}
+				
+	            navigateIntent.putExtra("navigateTo", "scanReceiving");            
+	            remoteViews.setOnClickPendingIntent(R.id.widget_frame,
+	                            PendingIntent.getActivity(context, 0, navigateIntent, 0));            
+	            navigateIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+	            context.startActivity(navigateIntent);     
+			}     
 		} else if (action.equals(WalletBalanceWidgetProvider.ACTION_WIDGET_BALANCE_SCREEN)) {
 			boolean isPassPinScreen = ((WalletApplication)context.getApplicationContext()).getIsPassedPinScreen();
 			final Intent navigateIntent;

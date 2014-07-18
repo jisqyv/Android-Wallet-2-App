@@ -102,6 +102,15 @@ public class WalletApplication extends Application {
 	public long earliestKeyTime;
 	private volatile boolean checkWalletStatusScheduled = false;
     private boolean isPassedPinScreen = false;
+    private boolean isScanning = false;
+
+    public boolean getIsScanning(){
+        return isScanning;
+    }
+    
+    public void setIsScanning(boolean isScanning){
+        this.isScanning = isScanning;
+    }  
     
     public boolean getIsPassedPinScreen(){
         return isPassedPinScreen;

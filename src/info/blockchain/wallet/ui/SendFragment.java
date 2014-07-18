@@ -1453,6 +1453,7 @@ public class SendFragment extends Fragment   {
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
+		application.setIsScanning(false);
 		if(resultCode == Activity.RESULT_OK && requestCode == SCAN_PRIVATE_KEY_FOR_SENDING)	{
     		String scanData = data.getStringExtra(ZBarConstants.SCAN_RESULT);
     		try {
