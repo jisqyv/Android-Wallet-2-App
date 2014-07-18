@@ -152,8 +152,9 @@ public class PinEntryActivity extends FragmentActivity {
 		    	}
 		    	
 			    if(userEntered.length() > 0)	{
-		    		userEntered = userEntered.substring(0, userEntered.length() - 1);
-		    		pinBoxArray[userEntered.length()].setText("");
+			    	for (int i = 0; i < pinBoxArray.length; i++)
+			    		pinBoxArray[i].setText("");
+			    	userEntered = "";
 		    	}
 		    }
 		});
