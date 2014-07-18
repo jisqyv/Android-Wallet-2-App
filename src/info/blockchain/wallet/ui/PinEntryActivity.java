@@ -30,7 +30,6 @@ import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.method.NumberKeyListener;
 import android.text.style.RelativeSizeSpan;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
@@ -187,7 +186,7 @@ public class PinEntryActivity extends FragmentActivity {
 
 			    if(userEntered.length() < PIN_LENGTH)	{
 		    		userEntered = userEntered + pressedButton.getText().toString().substring(0, 1);
-		    		Log.v("PinView", "User entered=" + userEntered);
+//		    		Log.v("PinView", "User entered=" + userEntered);
 		    		
 		    		// Update pin boxes
 		    		pinBoxArray[userEntered.length() - 1].setText("8");
@@ -306,7 +305,7 @@ public class PinEntryActivity extends FragmentActivity {
 		    		statusView.setText("");
 		    		
 		    		userEntered = userEntered + pressedButton.getText().toString().substring(0, 1);
-		    		Log.v("PinView", "User entered=" + userEntered);
+//		    		Log.v("PinView", "User entered=" + userEntered);
 		    		
 		    		//Update pin boxes
 		    		pinBoxArray[userEntered.length() - 1].setText("8");

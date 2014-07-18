@@ -16,6 +16,7 @@ import net.sourceforge.zbar.Symbol;
 
 //import org.json.simple.JSONObject;
 
+import piuk.blockchain.android.Constants;
 import piuk.blockchain.android.MyRemoteWallet;
 import piuk.blockchain.android.R;
 import piuk.blockchain.android.WalletApplication;
@@ -114,6 +115,7 @@ public class ReceiveFragment extends Fragment   {
     private List<HashMap<String,String>> filteredDisplayList = null;
 	private MagicAdapter adapter = null;
 	private String currentSelectedAddress = null;
+	private String defaultAddress = null;
 
 	private List<String> activeAddresses;
 	private Map<String,String> labels;
@@ -132,13 +134,14 @@ public class ReceiveFragment extends Fragment   {
         strCurrentFiatSymbol = prefs.getString(strCurrentFiatCode + "-SYM", "$");
 
         tvAddress = (TextView)rootView.findViewById(R.id.receiving_address);
-        tvAddress.setVisibility(View.INVISIBLE);
+//        tvAddress.setVisibility(View.INVISIBLE);
         tvAddressBis = (TextView)rootView.findViewById(R.id.receiving_address_bis);
-        tvAddressBis.setVisibility(View.INVISIBLE);
+//        tvAddressBis.setVisibility(View.INVISIBLE);
+
+        initMagicList();
 
         ivReceivingQR = (ImageView)rootView.findViewById(R.id.qr);
-        ivReceivingQR.setVisibility(View.INVISIBLE);
-        
+//        ivReceivingQR.setVisibility(View.INVISIBLE);
         ivReceivingQR.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -211,6 +214,15 @@ public class ReceiveFragment extends Fragment   {
       	  }
       	});
         
+        currentSelectedAddress = defaultAddress;
+        ivReceivingQR.setImageBitmap(generateQRCode(BitcoinURI.convertToBitcoinURI(currentSelectedAddress, BigInteger.ZERO, "", "")));
+        String label = labels.get(currentSelectedAddress);
+        String defaultDest = currentSelectedAddress;
+        if(label != null) {
+        	defaultDest = label;
+        }
+        tvAddress.setText(defaultDest);
+        
         tvCurrency = (TextView)rootView.findViewById(R.id.currency);
         tvCurrency.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -274,7 +286,7 @@ public class ReceiveFragment extends Fragment   {
         ((TextView)rootView.findViewById(R.id.currency)).setText(strCurrentFiatSymbol);
         ((TextView)rootView.findViewById(R.id.currency)).setTypeface(TypefaceUtil.getInstance(getActivity()).getGravityBoldTypeface());
 
-        initMagicList();
+//        initMagicList();
 
         tvAmount2 = ((TextView)rootView.findViewById(R.id.amount2));
         tvAmount2.setText("0.00" + " " + strCurrentFiatCode);
@@ -290,11 +302,15 @@ public class ReceiveFragment extends Fragment   {
 		    @Override
 		    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 		        if(actionId == EditorInfo.IME_ACTION_DONE) {
-		        	
+
 		        	if(edAddress.getText().toString() == null || edAddress.getText().toString().length() < 1) {
-						Toast.makeText(getActivity(), "Include a Bitcoin receiving address", Toast.LENGTH_LONG).show();
-		        		return false;
+//						Toast.makeText(getActivity(), "Include a Bitcoin receiving address", Toast.LENGTH_LONG).show();
+//		        		return false;
+		        		currentSelectedAddress = defaultAddress;
+			        	tvAddress.setText(currentSelectedAddress.substring(0, 15));
 		        	}
+
+		        	icon_row.setVisibility(View.GONE);
 
 		        	tvAddress.setVisibility(View.VISIBLE);
 		        	tvAddressBis.setVisibility(View.VISIBLE);
@@ -778,18 +794,27 @@ public class ReceiveFragment extends Fragment   {
     }
 
     private void initMagicList() {
-
+    	
 		final WalletApplication application = (WalletApplication)getActivity().getApplication();
 		MyRemoteWallet wallet = application.getRemoteWallet();
 		activeAddresses = Arrays.asList(wallet.getActiveAddresses());
 		labels = wallet.getLabelMap();
+        AddressManager addressManager = new AddressManager(wallet, application, getActivity());        
         
         magicData =  new ArrayList<HashMap<String,String>>();
         
         filteredDisplayList = new ArrayList<HashMap<String,String>>();
 
+		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+		defaultAddress = prefs.getString(Constants.PREFS_KEY_SELECTED_ADDRESS, null);
+
         for(int i = 0; i < activeAddresses.size(); i++) {
-		    String address = activeAddresses.get(i);
+        	
+        	if(defaultAddress == null && !addressManager.isWatchOnly(activeAddresses.get(i))) {
+                defaultAddress = activeAddresses.get(i);
+        	}
+
+        	String address = activeAddresses.get(i);
         	String amount = "0.000";
 		    BigInteger finalBalance = wallet.getBalance(address);	
 		    if (finalBalance != null)
@@ -1085,12 +1110,22 @@ public class ReceiveFragment extends Fragment   {
       	}
 
         tvAddress.setText("");
-        tvAddress.setVisibility(View.INVISIBLE);
+//        tvAddress.setVisibility(View.INVISIBLE);
         tvAddressBis.setText("");
-        tvAddressBis.setVisibility(View.INVISIBLE);
+//        tvAddressBis.setVisibility(View.INVISIBLE);
         
-        ivReceivingQR.setVisibility(View.INVISIBLE);
+//        ivReceivingQR.setVisibility(View.INVISIBLE);
         
+        currentSelectedAddress = defaultAddress;
+        ivReceivingQR.setVisibility(View.VISIBLE);
+        ivReceivingQR.setImageBitmap(generateQRCode(BitcoinURI.convertToBitcoinURI(currentSelectedAddress, BigInteger.ZERO, "", "")));
+        String label = labels.get(currentSelectedAddress);
+        String defaultDest = currentSelectedAddress;
+        if(label != null) {
+        	defaultDest = label;
+        }
+        tvAddress.setText(defaultDest);
+
         ivClearInput.setVisibility(View.INVISIBLE);
         icon_row.setVisibility(View.VISIBLE);
 
