@@ -99,7 +99,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.view.ContextThemeWrapper;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
-import android.util.Log;
+//import android.util.Log;
 import android.util.Pair;
 
 import com.dm.zbar.android.scanner.ZBarConstants;
@@ -793,7 +793,7 @@ public class SendFragment extends Fragment   {
 			
 		    private void customSendCoinsAsync(final HashMap<String, BigInteger> sendingAddresses, final String toAddress, final BigInteger amount, final FeePolicy feePolicy, final BigInteger fee, final SendProgress progress) {
 				String changeAddress = cs.getChangeAddress();
-				Log.d("MyRemoteWallet", "MyRemoteWallet customSendCoinsAsync changeAddress: " + changeAddress);
+//				Log.d("MyRemoteWallet", "MyRemoteWallet customSendCoinsAsync changeAddress: " + changeAddress);
 				
 				if (changeAddress == null || changeAddress.equals(SELECT_ADDRESS)) {
 					
@@ -850,7 +850,7 @@ public class SendFragment extends Fragment   {
 								try {
 									String numberFormated = emailOrNumber.replaceAll("\\D+","");	
 									numberFormated = "+"+numberFormated;
-									Log.d("sendCoinsSMS", "numberFormated: "+ numberFormated);
+//									Log.d("sendCoinsSMS", "numberFormated: "+ numberFormated);
 									remoteWallet.sendCoinsSMS(numberFormated, getBTCEnteredOutputValue(edAmount1.getText().toString()), progressEmailSMS);										
 								} catch (Exception e) {
 									e.printStackTrace();
@@ -875,7 +875,7 @@ public class SendFragment extends Fragment   {
 						try {
 							String numberFormated = emailOrNumber.replaceAll("\\D+","");	
 							numberFormated = "+"+numberFormated;
-							Log.d("sendCoinsSMS", "numberFormated: "+ numberFormated);
+//							Log.d("sendCoinsSMS", "numberFormated: "+ numberFormated);
 							remoteWallet.sendCoinsSMS(numberFormated, getBTCEnteredOutputValue(edAmount1.getText().toString()), progressEmailSMS);										
 						} catch (Exception e) {
 							e.printStackTrace();
@@ -1369,7 +1369,7 @@ public class SendFragment extends Fragment   {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         
-        Log.d("BlockchainWallet", "setUserVisible");
+//        Log.d("BlockchainWallet", "setUserVisible");
 
         if(isVisibleToUser) {
         	
@@ -1399,7 +1399,7 @@ public class SendFragment extends Fragment   {
     public void onResume() {
     	super.onResume();
 
-        Log.d("BlockchainWallet", "onResume");
+//        Log.d("BlockchainWallet", "onResume");
 
 //        IntentFilter filter = new IntentFilter(ACTION_INTENT);
 //        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiver, filter);
@@ -1562,7 +1562,7 @@ public class SendFragment extends Fragment   {
 
 				                    		emailOrNumber = sms;	
 				                        	if (sms.substring(0, 2).equals("00") || sms.charAt(0) == '+') {
-					                    		Log.d("emailOrNumber", "setSMSNumber: " + emailOrNumber);
+//					                    		Log.d("emailOrNumber", "setSMSNumber: " + emailOrNumber);
 				                        	} else {
 				                    			doSelectInternationalPrefix();				                        		
 				                        	}
@@ -1595,7 +1595,7 @@ public class SendFragment extends Fragment   {
 		                    		edAddress.setText(strName);
 		                    		emailOrNumber = strNumber;
 		                        	if (strNumber.substring(0, 2).equals("00") || strNumber.charAt(0) == '+') {
-			                    		Log.d("emailOrNumber", "setSMSNumber: " + emailOrNumber);
+//			                    		Log.d("emailOrNumber", "setSMSNumber: " + emailOrNumber);
 		                        	} else {
 		                    			doSelectInternationalPrefix();				                        		
 		                        	}
@@ -1644,7 +1644,7 @@ public class SendFragment extends Fragment   {
     			pn = p.parse(emailOrNumber, region);
     			String nationalnumber = String.valueOf(pn.getNationalNumber());
         		emailOrNumber = "+" + data.getAction() + nationalnumber;
-        		Log.d("emailOrNumber", "setSMSNumber with prefix: " + emailOrNumber);
+//        		Log.d("emailOrNumber", "setSMSNumber with prefix: " + emailOrNumber);
     		} catch (NumberParseException e1) {
     			// TODO Auto-generated catch block
     			e1.printStackTrace();
@@ -1660,7 +1660,7 @@ public class SendFragment extends Fragment   {
 				pn = p.parse(emailOrNumber, region);
 				String nationalnumber = String.valueOf(pn.getNationalNumber());
 	    		emailOrNumber = "+" + pn.getCountryCode() + nationalnumber;
-        		Log.d("emailOrNumber", "setSMSNumber default to local: " + emailOrNumber);
+//        		Log.d("emailOrNumber", "setSMSNumber default to local: " + emailOrNumber);
     		} catch (NumberParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

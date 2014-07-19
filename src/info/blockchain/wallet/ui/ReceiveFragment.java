@@ -59,7 +59,7 @@ import android.widget.TextView.OnEditorActionListener;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.text.InputType;
-import android.util.Log;
+//import android.util.Log;
 
 import com.dm.zbar.android.scanner.ZBarConstants;
 import com.dm.zbar.android.scanner.ZBarScannerActivity;
@@ -355,7 +355,7 @@ public class ReceiveFragment extends Fragment   {
 		        	}
 
 		        	if (currentSelectedAddress != null) {
-		        		Log.d("currentSelectedAddress", "currentSelectedAddress " + currentSelectedAddress);
+//		        		Log.d("currentSelectedAddress", "currentSelectedAddress " + currentSelectedAddress);
 			            ivReceivingQR.setImageBitmap(generateQRCode(BitcoinURI.convertToBitcoinURI(currentSelectedAddress, BigInteger.valueOf(btcValue), "", "")));		        		
 		        	} else {
 						Toast.makeText(getActivity(), "Include a valid Bitcoin receiving address", Toast.LENGTH_LONG).show();
@@ -638,7 +638,7 @@ public class ReceiveFragment extends Fragment   {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         
-        Log.d("BlockchainWallet", "setUserVisible");
+//        Log.d("BlockchainWallet", "setUserVisible");
 
         if(isVisibleToUser) {
         	
@@ -669,7 +669,7 @@ public class ReceiveFragment extends Fragment   {
     public void onResume() {
     	super.onResume();
 
-        Log.d("BlockchainWallet", "onResume");
+//        Log.d("BlockchainWallet", "onResume");
         
         if(edAddress.getText().length() < 1 && (edAmount1.getText().length() < 1 || edAmount1.getText().equals("0.0000"))) {
         	ivClearInput.setVisibility(View.INVISIBLE);

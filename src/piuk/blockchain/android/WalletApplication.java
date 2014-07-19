@@ -32,7 +32,7 @@ import android.net.ConnectivityManager;
 import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
-import android.util.Log;
+//import android.util.Log;
 import android.util.Pair;
 import android.widget.Toast;
 
@@ -1669,7 +1669,7 @@ public class WalletApplication extends Application {
 		sharedCoin.recoverSeeds(shared_coin_seeds, new SuccessCallback() {
 			@Override
 			public void onSuccess() {
-	            Log.d("SharedCoin", "SharedCoin recoverSeeds onSuccess");				
+//	            Log.d("SharedCoin", "SharedCoin recoverSeeds onSuccess");				
 				handler.post(new Runnable() {
 					public void run() {
 						Toast.makeText(WalletApplication.this, "SharedCoin recoverSeeds Success", Toast.LENGTH_LONG).show();
@@ -1679,7 +1679,7 @@ public class WalletApplication extends Application {
 
 			@Override
 			public void onFail() {
-	            Log.d("SharedCoin", "SharedCoin recoverSeeds onFail");				
+//	            Log.d("SharedCoin", "SharedCoin recoverSeeds onFail");				
 				handler.post(new Runnable() {
 					public void run() {
 						Toast.makeText(WalletApplication.this, "SharedCoin recoverSeeds fail", Toast.LENGTH_LONG).show();
@@ -1695,7 +1695,7 @@ public class WalletApplication extends Application {
 				sharedCoin.sendSharedCoin(2, fromAddresses, amount, toAddress, new ObjectSuccessCallback() {
 					@Override
 					public void onSuccess(final Object obj) {
-			            Log.d("SharedCoin", "SharedCoin sendSharedCoin onSuccess");				
+//			            Log.d("SharedCoin", "SharedCoin sendSharedCoin onSuccess");				
 						handler.post(new Runnable() {
 							public void run() {
 								Toast.makeText(WalletApplication.this, (String) obj, Toast.LENGTH_LONG).show();
@@ -1705,7 +1705,7 @@ public class WalletApplication extends Application {
 
 					@Override
 					public void onFail(final String error) {
-			            Log.d("SharedCoin", "SharedCoin sendSharedCoin onFail " + error);				
+//			            Log.d("SharedCoin", "SharedCoin sendSharedCoin onFail " + error);				
 						handler.post(new Runnable() {
 							public void run() {
 								Toast.makeText(WalletApplication.this, error, Toast.LENGTH_LONG).show();
@@ -1715,7 +1715,7 @@ public class WalletApplication extends Application {
 					
 				});
 			} catch (Exception e) {
-	            Log.d("SharedCoin", "SharedCoin sendSharedCoin Exception " + e.getLocalizedMessage());				
+//	            Log.d("SharedCoin", "SharedCoin sendSharedCoin Exception " + e.getLocalizedMessage());				
 				Toast.makeText(WalletApplication.this, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
 				e.printStackTrace();
 			}

@@ -64,7 +64,7 @@ import android.widget.Toast;
 import android.view.View.OnTouchListener;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Animation;
-import android.util.Log;
+//import android.util.Log;
 
 @SuppressLint("NewApi")
 public class BalanceFragment extends Fragment   {
@@ -316,15 +316,17 @@ public class BalanceFragment extends Fragment   {
     		application.getAccountInformation(false, new SuccessCallback() {
     			@Override
     			public void onSuccess() {
+    				/*
     	    		Log.d("getAccountInformation", "getAccountInformation isEnableEmailNotification " + application.getRemoteWallet().isEnableEmailNotification());
     	    		Log.d("getAccountInformation", "getAccountInformation isEnableSMSNotification " + application.getRemoteWallet().isEnableSMSNotification());
     	    		Log.d("getAccountInformation", "getAccountInformation getEmail " + application.getRemoteWallet().getEmail());
     	    		Log.d("getAccountInformation", "getAccountInformation getSMSNumber " + application.getRemoteWallet().getSmsNumber());			    		
+    	    		*/
     			}
     			
     			@Override
     			public void onFail() {
-    	    		Log.d("getAccountInformation", "getAccountInformation fail");	
+//    	    		Log.d("getAccountInformation", "getAccountInformation fail");	
     			}
     		});   
     		
@@ -600,7 +602,7 @@ public class BalanceFragment extends Fragment   {
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			
-			Log.d("List refresh", "" + position);
+//			Log.d("List refresh", "" + position);
 
 			View view;
 	        
@@ -647,7 +649,7 @@ public class BalanceFragment extends Fragment   {
 	        ((TextView)view.findViewById(R.id.currency_code)).setText(isBTC ? "BTC" : strCurrentFiatCode);
 
 	        if(addressLabelTxsDisplayed[position]) {
-				Log.d("List refresh sub", "" + position);
+//				Log.d("List refresh sub", "" + position);
 		    	System.gc();
 		    	
 	    		if(balance_extHiddenLayout.getChildCount() > 1) {

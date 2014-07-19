@@ -5,8 +5,6 @@ import java.io.FileWriter;
 import java.io.Writer;
 import java.util.Date;
 
-
-
 import piuk.blockchain.android.Constants;
 import piuk.blockchain.android.R;
 import piuk.blockchain.android.SuccessCallback;
@@ -27,7 +25,6 @@ import android.preference.Preference.OnPreferenceClickListener;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.method.PasswordTransformationMethod;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -363,12 +360,12 @@ public class SettingsActivity extends PreferenceActivity {
 
 										@Override
 										public void onSuccess() {
-								            Log.d("apiStoreKey", "apiStoreKey apiStoreKey onSuccess");				
+//								            Log.d("apiStoreKey", "apiStoreKey apiStoreKey onSuccess");				
 										}
 
 										@Override
 										public void onFail() {
-								            Log.d("apiStoreKey", "apiStoreKey apiStoreKey onFail");				
+//								            Log.d("apiStoreKey", "apiStoreKey apiStoreKey onFail");				
 										}
 					   				});
 								}

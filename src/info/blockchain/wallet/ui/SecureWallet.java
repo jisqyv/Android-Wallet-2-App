@@ -21,7 +21,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.ActivityInfo;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
+//import android.util.Log;
 import android.util.Patterns;
 import android.view.Menu;
 import android.view.MotionEvent;
@@ -256,7 +256,7 @@ public class SecureWallet extends Activity {
 		    	tgPassword.setChecked(false);
 			}
 			else {
-	    		Log.d("SecureWallet", "SecureWallet setTemporyPassword");
+//	    		Log.d("SecureWallet", "SecureWallet setTemporyPassword");
 	    		
 				handler = new Handler();
 
@@ -268,7 +268,7 @@ public class SecureWallet extends Activity {
 				application.saveWallet( new SuccessCallback() {
 					@Override
 					public void onSuccess() {		    		
-			    		Log.d("SecureWallet", "SecureWallet setTemporyPassword saveWallet onSuccess");
+//			    		Log.d("SecureWallet", "SecureWallet setTemporyPassword saveWallet onSuccess");
 			    		
 			    		edit.putBoolean("PWSecured", true);
 			    		edit.commit();
@@ -300,7 +300,7 @@ public class SecureWallet extends Activity {
 					
 					@Override
 					public void onFail() {
-			    		Log.d("SecureWallet", "SecureWallet setTemporyPassword saveWallet onFail");	
+//			    		Log.d("SecureWallet", "SecureWallet setTemporyPassword saveWallet onFail");	
 					}
 				});
 
@@ -323,12 +323,12 @@ public class SecureWallet extends Activity {
 				application.updateEmail(em, new SuccessCallback() {
 					@Override
 					public void onSuccess() {
-			    		Log.d("SecureWallet", "SecureWallet updateEmail onSuccess");
+//			    		Log.d("SecureWallet", "SecureWallet updateEmail onSuccess");
 			    		
 						application.updateNotificationsType(true, false, new SuccessCallback() {
 							@Override
 							public void onSuccess() {
-					    		Log.d("SecureWallet", "SecureWallet updateNotificationsType onSuccess");
+//					    		Log.d("SecureWallet", "SecureWallet updateNotificationsType onSuccess");
 					    		
 					    		edit.putBoolean("EmailBackups", true);
 					    		edit.commit();
@@ -360,7 +360,7 @@ public class SecureWallet extends Activity {
 							
 							@Override
 							public void onFail() {
-					    		Log.d("SecureWallet", "SecureWallet updateNotificationsType fail");	
+//					    		Log.d("SecureWallet", "SecureWallet updateNotificationsType fail");	
 							}
 						});
 
@@ -368,7 +368,7 @@ public class SecureWallet extends Activity {
 					
 					@Override
 					public void onFail() {
-			    		Log.d("SecureWallet", "SecureWallet updateEmail fail");	
+//			    		Log.d("SecureWallet", "SecureWallet updateEmail fail");	
 					}
 				});
 
