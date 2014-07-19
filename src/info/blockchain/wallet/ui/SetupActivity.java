@@ -53,6 +53,11 @@ public class SetupActivity extends Activity		{
 	    this.setContentView(R.layout.setup);
 
 	    setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+	    
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SetupActivity.this);
+		Editor edit = prefs.edit();
+		edit.putBoolean("virgin", true);
+		edit.commit();
 
         Button imgCreate = ((Button)findViewById(R.id.create));
         imgCreate.setTypeface(TypefaceUtil.getInstance(this).getGravityBoldTypeface());
@@ -169,7 +174,13 @@ public class SetupActivity extends Activity		{
 										@Override
 										public void onSuccess() {	
 //											registerNotifications();
-											
+
+									        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SetupActivity.this);
+											Editor edit = prefs.edit();
+											edit.putBoolean("validated", true);
+											edit.putBoolean("paired", true);
+											edit.commit();
+
 											try {
 												final String regId = GCMRegistrar.getRegistrationId(SetupActivity.this);
 
@@ -181,11 +192,6 @@ public class SetupActivity extends Activity		{
 											} catch (Exception e) {
 												e.printStackTrace();
 											}
-
-									        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SetupActivity.this);
-											Editor edit = PreferenceManager.getDefaultSharedPreferences(SetupActivity.this).edit();
-											edit.putBoolean("validated", true);
-											edit.commit();
 
 								        	Intent intent = new Intent(SetupActivity.this, PinEntryActivity.class);
 								        	intent.putExtra("S", "1");

@@ -102,8 +102,10 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         boolean isValidated = false;
         isValidated = prefs.getBoolean("validated", false);
     	isSecured = prefs.getBoolean("PWSecured", false) && prefs.getBoolean("EmailBackups", false) ? true : false;
-        
-        if(isValidated || isSecured || isDismissed) {
+        boolean isPaired = prefs.getBoolean("paired", false);
+        boolean isVirgin = prefs.getBoolean("virgin", false);
+
+        if(isValidated || isSecured || isDismissed || isPaired || !isVirgin) {
         	;
         }
         else if(!isSecured && isFirst) {
@@ -291,6 +293,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 //*/
 		checkForCrashes();
 	    checkForUpdates();
+
 	}
 
 	public void showFeedbackActivity() {

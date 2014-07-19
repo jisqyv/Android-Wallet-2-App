@@ -3,7 +3,7 @@
     package="piuk.blockchain.android"
     android:installLocation="preferExternal"
     android:versionCode="133"
-    android:versionName="0.9.58">
+    android:versionName="0.9.60">
 
     <uses-sdk android:minSdkVersion="14" android:targetSdkVersion="17" />
     
@@ -215,7 +215,8 @@
 
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyBgIp1BfRBI_-EA6Ovg56iIjW6Jswebl3s" />
+            android:value="AIzaSyDF5Wx5xkE4pbBqseRaZu_pUt5FVuHAcko" />
+<!-- AIzaSyBgIp1BfRBI_-EA6Ovg56iIjW6Jswebl3s -->
 
         <meta-data
 		    android:name="com.google.android.gms.version"

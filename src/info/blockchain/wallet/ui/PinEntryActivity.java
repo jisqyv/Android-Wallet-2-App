@@ -673,14 +673,17 @@ public class PinEntryActivity extends FragmentActivity {
 	}
 
 	public void validatePIN(final String PIN) {
-
+		
 		final WalletApplication application = (WalletApplication)PinEntryActivity.this.getApplication();
 
 		final Handler handler = new Handler();
 
 		final Activity activity = this;
 
+		ProgressUtil.getInstance(PinEntryActivity.this).show();
+
 		new Thread(new Runnable() {
+
 			public void run() {
 				
 				Looper.prepare();
@@ -711,6 +714,8 @@ public class PinEntryActivity extends FragmentActivity {
 										Editor edit = PreferenceManager.getDefaultSharedPreferences(PinEntryActivity.this).edit();
 										edit.putBoolean("verified", true);
 										edit.commit();
+
+										ProgressUtil.getInstance(PinEntryActivity.this).close();
 
 							        	Intent intent = new Intent(PinEntryActivity.this, MainActivity.class);
 										String navigateTo = getIntent().getStringExtra("navigateTo");
