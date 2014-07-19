@@ -4,6 +4,8 @@ import info.blockchain.api.ExchangeRates;
 
 import java.math.BigInteger;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -622,7 +624,13 @@ public class BalanceFragment extends Fragment   {
 	        if(isBTC) {
 	        	df = new DecimalFormat("######0.0000");
 	        	if(addressAmounts != null && addressAmounts[position] != null) {
-		        	amount = df.format(Double.parseDouble(addressAmounts[position]));
+		        	try {
+						amount = df.format(NumberFormat.getInstance().parse(addressAmounts[position]).doubleValue());
+					} catch (ParseException e) {
+						e.printStackTrace();
+						
+						amount = "ERROR";
+					}
 	        	}
 	        	else {
 		        	amount = "0.0000";
