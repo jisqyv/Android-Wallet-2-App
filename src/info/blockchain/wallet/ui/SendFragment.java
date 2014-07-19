@@ -1112,6 +1112,9 @@ public class SendFragment extends Fragment   {
 		    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 		        if(actionId == EditorInfo.IME_ACTION_NEXT) {
 
+	                if (labels == null)
+	                	labels = application.getRemoteWallet().getLabelMap();
+	                
 		        	if(labels.get(edAddress.getText().toString()) == null) {
 	 		            if(!BitcoinAddressCheck.isValidAddress(edAddress.getText().toString())) {
 							Toast.makeText(getActivity(), edAddress.getText().toString() + " is not a valid Bitcoin address", Toast.LENGTH_LONG).show();
