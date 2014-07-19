@@ -816,6 +816,8 @@ public class PinEntryActivity extends FragmentActivity {
 
 								AlertDialog dialog = builder.create();
 
+								ProgressUtil.getInstance(PinEntryActivity.this).close();
+
 								dialog.show();
 
 //								begin();
