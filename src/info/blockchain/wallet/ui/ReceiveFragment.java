@@ -215,13 +215,15 @@ public class ReceiveFragment extends Fragment   {
       	});
         
         currentSelectedAddress = defaultAddress;
-        ivReceivingQR.setImageBitmap(generateQRCode(BitcoinURI.convertToBitcoinURI(currentSelectedAddress, BigInteger.ZERO, "", "")));
-        String label = labels.get(currentSelectedAddress);
-        String defaultDest = currentSelectedAddress;
-        if(label != null) {
-        	defaultDest = label;
+        if(currentSelectedAddress != null) {
+            ivReceivingQR.setImageBitmap(generateQRCode(BitcoinURI.convertToBitcoinURI(currentSelectedAddress, BigInteger.ZERO, "", "")));
+            String label = labels.get(currentSelectedAddress);
+            String defaultDest = currentSelectedAddress;
+            if(label != null) {
+            	defaultDest = label;
+            }
+            tvAddress.setText(defaultDest);
         }
-        tvAddress.setText(defaultDest);
         
         tvCurrency = (TextView)rootView.findViewById(R.id.currency);
         tvCurrency.setOnClickListener(new View.OnClickListener() {
@@ -667,6 +669,7 @@ public class ReceiveFragment extends Fragment   {
             	ivClearInput.setVisibility(View.VISIBLE);
             	isKeyboard = false;
             }
+
         }
 
     }
