@@ -70,8 +70,8 @@ import org.spongycastle.util.encoders.Hex;
 public class WalletUtils {
 	public final static QRCodeWriter QR_CODE_WRITER = new QRCodeWriter();
 
-	private static final int DefaultRequestRetry = 2;
-	private static final int DefaultRequestTimeout = 60000;
+	public static final int DefaultRequestRetry = 2;
+	public static final int DefaultRequestTimeout = 60000;
 
 	public static ECKey parsePrivateKey(String format, String contents, String password) throws Exception { 
 		if (format.equals("sipa") || format.equals("compsipa")) {

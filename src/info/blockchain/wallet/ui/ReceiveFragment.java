@@ -839,11 +839,11 @@ public class ReceiveFragment extends Fragment   {
 	        	filteredDisplayList.add(row);
         }
 
-      //if the defaultAddress is null then we probably have all watch only addresses
-                //Just use the first one
-                if (defaultAddress == null && activeAddresses.size() > 0) {
-                    defaultAddress = activeAddresses.get(0);
-                }
+        //if the defaultAddress is null then we probably have all watch only addresses
+        //Just use the first one
+        if (defaultAddress == null && activeAddresses.size() > 0) {
+            defaultAddress = activeAddresses.get(0);
+        }
     }
 
     private void initAddressBookList() {
