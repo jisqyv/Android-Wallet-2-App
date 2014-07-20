@@ -1,5 +1,7 @@
 package info.blockchain.wallet.ui;
 
+import java.util.Locale;
+
 import net.sourceforge.zbar.Symbol;
 
 import com.dm.zbar.android.scanner.ZBarConstants;
@@ -30,7 +32,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
-//import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -46,6 +47,7 @@ import android.widget.TextView;
 //import android.location.LocationListener;
 import android.location.LocationManager;
 import android.widget.Toast;
+//import android.util.Log;
 
 //import android.util.Log;
 import info.blockchain.wallet.ui.SendFragment;
@@ -88,7 +90,10 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 	    setContentView(R.layout.activity_main);
 
 	    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-	    
+
+    	Locale locale = new Locale("en", "US");
+        Locale.setDefault(locale);
+
         boolean isFirst = false;
         boolean isSecured = false;
         boolean isDismissed = false;
