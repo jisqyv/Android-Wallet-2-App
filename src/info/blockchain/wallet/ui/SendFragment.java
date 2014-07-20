@@ -339,6 +339,9 @@ public class SendFragment extends Fragment   {
             		if(tmp.length() < 1) {
             			tmp = "0.0000";
             		}
+            		else {
+            			tmp = tmp.replace(",", ".");
+            		}
             		String tmp2 = tvAmount2.getText().toString().substring(0, tvAmount2.getText().toString().length() - 4);
             		try {
             			double d = Double.parseDouble(tmp2);
@@ -948,7 +951,10 @@ public class SendFragment extends Fragment   {
 			        	if(amount1 == null || amount1.length() < 1) {
 			        		amount1 = "0.00";
 			        	}
-			        	String amount2 = tvAmount2.getText().toString().substring(0, tvAmount2.getText().toString().length() - 4);	// buggy
+			        	else {
+			        		amount1 = amount1.replace(",", ".");
+			        	}
+			        	String amount2 = tvAmount2.getText().toString().substring(0, tvAmount2.getText().toString().length() - 4);
 			        	if(isBTC) {
 			        		amount1 += " BTC";
 			        		amount2 += " " + strCurrentFiatCode;

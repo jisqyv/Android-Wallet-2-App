@@ -233,6 +233,9 @@ public class ReceiveFragment extends Fragment   {
             		if(tmp.length() < 1) {
             			tmp = "0.0000";
             		}
+            		else {
+            			tmp = tmp.replace(",", ".");
+            		}
             		String tmp2 = tvAmount2.getText().toString().substring(0, tvAmount2.getText().toString().length() - 4);
             		try {
             			double d = Double.parseDouble(tmp2);
@@ -337,6 +340,9 @@ public class ReceiveFragment extends Fragment   {
 		        	String amount1 = edAmount1.getText().toString();
 		        	if(amount1 == null || amount1.length() < 1) {
 		        		amount1 = "0.00";
+		        	}
+		        	else {
+		        		amount1 = amount1.replace(",", ".");
 		        	}
 		        	String amount2 = tvAmount2.getText().toString().substring(0, tvAmount2.getText().toString().length() - 4);
 		        	long btcValue;
