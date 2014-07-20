@@ -697,7 +697,7 @@ public class PinEntryActivity extends FragmentActivity {
 
 					String decryptionKey = (String) response.get("success");
 					if (decryptionKey != null) {	
-						application.setTemporyPIN(PIN);
+//						application.setTemporyPIN(PIN);
 						application.didEncounterFatalPINServerError = false;
 
 						String password = MyWallet.decrypt(encrypted_password, decryptionKey, piuk.blockchain.android.ui.PinEntryActivity.PBKDF2Iterations);
@@ -797,6 +797,7 @@ public class PinEntryActivity extends FragmentActivity {
 														Intent intent = new Intent(PinEntryActivity.this, MainActivity.class);
 														String navigateTo = getIntent().getStringExtra("navigateTo");
 														intent.putExtra("navigateTo", navigateTo);
+														intent.putExtra("validated", true);
 														intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
 											    		startActivity(intent);
 

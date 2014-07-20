@@ -870,6 +870,7 @@ public class WalletApplication extends Application {
 				catch(Exception e) {
 					handler.post(new Runnable() {
 						public void run() {
+							if(callbackFinal != null)
 							callbackFinal.onFail();
 						};
 					});
@@ -878,6 +879,7 @@ public class WalletApplication extends Application {
 				if(walletPayloadObj == null) {
 					handler.post(new Runnable() {
 						public void run() {
+							if(callbackFinal != null)
 							callbackFinal.onFail();
 							return;
 						};
@@ -901,6 +903,7 @@ public class WalletApplication extends Application {
 					if (callback != null)  {
 						handler.post(new Runnable() {
 							public void run() {
+								if(callbackFinal != null)
 								callbackFinal.onSuccess();
 							};
 						});
@@ -923,6 +926,7 @@ public class WalletApplication extends Application {
 										R.string.toast_wallet_decryption_failed,
 										Toast.LENGTH_LONG).show();
 
+								if(callbackFinal != null)
 								callbackFinal.onFail();
 							};
 						});

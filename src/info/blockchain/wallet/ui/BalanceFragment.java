@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
+import java.text.NumberFormat;
+import java.text.ParseException;
 
 import org.json.simple.JSONObject;
 
@@ -622,8 +624,13 @@ public class BalanceFragment extends Fragment   {
 	        if(isBTC) {
 	        	df = new DecimalFormat("######0.0000");
 	        	if(addressAmounts != null && addressAmounts[position] != null) {
-		        	amount = df.format(Double.parseDouble(addressAmounts[position]));
-	        	}
+		        	try {
+		        		 						amount = df.format(NumberFormat.getInstance().parse(addressAmounts[position]).doubleValue());
+		        		 					} catch (ParseException e) {
+		        		 						e.printStackTrace();
+		        		 						
+		        		 						amount = "ERROR";
+		        		 					}	        	}
 	        	else {
 		        	amount = "0.0000";
 	        	}
