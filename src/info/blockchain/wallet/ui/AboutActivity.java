@@ -34,7 +34,7 @@ public class AboutActivity extends Activity	{
 	    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         tvAbout = (TextView)findViewById(R.id.about);
-        tvAbout.setText(getString(R.string.about, "4.0.3", "2014"));
+        tvAbout.setText(getString(R.string.about, "4.0.4", "2014"));
 
         bRate = (Button)findViewById(R.id.rate_us);
         bRate.setOnClickListener(new Button.OnClickListener() {

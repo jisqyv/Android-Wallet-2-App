@@ -10,7 +10,6 @@ import piuk.blockchain.android.MyWallet;
 import piuk.blockchain.android.WalletApplication;
 import piuk.blockchain.android.SuccessCallback;
 import piuk.blockchain.android.R;
-//import piuk.blockchain.android.ui.dialogs.RekeyWalletDialog;
 import piuk.blockchain.android.ui.dialogs.RequestPasswordDialog;
 import piuk.blockchain.android.util.WalletUtils;
 import android.os.AsyncTask;
@@ -28,10 +27,8 @@ import android.content.SharedPreferences.Editor;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.text.InputType;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
-import android.text.method.NumberKeyListener;
 import android.text.style.RelativeSizeSpan;
 import android.view.Menu;
 import android.view.MotionEvent;
@@ -40,21 +37,15 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.View.OnTouchListener;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.util.Log;
 import info.blockchain.api.ExchangeRates;
-import net.sourceforge.zbar.Symbol;
 
 import org.apache.commons.io.IOUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.spongycastle.util.encoders.Hex;
-
-import com.dm.zbar.android.scanner.ZBarConstants;
-import com.dm.zbar.android.scanner.ZBarScannerActivity;
 
 public class PinEntryActivity extends FragmentActivity {
 
@@ -119,11 +110,13 @@ public class PinEntryActivity extends FragmentActivity {
 			if(extras.getString("N") != null && extras.getString("N").equals("1"))	{
 				validating = false;
 				creating = true;
+				((TextView)findViewById(R.id.titleBox)).setText("Please create your 4-digit pin");
 			}
 			else if(extras.getString("N") != null && extras.getString("N").length() == 4)	{
 				validating = false;
 				creating = true;
 				userInput = extras.getString("N");
+				((TextView)findViewById(R.id.titleBox)).setText("Please confirm your 4-digit pin");
 			}
 			else if(extras.getString("S") != null && extras.getString("S").equals("1"))	{
 				validating = false;
@@ -142,7 +135,7 @@ public class PinEntryActivity extends FragmentActivity {
 		buttonForgot = (Button) findViewById(R.id.buttonForgot);
 		buttonForgot.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				;
+				requestPassword();
 			}
 		});
 		buttonForgot.setTypeface(typeface);
@@ -273,10 +266,18 @@ public class PinEntryActivity extends FragmentActivity {
 								else	{
 									Toast.makeText(PinEntryActivity.this, "Start over", Toast.LENGTH_SHORT).show();	
 
-									Intent intent = new Intent(PinEntryActivity.this, PinEntryActivity.class);
-									intent.putExtra("S", userEntered);
-									intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-									startActivity(intent);
+									if(creating)	{
+										Intent intent = new Intent(PinEntryActivity.this, PinEntryActivity.class);
+										intent.putExtra("N", "1");
+										intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+										startActivity(intent);
+									}
+									else	{
+										Intent intent = new Intent(PinEntryActivity.this, PinEntryActivity.class);
+										intent.putExtra("S", userEntered);
+										intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+										startActivity(intent);
+									}
 								}
 							}
 							else	{
@@ -730,7 +731,7 @@ public class PinEntryActivity extends FragmentActivity {
 										edit.putBoolean("verified", true);
 										edit.commit();
 
-										ProgressUtil.getInstance(PinEntryActivity.this).close();
+//										ProgressUtil.getInstance(PinEntryActivity.this).close();
 
 										Intent intent = new Intent(PinEntryActivity.this, MainActivity.class);
 										String navigateTo = getIntent().getStringExtra("navigateTo");
@@ -811,33 +812,14 @@ public class PinEntryActivity extends FragmentActivity {
 									public void onClick(DialogInterface dialog, int id) {
 										dialog.dismiss();
 
-										RequestPasswordDialog.show(getSupportFragmentManager(),
-													new SuccessCallback() {  
-											public void onSuccess() {
-												Toast.makeText(PinEntryActivity.this, "Password correct", Toast.LENGTH_LONG).show();
-
-												Intent starterIntent = getIntent();
-												starterIntent.putExtra("N", "1");
-												finish();
-												startActivity(starterIntent);
-
-											}
-											public void onFail() {	
-												Toast.makeText(PinEntryActivity.this, piuk.blockchain.android.R.string.password_incorrect, Toast.LENGTH_LONG).show();
-
-												Intent intent = new Intent(PinEntryActivity.this, PinEntryActivity.class);
-												intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-												startActivity(intent);
-
-											}
-										}, RequestPasswordDialog.PasswordTypeMain);
+										requestPassword();
 
 									}
 								});
 
 								AlertDialog dialog = builder.create();
 
-								ProgressUtil.getInstance(PinEntryActivity.this).close();
+//								ProgressUtil.getInstance(PinEntryActivity.this).close();
 
 								dialog.show();
 							} catch (Exception e) {
@@ -950,6 +932,29 @@ public class PinEntryActivity extends FragmentActivity {
 		} catch (ParseException e) {
 			throw new Exception("Invalid Server Response");
 		}		
+	}
+	
+	public void requestPassword() {
+		RequestPasswordDialog.show(getSupportFragmentManager(),
+				new SuccessCallback() {  
+			public void onSuccess() {
+				Toast.makeText(PinEntryActivity.this, "Password correct", Toast.LENGTH_LONG).show();
+
+				Intent starterIntent = getIntent();
+				starterIntent.putExtra("N", "1");
+				finish();
+				startActivity(starterIntent);
+
+			}
+			public void onFail() {	
+				Toast.makeText(PinEntryActivity.this, piuk.blockchain.android.R.string.password_incorrect, Toast.LENGTH_LONG).show();
+
+				Intent intent = new Intent(PinEntryActivity.this, PinEntryActivity.class);
+				intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+				startActivity(intent);
+
+			}
+		}, RequestPasswordDialog.PasswordTypeMain);
 	}
 
 }
