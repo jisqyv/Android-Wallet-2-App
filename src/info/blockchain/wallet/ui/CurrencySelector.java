@@ -43,12 +43,10 @@ public class CurrencySelector extends Activity	{
         bOK.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
             	int sel = spCurrencies.getSelectedItemPosition();
-            	if(sel != 0) {
-            		editor.putString("ccurrency", currencies[sel].substring(currencies[sel].length() - 3));
-            		editor.commit();
-            		BlockchainUtil.updateRate(CurrencySelector.this, currencies[sel].substring(currencies[sel].length() - 3));
-                	finish();
-            	}
+        		editor.putString("ccurrency", currencies[sel].substring(currencies[sel].length() - 3));
+        		editor.commit();
+        		BlockchainUtil.updateRate(CurrencySelector.this, currencies[sel].substring(currencies[sel].length() - 3));
+            	finish();
             }
         });
 

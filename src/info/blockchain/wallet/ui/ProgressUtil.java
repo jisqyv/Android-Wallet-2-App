@@ -48,7 +48,7 @@ public class ProgressUtil {
 	}
 
 	public void close() {
-		if(progressDialog != null) {
+		if(progressDialog != null && progressDialog.isShowing()) {
 		    progressDialog.dismiss();
 		    progressDialog = null;
 		}
