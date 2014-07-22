@@ -72,6 +72,7 @@ public class MapActivity extends Activity implements LocationListener	{
 	private static float Z00M_LEVEL_CLOSE = 18.0f;
 	private static float Z00M_LEVEL_FAR = 10.0f;
 	private float saveZ00mLevel = Z00M_LEVEL_DEFAULT;
+	private boolean changeZoom = false;
 	
 	private int color_category_selected = 0xffFFFFFF;
     private int color_category_unselected = 0xffF1F1F1;
@@ -318,6 +319,8 @@ public class MapActivity extends Activity implements LocationListener	{
         layoutCafe.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+     			saveZ00mLevel = map.getCameraPosition().zoom;
+     			changeZoom = false;
             	imgCafe.setImageResource(cafeSelected ? R.drawable.marker_cafe_off : R.drawable.marker_cafe);
             	dividerCafe.setBackgroundColor(cafeSelected ? color_category_unselected : color_cafe_selected);
             	cafeSelected = cafeSelected ? false : true;
@@ -329,6 +332,8 @@ public class MapActivity extends Activity implements LocationListener	{
         layoutDrink.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+     			saveZ00mLevel = map.getCameraPosition().zoom;
+     			changeZoom = false;
             	imgDrink.setImageResource(drinkSelected ? R.drawable.marker_drink_off : R.drawable.marker_drink);
             	dividerDrink.setBackgroundColor(drinkSelected ? color_category_unselected : color_drink_selected);
             	drinkSelected = drinkSelected ? false : true;
@@ -340,6 +345,8 @@ public class MapActivity extends Activity implements LocationListener	{
         layoutEat.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+     			saveZ00mLevel = map.getCameraPosition().zoom;
+     			changeZoom = false;
             	imgEat.setImageResource(eatSelected ? R.drawable.marker_eat_off : R.drawable.marker_eat);
             	dividerEat.setBackgroundColor(eatSelected ? color_category_unselected : color_eat_selected);
             	eatSelected = eatSelected ? false : true;
@@ -351,6 +358,8 @@ public class MapActivity extends Activity implements LocationListener	{
         layoutSpend.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+     			saveZ00mLevel = map.getCameraPosition().zoom;
+     			changeZoom = false;
             	imgSpend.setImageResource(spendSelected ? R.drawable.marker_spend_off : R.drawable.marker_spend);
             	dividerSpend.setBackgroundColor(spendSelected ? color_category_unselected : color_spend_selected);
             	spendSelected = spendSelected ? false : true;
@@ -362,6 +371,8 @@ public class MapActivity extends Activity implements LocationListener	{
         layoutATM.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+     			saveZ00mLevel = map.getCameraPosition().zoom;
+     			changeZoom = false;
             	imgATM.setImageResource(atmSelected ? R.drawable.marker_atm_off : R.drawable.marker_atm);
             	dividerATM.setBackgroundColor(atmSelected ? color_category_unselected : color_atm_selected);
             	atmSelected = atmSelected ? false : true;
@@ -573,7 +584,12 @@ public class MapActivity extends Activity implements LocationListener	{
 								e.printStackTrace();
 							}
 
-							setProperZoomLevel(new LatLng(currLocation.getLatitude(), currLocation.getLongitude()), 40000, 1);
+							if(changeZoom) {
+								setProperZoomLevel(new LatLng(currLocation.getLatitude(), currLocation.getLongitude()), 40000, 1);
+							}
+							else {
+								changeZoom = true;
+							}
 
 						}
 					});
