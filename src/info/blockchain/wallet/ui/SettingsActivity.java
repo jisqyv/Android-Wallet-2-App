@@ -122,7 +122,8 @@ public class SettingsActivity extends PreferenceActivity {
         			return true;
         		}
         	});
-        	
+
+        	/*
         	Preference pinPref = (Preference) findPreference("pin");
         	pinPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
         		public boolean onPreferenceClick(Preference preference) {
@@ -130,6 +131,7 @@ public class SettingsActivity extends PreferenceActivity {
         			return true;
         		}
         	});
+        	*/
     }
 
 	private void promptToEnterOldPINAndChangePIN() {

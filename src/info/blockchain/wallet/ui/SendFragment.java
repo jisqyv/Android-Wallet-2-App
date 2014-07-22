@@ -436,7 +436,7 @@ public class SendFragment extends Fragment   {
 						        sendingProgressDialog.dismiss();
 					        }
 							if (message != null)
-								Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
+								Toast.makeText(SendFragment.this.getActivity(), message, Toast.LENGTH_LONG).show();
 
 							application.getRemoteWallet().setState(MyRemoteWallet.State.INPUT);
 						}
