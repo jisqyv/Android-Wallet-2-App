@@ -49,7 +49,6 @@ import android.location.LocationManager;
 import android.widget.Toast;
 //import android.util.Log;
 
-//import android.util.Log;
 import info.blockchain.wallet.ui.SendFragment;
 import piuk.blockchain.android.R;
 import piuk.blockchain.android.SharedCoin;

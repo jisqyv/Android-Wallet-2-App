@@ -46,7 +46,7 @@ import piuk.blockchain.android.Constants;
 import piuk.blockchain.android.SuccessCallback;
 import piuk.blockchain.android.util.WalletUtils;
 import android.annotation.SuppressLint;
-import android.util.Log;
+//import android.util.Log;
 import android.util.Pair;
 
 import com.google.bitcoin.core.Address;
@@ -632,7 +632,7 @@ public class MyRemoteWallet extends MyWallet {
 		}
 
 		while (true) {
-			Log.d("generateNewMiniPrivateKey", "generateNewMiniPrivateKey");
+//			Log.d("generateNewMiniPrivateKey", "generateNewMiniPrivateKey");
 
 	        //Make Candidate Mini Key
 		    byte randomBytes[] = new byte[16];
@@ -659,9 +659,11 @@ public class MyRemoteWallet extends MyWallet {
 				        String privateKey1 = Base58.encode(dumpedPrivateKey1.bytes);
 
 				        final String toAddress = eckey.toAddress(getParams()).toString();
+				        /*
 						Log.d("sendCoinsToFriend", "generateNewMiniPrivateKey: minikey: " + minikey);
 						Log.d("sendCoinsToFriend", "generateNewMiniPrivateKey: privateKey: " + privateKey1);
 						Log.d("sendCoinsToFriend", "generateNewMiniPrivateKey: address: " + toAddress);
+						*/
 
 		            	return new Pair<ECKey, String>(eckey, minikey);
 
@@ -717,8 +719,10 @@ public class MyRemoteWallet extends MyWallet {
 			        String privateKey = Base58.encode(dumpedPrivateKey.bytes);
 
 			        final String toAddress = key.toAddress(getParams()).toString();
+			        /*
 					Log.d("sendCoinsToFriend", "sendCoinsToFriend: privateKey: " + privateKey);
 					Log.d("sendCoinsToFriend", "sendCoinsToFriend: toAddress: " + toAddress);
+					*/
 					BigInteger fee = BigInteger.ZERO;
 
 					try {
@@ -792,8 +796,10 @@ public class MyRemoteWallet extends MyWallet {
 
 				        final String txHash = tx.getHashAsString();
 
+				        /*
 						Log.d("sendCoinsToFriend", "sendCoinsToFriend: txHash: " + txHash);						
-						Log.d("sendCoinsToFriend", "sendCoinsToFriend: emailOrNumber: " + emailOrNumber);						
+						Log.d("sendCoinsToFriend", "sendCoinsToFriend: emailOrNumber: " + emailOrNumber);
+						*/
 
   						Map<Object, Object> params = new HashMap<Object, Object>();
 						params.put("type", sendType);
@@ -808,10 +814,10 @@ public class MyRemoteWallet extends MyWallet {
 							String response = WalletUtils.postURLWithParams(WebROOT + "send-via", params);
 							if (response != null && response.length() > 0) {
 								progress.onProgress("Send Transaction");
-								Log.d("sendCoinsToFriend", "sendCoinsToFriend: send-via response: " + response);
+//								Log.d("sendCoinsToFriend", "sendCoinsToFriend: send-via response: " + response);
 								String response2 = pushTx(tx);						
 								if (response2 != null && response2.length() > 0) {
-									Log.d("sendCoinsToFriend", "sendCoinsToFriend: pushTx response: " + response2);
+//									Log.d("sendCoinsToFriend", "sendCoinsToFriend: pushTx response: " + response2);
 									progress.onSend(tx, response2);
 
 									String label = sendType == "email" ? emailOrNumber + " Sent Via Email" : emailOrNumber + " Sent Via SMS";									
@@ -1150,7 +1156,7 @@ public class MyRemoteWallet extends MyWallet {
 			outputValueSum = outputValueSum.add(amount);
 			//Add the output
 			BitcoinScript toOutputScript = BitcoinScript.createSimpleOutBitoinScript(new BitcoinAddress(toAddress));
-			Log.d("MyRemoteWallet", "MyRemoteWallet makeTransactionCustom toAddress: " + toAddress + "amount: " + amount);
+//			Log.d("MyRemoteWallet", "MyRemoteWallet makeTransactionCustom toAddress: " + toAddress + "amount: " + amount);
 
 			TransactionOutput output = new TransactionOutput(getParams(), null, amount, toOutputScript.getProgram());
 			tx.addOutput(output);
@@ -1188,7 +1194,7 @@ public class MyRemoteWallet extends MyWallet {
 			MyTransactionInput input = new MyTransactionInput(getParams(), null, new byte[0], outPoint);
 
 			input.outpoint = outPoint;
-			Log.d("MyRemoteWallet", "MyRemoteWallet makeTransactionCustom fromAddress: " + address + "amount: " + outPoint.value);
+//			Log.d("MyRemoteWallet", "MyRemoteWallet makeTransactionCustom fromAddress: " + address + "amount: " + outPoint.value);
 
 			tx.addInput(input);
 
@@ -1232,7 +1238,7 @@ public class MyRemoteWallet extends MyWallet {
 	        	if (addressChangeAmount.compareTo(BigInteger.ZERO) > 0) {
 	    			//Add the output
 	    			BitcoinScript toOutputScript = BitcoinScript.createSimpleOutBitoinScript(new BitcoinAddress(address));
-	    			Log.d("MyRemoteWallet", "MyRemoteWallet makeTransactionCustom changeAddress == null: " + address + "addressChangeAmount: " + addressChangeAmount);
+//	    			Log.d("MyRemoteWallet", "MyRemoteWallet makeTransactionCustom changeAddress == null: " + address + "addressChangeAmount: " + addressChangeAmount);
 
 	    			TransactionOutput output = new TransactionOutput(getParams(), null, addressChangeAmount, toOutputScript.getProgram());
 
@@ -1255,7 +1261,7 @@ public class MyRemoteWallet extends MyWallet {
     			BitcoinScript toOutputScript = BitcoinScript.createSimpleOutBitoinScript(new BitcoinAddress(changeAddress));
 
     			TransactionOutput output = new TransactionOutput(getParams(), null, addressChangeAmountSum.subtract(fee), toOutputScript.getProgram());
-    			Log.d("MyRemoteWallet", "MyRemoteWallet makeTransactionCustom changeAddress != null: " + changeAddress + "addressChangeAmount: " + output.getValue());
+//    			Log.d("MyRemoteWallet", "MyRemoteWallet makeTransactionCustom changeAddress != null: " + changeAddress + "addressChangeAmount: " + output.getValue());
     			tx.addOutput(output);        		
         	}
 		}

@@ -267,23 +267,6 @@ public class MapActivity extends Activity implements LocationListener	{
             	return true;
             }
         });
-        /*
-        map.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
-            @Override
-            public void onMapLoaded() {
-                LatLngBounds.Builder builder = new LatLngBounds.Builder();
-                for (BTCBusiness b : btcb)
-                {
-                    builder.include(new LatLng(Double.parseDouble(b.lat), Double.parseDouble(b.lon)));
-                }
-                bounds = builder.build();
-                int padding = 30; // offset from edges of the map in pixels
-                CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-                map.moveCamera(cu);
-                map.animateCamera(cu);
-            }
-        });
-        */
 
 	    imgCafe = ((ImageView)findViewById(R.id.cafe));
 	    layoutCafe = ((LinearLayout)findViewById(R.id.layout_cafe));
@@ -442,12 +425,7 @@ public class MapActivity extends Activity implements LocationListener	{
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    switch (item.getItemId()) {
     	case R.id.list_view:
-//    		if(Double.parseDouble(MapActivity.btcb.get(0).distance) < 50.0) {
-        		doListView();
-//    		}
-//    		else {
-//		        Toast.makeText(MapActivity.this, "There are no nearby Bitcoin merchants to list.", Toast.LENGTH_SHORT).show();
-//    		}
+    		doListView();
     		return true;
 	    default:
 	        return super.onOptionsItemSelected(item);
