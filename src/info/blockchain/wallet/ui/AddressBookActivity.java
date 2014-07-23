@@ -22,6 +22,7 @@ import net.sourceforge.zbar.Symbol;
 
 import com.dm.zbar.android.scanner.ZBarConstants;
 import com.dm.zbar.android.scanner.ZBarScannerActivity;
+import com.google.bitcoin.core.ECKey;
 import com.google.bitcoin.core.Transaction;
 
 import piuk.blockchain.android.EventListeners;
@@ -34,6 +35,7 @@ import piuk.blockchain.android.SuccessCallback;
 import android.app.Activity;
 import android.app.ActionBar;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -102,7 +104,8 @@ public class AddressBookActivity extends Activity {
 	}
 	
     private DisplayedAddresses displayedAddresses = null;
-    
+	private ProgressDialog bip38DecryptDialog = null;
+
 	private EventListeners.EventListener eventListener = new EventListeners.EventListener() {
 		@Override
 		public String getDescription() {
@@ -375,53 +378,105 @@ public class AddressBookActivity extends Activity {
 	    }
 	}
 
-	public void handleScanPrivateKey(final String data) throws Exception {
-		application.getHandler().postDelayed(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					final String format = WalletUtils.detectPrivateKeyFormat(data);
+	public void handleScanPrivateKey(final String data) {
+		try {
+			final String format = WalletUtils.detectPrivateKeyFormat(data);
 
-					System.out.println("Scanned Private Key Format " + format);
 
-					if (format.equals("bip38")) {
-						AlertDialog.Builder builder = new AlertDialog.Builder(AddressBookActivity.this);
-						builder.setMessage(R.string.enter_bip38_passphrase)
-						.setCancelable(false);
+		System.out.println("Scanned Private Key Format " + format);
 
-						AlertDialog alert = builder.create();
-						alert.setTitle(R.string.passphrase_required);
+		if (format.equals("bip38")) {
+			AlertDialog.Builder builder = new AlertDialog.Builder(AddressBookActivity.this);
+			builder.setMessage(R.string.enter_bip38_passphrase)
+			.setCancelable(false);
 
-						final EditText input = new EditText(AddressBookActivity.this);
-						input.setHint(R.string.password_hint);
-						alert.setView(input);
-						
-						alert.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.enter), new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog, int id) {
-								final String password = input.getText().toString();
-								
+			final AlertDialog alert = builder.create();
+			alert.setTitle(R.string.passphrase_required);
+
+			final EditText input = new EditText(AddressBookActivity.this);
+			input.setHint(R.string.password_hint);
+			alert.setView(input);
+			
+			alert.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.enter), new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+					dialog.dismiss();
+
+					final String password = input.getText().toString();
+				    	bip38DecryptDialog = new ProgressDialog(AddressBookActivity.this);
+				    	bip38DecryptDialog.setTitle(R.string.decrypting);
+				    	bip38DecryptDialog.setMessage("Please wait");
+				    	bip38DecryptDialog.setCancelable(false);
+						bip38DecryptDialog.show();
+
+						new Thread() {
+							
+							@Override
+							public void run() {
 								try {
-									addressManager.handleScanPrivateKeyPair(WalletUtils.parsePrivateKey(format, data, password));
-								} catch (Exception e) {
-						    		Toast.makeText(AddressBookActivity.this, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+									final ECKey key = WalletUtils.parsePrivateKey(format, data, password);
+									application.getHandler().post(new Runnable() {
+										@Override
+										public void run() {
+											try {
+												addressManager.handleScanPrivateKeyPair(key, new SuccessCallback() {
+													@Override
+													public void onSuccess() {
+														if (bip38DecryptDialog != null) {
+															bip38DecryptDialog.dismiss();
+														}														
+													}
+
+													@Override
+													public void onFail() {
+														if (bip38DecryptDialog != null) {
+															bip38DecryptDialog.dismiss();
+														}
+											    		handleScanPrivateKey(data);														
+													}
+												});
+											} catch (Exception e) {
+									    		Toast.makeText(AddressBookActivity.this, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+												if (bip38DecryptDialog != null) {
+													bip38DecryptDialog.dismiss();;
+												}
+									    		handleScanPrivateKey(data);
+											}
+										}
+									});
+								} catch (final Exception e) {
+									application.getHandler().post(new Runnable() {
+										@Override
+										public void run() {
+								    		Toast.makeText(AddressBookActivity.this, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+											if (bip38DecryptDialog != null) {
+												bip38DecryptDialog.dismiss();;
+											}
+								    		handleScanPrivateKey(data);											
+										}
+									});
 								}
-							}}); 
+							}
+						}.start();			
+				}}); 
 
-						alert.setButton(AlertDialog.BUTTON_NEGATIVE, getString(R.string.cancel), new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog, int id) {
-								dialog.dismiss();
-							}});
+			alert.setButton(AlertDialog.BUTTON_NEGATIVE, getString(R.string.cancel), new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+					dialog.dismiss();
+				}});
 
-						alert.show();
-					} else {
-						addressManager.handleScanPrivateKeyPair(WalletUtils.parsePrivateKey(format, data, null));
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+			alert.show();
+		} else {
+			try {
+				addressManager.handleScanPrivateKeyPair(WalletUtils.parsePrivateKey(format, data, null), null);
+			} catch (Exception e) {
+	    		Toast.makeText(AddressBookActivity.this, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+	    		AddressBookActivity.this.handleScanPrivateKey(data);
 			}
-		}, 100);
-
+		}
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 	}
 	
 	@Override

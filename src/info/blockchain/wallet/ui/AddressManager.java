@@ -153,7 +153,7 @@ public class AddressManager {
 		}
 	}
 	
-	public void handleScanPrivateKeyPair(final ECKey key) throws Exception {
+	public void handleScanPrivateKeyPair(final ECKey key, final SuccessCallback callback) throws Exception {
 
 		new Thread() {
 			public void run() {
@@ -173,10 +173,14 @@ public class AddressManager {
 				    			@Override
 				    			public void onSuccess() {
 					        		Toast.makeText(activity, R.string.scanned_private_key, Toast.LENGTH_LONG).show();
+					        		if (callback != null)
+					        			callback.onSuccess();
 				    			}
 				    			
 				    			public void onFail() {
 					        		Toast.makeText(activity, R.string.scanned_private_key, Toast.LENGTH_LONG).show();
+					        		if (callback != null)
+					        			callback.onFail();
 				    			}
 				    		});
 				    						    			
@@ -184,10 +188,14 @@ public class AddressManager {
 
 						public void onError(String reason) {
 			        		Toast.makeText(activity, R.string.error_scanning_private_key, Toast.LENGTH_LONG).show();
+			        		if (callback != null)
+			        			callback.onFail();
 						}
 					});
 				} catch (final Exception e) {
 					e.printStackTrace();
+	        		if (callback != null)
+	        			callback.onFail();
 
 					handler.post(new Runnable() {
 						public void run() {
