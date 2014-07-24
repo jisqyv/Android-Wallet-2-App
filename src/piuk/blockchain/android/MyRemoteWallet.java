@@ -679,15 +679,18 @@ public class MyRemoteWallet extends MyWallet {
 	    }
 	}
 
-	public void sendCoinsEmail(final String email, final BigInteger amount, final SendProgress progress) throws Exception {
-		sendCoinsToFriend("email", email, amount, progress);
+	public void sendCoinsEmail(final String email, final BigInteger amount, final FeePolicy feePolicy,
+			final BigInteger fee, final SendProgress progress) throws Exception {
+		sendCoinsToFriend("email", email, amount, feePolicy, fee, progress);
 	}
 
-	public void sendCoinsSMS(final String number, final BigInteger amount, final SendProgress progress) throws Exception {
-		sendCoinsToFriend("sms", number, amount, progress);
+	public void sendCoinsSMS(final String number, final BigInteger amount, final FeePolicy feePolicy,
+			final BigInteger fee, final SendProgress progress) throws Exception {
+		sendCoinsToFriend("sms", number, amount, feePolicy, fee, progress);
 	}
 
-	private void sendCoinsToFriend(final String sendType,final String emailOrNumber, final BigInteger amount, final SendProgress progress) throws Exception {
+	private void sendCoinsToFriend(final String sendType,final String emailOrNumber, final BigInteger amount,
+			final FeePolicy feePolicy, final BigInteger fee, final SendProgress progress) throws Exception {
 
 		new Thread() {
 			@Override
@@ -723,7 +726,6 @@ public class MyRemoteWallet extends MyWallet {
 					Log.d("sendCoinsToFriend", "sendCoinsToFriend: privateKey: " + privateKey);
 					Log.d("sendCoinsToFriend", "sendCoinsToFriend: toAddress: " + toAddress);
 					*/
-					BigInteger fee = BigInteger.ZERO;
 
 					try {
 						//Try without asking for watch only addresses
@@ -815,7 +817,7 @@ public class MyRemoteWallet extends MyWallet {
 							if (response != null && response.length() > 0) {
 								progress.onProgress("Send Transaction");
 //								Log.d("sendCoinsToFriend", "sendCoinsToFriend: send-via response: " + response);
-								String response2 = pushTx(tx);						
+								String response2 = pushTx(tx);	
 								if (response2 != null && response2.length() > 0) {
 //									Log.d("sendCoinsToFriend", "sendCoinsToFriend: pushTx response: " + response2);
 									progress.onSend(tx, response2);
@@ -1053,6 +1055,7 @@ public class MyRemoteWallet extends MyWallet {
 			outputValueSum = outputValueSum.add(amount);
 			//Add the output
 			BitcoinScript toOutputScript = BitcoinScript.createSimpleOutBitoinScript(new BitcoinAddress(toAddress));
+//			Log.d("MyRemoteWallet", "MyRemoteWallet makeTransaction toAddress: " + toAddress + "amount: " + amount);
 
 			TransactionOutput output = new TransactionOutput(getParams(), null, amount, toOutputScript.getProgram());
 
@@ -1083,6 +1086,7 @@ public class MyRemoteWallet extends MyWallet {
 			MyTransactionInput input = new MyTransactionInput(getParams(), null, new byte[0], outPoint);
 
 			input.outpoint = outPoint;
+//			Log.d("MyRemoteWallet", "MyRemoteWallet makeTransaction fromAddress: " + address + "amount: " + outPoint.value);
 
 			tx.addInput(input);
 
@@ -1109,8 +1113,10 @@ public class MyRemoteWallet extends MyWallet {
 			BitcoinScript change_script;
 			if (changeAddress != null) {
 				change_script = BitcoinScript.createSimpleOutBitoinScript(new BitcoinAddress(changeAddress));
+//				Log.d("MyRemoteWallet", "MyRemoteWallet makeTransaction changeAddress != null: " + changeAddress + "change: " + change);
 			} else if (changeOutPoint != null) {
 				BitcoinScript inputScript = new BitcoinScript(changeOutPoint.getConnectedPubKeyScript());
+//    			Log.d("MyRemoteWallet", "MyRemoteWallet makeTransaction changeAddress == null: " + inputScript.getAddress() + "change: " + change);
 
 				//Return change to the first address
 				change_script = BitcoinScript.createSimpleOutBitoinScript(inputScript.getAddress());

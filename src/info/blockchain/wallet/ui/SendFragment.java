@@ -831,12 +831,13 @@ public class SendFragment extends Fragment   {
 
 				final MyRemoteWallet.FeePolicy feePolicy;
 
-				if (sendType != null && sendType == SendTypeQuickSend) {
-					
+				if (sendType != null && sendType == SendTypeQuickSend) {					
 					feePolicy = MyRemoteWallet.FeePolicy.FeeForce;
 				} else {
 					feePolicy = MyRemoteWallet.FeePolicy.FeeOnlyIfNeeded;
 				}
+				
+				final BigInteger baseFee = remoteWallet.getBaseFee();
 
 				if (remoteWallet.isDoubleEncrypted() && remoteWallet.temporySecondPassword == null) {
 					RequestPasswordDialog.show(getFragmentManager(), new SuccessCallback() {
@@ -845,7 +846,8 @@ public class SendFragment extends Fragment   {
 							if(sendViaEmail && emailOrNumber != null && emailOrNumber.contains("@")) {	
 
 				            	try {
-									remoteWallet.sendCoinsEmail(emailOrNumber, getBTCEnteredOutputValue(edAmount1.getText().toString()), progressEmailSMS);
+									remoteWallet.sendCoinsEmail(emailOrNumber, getBTCEnteredOutputValue(edAmount1.getText().toString()),
+											feePolicy, baseFee, progressEmailSMS);
 								} catch (Exception e) {
 									e.printStackTrace();
 								}
@@ -854,7 +856,8 @@ public class SendFragment extends Fragment   {
 									String numberFormated = emailOrNumber.replaceAll("\\D+","");	
 									numberFormated = "+"+numberFormated;
 //									Log.d("sendCoinsSMS", "numberFormated: "+ numberFormated);
-									remoteWallet.sendCoinsSMS(numberFormated, getBTCEnteredOutputValue(edAmount1.getText().toString()), progressEmailSMS);										
+									remoteWallet.sendCoinsSMS(numberFormated, getBTCEnteredOutputValue(edAmount1.getText().toString()),
+											feePolicy, baseFee, progressEmailSMS);										
 								} catch (Exception e) {
 									e.printStackTrace();
 								}								
@@ -870,7 +873,8 @@ public class SendFragment extends Fragment   {
 				} else {
 					if(sendViaEmail && emailOrNumber != null && emailOrNumber.contains("@")) {	
 						try {
-							remoteWallet.sendCoinsEmail(emailOrNumber, getBTCEnteredOutputValue(edAmount1.getText().toString()), progressEmailSMS);
+							remoteWallet.sendCoinsEmail(emailOrNumber, getBTCEnteredOutputValue(edAmount1.getText().toString()),
+									feePolicy, baseFee, progressEmailSMS);
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
@@ -879,7 +883,8 @@ public class SendFragment extends Fragment   {
 							String numberFormated = emailOrNumber.replaceAll("\\D+","");	
 							numberFormated = "+"+numberFormated;
 //							Log.d("sendCoinsSMS", "numberFormated: "+ numberFormated);
-							remoteWallet.sendCoinsSMS(numberFormated, getBTCEnteredOutputValue(edAmount1.getText().toString()), progressEmailSMS);										
+							remoteWallet.sendCoinsSMS(numberFormated, getBTCEnteredOutputValue(edAmount1.getText().toString()),
+									feePolicy, baseFee, progressEmailSMS);										
 						} catch (Exception e) {
 							e.printStackTrace();
 						}								
