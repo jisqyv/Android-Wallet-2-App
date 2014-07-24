@@ -671,7 +671,6 @@ public class PinCreateActivity extends Activity {
         						final WalletApplication application = WalletUtil.getInstance(PinCreateActivity.this, PinCreateActivity.this).getWalletApplication();
         						try {
         							try {
-
         								application.generateNewWallet();
 
         							} catch (Exception e1) {
@@ -682,10 +681,12 @@ public class PinCreateActivity extends Activity {
 
         							final String guid = application.getRemoteWallet().getGUID();
         							final String sharedKey = application.getRemoteWallet().getSharedKey();
-        							final String password = RandomStringUtils.randomAlphabetic(64);
+//        							final String password = RandomStringUtils.randomAlphabetic(64);
         							final String pinCode = p1;
+        							final String password = pinCode + pinCode + pinCode;
 
         							application.getRemoteWallet().setTemporyPassword(password);
+//									Toast.makeText(application, "Your password is: " + password, Toast.LENGTH_LONG).show();
 
         							if (!application.getRemoteWallet().remoteSave("")) {
         								throw new Exception("Unknown Error Inserting wallet");

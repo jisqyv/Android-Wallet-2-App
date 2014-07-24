@@ -10,12 +10,15 @@ import org.spongycastle.util.encoders.Hex;
 
 import com.dm.zbar.android.scanner.ZBarConstants;
 import com.dm.zbar.android.scanner.ZBarScannerActivity;
+import com.google.android.gcm.GCMRegistrar;
 
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -23,6 +26,7 @@ import android.content.pm.ActivityInfo;
 import android.support.v4.content.LocalBroadcastManager;
 //import android.util.Log;
 import android.util.Patterns;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
@@ -37,6 +41,7 @@ import android.view.View.OnClickListener;
 import android.graphics.Rect;
 import android.widget.Toast;
 
+import piuk.blockchain.android.Constants;
 import piuk.blockchain.android.MyRemoteWallet;
 import piuk.blockchain.android.MyWallet;
 import piuk.blockchain.android.R;
@@ -261,10 +266,11 @@ public class SecureWallet extends Activity {
 				handler = new Handler();
 
 				final WalletApplication application = (WalletApplication)this.getApplication();
-				final MyRemoteWallet remoteWallet = application.getRemoteWallet();
+//				final MyRemoteWallet remoteWallet = application.getRemoteWallet();
 
-				remoteWallet.setTemporyPassword(strPw1);
-//	    		Log.d("SecureWallet", "SecureWallet setTemporyPassword: " + remoteWallet.getTemporyPassword());	
+				application.getRemoteWallet().setTemporyPassword(strPw1);
+//	    		Log.d("SecureWallet", "SecureWallet setTemporyPassword: " + remoteWallet.getTemporyPassword());
+
 				application.saveWallet( new SuccessCallback() {
 					@Override
 					public void onSuccess() {		    		
@@ -396,5 +402,17 @@ public class SecureWallet extends Activity {
 		}
 		
 	}
+
+	@Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) { 
+        if(keyCode == KeyEvent.KEYCODE_BACK) {
+            return true;
+        }
+        else	{
+        	;
+        }
+
+        return false;
+    }
 
 }

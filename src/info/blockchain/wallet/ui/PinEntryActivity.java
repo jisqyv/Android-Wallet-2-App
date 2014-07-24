@@ -111,19 +111,25 @@ public class PinEntryActivity extends FragmentActivity {
 				validating = false;
 				creating = true;
 				((TextView)findViewById(R.id.titleBox)).setText("Please create your 4-digit pin");
+				Toast.makeText(this, "Please create your 4-digit pin", Toast.LENGTH_LONG).show();
 			}
 			else if(extras.getString("N") != null && extras.getString("N").length() == 4)	{
 				validating = false;
 				creating = true;
 				userInput = extras.getString("N");
 				((TextView)findViewById(R.id.titleBox)).setText("Please confirm your 4-digit pin");
+				Toast.makeText(this, "Please confirm your 4-digit pin", Toast.LENGTH_LONG).show();
 			}
 			else if(extras.getString("S") != null && extras.getString("S").equals("1"))	{
 				validating = false;
+				((TextView)findViewById(R.id.titleBox)).setText("Please create your 4-digit pin");
+				Toast.makeText(this, "Please create your 4-digit pin", Toast.LENGTH_LONG).show();
 			}
 			else if(extras.getString("S") != null && extras.getString("S").length() == 4)	{
 				validating = false;
 				userInput = extras.getString("S");
+				((TextView)findViewById(R.id.titleBox)).setText("Please confirm your 4-digit pin");
+				Toast.makeText(this, "Please confirm your 4-digit pin", Toast.LENGTH_LONG).show();
 			}
 			else {
 				validating = true;
