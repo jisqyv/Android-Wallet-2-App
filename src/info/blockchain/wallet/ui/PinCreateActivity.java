@@ -115,6 +115,14 @@ public class PinCreateActivity extends Activity {
         pin3_2 = ((EditText)findViewById(R.id.pin3_2));
         pin4_2 = ((EditText)findViewById(R.id.pin4_2));
 
+        pin1.postDelayed(new Runnable() {
+     	   @Override
+     	   public void run() {
+     	     InputMethodManager keyboard = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+     	     keyboard.showSoftInput(pin1, 0);
+     	   }
+   	   	}, 50);
+        
         pin1.setOnKeyListener(new OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
