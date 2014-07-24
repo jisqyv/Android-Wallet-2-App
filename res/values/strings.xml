@@ -384,6 +384,8 @@
     <string name="passphrase_required">Passphrase required</string>
     <string name="enter_bip38_passphrase">Enter BIP38 passphrase:</string>
     <string name="password_hint">Password</string>
+    <string name="decrypting">Decrypting</string>
+    <string name="please_wait">Please Wait</string>
     
 	<string name="wallet_sync_error">Wallet sync error</string>
 	<string name="success_contact_added">Success Contact added</string>
