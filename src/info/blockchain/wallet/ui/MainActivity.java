@@ -341,28 +341,24 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 		Tracking.stopUsage(this);                 
 		super.onPause();
 	}
-	
+
 	@Override
 	protected void onResume() {
 		super.onResume();
 		Tracking.startUsage(this);
 		application.setIsPassedPinScreen(true);
 
-		if(returningFromActivity) {
-			if(TimeOutUtil.getInstance().isTimedOut()) {
-	        	Intent intent = new Intent(MainActivity.this, PinEntryActivity.class);
-				String navigateTo = getIntent().getStringExtra("navigateTo");
-				intent.putExtra("navigateTo", navigateTo);   
-				intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-	        	intent.putExtra("verified", true);
-	    		startActivity(intent);
-			}
-			else {
-				TimeOutUtil.getInstance().updatePin();
-			}
+		if(TimeOutUtil.getInstance().isTimedOut()) {
+        	Intent intent = new Intent(MainActivity.this, PinEntryActivity.class);
+			String navigateTo = getIntent().getStringExtra("navigateTo");
+			intent.putExtra("navigateTo", navigateTo);   
+			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        	intent.putExtra("verified", true);
+    		startActivity(intent);
 		}
-
-		returningFromActivity = false;
+		else {
+			TimeOutUtil.getInstance().updatePin();
+		}
 
 	}
 	
@@ -503,26 +499,26 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     		EnableGeo.displayGPSPrompt(this);
     	}
     	else {
-			returningFromActivity = true;
+    		TimeOutUtil.getInstance().updatePin();
         	Intent intent = new Intent(MainActivity.this, info.blockchain.merchant.directory.MapActivity.class);
     		startActivityForResult(intent, MERCHANT_ACTIVITY);
     	}
     }
 
     private void doAbout()	{
-		returningFromActivity = true;
+		TimeOutUtil.getInstance().updatePin();
     	Intent intent = new Intent(MainActivity.this, AboutActivity.class);
 		startActivityForResult(intent, ABOUT_ACTIVITY);
     }
 
     private void doSettings()	{
-		returningFromActivity = true;
+		TimeOutUtil.getInstance().updatePin();
     	Intent intent = new Intent(MainActivity.this, info.blockchain.wallet.ui.SettingsActivity.class);
 		startActivityForResult(intent, SETTINGS_ACTIVITY);
     }
 
     private void doAddressBook()	{
-		returningFromActivity = true;
+		TimeOutUtil.getInstance().updatePin();
     	Intent intent = new Intent(MainActivity.this, info.blockchain.wallet.ui.AddressBookActivity.class);
 		startActivityForResult(intent, ADDRESSBOOK_ACTIVITY);
     }
