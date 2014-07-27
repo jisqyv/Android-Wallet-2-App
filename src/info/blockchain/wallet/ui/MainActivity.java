@@ -348,8 +348,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 		Tracking.startUsage(this);
 		application.setIsPassedPinScreen(true);
 
-	    
-		if(!returningFromActivity) {
+		if(returningFromActivity) {
 			if(TimeOutUtil.getInstance().isTimedOut()) {
 	        	Intent intent = new Intent(MainActivity.this, PinEntryActivity.class);
 				String navigateTo = getIntent().getStringExtra("navigateTo");
@@ -362,9 +361,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 				TimeOutUtil.getInstance().updatePin();
 			}
 		}
-		else {
-			returningFromActivity = false;
-		}
+
+		returningFromActivity = false;
 
 	}
 	

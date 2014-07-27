@@ -653,7 +653,7 @@ public class ReceiveFragment extends Fragment   {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
             strCurrentFiatCode = prefs.getString("ccurrency", "USD");
             strCurrentFiatSymbol = prefs.getString(strCurrentFiatCode + "-SYM", "$");
-            
+
             if(isBTC) {
         		tvAmount2.setText(tvAmount2.getText().toString().substring(0, tvAmount2.getText().toString().length() - 4) + " " + strCurrentFiatCode);
             }

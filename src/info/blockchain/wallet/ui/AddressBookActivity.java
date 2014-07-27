@@ -12,7 +12,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-
 //import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -68,7 +67,7 @@ import android.widget.TextView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.Toast;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
+//import android.util.Log;
  
 public class AddressBookActivity extends Activity {
 

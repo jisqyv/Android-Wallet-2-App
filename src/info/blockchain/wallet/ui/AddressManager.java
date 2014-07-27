@@ -10,7 +10,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.util.Log;
+//import android.util.Log;
 import android.util.Pair;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -86,14 +86,14 @@ public class AddressManager {
 			application.saveWallet(new SuccessCallback() {
 				@Override
 				public void onSuccess() {
-		    		Log.d("AddressManager", "AddressManager saveWallet onSuccess");			    		
+//		    		Log.d("AddressManager", "AddressManager saveWallet onSuccess");			    		
 					EventListeners.invokeWalletDidChange();
 					callback.onSuccess();
 				}
 
 				@Override
 				public void onFail() {
-		    		Log.d("AddressManager", "AddressManager saveWallet onFail");
+//		    		Log.d("AddressManager", "AddressManager saveWallet onFail");
 		    		callback.onFail();
 				}
 			});
@@ -129,7 +129,7 @@ public class AddressManager {
 			application.saveWallet(new SuccessCallback() {
 				@Override
 				public void onSuccess() {
-		    		Log.d("AddressManager", "AddressManager onSavedAddress onSuccess");			    		
+//		    		Log.d("AddressManager", "AddressManager onSavedAddress onSuccess");			    		
 		    		application.checkIfWalletHasUpdatedAndFetchTransactions(blockchainWallet.getTemporyPassword(), new SuccessCallback() {
 		    			@Override
 		    			public void onSuccess() {
@@ -286,10 +286,12 @@ public class AddressManager {
 								try {
 									ECKey key = blockchainWallet.getECKey(address);									
 									//TODO fix so address equality matches
+									/*
 						    		Log.d("AddressManager", "AddressManager addKeyToWallet address1 " + address); // compressed address				    		
 						    		Log.d("AddressManager", "AddressManager addKeyToWallet address2 " + key.toAddress(MainNetParams.get()).toString());	// compressed address		    		
 						    		Log.d("AddressManager", "AddressManager addKeyToWallet address3 " + key.toAddressUnCompressed(MainNetParams.get()).toString());	    		
 						    		Log.d("AddressManager", "AddressManager addKeyToWallet address4 " + key.toAddressCompressed(MainNetParams.get()).toString());
+						    		*/
 
 						    		if (key != null && (key.toAddressCompressed(MainNetParams.get()).toString().equals(address) ||
 						    				key.toAddressUnCompressed(MainNetParams.get()).toString().equals(address))) {
