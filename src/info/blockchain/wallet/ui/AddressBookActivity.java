@@ -382,7 +382,7 @@ public class AddressBookActivity extends Activity {
 			final String format = WalletUtils.detectPrivateKeyFormat(data);
 
 
-		System.out.println("Scanned Private Key Format " + format);
+//		System.out.println("Scanned Private Key Format " + format);
 
 		if (format.equals("bip38")) {
 			AlertDialog.Builder builder = new AlertDialog.Builder(AddressBookActivity.this);

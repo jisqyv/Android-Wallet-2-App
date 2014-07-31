@@ -40,7 +40,7 @@
     <string name="toast_error_syncing_wallet">Error syncing wallet. Please check your internet
 		connection.</string>
     <string name="toast_error_downloading_captcha">Error downloading captcha.</string>
-    <string name="error_pairing_wallet">Error pairing wallet.</string>
+    <string name="error_pairing_wallet">Error pairing wallet. Verify your identifier and password.</string>
     <string name="wallet_options_bug">Bug Report</string>
     <string name="wrong_private_key">Private Key does not match bitcoin address. You scanned %s</string>
     <string name="second_password_text">This action requires a second password in order to
@@ -394,5 +394,12 @@
 	<string name="error_scanning_address">Error scanning address</string>
 	<string name="scanned_private_key">Scanned private key</string>
 	<string name="error_scanning_private_key">Error scanning private key</string>
-			
+	<string name="invalid_wallet_identifier">Invalid Blockchain wallet identifier</string>
+	
+	<string name="manual_pairing_ok">Pair manually succeeded</string>
+	<string name="manual_pairing_prompt">For manual pairing: Enter your 36 character wallet identifier including dashes and your password. Make sure that 2FA is disabled.</string>
+
+	<string name="manual_pairing">Manual pairing</string>
+	<string name="scan_pairing">Scan QR code</string>
+							
 </resources>

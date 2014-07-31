@@ -964,6 +964,7 @@ public class BalanceFragment extends Fragment   {
 		child.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+        		TimeOutUtil.getInstance().updatePin();
                 Intent intent;
         		intent = new Intent(getActivity(), TxActivity.class);
         		intent.putExtra("TX", transactionHash);
