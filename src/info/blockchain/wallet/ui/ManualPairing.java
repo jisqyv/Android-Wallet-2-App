@@ -63,11 +63,6 @@ public class ManualPairing extends Activity	{
             	finish();
             }
         });
-        
-        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-        uuid.setFocusable(true);
-        uuid.requestFocus();
-        imm.showSoftInput(uuid, InputMethodManager.SHOW_FORCED);
 
     }
 

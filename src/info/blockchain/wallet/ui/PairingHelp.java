@@ -67,7 +67,7 @@ public class PairingHelp extends Activity {
 	private int level = 0;
 
 	private static int MANUAL_PAIRING = 1;
-	private static int ZBAR_SCANNER_REQUEST = 2026;
+	private static int ZBAR_SCANNER_REQUEST = 2;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
