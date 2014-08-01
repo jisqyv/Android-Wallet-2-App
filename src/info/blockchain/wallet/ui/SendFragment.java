@@ -244,7 +244,9 @@ public class SendFragment extends Fragment   {
 
 		@Override
 		public void onCoinsSent(final Transaction tx, final long result) {
-			btSend.setVisibility(View.GONE);
+//			btSend.setVisibility(View.GONE);
+			btSend.setBackgroundColor(0xff808080);
+			btSend.setClickable(false);
 	        summary3.setVisibility(View.VISIBLE);
 	        tvSentPrompt.setVisibility(View.VISIBLE);
 
@@ -397,7 +399,9 @@ public class SendFragment extends Fragment   {
         initAddressBookList();
 
         btSend = ((Button)rootView.findViewById(R.id.send));
-        btSend.setVisibility(View.INVISIBLE);
+//        btSend.setVisibility(View.INVISIBLE);
+		btSend.setBackgroundColor(0xff808080);
+		btSend.setClickable(false);
         btSend.setOnClickListener(new Button.OnClickListener() {
 
 			final SendProgress progress = new SendProgress() {
@@ -921,9 +925,6 @@ public class SendFragment extends Fragment   {
 		        	if(sendType == SendTypeCustomSend) {
                         //doCustomSend();
 		            }
-		        	
-		        	
-		        	
 
 			        	summary2.setVisibility(View.VISIBLE);
 			        	tvAddress.setVisibility(View.VISIBLE);
@@ -977,7 +978,9 @@ public class SendFragment extends Fragment   {
 			        	tvAmount.setText(a1);
 			        	tvAmountBis.setText(a2);
 
-		            	btSend.setVisibility(View.VISIBLE);
+//		            	btSend.setVisibility(View.VISIBLE);
+						btSend.setBackgroundColor(0xff1b8ac7);
+						btSend.setClickable(true);
 
 			        	edAmount1.clearFocus();
 		                InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -2934,7 +2937,9 @@ public class SendFragment extends Fragment   {
         tvAddressBis.setVisibility(View.INVISIBLE);
 
         btSend.setText("Send");
-        btSend.setVisibility(View.INVISIBLE);
+//        btSend.setVisibility(View.INVISIBLE);
+		btSend.setBackgroundColor(0xff808080);
+		btSend.setClickable(false);
 
         summary3.setVisibility(View.GONE);
         tvSentPrompt.setVisibility(View.GONE);

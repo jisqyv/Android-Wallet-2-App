@@ -303,7 +303,7 @@
         android:layout_height="60dp"
         android:text="Send" 
         android:textSize="28sp"
-	    android:background="@color/blockchain_blue"
+	    android:background="@color/blockchain_grey"
 	    android:textColor="#FFFFFFFF"
         android:layout_gravity="center_vertical|center_horizontal" 
     />
