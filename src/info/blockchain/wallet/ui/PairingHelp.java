@@ -99,27 +99,27 @@ public class PairingHelp extends Activity {
 
 		tvHeader = (TextView)findViewById(R.id.header);
 		tvHeader.setTypeface(TypefaceUtil.getInstance(this).getGravityLightTypeface());
-		tvHeader.setText("connect an existing wallet");
+		tvHeader.setText(R.string.connect_existing_wallet);
 
 		tvFooter1 = (TextView)findViewById(R.id.footer1);
-		tvFooter1.setText("SCAN PAIRING CODE");
+		tvFooter1.setText(R.string.SCAN_CODE);
 		tvFooter2 = (TextView)findViewById(R.id.footer2);
-		tvFooter2.setText("PAIR DEVICE MANUALLY");
+		tvFooter2.setText(R.string.MANUAL_PAIR);
 		
 		tvWarning1 = (TextView)findViewById(R.id.warning1);
 		tvWarning2 = (TextView)findViewById(R.id.warning2);
 		tvWarning2.setTextColor(0xFF039BD3);
         if(level == 2)	{
-    		tvWarning1.setText("Step 3");
-    		tvWarning2.setText("Select 'Devices' on the left menu of the settings page and click 'Show/Hide Pairing Code'");
+    		tvWarning1.setText(R.string.step_3);
+    		tvWarning2.setText(R.string.step_3_text);
         }
         else if(level == 1)	{
-    		tvWarning1.setText("Step 2");
-    		tvWarning2.setText("On your wallet homepage click the Account Settings button");
+    		tvWarning1.setText(R.string.step_2);
+    		tvWarning2.setText(R.string.step_2_text);
         }
         else	{
-    		tvWarning1.setText("Step 1");
-    		tvWarning2.setText("Login to your Blockchain Wallet on the web by visiting blockchain.info/wallet in your web browser");
+    		tvWarning1.setText(R.string.step_1);
+    		tvWarning2.setText(R.string.step_1_text);
         }
         
 		layoutScan = (LinearLayout)findViewById(R.id.scan);

@@ -268,7 +268,7 @@
         android:textAlignment="gravity"
         android:textColor="#FFffffff"
     	android:background="#FFb2b2b2"
-    	android:text="DISMISS AND CONTINUE TO WALLET"
+    	android:text="@string/dismiss_and_continue"
     	android:paddingLeft="10dp"
     	android:paddingRight="10dp"
     	/>

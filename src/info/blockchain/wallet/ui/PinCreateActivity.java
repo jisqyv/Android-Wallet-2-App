@@ -85,7 +85,7 @@ public class PinCreateActivity extends Activity {
         cbAccept = (CheckBox)findViewById(R.id.tos_accept);
 
         tvTOS = (TextView)findViewById(R.id.tos_text);
-        tvTOS.setText("By tapping on 'ACCEPT', you acknowledge that you are accepting Blockchain's terms of service: https://blockchain.info");
+        tvTOS.setText(R.string.accept_tos);
         Linkify.addLinks(tvTOS, Linkify.WEB_URLS);
 
         tosLayout = (LinearLayout) findViewById(R.id.tos);
@@ -96,14 +96,14 @@ public class PinCreateActivity extends Activity {
 
 		tvHeader = (TextView)findViewById(R.id.header);
 		tvHeader.setTypeface(TypefaceUtil.getInstance(this).getGravityLightTypeface());
-		tvHeader.setText("create new wallet");
+		tvHeader.setText(R.string.create_new_wallet);
 
 		tvWarning1 = (TextView)findViewById(R.id.warning1);
-		tvWarning1.setText("Set your pin code");
+		tvWarning1.setText(R.string.set_your_pin);
 
 		tvWarning2 = (TextView)findViewById(R.id.warning2);
 		tvWarning2.setTextColor(0xFF039BD3);
-		tvWarning2.setText("Enter a 4-digit code that will be easy for you to remember but not easily guessed by anyone else.");
+		tvWarning2.setText(R.string.set_your_pin2);
 
         pin1 = ((EditText)findViewById(R.id.pin1));
         pin2 = ((EditText)findViewById(R.id.pin2));
@@ -201,7 +201,7 @@ public class PinCreateActivity extends Activity {
                 if(pin4.getText().length() == 1) {
                 	tosLayout.setVisibility(View.VISIBLE);
                 	tosPinConfirm.setVisibility(View.VISIBLE);
-            		tvWarning2.setText("Confirm your 4-digit pin code.");
+            		tvWarning2.setText(R.string.confirm_your_pin);
                     pin1_2.requestFocus();
                 } else if(pin4.getText().toString().length() == 0)
                     pin3.requestFocus();
@@ -218,7 +218,7 @@ public class PinCreateActivity extends Activity {
             	if(pin1_2.getText().toString().length() == 0) {
                 	tosPinConfirm.setVisibility(View.INVISIBLE);
                 	tosLayout.setVisibility(View.INVISIBLE);
-            		tvWarning2.setText("Enter a 4-digit code that will be easy for you to remember but not easily guessed by anyone else.");
+            		tvWarning2.setText(R.string.set_your_pin2);
                     pin4.requestFocus();
         		}
                 return false;
@@ -230,7 +230,7 @@ public class PinCreateActivity extends Activity {
         		if(pin1_2.getText().toString().length() == 0) {
                 	tosPinConfirm.setVisibility(View.INVISIBLE);
                 	tosLayout.setVisibility(View.INVISIBLE);
-            		tvWarning2.setText("Enter a 4-digit code that will be easy for you to remember but not easily guessed by anyone else.");
+            		tvWarning2.setText(R.string.set_your_pin2);
                     pin4.requestFocus();
         		} else if(pin1_2.getText().length() == 1)
                     pin2_2.requestFocus();
@@ -357,7 +357,7 @@ public class PinCreateActivity extends Activity {
                     if(pin4.getText().length() == 1)
                     	tosLayout.setVisibility(View.VISIBLE);
                     	tosPinConfirm.setVisibility(View.VISIBLE);
-                		tvWarning2.setText("Confirm your 4-digit pin code.");
+                		tvWarning2.setText(R.string.confirm_your_pin);
                         pin1_2.requestFocus();
                     return false;
                 }
@@ -387,7 +387,7 @@ public class PinCreateActivity extends Activity {
             		if(pin1_2.getText().toString().length() == 0) {
                     	tosPinConfirm.setVisibility(View.INVISIBLE);
                     	tosLayout.setVisibility(View.INVISIBLE);
-                		tvWarning2.setText("Enter a 4-digit code that will be easy for you to remember but not easily guessed by anyone else.");
+                		tvWarning2.setText(R.string.set_your_pin2);
                         pin4.requestFocus();
             		}
             	}
@@ -542,7 +542,7 @@ public class PinCreateActivity extends Activity {
                     if(pin4.getText().length() == 1) {
                     	tosLayout.setVisibility(View.VISIBLE);
                     	tosPinConfirm.setVisibility(View.VISIBLE);
-                		tvWarning2.setText("Confirm your 4-digit pin code.");
+                		tvWarning2.setText(R.string.confirm_your_pin);
                         pin1_2.requestFocus();
                     } else if(pin4.getText().toString().length() == 0)
                         pin3.requestFocus();
@@ -559,7 +559,7 @@ public class PinCreateActivity extends Activity {
                 	if(pin1_2.getText().toString().length() == 0) {
                     	tosPinConfirm.setVisibility(View.INVISIBLE);
                     	tosLayout.setVisibility(View.INVISIBLE);
-                		tvWarning2.setText("Enter a 4-digit code that will be easy for you to remember but not easily guessed by anyone else.");
+                		tvWarning2.setText(R.string.set_your_pin2);
                         pin4.requestFocus();
             		}
                     return false;
@@ -571,7 +571,7 @@ public class PinCreateActivity extends Activity {
             		if(pin1_2.getText().toString().length() == 0) {
                     	tosPinConfirm.setVisibility(View.INVISIBLE);
                     	tosLayout.setVisibility(View.INVISIBLE);
-                		tvWarning2.setText("Enter a 4-digit code that will be easy for you to remember but not easily guessed by anyone else.");
+                		tvWarning2.setText(R.string.set_your_pin2);
                         pin4.requestFocus();
             		} else if(pin1_2.getText().length() == 1)
                         pin2_2.requestFocus();
@@ -689,12 +689,10 @@ public class PinCreateActivity extends Activity {
 
         							final String guid = application.getRemoteWallet().getGUID();
         							final String sharedKey = application.getRemoteWallet().getSharedKey();
-//        							final String password = RandomStringUtils.randomAlphabetic(64);
         							final String pinCode = p1;
         							final String password = pinCode + pinCode + pinCode;
 
         							application.getRemoteWallet().setTemporyPassword(password);
-//									Toast.makeText(application, "Your password is: " + password, Toast.LENGTH_LONG).show();
 
         							if (!application.getRemoteWallet().remoteSave("")) {
         								throw new Exception("Unknown Error Inserting wallet");
@@ -753,7 +751,6 @@ public class PinCreateActivity extends Activity {
         																	else {
         																		TimeOutUtil.getInstance().updatePin();
 
-//        																		Toast.makeText(application, R.string.toast_pin_saved, Toast.LENGTH_SHORT).show();
         															        	Intent intent = new Intent(PinCreateActivity.this, SecureWallet.class);
         																		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         															    		startActivity(intent);
@@ -851,8 +848,8 @@ public class PinCreateActivity extends Activity {
           				cbAccept.setChecked(false);
           		    	tosLayout.setVisibility(View.INVISIBLE);
           		    	tosPinConfirm.setVisibility(View.INVISIBLE);
-                		tvWarning2.setText("Enter a 4-digit code that will be easy for you to remember but not easily guessed by anyone else.");
-        				Toast.makeText(PinCreateActivity.this, "Enter two matching 4-digit pin codes", Toast.LENGTH_LONG).show();
+                		tvWarning2.setText(R.string.set_your_pin2);
+        				Toast.makeText(PinCreateActivity.this, R.string.enter_matching_pins, Toast.LENGTH_LONG).show();
           			}
 
             	}

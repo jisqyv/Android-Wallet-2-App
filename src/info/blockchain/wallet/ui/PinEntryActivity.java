@@ -983,7 +983,7 @@ public class PinEntryActivity extends FragmentActivity {
 	public void requestPassword() {
 		RequestPasswordDialog.show(getSupportFragmentManager(), new SuccessCallback() {  
 			public void onSuccess() {
-				Toast.makeText(PinEntryActivity.this, "Password correct", Toast.LENGTH_LONG).show();
+				Toast.makeText(PinEntryActivity.this, R.string.password_correct, Toast.LENGTH_LONG).show();
 
 				Intent starterIntent = getIntent();
 				starterIntent.putExtra("N", "1");

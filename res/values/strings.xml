@@ -401,5 +401,47 @@
 
 	<string name="manual_pairing">Manual pairing</string>
 	<string name="scan_pairing">Scan QR code</string>
-							
+	
+	<string name="dismiss_and_continue">DISMISS AND CONTINUE TO WALLET</string>
+	
+	<string name="pin_entry">Please enter your 4-digit pin</string>
+    <string name="options_CLEAR">CLEAR</string>
+    <string name="options_FORGOT_PIN">FORGOT PIN</string>
+
+    <string name="step_1">Step 1</string>
+    <string name="step_2">Step 2</string>
+    <string name="step_3">Step 3</string>
+    <string name="step_1_text">Login to your Blockchain Wallet on the web by visiting blockchain.info/wallet in your web browser</string>
+    <string name="step_2_text">On your wallet homepage click the Account Settings button</string>
+    <string name="step_3_text">Select \'Devices\' on the left menu of the settings page and click \'Show/Hide Pairing Code\'</string>
+    
+    <string name="connect_existing_wallet">connect an existing wallet</string>
+    <string name="SCAN_CODE">SCAN PAIRING CODE</string>
+    <string name="MANUAL_PAIR">PAIR DEVICE MANUALLY</string>
+    
+    <string name="password_correct">Password correct</string>
+    <string name="invalid_server_reponse">Invalid server response</string>
+    <string name="fatal_pin_error">Fatal PIN server error</string>
+
+    <string name="create_new_wallet">create new wallet</string>
+    <string name="accept_tos">By tapping on \'ACCEPT\', you acknowledge that you are accepting Blockchain\'s terms of service: https://blockchain.info</string>
+    <string name="set_your_pin">Set your pin code</string>
+    <string name="set_your_pin2">"Enter a 4-digit code that will be easy for you to remember but not easily guessed by anyone else.</string>
+    <string name="confirm_your_pin">Confirm your 4-digit pin code.</string>
+    <string name="enter_matching_pins">Enter two matching 4-digit pin codes</string>
+
+    <string name="secure_your_wallet">secure your wallet</string>
+    <string name="your_wallet_ready">Your Wallet Is Ready!</string>
+    <string name="enabling_features">Enabling these security options ensures you are always in full control of your wallet and your bitcoin. This message will appear until you enable all options.</string>
+    <string name="enabling_features2">This message will display every time you launch your blockchain wallet until the security features are activated.</string>
+    <string name="enabling_features3">Please enable the following security features...</string>
+    <string name="enabling_features4">If this device is lost, stolen or compromised your bitcoin will be lost forever. Please enable the security features below.</string>
+    <string name="set_memorable_password">Set memorable password</string>
+    <string name="set_memorable_password2">Access your wallet and funds from the web in the case this device is lost or compromised.</string>
+    <string name="auto_email_backups">Automatic E-mail Backups</string>
+    <string name="auto_email_backups2">Receive secure automatic backups of your wallet and funds directly to your email address.</string>
+
+    <string name="open_new_wallet">Open A New Wallet</string>
+    <string name="connect_wallet">Connect Existing Wallet</string>
+    
 </resources>

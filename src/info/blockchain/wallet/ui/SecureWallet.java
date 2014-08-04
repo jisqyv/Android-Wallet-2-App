@@ -110,38 +110,36 @@ public class SecureWallet extends Activity {
 		tvHeader = (TextView)findViewById(R.id.header);
 		tvHeader.setTypeface(TypefaceUtil.getInstance(this).getGravityLightTypeface());
 		if(creating) {
-			tvHeader.setText("create new wallet");
+			tvHeader.setText(R.string.create_new_wallet);
 		}
 		else {
-			tvHeader.setText("secure your wallet");
+			tvHeader.setText(R.string.secure_your_wallet);
 		}
 
 		tvFooter = (TextView)findViewById(R.id.footer);
 		if(creating) {
-			tvFooter.setText("Enabling these security options ensures you are always in full control of your wallet and your bitcoin. This message will appear until you enable all options.");
+			tvFooter.setText(R.string.enabling_features);
 		}
 		else {
-			tvFooter.setText("This message will display every time you launch your blockchain wallet until the security features are activated.");
+			tvFooter.setText(R.string.enabling_features2);
 		}
 
 		tvWarning1 = (TextView)findViewById(R.id.warning1);
 		if(creating) {
-			tvWarning1.setText("Your Wallet Is Ready!");
+			tvWarning1.setText(R.string.your_wallet_ready);
 		}
 		else {
-//			tvWarning1.setText("");
 			tvWarning1.setVisibility(View.GONE);
 		}
 
 		tvWarning2 = (TextView)findViewById(R.id.warning2);
 		if(creating) {
 			tvWarning2.setTextColor(0xFF039BD3);
-			tvWarning2.setText("Please enable the following security features...");
+			tvWarning2.setText(R.string.enabling_features3);
 		}
 		else {
 			tvWarning2.setTextColor(0xFFd65858);
-//			tvWarning2.setText("If this device is lost, stolen or compromised your bitcoin will be lost forever. Please enable the security features below to easily secure your wallet.");
-			tvWarning2.setText("If this device is lost, stolen or compromised your bitcoin will be lost forever. Please enable the security features below.");
+			tvWarning2.setText(R.string.enabling_features4);
 		}
 
 	    if(pwSecured) {
@@ -151,10 +149,10 @@ public class SecureWallet extends Activity {
 	    else {
 			tvSwitchTitle1 = (TextView)findViewById(R.id.switch_title1);
 			tvSwitchTitle1.setTypeface(TypefaceUtil.getInstance(this).getGravityBoldTypeface());
-			tvSwitchTitle1.setText("Set memorable password");
+			tvSwitchTitle1.setText(R.string.set_memorable_password);
 
 			tvSwitchText1 = (TextView)findViewById(R.id.switch_text1);
-			tvSwitchText1.setText("Access your wallet and funds from the web in the case this device is lost or compromised.");
+			tvSwitchText1.setText(R.string.set_memorable_password2);
 	    }
 
 	    if(emailBackups) {
@@ -164,10 +162,10 @@ public class SecureWallet extends Activity {
 	    else {
 			tvSwitchTitle2 = (TextView)findViewById(R.id.switch_title2);
 			tvSwitchTitle2.setTypeface(TypefaceUtil.getInstance(this).getGravityBoldTypeface());
-			tvSwitchTitle2.setText("Automatic E-mail Backups");
+			tvSwitchTitle2.setText(R.string.auto_email_backups);
 
 			tvSwitchText2 = (TextView)findViewById(R.id.switch_text2);
-			tvSwitchText2.setText("Receive secure automatic backups of your wallet and funds directly to your email address.");
+			tvSwitchText2.setText(R.string.auto_email_backups2);
 	    }
 
         tvDismiss = (TextView)findViewById(R.id.dismiss);
