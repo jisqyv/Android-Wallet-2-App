@@ -46,7 +46,7 @@ public class QRActivity extends Activity	{
 	    tvBTCAddress.setText(btcAddress);
 	    tvBTCLabel = (TextView)findViewById(R.id.btc_label);
 	    
-		MyRemoteWallet wallet = WalletUtil.getInstance(this, this).getRemoteWallet();
+		MyRemoteWallet wallet = WalletUtil.getInstance(this).getRemoteWallet();
 		Map<String,String> labels = wallet.getLabelMap();
         String label = labels.get(btcAddress);
         if (label != null) {

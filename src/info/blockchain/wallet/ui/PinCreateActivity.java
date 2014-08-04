@@ -676,7 +676,7 @@ public class PinCreateActivity extends Activity {
         						
         						Looper.prepare();
         						
-        						final WalletApplication application = WalletUtil.getInstance(PinCreateActivity.this, PinCreateActivity.this).getWalletApplication();
+        						final WalletApplication application = WalletUtil.getInstance(PinCreateActivity.this).getWalletApplication();
         						try {
         							try {
         								application.generateNewWallet();

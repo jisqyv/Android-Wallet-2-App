@@ -140,7 +140,7 @@ public class BalanceFragment extends Fragment   {
 			sentTx = null;
 			
     		try {
-        		WalletUtil.getInstance(getActivity(), getActivity()).getWalletApplication().doMultiAddr(false, null);
+        		WalletUtil.getInstance(getActivity()).getWalletApplication().doMultiAddr(false, null);
     		}
     		catch(Exception e) {
         		Toast.makeText(getActivity(), e.toString(), Toast.LENGTH_SHORT).show();
@@ -221,13 +221,13 @@ public class BalanceFragment extends Fragment   {
         strCurrentFiatCode = prefs.getString("ccurrency", "USD");
         strCurrentFiatSymbol = prefs.getString(strCurrentFiatCode + "-SYM", "$");
 
-		application = WalletUtil.getRefreshedInstance(getActivity(),  getActivity()).getWalletApplication();
+		application = WalletUtil.getRefreshedInstance(getActivity()).getWalletApplication();
 
 		if (application == null) {
 			return;
 		}
 
-		MyRemoteWallet remoteWallet = WalletUtil.getInstance(getActivity(), getActivity()).getRemoteWallet();
+		MyRemoteWallet remoteWallet = WalletUtil.getInstance(getActivity()).getRemoteWallet();
 		if (remoteWallet == null) {
 			return;
 		}
@@ -384,7 +384,7 @@ public class BalanceFragment extends Fragment   {
         tViewAmount1 = (TextView)rootView.findViewById(R.id.amount1);
         tViewAmount1.setTypeface(TypefaceUtil.getInstance(getActivity()).getRobotoLightTypeface());
         tViewAmount2 = (TextView)rootView.findViewById(R.id.amount2);
-		MyRemoteWallet remoteWallet = WalletUtil.getInstance(getActivity(), getActivity()).getRemoteWallet();
+		MyRemoteWallet remoteWallet = WalletUtil.getInstance(getActivity()).getRemoteWallet();
 		if(remoteWallet != null) {
 	        tViewAmount1.setText(BlockchainUtil.formatBitcoin(remoteWallet.getBalance()));
 	        tViewAmount2.setText(strCurrentFiatSymbol + BlockchainUtil.BTC2Fiat(BlockchainUtil.formatBitcoin(remoteWallet.getBalance())));
@@ -999,7 +999,7 @@ public class BalanceFragment extends Fragment   {
 		Toast.makeText(getActivity(), "Refreshing...", Toast.LENGTH_LONG).show();
 
 		try {
-    		WalletUtil.getRefreshedInstance(getActivity(), getActivity()).getWalletApplication().doMultiAddr(false, null);
+    		WalletUtil.getRefreshedInstance(getActivity()).getWalletApplication().doMultiAddr(false, null);
 		}
 		catch(Exception e) {
     		Toast.makeText(getActivity(), e.toString(), Toast.LENGTH_SHORT).show();

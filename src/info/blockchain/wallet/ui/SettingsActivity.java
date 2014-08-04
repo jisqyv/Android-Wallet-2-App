@@ -46,7 +46,6 @@ public class SettingsActivity extends PreferenceActivity {
         	addPreferencesFromResource(R.xml.settings);
 
         	SharedPreferences sp = getPreferenceScreen().getSharedPreferences();
-//        	final String guid = WalletUtil.getInstance(this, this).getRemoteWallet().getGUID();
         	application = (WalletApplication)getApplication();
         	final String guid = application.getRemoteWallet().getGUID();
 
@@ -286,7 +285,7 @@ public class SettingsActivity extends PreferenceActivity {
 		            @Override
 		            public void onClick(View view) {
 						String oldPasssword = oldPassswordEditText.getText().toString().trim();
-			   			if (! oldPasssword.equals(application.getRemoteWallet().getTemporyPassword())) {
+			   			if (!oldPasssword.equals(application.getRemoteWallet().getTemporyPassword())) {
 			   				Toast.makeText(SettingsActivity.this, R.string.incorrect_password, Toast.LENGTH_LONG).show();
 			   				return;
 			   			} 
@@ -345,13 +344,14 @@ public class SettingsActivity extends PreferenceActivity {
 			   				Toast.makeText(SettingsActivity.this, R.string.new_account_password_length_error, Toast.LENGTH_LONG).show();
 			   				return;
 			   			}
-			   			if (! pw1.equals(pw2)) {
+			   			if (!pw1.equals(pw2)) {
 			   				Toast.makeText(SettingsActivity.this, R.string.new_account_password_mismatch_error, Toast.LENGTH_LONG).show();
 			   				return;
 			   			}
 			   			
 			   			try {
 			   				application.getRemoteWallet().setTemporyPassword(pw1);
+			   				application.localSaveWallet();
 							application.saveWallet(new SuccessCallback() {
 								@Override
 								public void onSuccess() {	
@@ -362,7 +362,7 @@ public class SettingsActivity extends PreferenceActivity {
 
 										@Override
 										public void onSuccess() {
-//								            Log.d("apiStoreKey", "apiStoreKey apiStoreKey onSuccess");				
+//								            Log.d("apiStoreKey", "apiStoreKey apiStoreKey onSuccess");
 										}
 
 										@Override
@@ -445,7 +445,7 @@ public class SettingsActivity extends PreferenceActivity {
 	
 	private void exportPrivateKeys()
 	{
-		WalletApplication application = WalletUtil.getInstance(this, this).getWalletApplication();
+		WalletApplication application = WalletUtil.getInstance(this).getWalletApplication();
 
 		if (application.getRemoteWallet() == null)
 			return;

@@ -48,10 +48,18 @@ public class ProgressUtil {
 	}
 
 	public void close() {
-		if(progressDialog != null && progressDialog.isShowing()) {
-		    progressDialog.dismiss();
-		    progressDialog = null;
-		}
+		try {
+	        if (progressDialog != null && progressDialog.isShowing()) {
+			    progressDialog.dismiss();
+			    progressDialog = null;
+	        }
+	    } catch (final IllegalArgumentException e) {
+	    	;
+	    } catch (final Exception e) {
+	    	;
+	    } finally {
+	    	progressDialog = null;
+	    }  
 	}
 
 }

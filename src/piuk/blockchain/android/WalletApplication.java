@@ -875,7 +875,10 @@ public class WalletApplication extends Application {
 						};
 					});
 				}
-				
+
+				/*
+				 * 
+				 * 
 				if(walletPayloadObj == null) {
 					handler.post(new Runnable() {
 						public void run() {
@@ -886,20 +889,65 @@ public class WalletApplication extends Application {
 					});
 					return;
 				}
+				*
+				*
+				*/
 
+				//
+				//
+				//
+//				walletPayloadObj = null;							// remove forced null
+				if(walletPayloadObj == null) {
+					System.out.println("walletPayloadObj == null, going local");
+					String localWallet = readLocalWallet();
+
+					if(decryptLocalWallet(localWallet, password)) {
+						System.out.println("local decrypted ok");
+						try {
+							walletPayloadObj = MyRemoteWallet.getWalletPayload(guid, sharedKey);
+						}
+						catch(Exception e) {
+							System.out.println("error fetching payload after local decrypt");
+							handler.post(new Runnable() {
+								public void run() {
+									if (callbackFinal != null)
+										callbackFinal.onFail();
+									return;
+								};
+							});
+						}
+					}
+					else {
+						System.out.println("local decrypted ko");
+						handler.post(new Runnable() {
+							public void run() {
+								if (callbackFinal != null)
+									callbackFinal.onFail();
+								return;
+							};
+						});
+						return;
+					}
+				}
+				//
+				//
+				//
+
+				// walletPayloadObj != null
 				try {
 					if (blockchainWallet == null) {
-//						System.out.println("7:blockchainWallet == null:");
+						System.out.println("blockchainWallet == null, using payload + password");
 						blockchainWallet = new MyRemoteWallet(walletPayloadObj, password);
 						doMultiAddr(false, null);
 					} else {						
-//						System.out.println("8:blockchainWallet setTemporaryPassword:");
-//						blockchainWallet.setTemporyPassword(password);
+						System.out.println("blockchainWallet != null");
 						blockchainWallet.setPayload(walletPayloadObj);
 					}
-
+					
+//					blockchainWallet.setTemporyPassword(password);
+					
 					decryptionErrors = 0;
-
+					
 					if (callback != null)  {
 						handler.post(new Runnable() {
 							public void run() {
@@ -922,9 +970,7 @@ public class WalletApplication extends Application {
 					if (callback != null)  {
 						handler.post(new Runnable() {
 							public void run() {
-								Toast.makeText(WalletApplication.this,
-										R.string.toast_wallet_decryption_failed,
-										Toast.LENGTH_LONG).show();
+								Toast.makeText(WalletApplication.this, R.string.toast_wallet_decryption_failed, Toast.LENGTH_LONG).show();
 
 								if (callbackFinal != null)
 									callbackFinal.onFail();
@@ -957,9 +1003,7 @@ public class WalletApplication extends Application {
 
 					handler.post(new Runnable() {
 						public void run() {
-							Toast.makeText(WalletApplication.this,
-									R.string.toast_error_syncing_wallet,
-									Toast.LENGTH_LONG).show();
+							Toast.makeText(WalletApplication.this, R.string.toast_error_syncing_wallet, Toast.LENGTH_LONG).show();
 						}
 					});
 				}

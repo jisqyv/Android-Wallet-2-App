@@ -1,10 +1,5 @@
 package info.blockchain.wallet.ui;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.ArrayList;
@@ -41,16 +36,12 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.graphics.Bitmap.CompressFormat;
-import android.graphics.drawable.BitmapDrawable;
-import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
-import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.InputType;
@@ -73,11 +64,8 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.ScrollView;
 import android.widget.ImageView;
-import android.widget.ImageButton;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Switch;
@@ -94,13 +82,9 @@ import android.provider.ContactsContract.CommonDataKinds;
 import android.provider.ContactsContract.Contacts;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.content.BroadcastReceiver;
-import android.content.pm.PackageManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.ContextThemeWrapper;
-import android.view.GestureDetector;
-import android.view.GestureDetector.OnGestureListener;
 //import android.util.Log;
-import android.util.Pair;
 
 import com.dm.zbar.android.scanner.ZBarConstants;
 import com.dm.zbar.android.scanner.ZBarScannerActivity;
@@ -1796,8 +1780,9 @@ public class SendFragment extends Fragment   {
 
     private void initMagicList() {
 
-		final WalletApplication application = (WalletApplication)getActivity().getApplication();
-		MyRemoteWallet wallet = application.getRemoteWallet();
+//		final WalletApplication application = (WalletApplication)getActivity().getApplication();
+//		MyRemoteWallet wallet = application.getRemoteWallet();
+    	MyRemoteWallet wallet = WalletUtil.getInstance(getActivity()).getRemoteWallet();
 		activeAddresses = Arrays.asList(wallet.getActiveAddresses());
 		labels = wallet.getLabelMap();
         
@@ -1834,8 +1819,9 @@ public class SendFragment extends Fragment   {
     }
     
     private void initAddressBookList() {
- 		final WalletApplication application = (WalletApplication)getActivity().getApplication();
- 		MyRemoteWallet wallet = application.getRemoteWallet();
+// 		final WalletApplication application = (WalletApplication)getActivity().getApplication();
+// 		MyRemoteWallet wallet = application.getRemoteWallet();
+    	MyRemoteWallet wallet = WalletUtil.getInstance(getActivity()).getRemoteWallet();
  		
         magicData =  new ArrayList<HashMap<String,String>>();
 

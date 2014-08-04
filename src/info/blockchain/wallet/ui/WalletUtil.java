@@ -17,14 +17,19 @@ public class WalletUtil {
 
 	private WalletUtil() { ; }
 
-	public static WalletUtil getInstance(Context ctx, Activity act) {
+	public static WalletUtil getInstance(Activity act) {
 		
 		if(instance == null) {
-			context = ctx;
 			activity = act;
 			
 			application = (WalletApplication)activity.getApplication();
 			remoteWallet = application.getRemoteWallet();
+			/*
+			if(remoteWallet == null) {
+				application = (WalletApplication)activity.getApplication();
+				remoteWallet = application.getRemoteWallet();
+			}
+			*/
 
 			instance = new WalletUtil();
 		}
@@ -32,13 +37,22 @@ public class WalletUtil {
 		return instance;
 	}
 
-	public static WalletUtil getRefreshedInstance(Context ctx, Activity act) {
-		
-		context = ctx;
+	public static WalletUtil getRefreshedInstance(Activity act) {
+
+		if(instance == null) {
+			return getInstance(act);
+		}
+
 		activity = act;
 		
 		application = (WalletApplication)activity.getApplication();
 		remoteWallet = application.getRemoteWallet();
+		/*
+		if(remoteWallet == null) {
+			application = (WalletApplication)activity.getApplication();
+			remoteWallet = application.getRemoteWallet();
+		}
+		*/
 
 		instance = new WalletUtil();
 		
@@ -51,6 +65,10 @@ public class WalletUtil {
 
 	public MyRemoteWallet getRemoteWallet() {
 		return remoteWallet;
+	}
+
+	public boolean remoteWalletIsLoaded() {
+		return (remoteWallet != null);
 	}
 
 }

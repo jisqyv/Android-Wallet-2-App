@@ -804,11 +804,12 @@ public class ReceiveFragment extends Fragment   {
 
     private void initMagicList() {
     	
-		final WalletApplication application = (WalletApplication)getActivity().getApplication();
-		MyRemoteWallet wallet = application.getRemoteWallet();
+//		final WalletApplication application = (WalletApplication)getActivity().getApplication();
+//		MyRemoteWallet wallet = application.getRemoteWallet();
+ 		MyRemoteWallet wallet = WalletUtil.getInstance(getActivity()).getRemoteWallet();
 		activeAddresses = Arrays.asList(wallet.getActiveAddresses());
 		labels = wallet.getLabelMap();
-        AddressManager addressManager = new AddressManager(wallet, application, getActivity());        
+        AddressManager addressManager = new AddressManager(wallet, WalletUtil.getInstance(getActivity()).getWalletApplication(), getActivity());        
         
         magicData =  new ArrayList<HashMap<String,String>>();
         
@@ -857,8 +858,9 @@ public class ReceiveFragment extends Fragment   {
 
     private void initAddressBookList() {
 
- 		final WalletApplication application = (WalletApplication)getActivity().getApplication();
- 		MyRemoteWallet wallet = application.getRemoteWallet();
+// 		final WalletApplication application = (WalletApplication)getActivity().getApplication();
+// 		MyRemoteWallet wallet = application.getRemoteWallet();
+ 		MyRemoteWallet wallet = WalletUtil.getInstance(getActivity()).getRemoteWallet();
  		
         magicData =  new ArrayList<HashMap<String,String>>();
 

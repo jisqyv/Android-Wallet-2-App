@@ -172,12 +172,12 @@ public final class RequestPasswordDialog extends DialogFragment {
 				
 				try {
 					if (passwordType == PasswordTypeSecond) {
-						if (passwordField.getText() == null)
+						if (passwordField.getText().toString().trim() == null || passwordField.getText().toString().trim().length() < 1)
 							return;
 
 						MyRemoteWallet wallet = application.getRemoteWallet();
 						
-						String secondPassword = passwordField.getText().toString();
+						String secondPassword = passwordField.getText().toString().trim();
 
 						if (wallet == null) {
 							dismiss();
@@ -203,7 +203,7 @@ public final class RequestPasswordDialog extends DialogFragment {
 	 						return;
 	 					}
 	 					
-						String password = passwordField.getText().toString();
+						String password = passwordField.getText().toString().trim();
 
 						application.checkIfWalletHasUpdatedAndFetchTransactions(password, new SuccessCallback() {
 							@Override
@@ -229,7 +229,7 @@ public final class RequestPasswordDialog extends DialogFragment {
 	 						return;
 	 					}
 	 					
-						passwordResult = passwordField.getText().toString();
+						passwordResult = passwordField.getText().toString().trim();
 
 						dismiss();
 

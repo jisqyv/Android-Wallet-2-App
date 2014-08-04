@@ -1,6 +1,7 @@
 package info.blockchain.wallet.ui;
 
 import java.util.Locale;
+import java.math.BigInteger;
 
 import net.sourceforge.zbar.Symbol;
 
@@ -77,6 +78,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 	private WalletApplication application;
 	
 	private boolean returningFromActivity = false;
+	
+	public static final String INTENT_EXTRA_ADDRESS = "address";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -91,10 +94,13 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         boolean isFirst = false;
         boolean isSecured = false;
         boolean isDismissed = false;
+//        String strUri = null;
         Bundle extras = getIntent().getExtras();
         if(extras != null)	{
         	isFirst = extras.getBoolean("first");
         	isDismissed = extras.getBoolean("dismissed");
+//        	strUri = extras.getString("INTENT_URI");
+//			Toast.makeText(MainActivity.this, strUri, Toast.LENGTH_LONG).show();
         }
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -174,7 +180,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
             }
         });
 
-        application = WalletUtil.getInstance(this, this).getWalletApplication();
+        application = WalletUtil.getInstance(this).getWalletApplication();
         
         final ImageView refresh_icon = new ImageView(actionBar.getThemedContext());
         refresh_icon.setImageResource(R.drawable.refresh_icon);
@@ -187,7 +193,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 //        		application.checkIfWalletHasUpdatedAndFetchTransactions(application.getRemoteWallet().getTemporyPassword());
         		
         		try {
-            		WalletUtil.getInstance(MainActivity.this, MainActivity.this).getWalletApplication().doMultiAddr(false, null);
+            		WalletUtil.getInstance(MainActivity.this).getWalletApplication().doMultiAddr(false, null);
         		}
         		catch(Exception e) {
             		Toast.makeText(MainActivity.this, e.toString(), Toast.LENGTH_SHORT).show();
@@ -246,9 +252,11 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         
         BlockchainUtil.getInstance(this);
 
+        /*
 		if (application.getRemoteWallet() != null) {
 			application.checkIfWalletHasUpdatedAndFetchTransactions(application.getRemoteWallet().getTemporyPassword());
 		}
+		*/
 /*	
 		application.sharedCoinGetInfo(new SuccessCallback() {
 
@@ -293,6 +301,14 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
 //		checkForCrashes();
 //	    checkForUpdates();
+
+		/*
+    	if(strUri != null) {
+			Intent intent2 = new Intent("info.blockchain.wallet.ui.SendFragment.BTC_ADDRESS_SCAN");
+		    intent2.putExtra("BTC_ADDRESS", strUri);
+		    LocalBroadcastManager.getInstance(this).sendBroadcast(intent2);
+    	}
+    	*/
 
 	}
 
@@ -530,4 +546,5 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 //    	intent.setType(ContactsContract.CommonDataKinds.Email.CONTENT_TYPE);
     	startActivityForResult(intent, PICK_CONTACT);
     }
+
 }

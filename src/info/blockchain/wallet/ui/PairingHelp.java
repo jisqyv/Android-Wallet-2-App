@@ -138,7 +138,8 @@ public class PairingHelp extends Activity {
             @Override
             public boolean onTouch(View arg0, MotionEvent arg1) {
          	 	Intent intent = new Intent(PairingHelp.this, ManualPairing.class);
-         	 	startActivityForResult(intent, MANUAL_PAIRING);            	
+//         	 	startActivityForResult(intent, MANUAL_PAIRING);            	
+         	 	startActivity(intent);            	
                 return false;
             }
         });
@@ -187,6 +188,7 @@ public class PairingHelp extends Activity {
 	        	handleQRCode(strResult);
 			}
         }
+		/*
 		else if(resultCode == Activity.RESULT_OK && requestCode == MANUAL_PAIRING) {
 			if(data != null && data.getAction() != null)	{
 				String res = data.getAction();
@@ -194,9 +196,10 @@ public class PairingHelp extends Activity {
 				String pw = res.substring(36);
 //				Toast.makeText(this, "Wallet identifier:" + uuid, Toast.LENGTH_SHORT).show();
 //				Toast.makeText(this, "Password:" + pw, Toast.LENGTH_SHORT).show();
-				pairManually(uuid, pw);
+//				pairManually(uuid, pw);
 			}
         }
+        */
         else {
         	;
         }
@@ -343,7 +346,7 @@ public class PairingHelp extends Activity {
 		}
 		
 	}
-
+/*
 	public void pairManually(final String guid, final String password) {
 
 		final Activity activity = this;
@@ -404,8 +407,7 @@ public class PairingHelp extends Activity {
 									@Override
 									public void onFail() {
 										finish();
-										Toast.makeText(application, R.string.error_pairing_wallet, Toast.LENGTH_LONG)
-										.show();
+										Toast.makeText(application, R.string.error_pairing_wallet, Toast.LENGTH_LONG).show();
 									}
 								});
 							} catch (final Exception e) {
@@ -436,5 +438,5 @@ public class PairingHelp extends Activity {
 			}
 		}).start();
 	}
-
+*/
 }

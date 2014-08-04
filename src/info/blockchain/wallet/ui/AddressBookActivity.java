@@ -174,7 +174,7 @@ public class AddressBookActivity extends Activity {
         //
         //
         //
-		MyRemoteWallet remoteWallet = WalletUtil.getInstance(this, this).getRemoteWallet();
+		MyRemoteWallet remoteWallet = WalletUtil.getInstance(this).getRemoteWallet();
 		String[] activeAddresses = remoteWallet.getActiveAddresses();
 
 		allAddresses = new ArrayList<String>();
@@ -295,7 +295,7 @@ public class AddressBookActivity extends Activity {
             }
         });
 
-		application = WalletUtil.getInstance(this, this).getWalletApplication();
+		application = WalletUtil.getInstance(this).getWalletApplication();
         addressManager = new AddressManager(remoteWallet, application, this);        
 		EventListeners.addEventListener(eventListener);
 		
@@ -608,7 +608,7 @@ public class AddressBookActivity extends Activity {
     private void initArchivedList() {
         displayedAddresses = DisplayedAddresses.ArchivedAddresses;
 
-        MyRemoteWallet remoteWallet = WalletUtil.getInstance(this, this).getRemoteWallet();
+        MyRemoteWallet remoteWallet = WalletUtil.getInstance(this).getRemoteWallet();
 		String[] archivedAddresses = remoteWallet.getArchivedAddresses();
 
 		allAddresses = new ArrayList<String>();
@@ -623,7 +623,7 @@ public class AddressBookActivity extends Activity {
     private void initActiveList() {
         displayedAddresses = DisplayedAddresses.ActiveAddresses;
 
-		MyRemoteWallet remoteWallet = WalletUtil.getInstance(this, this).getRemoteWallet();
+		MyRemoteWallet remoteWallet = WalletUtil.getInstance(this).getRemoteWallet();
 		String[] activeAddresses = remoteWallet.getActiveAddresses();
 
 		allAddresses = new ArrayList<String>();
@@ -638,7 +638,7 @@ public class AddressBookActivity extends Activity {
     private void initContactsList() {
         displayedAddresses = DisplayedAddresses.ContactsAddresses;
 
-        MyRemoteWallet remoteWallet = WalletUtil.getInstance(this, this).getRemoteWallet();
+        MyRemoteWallet remoteWallet = WalletUtil.getInstance(this).getRemoteWallet();
         addressBookMapList = remoteWallet.getAddressBookMap();
 
 		allAddresses = new ArrayList<String>();

@@ -5,8 +5,12 @@ import java.util.UUID;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.text.InputType;
 import android.view.View;
 import android.view.Window;
@@ -15,8 +19,11 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+import piuk.blockchain.android.MyRemoteWallet;
 import piuk.blockchain.android.R;
 //import android.util.Log;
+import piuk.blockchain.android.SuccessCallback;
+import piuk.blockchain.android.WalletApplication;
 
 public class ManualPairing extends Activity	{
 
@@ -50,8 +57,10 @@ public class ManualPairing extends Activity	{
     				return;
     			}
     			
-            	setResult(RESULT_OK, (new Intent()).setAction(strUUID + strPW));
-            	finish();
+//            	setResult(RESULT_OK, (new Intent()).setAction(strUUID + strPW));
+//            	finish();
+    			
+				pairManually(strUUID, strPW);
 
             }
         });
@@ -81,6 +90,99 @@ public class ManualPairing extends Activity	{
 		}
 		
 		return true;
+	}
+	
+	public void pairManually(final String guid, final String password) {
+
+		final Activity activity = this;
+
+		final WalletApplication application = (WalletApplication) getApplication();
+
+		final Handler handler = new Handler();
+
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					final String payload = MyRemoteWallet.getWalletManualPairing(guid);
+
+					handler.post(new Runnable() {
+
+						@Override
+						public void run() {
+
+							try {
+								final MyRemoteWallet wallet = new MyRemoteWallet(payload, password);
+
+								if(wallet == null) {
+									return;
+								}
+
+								String sharedKey = wallet.getSharedKey();
+
+								application.clearWallet();
+
+//								PinEntryActivity.clearPrefValues(application);
+
+								Editor edit = PreferenceManager.getDefaultSharedPreferences(activity).edit();
+
+								edit.putString("guid", guid);
+								edit.putString("sharedKey", sharedKey);
+
+								edit.commit();
+
+								application.checkIfWalletHasUpdated(password, guid, sharedKey, true, new SuccessCallback(){
+									@Override
+									public void onSuccess() {
+//										registerNotifications();
+
+								        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ManualPairing.this);
+										Editor edit = prefs.edit();
+										edit.putBoolean("validated", true);
+										edit.putBoolean("paired", true);
+										edit.commit();
+
+							        	Intent intent = new Intent(ManualPairing.this, PinEntryActivity.class);
+							        	intent.putExtra("S", "1");
+										intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+							    		startActivity(intent);
+
+										finish();
+									}
+
+									@Override
+									public void onFail() {
+//										finish();
+										Toast.makeText(application, R.string.error_pairing_wallet, Toast.LENGTH_LONG).show();
+									}
+								});
+							} catch (final Exception e) {
+//								Toast.makeText(application, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+								Toast.makeText(application, R.string.error_pairing_wallet, Toast.LENGTH_LONG).show();
+
+								application.writeException(e);
+
+//								finish();
+							}
+						}
+					});
+				} catch (final Exception e) {
+					e.printStackTrace();
+
+					handler.post(new Runnable() {
+						public void run() {
+
+//							Toast.makeText(application, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+							Toast.makeText(application, R.string.error_pairing_wallet, Toast.LENGTH_LONG).show();
+
+							application.writeException(e);
+
+//							finish();
+						}
+					});
+				}
+			}
+		}).start();
 	}
 
 }

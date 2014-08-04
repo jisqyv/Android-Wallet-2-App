@@ -112,12 +112,11 @@ public class TxActivity extends Activity	{
         	strCurrency = extras.getString("CURRENCY");
         	ts = extras.getLong("TS");
         }
-        
-		labels = WalletUtil.getInstance(this,  this).getRemoteWallet().getLabelMap();
 
-		application = WalletUtil.getInstance(this, this).getWalletApplication();
-		remoteWallet =  WalletUtil.getInstance(this, this).getRemoteWallet();
+		application = WalletUtil.getInstance(this).getWalletApplication();
+		remoteWallet =  WalletUtil.getInstance(this).getRemoteWallet();
         addressManager = new AddressManager(remoteWallet, application, this);        
+		labels = remoteWallet.getLabelMap();
 
         latestBlock = new LatestBlock();
         transaction = new Transaction(strTxHash);

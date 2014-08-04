@@ -6,12 +6,15 @@ import java.net.URL;
 import java.security.SecureRandom;
 
 import piuk.blockchain.android.Constants;
+import piuk.blockchain.android.MyRemoteWallet;
 import piuk.blockchain.android.MyWallet;
 import piuk.blockchain.android.WalletApplication;
 import piuk.blockchain.android.SuccessCallback;
 import piuk.blockchain.android.R;
 import piuk.blockchain.android.ui.dialogs.RequestPasswordDialog;
 import piuk.blockchain.android.util.WalletUtils;
+import info.blockchain.api.ExchangeRates;
+
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -39,7 +42,7 @@ import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-import info.blockchain.api.ExchangeRates;
+import android.support.v4.content.LocalBroadcastManager;
 
 import org.apache.commons.io.IOUtils;
 import org.json.simple.JSONObject;
@@ -85,6 +88,8 @@ public class PinEntryActivity extends FragmentActivity {
 
 	private static final String WebROOT = "https://" + Constants.BLOCKCHAIN_DOMAIN + "/pin-store";
 	public static final int PBKDF2Iterations = 2000;
+	
+//	public static String strUri = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -94,8 +99,7 @@ public class PinEntryActivity extends FragmentActivity {
 		userEntered = "";
 
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-				WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
 		if(!DeviceUtil.getInstance(this).isSmallScreen()) {
 			setContentView(R.layout.activity_pin_entry);
@@ -105,6 +109,18 @@ public class PinEntryActivity extends FragmentActivity {
 		}
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
+		/*
+		Intent intent2 = getIntent();
+	    String action = intent2.getAction();
+//		Toast.makeText(this, action, Toast.LENGTH_LONG).show();
+	    String scheme = intent2.getScheme();
+//		Toast.makeText(this, scheme, Toast.LENGTH_LONG).show();
+		if(intent2 != null && action != null && Intent.ACTION_VIEW.equals(action) && scheme.equals("bitcoin")) {
+			strUri = intent2.getData().toString();
+//			Toast.makeText(this, strUri, Toast.LENGTH_LONG).show();
+	    }
+	    */
+		
 		Bundle extras = getIntent().getExtras();
 		if(extras != null)	{
 			if(extras.getString("N") != null && extras.getString("N").equals("1"))	{
@@ -131,6 +147,11 @@ public class PinEntryActivity extends FragmentActivity {
 				((TextView)findViewById(R.id.titleBox)).setText("Please confirm your 4-digit pin");
 				Toast.makeText(this, "Please confirm your 4-digit pin", Toast.LENGTH_LONG).show();
 			}
+			/*
+			else if(extras.getString("INTENT_URI") != null)	{
+				strUri = extras.getString("INTENT_URI");
+			}
+			*/
 			else {
 				validating = true;
 			}
@@ -719,7 +740,7 @@ public class PinEntryActivity extends FragmentActivity {
 
 					String decryptionKey = (String) response.get("success");
 					if (decryptionKey != null) {	
-//						application.setTemporyPIN(PIN);
+						application.setTemporyPIN(PIN);
 						application.didEncounterFatalPINServerError = false;
 
 						String password = MyWallet.decrypt(encrypted_password, decryptionKey, piuk.blockchain.android.ui.PinEntryActivity.PBKDF2Iterations);
@@ -737,13 +758,22 @@ public class PinEntryActivity extends FragmentActivity {
 										edit.putBoolean("verified", true);
 										edit.commit();
 
-//										ProgressUtil.getInstance(PinEntryActivity.this).close();
+										ProgressUtil.getInstance(PinEntryActivity.this).close();
+
+								    	if(!WalletUtil.getInstance(PinEntryActivity.this).remoteWalletIsLoaded()) {
+											Toast.makeText(PinEntryActivity.this, "Remote wallet not loaded", Toast.LENGTH_SHORT).show();	
+								    	}
 
 										Intent intent = new Intent(PinEntryActivity.this, MainActivity.class);
 										String navigateTo = getIntent().getStringExtra("navigateTo");
 										intent.putExtra("navigateTo", navigateTo);   
-										intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
 										intent.putExtra("verified", true);
+										intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+										/*
+										if(strUri != null) {
+										    intent.putExtra("INTENT_URI", strUri);
+										}
+										*/
 										startActivity(intent);
 
 									}
@@ -755,7 +785,10 @@ public class PinEntryActivity extends FragmentActivity {
 								handler.post(new Runnable() {
 									public void run() {
 
-										Toast.makeText(PinEntryActivity.this, piuk.blockchain.android.R.string.toast_wallet_decryption_failed, Toast.LENGTH_LONG).show();	
+										Toast.makeText(PinEntryActivity.this, piuk.blockchain.android.R.string.toast_wallet_decryption_failed, Toast.LENGTH_LONG).show();
+										
+										ProgressUtil.getInstance(PinEntryActivity.this).show();
+
 									}
 								});
 							}
@@ -764,6 +797,8 @@ public class PinEntryActivity extends FragmentActivity {
 						Toast.makeText(PinEntryActivity.this, response.get("error").toString(), Toast.LENGTH_SHORT).show();	
 
 						application.didEncounterFatalPINServerError = false;
+
+						ProgressUtil.getInstance(PinEntryActivity.this).show();
 
 						//"code" == 2 means the PIN is incorrect
 						if (!response.containsKey("code") || ((Number)response.get("code")).intValue() != 2) {
@@ -784,10 +819,15 @@ public class PinEntryActivity extends FragmentActivity {
 							});
 						}
 					} else {
+						
+						ProgressUtil.getInstance(PinEntryActivity.this).show();
+
 						throw new Exception("Unknown Error");
 					}
 				} catch (final Exception e) {
 					e.printStackTrace();
+
+					ProgressUtil.getInstance(PinEntryActivity.this).show();
 
 					application.didEncounterFatalPINServerError = true;
 
@@ -941,8 +981,7 @@ public class PinEntryActivity extends FragmentActivity {
 	}
 	
 	public void requestPassword() {
-		RequestPasswordDialog.show(getSupportFragmentManager(),
-				new SuccessCallback() {  
+		RequestPasswordDialog.show(getSupportFragmentManager(), new SuccessCallback() {  
 			public void onSuccess() {
 				Toast.makeText(PinEntryActivity.this, "Password correct", Toast.LENGTH_LONG).show();
 
