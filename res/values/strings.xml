@@ -444,4 +444,93 @@
     <string name="open_new_wallet">Open A New Wallet</string>
     <string name="connect_wallet">Connect Existing Wallet</string>
     
+    <string name="address_copied_clipboard">Address copied to clipboard</string>
+    <string name="refreshing">Refreshing...</string>
+
+    <string name="include_BTC_address">Include a Bitcoin sending address</string>
+    <string name="is_not_valid_BTC_address">is not a valid Bitcoin address</string>
+    <string name="to_use_send2friend">To use this service select a contact with an email address or a mobile phone number. Thank you.</string>
+    <string name="sum_must_be_same">The sum of the amounts for all sending addresses must be equal to the amount specified on the top of the screen.</string>
+    <string name="not_processed">not processed</string>
+    <string name="error_decrypt_private_key">Error Decrypting Private Key</string>
+    
+    <string name="include_valid_BTC_address_receive">Include a Bitcoin receiving address</string>
+
+    <string name="send2friend">Send Bitcoins to a Friend</string>
+    <string name="send2_1">Send Bitcoins to</string>
+    <string name="send2_2">via which method?</string>
+    
+    <string name="no_sending_addresses">You do not yet have any sending addresses in your addressbook. Would you like to create one?</string>
+
+    <string name="options_id">Blockchain identifier</string>
+    <string name="options_id2">Your Blockchain identifier</string>
+    <string name="options_email">E-mail address (optional)</string>
+    <string name="options_email2">E-mail address for backups</string>
+    <string name="options_email_backups">E-mail backups</string>
+    <string name="options_email_backups2">Receive wallet backups by e-mail</string>
+    <string name="options_cell">Mobile phone number (optional)</string>
+    <string name="options_cell2">Mobile phone number for 2FA and SMS notifications</string>
+    <string name="options_sms">SMS notifications</string>
+    <string name="options_sms2">Receive notifications by SMS</string>
+    <string name="options_currency">Currency</string>
+    <string name="options_currency2">Your preferred fiat currency</string>
+    <string name="wallet_options_backup2">Backup wallet to media of your choice</string>
+    <string name="options_pin">Change PIN</string>
+    <string name="options_pin2">Change your PIN</string>
+    <string name="options_password">Change password</string>
+    <string name="options_password2">Change your password</string>
+    <string name="options_unpair">Unpair device</string>
+    <string name="options_unpair2">Unpair this device to import a different wallet</string>
+    <string name="id_copied">Identifier copied to clipboard</string>
+
+    <string name="enable_geo">Enable either GPS or any other location service to find current location. Click OK to go to location services settings to let you do so.</string>
+
+    <string name="ok">Ok</string>
+    <string name="cancel">Cancel</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+
+    <string name="no_merchants_in_range">There are no Bitcoin businesses within range for listing.</string>
+    <string name="merchant_info">Merchant Info</string>
+    <string name="directions">Directions</string>
+    <string name="call">Call</string>
+
+    <string name="validating">Validating...</string>
+    
+    <string name="value_then">Value then</string>
+    <string name="value_now">Value now</string>
+    <string name="tx_note">Transaction note</string>
+    <string name="confirmations">Confirmations</string>
+    <string name="amount_sent">Amount sent</string>
+    <string name="amount_received">Amount received</string>
+    <string name="SENT">SENT</string>
+    <string name="RECEIVED">RECEIVED</string>
+    <string name="tx_fee">Transaction fee</string>
+    <string name="tx_hash">Transaction hash</string>
+    <string name="hash_copied">Hash copied to clipboard</string>
+    <string name="downloading_tx">Downloading transaction info</string>
+
+    <string name="select_currency">Select currency</string>
+    
+    <string name="ENABLED">ENABLED</string>
+    <string name="DISABLED">DISABLED</string>
+    <string name="addresses_active">Active</string>
+    <string name="addresses_archived">Archived</string>
+    <string name="addresses_contacts">Contacts</string>
+
+    <string name="send">Send</string>
+    <string name="advanced_send">Advanced:</string>
+    <string name="transaction_completed">Transaction completed</string>
+
+    <string name="TO">TO</string>
+    <string name="FROM">FROM</string>
+    <string name="view_in_browser">View in web browser</string>
+
+    <string name="my_contacts">My Contacts</string>
+    <string name="phone_contacts">Phone Contacts</string>
+    <string name="my_addresses">My Addresses</string>
+
+    <string name="YESTERDAY">YESTERDAY</string>
+    <string name="TODAY">TODAY</string>
+    
 </resources>

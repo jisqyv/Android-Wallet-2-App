@@ -151,13 +151,13 @@ public class TxActivity extends Activity	{
         tvValueThenValue.setTextColor(0xFF949ea3);
         tvValueNowValue = (TextView)findViewById(R.id.value_now_value);
         tvValueNowValue.setTextColor(0xFF949ea3);
-        tvValueThenLabel.setText("Value Then");
-        tvValueNowLabel.setText("Value Now");
+        tvValueThenLabel.setText(R.string.value_then);
+        tvValueNowLabel.setText(R.string.value_now);
         setValueThenAndNow(remoteWallet, strTxHash);
 
         tvNoteLabel = (TextView)findViewById(R.id.tx_note_label);
         tvValueNote = (TextView)findViewById(R.id.tx_note_value);
-        tvNoteLabel.setText("Transaction Note");
+        tvNoteLabel.setText(R.string.tx_note);
         tvValueNote.setText(remoteWallet.getTxNote(strTxHash));
         txNoteRowLayout = (LinearLayout)findViewById(R.id.txNoteRowLayout);
         txNoteRowLayout.setOnClickListener(new View.OnClickListener() {
@@ -170,17 +170,17 @@ public class TxActivity extends Activity	{
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         tvTS.setText(sdf.format(new Date(ts * 1000)));
         
-        tvLabelConfirmations.setText("Confirmations");
+        tvLabelConfirmations.setText(R.string.confirmations);
         if(isSending)	{
-            tvLabelAmount.setText("Amount sent");
-            tvResult.setText("SENT " + strResult + " BTC");
+            tvLabelAmount.setText(R.string.amount_sent);
+            tvResult.setText(this.getString(R.string.SENT) + " " + strResult + " BTC");
             tvResult.setBackgroundResource(R.drawable.rounded_view_red);
             tvTS.setTextColor(getResources().getColor(R.color.blockchain_red));
             tvTo.setTextColor(getResources().getColor(R.color.blockchain_red));
         }
         else	{
-            tvLabelAmount.setText("Amount received");
-            tvResult.setText("RECEIVED " + strResult + " BTC");
+            tvLabelAmount.setText(R.string.amount_received);
+            tvResult.setText(this.getString(R.string.RECEIVED) + " " + strResult + " BTC");
             tvResult.setBackgroundResource(R.drawable.rounded_view_green);
             tvTo.setTextColor(getResources().getColor(R.color.blockchain_green));
             tvTS.setTextColor(getResources().getColor(R.color.blockchain_green));
@@ -191,10 +191,10 @@ public class TxActivity extends Activity	{
             public void onClick(View v) {
             	if(!isHistorical) {
                     if(isSending)	{
-                		tvResult.setText("SENT " + strFiat + " " + strCurrency);
+                		tvResult.setText(TxActivity.this.getString(R.string.SENT) + " " + strFiat + " " + strCurrency);
                     }
                     else	{
-                		tvResult.setText("RECEIVED " + strFiat + " " + strCurrency);
+                		tvResult.setText(TxActivity.this.getString(R.string.RECEIVED) + " " + strFiat + " " + strCurrency);
                     }
 
                     for (TextView key : txAmounts.keySet()) {
@@ -204,10 +204,10 @@ public class TxActivity extends Activity	{
             	}
             	else {
                     if(isSending)	{
-                		tvResult.setText("SENT " + strResult + " BTC");
+                		tvResult.setText(TxActivity.this.getString(R.string.SENT) + " " + strResult + " BTC");
                     }
                     else	{
-                		tvResult.setText("RECEIVED " + strResult + " BTC");
+                		tvResult.setText(TxActivity.this.getString(R.string.RECEIVED) + " " + strResult + " BTC");
                     }
 
                     for (TextView key : txAmounts.keySet()) {
@@ -217,8 +217,8 @@ public class TxActivity extends Activity	{
             	}
             }
         });
-        tvLabelFee.setText("Transaction fee");
-        tvLabelTx.setText("Transaction hash");
+        tvLabelFee.setText(R.string.tx_fee);
+        tvLabelTx.setText(R.string.tx_hash);
 
         tvValueConfirmations.setText("");
         tvValueAmount.setText(strResult + " BTC");
@@ -232,7 +232,7 @@ public class TxActivity extends Activity	{
       			android.content.ClipboardManager clipboard = (android.content.ClipboardManager)TxActivity.this.getSystemService(android.content.Context.CLIPBOARD_SERVICE);
       		    android.content.ClipData clip = android.content.ClipData.newPlainText("Hash", strTxHash);
       		    clipboard.setPrimaryClip(clip);
-     			Toast.makeText(TxActivity.this, "Hash copied to clipboard", Toast.LENGTH_LONG).show();
+     			Toast.makeText(TxActivity.this, R.string.hash_copied, Toast.LENGTH_LONG).show();
 
                 return false;
             }
@@ -241,8 +241,8 @@ public class TxActivity extends Activity	{
     	progress = new ProgressDialog(this);
     	progress.setCancelable(true);
     	progress.setIndeterminate(true);
-    	progress.setTitle("Downloading transaction info");
-    	progress.setMessage("Please wait");
+    	progress.setTitle(R.string.downloading_tx);
+    	progress.setMessage(this.getText(R.string.please_wait));
     	progress.show();
 		
     	setValueHistorical(remoteWallet, strTxHash);
@@ -643,7 +643,7 @@ public class TxActivity extends Activity	{
 						          			android.content.ClipboardManager clipboard = (android.content.ClipboardManager)TxActivity.this.getSystemService(android.content.Context.CLIPBOARD_SERVICE);
 						          		    android.content.ClipData clip = android.content.ClipData.newPlainText("Address", addr);
 						          		    clipboard.setPrimaryClip(clip);
-						         			Toast.makeText(TxActivity.this, "Address copied to clipboard", Toast.LENGTH_LONG).show();
+						         			Toast.makeText(TxActivity.this, R.string.address_copied_clipboard, Toast.LENGTH_LONG).show();
 						        	    }
 						        	});
 						        	if(labels.get(addr) == null) {
@@ -659,7 +659,7 @@ public class TxActivity extends Activity	{
 						          			android.content.ClipboardManager clipboard = (android.content.ClipboardManager)TxActivity.this.getSystemService(android.content.Context.CLIPBOARD_SERVICE);
 						          		    android.content.ClipData clip = android.content.ClipData.newPlainText("Address", addr);
 						          		    clipboard.setPrimaryClip(clip);
-						         			Toast.makeText(TxActivity.this, "Address copied to clipboard", Toast.LENGTH_LONG).show();
+						         			Toast.makeText(TxActivity.this, R.string.address_copied_clipboard, Toast.LENGTH_LONG).show();
 						        	    }
 						        	});
 						        	if(labels.get(addr) == null) {
@@ -737,7 +737,7 @@ public class TxActivity extends Activity	{
 						      			android.content.ClipboardManager clipboard = (android.content.ClipboardManager)TxActivity.this.getSystemService(android.content.Context.CLIPBOARD_SERVICE);
 						      		    android.content.ClipData clip = android.content.ClipData.newPlainText("Address", addr);
 						      		    clipboard.setPrimaryClip(clip);
-						     			Toast.makeText(TxActivity.this, "Address copied to clipboard", Toast.LENGTH_LONG).show();
+						     			Toast.makeText(TxActivity.this, R.string.address_copied_clipboard, Toast.LENGTH_LONG).show();
 						    	    }
 						    	});
 						    	if(labels.get(addr) == null) {
@@ -753,7 +753,7 @@ public class TxActivity extends Activity	{
 						      			android.content.ClipboardManager clipboard = (android.content.ClipboardManager)TxActivity.this.getSystemService(android.content.Context.CLIPBOARD_SERVICE);
 						      		    android.content.ClipData clip = android.content.ClipData.newPlainText("Address", addr);
 						      		    clipboard.setPrimaryClip(clip);
-						     			Toast.makeText(TxActivity.this, "Address copied to clipboard", Toast.LENGTH_LONG).show();
+						     			Toast.makeText(TxActivity.this, R.string.address_copied_clipboard, Toast.LENGTH_LONG).show();
 						    	    }
 						    	});
 						    	if(labels.get(addr) == null) {

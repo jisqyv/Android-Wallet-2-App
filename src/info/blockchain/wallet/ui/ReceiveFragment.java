@@ -366,7 +366,7 @@ public class ReceiveFragment extends Fragment   {
 //		        		Log.d("currentSelectedAddress", "currentSelectedAddress " + currentSelectedAddress);
 			            ivReceivingQR.setImageBitmap(generateQRCode(BitcoinURI.convertToBitcoinURI(currentSelectedAddress, BigInteger.valueOf(btcValue), "", "")));		        		
 		        	} else {
-						Toast.makeText(getActivity(), "Include a valid Bitcoin receiving address", Toast.LENGTH_LONG).show();
+						Toast.makeText(getActivity(), R.string.include_valid_BTC_address_receive, Toast.LENGTH_LONG).show();
 						clearReceive();
 		        		return false;
 		        	}
@@ -532,7 +532,7 @@ public class ReceiveFragment extends Fragment   {
 
 		        	if(labels.get(edAddress.getText().toString()) == null) {
 	 		            if(!BitcoinAddressCheck.isValidAddress(edAddress.getText().toString())) {
-							Toast.makeText(getActivity(), edAddress.getText().toString() + " is not a valid Bitcoin address", Toast.LENGTH_LONG).show();
+							Toast.makeText(getActivity(), edAddress.getText().toString() + " " + getActivity().getResources().getString(R.string.is_not_valid_BTC_address), Toast.LENGTH_LONG).show();
 	 		            	return false;
 	 		            }
 		        	}
@@ -1022,8 +1022,7 @@ public class ReceiveFragment extends Fragment   {
                 	edAddress.setText("");
                 	
                    	final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                    final String message = "You do not yet have any sending addresses in your addressbook. "
-                        + " Would you like to create one?";
+                    final String message = getActivity().getResources().getString(R.string.no_sending_addresses);
                     builder.setMessage(message)
                         .setPositiveButton("Yes",
                             new DialogInterface.OnClickListener() {

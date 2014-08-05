@@ -1,5 +1,6 @@
 package info.blockchain.wallet.ui;
 
+import piuk.blockchain.android.R;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -15,19 +16,17 @@ public class EnableGeo {
         
     	final String action = Settings.ACTION_LOCATION_SOURCE_SETTINGS;
     
-        final String message = "Enable either GPS or any other location"
-            + " service to find current location.  Click OK to go to"
-            + " location services settings to let you do so.";
+        final String message = activity.getString(R.string.enable_geo);
  
         builder.setMessage(message)
-            .setPositiveButton("OK",
+            .setPositiveButton(R.string.ok,
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface d, int id) {
                         activity.startActivity(new Intent(action));
                         d.dismiss();
                     }
             })
-            .setNegativeButton("Cancel",
+            .setNegativeButton(R.string.cancel,
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface d, int id) {
                         d.cancel();

@@ -189,7 +189,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         refresh_icon.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-				Toast.makeText(MainActivity.this, "Refreshing...", Toast.LENGTH_LONG).show();
+				Toast.makeText(MainActivity.this, R.string.refreshing, Toast.LENGTH_LONG).show();
 //        		application.checkIfWalletHasUpdatedAndFetchTransactions(application.getRemoteWallet().getTemporyPassword());
         		
         		try {
@@ -433,7 +433,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 			    LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
         	}
 			else {
-				Toast.makeText(this, "Invalid address", Toast.LENGTH_LONG).show();
+				Toast.makeText(this, R.string.invalid_bitcoin_address, Toast.LENGTH_LONG).show();
 			}
 
         }

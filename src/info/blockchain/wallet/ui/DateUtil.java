@@ -4,16 +4,22 @@ import java.util.Date;
 import java.util.Calendar;
 import java.text.SimpleDateFormat;
 
+import piuk.blockchain.android.R;
+
+import android.content.Context;
+
 public class DateUtil {
 	
 	private static DateUtil instance = null;
 	private static Date now = null;
+	private static Context context = null;
 
 	private DateUtil() { ; }
 
-	public static DateUtil getInstance() {
+	public static DateUtil getInstance(Context ctx) {
 		
 		now = new Date();
+		context = ctx;
 		
 		if(instance == null) {
 			instance = new DateUtil();
@@ -41,11 +47,11 @@ public class DateUtil {
 		if(now - date < hours24) {
 			if(thenDay < nowDay) {
 				SimpleDateFormat sd = new SimpleDateFormat("HH:mm");
-				ret = "YESTERDAY @ " + sd.format(date * 1000L);
+				ret = context.getString(R.string.YESTERDAY) + " @ " + sd.format(date * 1000L);
 			}
 			else {
 				SimpleDateFormat sd = new SimpleDateFormat("HH:mm");
-				ret = "TODAY @ " + sd.format(date * 1000L);
+				ret = context.getString(R.string.TODAY) + " @ " + sd.format(date * 1000L);
 			}
 		}
 		// within 48h

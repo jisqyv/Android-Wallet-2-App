@@ -58,7 +58,7 @@
     			android:textSize="12sp"
     			android:textColor="#FFffffff"
         		android:gravity="center_horizontal|center_vertical"
-        		android:text="My Contacts"
+        		android:text="@string/my_contacts"
     			/>
     		</LinearLayout>
 
@@ -79,7 +79,7 @@
     			android:textSize="12sp"
     			android:textColor="#FF000000"
         		android:gravity="center_horizontal|center_vertical"
-        		android:text="My Addresses"
+        		android:text="@string/my_addresses"
     			/>
     		</LinearLayout>
 	    		    	
@@ -100,7 +100,7 @@
     			android:textSize="12sp"
     			android:textColor="#FF000000"
         		android:gravity="center_horizontal|center_vertical"
-        		android:text="Phone Contacts"
+        		android:text="@string/phone_contacts"
     			/>
     		</LinearLayout>
 

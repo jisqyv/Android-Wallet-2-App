@@ -67,7 +67,7 @@ public class ListActivity extends Activity {
             	final BTCBusiness b = businesses.get(position);
 
      			AlertDialog.Builder alert = new AlertDialog.Builder(ListActivity.this);
-                alert.setTitle("Merchant Info");
+                alert.setTitle(R.string.merchant_info);
                 /*
                 alert.setMessage("Correct Answer: "
                         + scoreMode.getCorrectAnswer() + "\n"
@@ -76,7 +76,7 @@ public class ListActivity extends Activity {
                         + scoreMode.getScorePoint() + "\n"
                         + "Bonus Score: " + scoreMode.getBonusPoint());
                 */
-                alert.setPositiveButton("Directions",
+                alert.setPositiveButton(R.string.directions,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface arg0, int arg1) {
                      			Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -89,7 +89,7 @@ public class ListActivity extends Activity {
                             }
                         });
                 if(b.tel != null) {
-                    alert.setNeutralButton("Call",
+                    alert.setNeutralButton(R.string.call,
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface arg0, int arg1) {
                                 	Intent intent = new Intent(Intent.ACTION_DIAL);

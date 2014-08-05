@@ -710,7 +710,7 @@ public class BalanceFragment extends Fragment   {
       			android.content.ClipboardManager clipboard = (android.content.ClipboardManager)getActivity().getSystemService(android.content.Context.CLIPBOARD_SERVICE);
       		    android.content.ClipData clip = android.content.ClipData.newPlainText("Address", address);
       		    clipboard.setPrimaryClip(clip);
-     			Toast.makeText(getActivity(), "Address copied to clipboard", Toast.LENGTH_LONG).show();
+     			Toast.makeText(getActivity(), R.string.address_copied_clipboard, Toast.LENGTH_LONG).show();
 
                 Intent intent;
         		intent = new Intent(getActivity(), QRActivity.class);
@@ -933,7 +933,7 @@ public class BalanceFragment extends Fragment   {
 
         ((TextView)child.findViewById(R.id.ts)).setTypeface(TypefaceUtil.getInstance(getActivity()).getGravityBoldTypeface());
         
-        ((TextView)child.findViewById(R.id.ts)).setText(DateUtil.getInstance().formatted(transaction.getTime().getTime() / 1000));
+        ((TextView)child.findViewById(R.id.ts)).setText(DateUtil.getInstance(getActivity()).formatted(transaction.getTime().getTime() / 1000));
 
         if (isSending) {
 	        TxBitmap txBitmap = new TxBitmap(getActivity(), addressValueEntryList);
@@ -996,7 +996,7 @@ public class BalanceFragment extends Fragment   {
     }
     
     public boolean refreshPayload() {
-		Toast.makeText(getActivity(), "Refreshing...", Toast.LENGTH_LONG).show();
+		Toast.makeText(getActivity(), R.string.refreshing, Toast.LENGTH_LONG).show();
 
 		try {
     		WalletUtil.getRefreshedInstance(getActivity()).getWalletApplication().doMultiAddr(false, null);

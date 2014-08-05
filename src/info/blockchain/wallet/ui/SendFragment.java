@@ -902,7 +902,7 @@ public class SendFragment extends Fragment   {
 		        if(actionId == EditorInfo.IME_ACTION_DONE) {
 
 		        	if(edAddress.getText().toString() == null || edAddress.getText().toString().length() < 1) {
-						Toast.makeText(getActivity(), "Include a Bitcoin sending address", Toast.LENGTH_LONG).show();
+						Toast.makeText(getActivity(), R.string.include_BTC_address, Toast.LENGTH_LONG).show();
 		        		return false;
 		        	}
 		        	
@@ -1115,7 +1115,7 @@ public class SendFragment extends Fragment   {
 	                
 		        	if(labels.get(edAddress.getText().toString()) == null) {
 	 		            if(!BitcoinAddressCheck.isValidAddress(edAddress.getText().toString())) {
-							Toast.makeText(getActivity(), edAddress.getText().toString() + " is not a valid Bitcoin address", Toast.LENGTH_LONG).show();
+							Toast.makeText(getActivity(), edAddress.getText().toString() + " " + getActivity().getResources().getString(R.string.is_not_valid_BTC_address), Toast.LENGTH_LONG).show();
 	 		            	return false;
 	 		            }
 		        	}
@@ -1538,8 +1538,8 @@ public class SendFragment extends Fragment   {
 		                    		final String name = strName;
 
 		                			new AlertDialog.Builder(getActivity())
-		                            .setIcon(R.drawable.ic_launcher).setTitle("Send Bitcoins to a Friend")
-		                            .setMessage("Send Bitcoins to " + strName + " via which method?")
+		                            .setIcon(R.drawable.ic_launcher).setTitle(R.string.send2friend)
+		                            .setMessage(getActivity().getResources().getString(R.string.send2_1) + " " + strName + " " + getActivity().getResources().getString(R.string.send2_2))
 		                            .setPositiveButton(em, new DialogInterface.OnClickListener() {
 //		                              @Override
 		                              public void onClick(DialogInterface dialog, int which) {
@@ -1608,7 +1608,7 @@ public class SendFragment extends Fragment   {
 		                    	else
 		                    	{
 		                    		// this will be replaced by proper model dialog by Bill w/ official text
-		                    		Toast.makeText(getActivity(), "To use this service select a contact with an email address or a mobile phone number. Thank you.", Toast.LENGTH_SHORT).show();
+		                    		Toast.makeText(getActivity(), R.string.to_use_send2friend, Toast.LENGTH_SHORT).show();
 		                    	}
 
 	                    	//
@@ -2008,8 +2008,7 @@ public class SendFragment extends Fragment   {
                 	edAddress.setText("");
                 	
                    	final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                    final String message = "You do not yet have any sending addresses in your addressbook. "
-                        + " Would you like to create one?";
+                    final String message = getActivity().getResources().getString(R.string.no_sending_addresses);
                     builder.setMessage(message)
                         .setPositiveButton("Yes",
                             new DialogInterface.OnClickListener() {
@@ -2682,7 +2681,7 @@ public class SendFragment extends Fragment   {
 		//
 		//
 		if(total_amount.compareTo(entered_amount) != 0) {
-    		Toast.makeText(getActivity(), "The sum of the amounts for all sending addresses must be equal to the amount specified on the top of the screen.", Toast.LENGTH_LONG).show();
+    		Toast.makeText(getActivity(), R.string.sum_must_be_same, Toast.LENGTH_LONG).show();
 			return false;
 		}
 		else {
@@ -2889,7 +2888,7 @@ public class SendFragment extends Fragment   {
             
         }
         else {
-    		Toast.makeText(getActivity(), "not processed", Toast.LENGTH_SHORT).show();
+    		Toast.makeText(getActivity(), R.string.not_processed, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -2992,14 +2991,14 @@ public class SendFragment extends Fragment   {
 									e.printStackTrace();
 
 									//longToast("Error Decrypting Private Key");
-									Toast.makeText(application, "Error Decrypting Private Key", Toast.LENGTH_LONG).show();
+									Toast.makeText(application, R.string.error_decrypt_private_key, Toast.LENGTH_LONG).show();
 									//updateSendCoinsFragment(contents, null);
 								}
 							}
 
 							public void onFail() {
 								//updateSendCoinsFragment(contents, null);
-								Toast.makeText(application, "Incorrect password", Toast.LENGTH_LONG).show();
+								Toast.makeText(application, R.string.password_incorrect, Toast.LENGTH_LONG).show();
 							}
 						}, RequestPasswordDialog.PasswordTypePrivateKey);
 					}
@@ -3017,7 +3016,7 @@ public class SendFragment extends Fragment   {
 				} else {
 					//Success
 					SendFragment.temporaryPrivateKeys.put(SendFragment.scanPrivateKeyAddress, key);
-					Toast.makeText(application, "Success. Private key temporary imported", Toast.LENGTH_LONG).show();
+					Toast.makeText(application, R.string.scanned_private_key, Toast.LENGTH_LONG).show();
 				}
 
 				synchronized (SendFragment.temporaryPrivateKeys) {

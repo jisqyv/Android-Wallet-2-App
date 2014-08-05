@@ -1,5 +1,6 @@
 package info.blockchain.wallet.ui;
  
+import piuk.blockchain.android.R;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.widget.Toast;
@@ -32,8 +33,8 @@ public class ProgressUtil {
 			progressDialog = new ProgressDialog(context);
 			progressDialog.setCancelable(true);
 			progressDialog.setIndeterminate(true);
-			progressDialog.setTitle("Validating...");
-			progressDialog.setMessage("Please wait");
+			progressDialog.setTitle(R.string.validating);
+			progressDialog.setMessage(context.getString(R.string.please_wait));
 			progressDialog.show();
 		}
 	}
@@ -42,8 +43,8 @@ public class ProgressUtil {
 		progressDialog = new ProgressDialog(context);
 		progressDialog.setCancelable(true);
 		progressDialog.setIndeterminate(true);
-		progressDialog.setTitle("Validating...");
-		progressDialog.setMessage("Please wait");
+		progressDialog.setTitle(R.string.validating);
+		progressDialog.setMessage(context.getString(R.string.please_wait));
 		progressDialog.show();
 	}
 

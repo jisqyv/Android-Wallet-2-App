@@ -653,7 +653,7 @@ public class MapActivity extends Activity implements LocationListener	{
     		startActivity(intent);
     	}
     	else {
- 			Toast.makeText(MapActivity.this, "There are no Bitcoin businesses within range for listing.", Toast.LENGTH_LONG).show();
+ 			Toast.makeText(MapActivity.this, R.string.no_merchants_in_range, Toast.LENGTH_LONG).show();
     	}
     }
 

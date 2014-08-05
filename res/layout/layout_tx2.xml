@@ -22,7 +22,7 @@
 		    		android:layout_gravity="right|center_vertical"
     				android:textSize="14sp"
     				android:textColor="@color/blockchain_green"
-    				android:text="FROM"
+    				android:text="@string/FROM"
     				/>
     			    
     			</LinearLayout>

@@ -57,7 +57,7 @@ public class SettingsActivity extends PreferenceActivity {
           			android.content.ClipboardManager clipboard = (android.content.ClipboardManager)SettingsActivity.this.getSystemService(android.content.Context.CLIPBOARD_SERVICE);
           		    android.content.ClipData clip = android.content.ClipData.newPlainText("Blockchain identifier", guid);
           		    clipboard.setPrimaryClip(clip);
-         			Toast.makeText(SettingsActivity.this, "Identifier copied to clipboard", Toast.LENGTH_LONG).show();
+         			Toast.makeText(SettingsActivity.this, R.string.id_copied, Toast.LENGTH_LONG).show();
 
         			return true;
         		}
