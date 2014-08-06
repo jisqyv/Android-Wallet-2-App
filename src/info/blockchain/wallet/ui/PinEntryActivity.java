@@ -4,6 +4,7 @@ import java.io.DataOutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.SecureRandom;
+import java.util.HashMap;
 
 import piuk.blockchain.android.Constants;
 import piuk.blockchain.android.MyRemoteWallet;
@@ -26,6 +27,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
@@ -89,7 +91,7 @@ public class PinEntryActivity extends FragmentActivity {
 	private static final String WebROOT = "https://" + Constants.BLOCKCHAIN_DOMAIN + "/pin-store";
 	public static final int PBKDF2Iterations = 2000;
 	
-//	public static String strUri = null;
+	public String strUri = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -109,49 +111,38 @@ public class PinEntryActivity extends FragmentActivity {
 		}
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-		/*
-		Intent intent2 = getIntent();
-	    String action = intent2.getAction();
-//		Toast.makeText(this, action, Toast.LENGTH_LONG).show();
-	    String scheme = intent2.getScheme();
-//		Toast.makeText(this, scheme, Toast.LENGTH_LONG).show();
-		if(intent2 != null && action != null && Intent.ACTION_VIEW.equals(action) && scheme.equals("bitcoin")) {
-			strUri = intent2.getData().toString();
-//			Toast.makeText(this, strUri, Toast.LENGTH_LONG).show();
+	    String action = getIntent().getAction();
+	    String scheme = getIntent().getScheme();
+		if(action != null && Intent.ACTION_VIEW.equals(action) && scheme.equals("bitcoin")) {
+			strUri = getIntent().getData().toString();
 	    }
-	    */
 		
 		Bundle extras = getIntent().getExtras();
 		if(extras != null)	{
 			if(extras.getString("N") != null && extras.getString("N").equals("1"))	{
 				validating = false;
 				creating = true;
-				((TextView)findViewById(R.id.titleBox)).setText("Please create your 4-digit pin");
-				Toast.makeText(this, "Please create your 4-digit pin", Toast.LENGTH_LONG).show();
+				((TextView)findViewById(R.id.titleBox)).setText(R.string.create_pin);
+				Toast.makeText(this, R.string.create_pin, Toast.LENGTH_LONG).show();
 			}
 			else if(extras.getString("N") != null && extras.getString("N").length() == 4)	{
 				validating = false;
 				creating = true;
 				userInput = extras.getString("N");
-				((TextView)findViewById(R.id.titleBox)).setText("Please confirm your 4-digit pin");
-				Toast.makeText(this, "Please confirm your 4-digit pin", Toast.LENGTH_LONG).show();
+				((TextView)findViewById(R.id.titleBox)).setText(R.string.confirm_pin);
+				Toast.makeText(this, R.string.confirm_pin, Toast.LENGTH_LONG).show();
 			}
 			else if(extras.getString("S") != null && extras.getString("S").equals("1"))	{
 				validating = false;
-				((TextView)findViewById(R.id.titleBox)).setText("Please create your 4-digit pin");
-				Toast.makeText(this, "Please create your 4-digit pin", Toast.LENGTH_LONG).show();
+				((TextView)findViewById(R.id.titleBox)).setText(R.string.create_pin);
+				Toast.makeText(this, R.string.create_pin, Toast.LENGTH_LONG).show();
 			}
 			else if(extras.getString("S") != null && extras.getString("S").length() == 4)	{
 				validating = false;
 				userInput = extras.getString("S");
-				((TextView)findViewById(R.id.titleBox)).setText("Please confirm your 4-digit pin");
-				Toast.makeText(this, "Please confirm your 4-digit pin", Toast.LENGTH_LONG).show();
+				((TextView)findViewById(R.id.titleBox)).setText(R.string.confirm_pin);
+				Toast.makeText(this, R.string.confirm_pin, Toast.LENGTH_LONG).show();
 			}
-			/*
-			else if(extras.getString("INTENT_URI") != null)	{
-				strUri = extras.getString("INTENT_URI");
-			}
-			*/
 			else {
 				validating = true;
 			}
@@ -287,7 +278,6 @@ public class PinEntryActivity extends FragmentActivity {
 
 										}
 									}).start();
-
 
 								}
 								else	{
@@ -769,11 +759,9 @@ public class PinEntryActivity extends FragmentActivity {
 										intent.putExtra("navigateTo", navigateTo);   
 										intent.putExtra("verified", true);
 										intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-										/*
 										if(strUri != null) {
 										    intent.putExtra("INTENT_URI", strUri);
 										}
-										*/
 										startActivity(intent);
 
 									}

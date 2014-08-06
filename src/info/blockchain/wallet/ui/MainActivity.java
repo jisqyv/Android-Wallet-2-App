@@ -3,11 +3,6 @@ package info.blockchain.wallet.ui;
 import java.util.Locale;
 import java.math.BigInteger;
 
-import net.sourceforge.zbar.Symbol;
-
-import com.dm.zbar.android.scanner.ZBarConstants;
-import com.dm.zbar.android.scanner.ZBarScannerActivity;
-
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.Activity;
@@ -39,8 +34,6 @@ import android.widget.LinearLayout;
 import android.view.View.OnTouchListener;
 import android.widget.ImageView;
 import android.support.v4.content.LocalBroadcastManager;
-//import android.location.Location;
-//import android.location.LocationListener;
 import android.widget.Toast;
 //import android.util.Log;
 
@@ -49,12 +42,11 @@ import piuk.blockchain.android.R;
 //import piuk.blockchain.android.SharedCoin;
 import piuk.blockchain.android.WalletApplication;
 //import piuk.blockchain.android.SuccessCallback;
-/*
-import net.hockeyapp.android.CrashManager;
-import net.hockeyapp.android.FeedbackManager;
-import net.hockeyapp.android.Tracking;
-import net.hockeyapp.android.UpdateManager;
-*/
+
+import net.sourceforge.zbar.Symbol;
+
+import com.dm.zbar.android.scanner.ZBarConstants;
+import com.dm.zbar.android.scanner.ZBarScannerActivity;
 
 @SuppressLint("NewApi")
 public class MainActivity extends FragmentActivity implements ActionBar.TabListener, SendFragment.OnCompleteListener {
@@ -81,6 +73,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 	
 	public static final String INTENT_EXTRA_ADDRESS = "address";
 
+	private String strUri = null;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -94,13 +88,11 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         boolean isFirst = false;
         boolean isSecured = false;
         boolean isDismissed = false;
-//        String strUri = null;
         Bundle extras = getIntent().getExtras();
         if(extras != null)	{
         	isFirst = extras.getBoolean("first");
         	isDismissed = extras.getBoolean("dismissed");
-//        	strUri = extras.getString("INTENT_URI");
-//			Toast.makeText(MainActivity.this, strUri, Toast.LENGTH_LONG).show();
+        	strUri = extras.getString("INTENT_URI");
         }
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -190,8 +182,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
             @Override
             public boolean onTouch(View v, MotionEvent event) {
 				Toast.makeText(MainActivity.this, R.string.refreshing, Toast.LENGTH_LONG).show();
-//        		application.checkIfWalletHasUpdatedAndFetchTransactions(application.getRemoteWallet().getTemporyPassword());
-        		
         		try {
             		WalletUtil.getInstance(MainActivity.this).getWalletApplication().doMultiAddr(false, null);
         		}
@@ -252,11 +242,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         
         BlockchainUtil.getInstance(this);
 
-        /*
-		if (application.getRemoteWallet() != null) {
-			application.checkIfWalletHasUpdatedAndFetchTransactions(application.getRemoteWallet().getTemporyPassword());
-		}
-		*/
 /*	
 		application.sharedCoinGetInfo(new SuccessCallback() {
 
@@ -299,33 +284,28 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 		});            	
 //*/
 
-//		checkForCrashes();
-//	    checkForUpdates();
-
-		/*
-    	if(strUri != null) {
-			Intent intent2 = new Intent("info.blockchain.wallet.ui.SendFragment.BTC_ADDRESS_SCAN");
-		    intent2.putExtra("BTC_ADDRESS", strUri);
-		    LocalBroadcastManager.getInstance(this).sendBroadcast(intent2);
-    	}
-    	*/
-
 	}
-
-/*
-	public void showFeedbackActivity() {
-		  FeedbackManager.register(this, getHockeyAppID(), null);
-		  FeedbackManager.showFeedbackActivity(this);
-	}
-
-	public String getHockeyAppID() {
-		return "44b8c28075f744024dd98e3774bef41f";
-	}
-*/	
 
 	@Override
 	public void onComplete() {
-		handleNavigateTo();		
+		handleNavigateTo();
+		
+        if(strUri != null)	{
+//			Toast.makeText(MainActivity.this, strUri, Toast.LENGTH_LONG).show();
+			Intent intent = new Intent("info.blockchain.wallet.ui.SendFragment.BTC_ADDRESS_SCAN");
+		    intent.putExtra("BTC_ADDRESS", strUri);
+		    LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+		    intent = null;
+		    strUri = null;
+//        	viewPager.setCurrentItem(0, true);
+		    new android.os.Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    viewPager.setCurrentItem(0, true);
+                }
+            }, 1000);
+        }
+
 	}
 
 	void handleNavigateTo() {
@@ -341,16 +321,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 			}
 		}
 	}
-/*	 
-	private void checkForCrashes() {
-		CrashManager.register(this, getHockeyAppID());
-	}
 
-	private void checkForUpdates() {
-		// Remove this for store builds!
-		UpdateManager.register(this, getHockeyAppID());
-	}	
-*/	 
 	@Override
 	protected void onPause() {
 //		Tracking.stopUsage(this);                 

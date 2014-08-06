@@ -532,5 +532,8 @@
 
     <string name="YESTERDAY">YESTERDAY</string>
     <string name="TODAY">TODAY</string>
+
+    <string name="create_pin">Please create your 4-digit pin</string>
+    <string name="confirm_pin">Please confirm your 4-digit pin</string>
     
 </resources>
