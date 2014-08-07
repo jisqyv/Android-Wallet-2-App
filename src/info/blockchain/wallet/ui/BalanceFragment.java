@@ -658,7 +658,7 @@ public class BalanceFragment extends Fragment   {
 	        ((TextView)view.findViewById(R.id.amount)).setText(amount);
 	        ((TextView)view.findViewById(R.id.currency_code)).setText(isBTC ? "BTC" : strCurrentFiatCode);
 
-	        if(addressLabelTxsDisplayed[position]) {
+	        if(addressLabelTxsDisplayed != null && position < addressLabelTxsDisplayed.length && addressLabelTxsDisplayed[position]) {
 //				Log.d("List refresh sub", "" + position);
 		    	System.gc();
 		    	
@@ -669,7 +669,7 @@ public class BalanceFragment extends Fragment   {
 		        doDisplaySubList(view, position);
 	        }
 
-	        if(addressLabelTxsDisplayed[position]) {
+	        if(addressLabelTxsDisplayed != null && position < addressLabelTxsDisplayed.length && addressLabelTxsDisplayed[position]) {
 		        if (isWatchOnlys[position])
 			        ((ImageView)view.findViewById(R.id.address_type)).setImageResource(R.drawable.address_watch);
 		        else
