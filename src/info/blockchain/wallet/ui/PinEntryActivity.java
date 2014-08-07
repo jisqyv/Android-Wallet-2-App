@@ -12,7 +12,7 @@ import piuk.blockchain.android.MyWallet;
 import piuk.blockchain.android.WalletApplication;
 import piuk.blockchain.android.SuccessCallback;
 import piuk.blockchain.android.R;
-import piuk.blockchain.android.ui.dialogs.RequestPasswordDialog;
+import piuk.blockchain.android.ui.dialogs.RequestForgotPasswordDialog;
 import piuk.blockchain.android.util.WalletUtils;
 import info.blockchain.api.ExchangeRates;
 
@@ -969,7 +969,7 @@ public class PinEntryActivity extends FragmentActivity {
 	}
 	
 	public void requestPassword() {
-		RequestPasswordDialog.show(getSupportFragmentManager(), new SuccessCallback() {  
+		RequestForgotPasswordDialog.show(getSupportFragmentManager(), new SuccessCallback() {  
 			public void onSuccess() {
 				Toast.makeText(PinEntryActivity.this, R.string.password_correct, Toast.LENGTH_LONG).show();
 
@@ -987,7 +987,7 @@ public class PinEntryActivity extends FragmentActivity {
 				startActivity(intent);
 
 			}
-		}, RequestPasswordDialog.PasswordTypeMain);
+		});
 	}
 
 }
