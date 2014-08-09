@@ -104,7 +104,7 @@ public class BalanceFragment extends Fragment   {
 	private static int TX_ACTIVITY = 2;
 	
 	private boolean isNoRefreshOnReturn = false;
-	private Transaction sentTx = null;
+	private Transaction showTx = null;
 	private List<String> activeAddresses;
 
 	public static final String ACTION_INTENT = "info.blockchain.wallet.ui.BalanceFragment.REFRESH";
@@ -134,10 +134,10 @@ public class BalanceFragment extends Fragment   {
 
 		@Override
 		public void onCoinsSent(final Transaction tx, final long result) {
-			sentTx = tx;
+			showTx = tx;
 	        ((ViewPager)getActivity().findViewById(R.id.pager)).setCurrentItem(1);
 			setAdapterContent();
-			sentTx = null;
+			showTx = null;
 			
     		try {
         		WalletUtil.getInstance(getActivity()).getWalletApplication().doMultiAddr(false, null);
@@ -151,7 +151,18 @@ public class BalanceFragment extends Fragment   {
 
 		@Override
 		public void onCoinsReceived(final Transaction tx, final long result) {
+			showTx = tx;
+	        ((ViewPager)getActivity().findViewById(R.id.pager)).setCurrentItem(1);
 			setAdapterContent();
+			showTx = null;
+			
+    		try {
+        		WalletUtil.getInstance(getActivity()).getWalletApplication().doMultiAddr(false, null);
+    		}
+    		catch(Exception e) {
+        		Toast.makeText(getActivity(), e.toString(), Toast.LENGTH_SHORT).show();
+    		}
+
 			adapter.notifyDataSetChanged();
 		};
 
@@ -241,12 +252,17 @@ public class BalanceFragment extends Fragment   {
 		addressAmounts = new String[addressLabels.length];
 		isWatchOnlys = new boolean[addressLabels.length];
 		
+		if(TxNotifUtil.getInstance().getTx() != null) {
+			showTx = TxNotifUtil.getInstance().getTx();
+			TxNotifUtil.getInstance().clear();
+		}
+
    		if(!isNoRefreshOnReturn) {
    			
 			addressLabelTxsDisplayed = new boolean[addressLabels.length];
 
-			if(sentTx != null) {
-				List<String> addressesPartOfLastSentTransaction = getAddressesPartOfLastSentTransaction(sentTx, remoteWallet);
+			if(showTx != null) {
+				List<String> addressesPartOfLastSentTransaction = getAddressesPartOfLastSentTransaction(showTx, remoteWallet);
 				for (int i = 0; i < addressLabelTxsDisplayed.length; i++) {
 					if (addressesPartOfLastSentTransaction.contains(activeAddresses.get(i))) {
 						addressLabelTxsDisplayed[i] = true;
@@ -256,6 +272,8 @@ public class BalanceFragment extends Fragment   {
 					}
 				}
 				isNoRefreshOnReturn = true;
+				
+				showTx = null;
 			}
 			else {
 				for (int i = 0; i < addressLabelTxsDisplayed.length; i++) {
@@ -497,7 +515,7 @@ public class BalanceFragment extends Fragment   {
         balance_extLayout.setVisibility(View.GONE);
 
 		EventListeners.addEventListener(eventListener);
-		
+
         return rootView;
     }
 

@@ -17,6 +17,8 @@
 
 package piuk.blockchain.android.service;
 
+import info.blockchain.wallet.ui.TxNotifUtil;
+
 import java.math.BigInteger;
 import java.util.LinkedList;
 import java.util.List;
@@ -91,10 +93,10 @@ public class WebsocketService extends android.app.Service
 			System.out.println("onCoinsSent()");
 
 			try {
-				final MyTransactionOutput output = (MyTransactionOutput) tx.getOutputs().get(0);
-				final Address to = output.getToAddress();
+//				final MyTransactionOutput output = (MyTransactionOutput) tx.getOutputs().get(0);
+//				final Address to = output.getToAddress();
 
-				notifyCoinsSent(to, BigInteger.valueOf(result).abs());
+				notifyCoinsSent(tx, BigInteger.valueOf(result).abs());
 
 				notifyWidgets();
 			} catch (Exception e) {
@@ -119,7 +121,7 @@ public class WebsocketService extends android.app.Service
 					{
 						public void run()
 						{
-							notifyCoinsReceived(from, BigInteger.valueOf(result));
+							notifyCoinsReceived(tx, BigInteger.valueOf(result));
 
 							notifyWidgets();
 
@@ -132,9 +134,13 @@ public class WebsocketService extends android.app.Service
 		}
 	};
 
-	private void notifyCoinsSent(final Address to, final BigInteger amount)
+	private void notifyCoinsSent(final Transaction tx, final BigInteger amount)
 	{
 		System.out.println("Notify ");
+
+		final MyTransactionOutput output = (MyTransactionOutput) tx.getOutputs().get(0);
+		final Address to = output.getToAddress();
+		TxNotifUtil.getInstance().setTx(tx);
 
 		BigInteger notificationAccumulatedAmount = BigInteger.ZERO;
 
@@ -196,9 +202,13 @@ public class WebsocketService extends android.app.Service
 
 	}
 
-	private void notifyCoinsReceived(final Address from, final BigInteger amount)
+	private void notifyCoinsReceived(final Transaction tx, final BigInteger amount)
 	{
 		System.out.println("Notify ");
+		
+		final TransactionInput input = tx.getInputs().get(0);
+		final Address from = input.getFromAddress();
+		TxNotifUtil.getInstance().setTx(tx);
 
 		BigInteger notificationAccumulatedAmount = BigInteger.ZERO;
 

@@ -900,7 +900,10 @@ public class SendFragment extends Fragment   {
 		    @Override
 		    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 		        if(actionId == EditorInfo.IME_ACTION_DONE) {
+		        	
+		        	confirmSimpleSend();
 
+		        	/*
 		        	if(edAddress.getText().toString() == null || edAddress.getText().toString().length() < 1) {
 						Toast.makeText(getActivity(), R.string.include_BTC_address, Toast.LENGTH_LONG).show();
 		        		return false;
@@ -910,69 +913,69 @@ public class SendFragment extends Fragment   {
                         //doCustomSend();
 		            }
 
-			        	summary2.setVisibility(View.VISIBLE);
-			        	tvAddress.setVisibility(View.VISIBLE);
-			        	tvAddressBis.setVisibility(View.VISIBLE);
-			        	tvArrow.setVisibility(View.VISIBLE);
-			        	tvAmount.setVisibility(View.VISIBLE);
-			        	tvAmountBis.setVisibility(View.VISIBLE);
+		        	summary2.setVisibility(View.VISIBLE);
+		        	tvAddress.setVisibility(View.VISIBLE);
+		        	tvAddressBis.setVisibility(View.VISIBLE);
+		        	tvArrow.setVisibility(View.VISIBLE);
+		        	tvAmount.setVisibility(View.VISIBLE);
+		        	tvAmountBis.setVisibility(View.VISIBLE);
 
-			        	if(edAddress.getText().toString().length() > 15) {
-				        	tvAddress.setText(edAddress.getText().toString().substring(0, 15) + "...");
-			        	}
-			        	else {
-				        	tvAddress.setText(edAddress.getText().toString());
-			        	}
+		        	if(edAddress.getText().toString().length() > 15) {
+			        	tvAddress.setText(edAddress.getText().toString().substring(0, 15) + "...");
+		        	}
+		        	else {
+			        	tvAddress.setText(edAddress.getText().toString());
+		        	}
 
-	 		            if(currentSelectedAddress != null) {
-	 		            	tvAddressBis.setText(currentSelectedAddress.substring(0, 20) + "...");
-	 		            }
-	 		            else {
-	 		            	tvAddressBis.setVisibility(View.GONE);
-	 		            }
+ 		            if(currentSelectedAddress != null) {
+ 		            	tvAddressBis.setText(currentSelectedAddress.substring(0, 20) + "...");
+ 		            }
+ 		            else {
+ 		            	tvAddressBis.setVisibility(View.GONE);
+ 		            }
 
-	 		            if(BitcoinAddressCheck.isValidAddress(edAddress.getText().toString())) {
-	 		            	tvAddressBis.setVisibility(View.GONE);
-	 		            }
+ 		            if(BitcoinAddressCheck.isValidAddress(edAddress.getText().toString())) {
+ 		            	tvAddressBis.setVisibility(View.GONE);
+ 		            }
 
-			        	tvArrow.setText(Character.toString((char)0x2192));
+		        	tvArrow.setText(Character.toString((char)0x2192));
 
-			        	String amount1 = edAmount1.getText().toString();
-			        	if(amount1 == null || amount1.length() < 1) {
-			        		amount1 = "0.00";
-			        	}
-			        	else {
-			        		amount1 = amount1.replace(",", ".");
-			        	}
-			        	String amount2 = tvAmount2.getText().toString().substring(0, tvAmount2.getText().toString().length() - 4);
-			        	if(isBTC) {
-			        		amount1 += " BTC";
-			        		amount2 += " " + strCurrentFiatCode;
-			        	}
-			        	else {
-			        		amount1 += " " + strCurrentFiatCode;
-			        		amount2 += " BTC";
-			        	}
-			        	SpannableStringBuilder a1 = new SpannableStringBuilder(amount1);
-			        	SpannableStringBuilder a2 = new SpannableStringBuilder(amount2);
-			        	a1.setSpan(new SuperscriptSpan(), amount1.length() - 4, amount1.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-			        	a1.setSpan(new RelativeSizeSpan((float)0.50), amount1.length() - 4, amount1.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-			        	a2.setSpan(new SuperscriptSpan(), amount2.length() - 4, amount2.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-			        	a2.setSpan(new RelativeSizeSpan((float)0.50), amount2.length() - 4, amount2.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-			        	tvAmount.setText(a1);
-			        	tvAmountBis.setText(a2);
+		        	String amount1 = edAmount1.getText().toString();
+		        	if(amount1 == null || amount1.length() < 1) {
+		        		amount1 = "0.00";
+		        	}
+		        	else {
+		        		amount1 = amount1.replace(",", ".");
+		        	}
+		        	String amount2 = tvAmount2.getText().toString().substring(0, tvAmount2.getText().toString().length() - 4);
+		        	if(isBTC) {
+		        		amount1 += " BTC";
+		        		amount2 += " " + strCurrentFiatCode;
+		        	}
+		        	else {
+		        		amount1 += " " + strCurrentFiatCode;
+		        		amount2 += " BTC";
+		        	}
+		        	SpannableStringBuilder a1 = new SpannableStringBuilder(amount1);
+		        	SpannableStringBuilder a2 = new SpannableStringBuilder(amount2);
+		        	a1.setSpan(new SuperscriptSpan(), amount1.length() - 4, amount1.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+		        	a1.setSpan(new RelativeSizeSpan((float)0.50), amount1.length() - 4, amount1.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+		        	a2.setSpan(new SuperscriptSpan(), amount2.length() - 4, amount2.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+		        	a2.setSpan(new RelativeSizeSpan((float)0.50), amount2.length() - 4, amount2.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+		        	tvAmount.setText(a1);
+		        	tvAmountBis.setText(a2);
 
-//		            	btSend.setVisibility(View.VISIBLE);
-						btSend.setBackgroundColor(0xff1b8ac7);
-						btSend.setClickable(true);
+//	            	btSend.setVisibility(View.VISIBLE);
+					btSend.setBackgroundColor(0xff1b8ac7);
+					btSend.setClickable(true);
 
-			        	edAmount1.clearFocus();
-		                InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-		                imm.hideSoftInputFromWindow(edAmount1.getWindowToken(), 0);
-
-		        	
+		        	edAmount1.clearFocus();
+	                InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+	                imm.hideSoftInputFromWindow(edAmount1.getWindowToken(), 0);
+	                */
 
 		        }
+
 		        return false;
 		    }
 		});
@@ -2877,19 +2880,93 @@ public class SendFragment extends Fragment   {
             edAmount1.requestFocus();
             edAmount1.setText(Double.toString(Double.parseDouble(btc_amount) / 100000000.0));
             edAmount1.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+//            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
 
-            InputMethodManager inputMethodManager = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-            inputMethodManager.showSoftInput(edAmount1, InputMethodManager.SHOW_IMPLICIT);
+//            InputMethodManager inputMethodManager = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+//            inputMethodManager.showSoftInput(edAmount1, InputMethodManager.SHOW_IMPLICIT);
 
             isBTC = true;
     	    tvCurrency.setTypeface(TypefaceUtil.getInstance(getActivity()).getBTCTypeface());
     		tvCurrency.setText(Character.toString((char)TypefaceUtil.getInstance(getActivity()).getBTCSymbol()));
+    		
+    		confirmSimpleSend();
             
         }
         else {
     		Toast.makeText(getActivity(), R.string.not_processed, Toast.LENGTH_SHORT).show();
         }
+    }
+    
+    private void confirmSimpleSend()	{
+    	if(edAddress.getText().toString() == null || edAddress.getText().toString().length() < 1) {
+			Toast.makeText(getActivity(), R.string.include_BTC_address, Toast.LENGTH_LONG).show();
+//    		return false;
+			return;
+    	}
+    	
+    	if(sendType == SendTypeCustomSend) {
+            //doCustomSend();
+        }
+
+    	summary2.setVisibility(View.VISIBLE);
+    	tvAddress.setVisibility(View.VISIBLE);
+    	tvAddressBis.setVisibility(View.VISIBLE);
+    	tvArrow.setVisibility(View.VISIBLE);
+    	tvAmount.setVisibility(View.VISIBLE);
+    	tvAmountBis.setVisibility(View.VISIBLE);
+
+    	if(edAddress.getText().toString().length() > 15) {
+        	tvAddress.setText(edAddress.getText().toString().substring(0, 15) + "...");
+    	}
+    	else {
+        	tvAddress.setText(edAddress.getText().toString());
+    	}
+
+         if(currentSelectedAddress != null) {
+         	tvAddressBis.setText(currentSelectedAddress.substring(0, 20) + "...");
+         }
+         else {
+         	tvAddressBis.setVisibility(View.GONE);
+         }
+
+         if(BitcoinAddressCheck.isValidAddress(edAddress.getText().toString())) {
+         	tvAddressBis.setVisibility(View.GONE);
+         }
+
+    	tvArrow.setText(Character.toString((char)0x2192));
+
+    	String amount1 = edAmount1.getText().toString();
+    	if(amount1 == null || amount1.length() < 1) {
+    		amount1 = "0.00";
+    	}
+    	else {
+    		amount1 = amount1.replace(",", ".");
+    	}
+    	String amount2 = tvAmount2.getText().toString().substring(0, tvAmount2.getText().toString().length() - 4);
+    	if(isBTC) {
+    		amount1 += " BTC";
+    		amount2 += " " + strCurrentFiatCode;
+    	}
+    	else {
+    		amount1 += " " + strCurrentFiatCode;
+    		amount2 += " BTC";
+    	}
+    	SpannableStringBuilder a1 = new SpannableStringBuilder(amount1);
+    	SpannableStringBuilder a2 = new SpannableStringBuilder(amount2);
+    	a1.setSpan(new SuperscriptSpan(), amount1.length() - 4, amount1.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+    	a1.setSpan(new RelativeSizeSpan((float)0.50), amount1.length() - 4, amount1.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+    	a2.setSpan(new SuperscriptSpan(), amount2.length() - 4, amount2.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+    	a2.setSpan(new RelativeSizeSpan((float)0.50), amount2.length() - 4, amount2.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+    	tvAmount.setText(a1);
+    	tvAmountBis.setText(a2);
+
+//    	btSend.setVisibility(View.VISIBLE);
+		btSend.setBackgroundColor(0xff1b8ac7);
+		btSend.setClickable(true);
+
+    	edAmount1.clearFocus();
+        InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(edAmount1.getWindowToken(), 0);
     }
 
     private void clearSend()	{

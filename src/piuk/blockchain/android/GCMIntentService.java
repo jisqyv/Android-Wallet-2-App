@@ -70,7 +70,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 		String title = intent.getStringExtra(Constants.TITLE);
 		String body = intent.getStringExtra(Constants.BODY);
 
-		generateNotification(context, body);
+//		generateNotification(context, body);
 		
 		displayMessage(context, title, body);
 	}
