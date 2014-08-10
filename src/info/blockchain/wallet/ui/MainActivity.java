@@ -429,7 +429,13 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 				public void onClick(DialogInterface dialog, int id) {
 					application.setIsPassedPinScreen(false);
 					
-					finish();
+//					finish();
+
+					final Intent relaunch = new Intent(MainActivity.this, Exit.class)
+					.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK // CLEAR_TASK requires this
+							| Intent.FLAG_ACTIVITY_CLEAR_TASK // finish everything else in the task
+							| Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS); // hide (remove, in this case) task from recents
+					startActivity(relaunch);
 					
 					dialog.dismiss();
 				}}); 
