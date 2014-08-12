@@ -903,77 +903,6 @@ public class SendFragment extends Fragment   {
 		        	
 		        	confirmSimpleSend();
 
-		        	/*
-		        	if(edAddress.getText().toString() == null || edAddress.getText().toString().length() < 1) {
-						Toast.makeText(getActivity(), R.string.include_BTC_address, Toast.LENGTH_LONG).show();
-		        		return false;
-		        	}
-		        	
-		        	if(sendType == SendTypeCustomSend) {
-                        //doCustomSend();
-		            }
-
-		        	summary2.setVisibility(View.VISIBLE);
-		        	tvAddress.setVisibility(View.VISIBLE);
-		        	tvAddressBis.setVisibility(View.VISIBLE);
-		        	tvArrow.setVisibility(View.VISIBLE);
-		        	tvAmount.setVisibility(View.VISIBLE);
-		        	tvAmountBis.setVisibility(View.VISIBLE);
-
-		        	if(edAddress.getText().toString().length() > 15) {
-			        	tvAddress.setText(edAddress.getText().toString().substring(0, 15) + "...");
-		        	}
-		        	else {
-			        	tvAddress.setText(edAddress.getText().toString());
-		        	}
-
- 		            if(currentSelectedAddress != null) {
- 		            	tvAddressBis.setText(currentSelectedAddress.substring(0, 20) + "...");
- 		            }
- 		            else {
- 		            	tvAddressBis.setVisibility(View.GONE);
- 		            }
-
- 		            if(BitcoinAddressCheck.isValidAddress(edAddress.getText().toString())) {
- 		            	tvAddressBis.setVisibility(View.GONE);
- 		            }
-
-		        	tvArrow.setText(Character.toString((char)0x2192));
-
-		        	String amount1 = edAmount1.getText().toString();
-		        	if(amount1 == null || amount1.length() < 1) {
-		        		amount1 = "0.00";
-		        	}
-		        	else {
-		        		amount1 = amount1.replace(",", ".");
-		        	}
-		        	String amount2 = tvAmount2.getText().toString().substring(0, tvAmount2.getText().toString().length() - 4);
-		        	if(isBTC) {
-		        		amount1 += " BTC";
-		        		amount2 += " " + strCurrentFiatCode;
-		        	}
-		        	else {
-		        		amount1 += " " + strCurrentFiatCode;
-		        		amount2 += " BTC";
-		        	}
-		        	SpannableStringBuilder a1 = new SpannableStringBuilder(amount1);
-		        	SpannableStringBuilder a2 = new SpannableStringBuilder(amount2);
-		        	a1.setSpan(new SuperscriptSpan(), amount1.length() - 4, amount1.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-		        	a1.setSpan(new RelativeSizeSpan((float)0.50), amount1.length() - 4, amount1.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-		        	a2.setSpan(new SuperscriptSpan(), amount2.length() - 4, amount2.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-		        	a2.setSpan(new RelativeSizeSpan((float)0.50), amount2.length() - 4, amount2.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-		        	tvAmount.setText(a1);
-		        	tvAmountBis.setText(a2);
-
-//	            	btSend.setVisibility(View.VISIBLE);
-					btSend.setBackgroundColor(0xff1b8ac7);
-					btSend.setClickable(true);
-
-		        	edAmount1.clearFocus();
-	                InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-	                imm.hideSoftInputFromWindow(edAmount1.getWindowToken(), 0);
-	                */
-
 		        }
 
 		        return false;
@@ -1010,40 +939,22 @@ public class SendFragment extends Fragment   {
         	public void onTextChanged(CharSequence s, int start, int before, int count)	{ ; }
         });
 
-        /*
-        edAmount1.setOnFocusChangeListener(new OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(hasFocus) {
-                    if(edAmount1.getText().toString() != null && edAmount1.getText().toString().length() > 0) {
-            			edAmount1.setText("");
-                    	if(isBTC) {
-                			edAmount1.setHint("0.0000");
-                    	}
-                    	else {
-                			edAmount1.setHint("0.00");
-                    	}
-                    }
-                }
-            }
-        });
-        */
-
         edAddress = ((EditText)rootView.findViewById(R.id.address));
         edAddress.setHint(R.string.send_payment_hint);
+        /*
         edAddress.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
 
-            	/*
             	if(!isMagic) {
             		displayMagicList();
             	}
             	else {
             		removeMagicList();
             	}
-            	*/
+
             }
         });
+        */
 
         edAddress.setOnTouchListener(new OnTouchListener(){
             @Override
@@ -1786,38 +1697,41 @@ public class SendFragment extends Fragment   {
 //		final WalletApplication application = (WalletApplication)getActivity().getApplication();
 //		MyRemoteWallet wallet = application.getRemoteWallet();
     	MyRemoteWallet wallet = WalletUtil.getInstance(getActivity()).getRemoteWallet();
-		activeAddresses = Arrays.asList(wallet.getActiveAddresses());
-		labels = wallet.getLabelMap();
-        
-        magicData =  new ArrayList<HashMap<String,String>>();
-        
-        filteredDisplayList = new ArrayList<HashMap<String,String>>();
+    	
+    	if(wallet != null) {
+    		activeAddresses = Arrays.asList(wallet.getActiveAddresses());
+    		labels = wallet.getLabelMap();
+            
+            magicData =  new ArrayList<HashMap<String,String>>();
+            
+            filteredDisplayList = new ArrayList<HashMap<String,String>>();
 
-        for(int i = 0; i < activeAddresses.size(); i++) {
-		    String address = activeAddresses.get(i);
-        	String amount = "0.000";
-		    BigInteger finalBalance = wallet.getBalance(address);	
-		    if (finalBalance != null)
-		    	amount = BlockchainUtil.formatBitcoin(finalBalance);
+            for(int i = 0; i < activeAddresses.size(); i++) {
+    		    String address = activeAddresses.get(i);
+            	String amount = "0.000";
+    		    BigInteger finalBalance = wallet.getBalance(address);	
+    		    if (finalBalance != null)
+    		    	amount = BlockchainUtil.formatBitcoin(finalBalance);
 
-		        HashMap<String,String> row = new HashMap<String,String>();
+    		        HashMap<String,String> row = new HashMap<String,String>();
 
-		        String label = labels.get(address);
-		        String labelOrAddress;
-		        if (label != null) {
-		            row.put("label", label.toString());	
-		            labelOrAddress = label;
-		        } else {
-		        	labelOrAddress = address;
-		        }
-		        row.put("address", address.toString());
-		        row.put("amount", amount);
-		        row.put("labelOrAddress", labelOrAddress);
+    		        String label = labels.get(address);
+    		        String labelOrAddress;
+    		        if (label != null) {
+    		            row.put("label", label.toString());	
+    		            labelOrAddress = label;
+    		        } else {
+    		        	labelOrAddress = address;
+    		        }
+    		        row.put("address", address.toString());
+    		        row.put("amount", amount);
+    		        row.put("labelOrAddress", labelOrAddress);
 
-				magicData.add(row);    
+    				magicData.add(row);    
 
-	        	filteredDisplayList.add(row);
-        }
+    	        	filteredDisplayList.add(row);
+            }
+    	}
 
     }
     
@@ -1825,47 +1739,49 @@ public class SendFragment extends Fragment   {
 // 		final WalletApplication application = (WalletApplication)getActivity().getApplication();
 // 		MyRemoteWallet wallet = application.getRemoteWallet();
     	MyRemoteWallet wallet = WalletUtil.getInstance(getActivity()).getRemoteWallet();
- 		
+
         magicData =  new ArrayList<HashMap<String,String>>();
 
-        addressBookMapList = wallet.getAddressBookMap();
-        filteredDisplayList = new ArrayList<HashMap<String,String>>();
+    	if(wallet != null) {
+            addressBookMapList = wallet.getAddressBookMap();
+            filteredDisplayList = new ArrayList<HashMap<String,String>>();
 
-        if (addressBookMapList != null && addressBookMapList.size() > 0) {
-  		    for (Iterator<Map<String, Object>> iti = addressBookMapList.iterator(); iti.hasNext();) {
- 		    	Map<String, Object> addressBookMap = iti.next();
- 		    	Object address = addressBookMap.get("addr");
- 		    	Object label = addressBookMap.get("label");
+            if (addressBookMapList != null && addressBookMapList.size() > 0) {
+      		    for (Iterator<Map<String, Object>> iti = addressBookMapList.iterator(); iti.hasNext();) {
+     		    	Map<String, Object> addressBookMap = iti.next();
+     		    	Object address = addressBookMap.get("addr");
+     		    	Object label = addressBookMap.get("label");
 
- 		        HashMap<String,String> row = new HashMap<String,String>();
- 		        if (label != null) {
- 	 		        row.put("label", label.toString()); 		        	
- 			        row.put("labelOrAddress", label.toString());
- 		        } else {
- 	 		        row.put("label", "null"); 		        	
- 			        row.put("labelOrAddress", "null");
- 		        }
- 		        if (address != null) {
- 	 		        row.put("address", address.toString());
- 		        } else {
- 	 		        row.put("address", "null");
- 		        }
+     		        HashMap<String,String> row = new HashMap<String,String>();
+     		        if (label != null) {
+     	 		        row.put("label", label.toString()); 		        	
+     			        row.put("labelOrAddress", label.toString());
+     		        } else {
+     	 		        row.put("label", "null"); 		        	
+     			        row.put("labelOrAddress", "null");
+     		        }
+     		        if (address != null) {
+     	 		        row.put("address", address.toString());
+     		        } else {
+     	 		        row.put("address", "null");
+     		        }
+
+        			magicData.add(row);
+    	         	filteredDisplayList.add(row);
+     		    }
+
+            }
+            else {
+    		    HashMap<String,String> row = new HashMap<String,String>();
+    		    row.put("label", BlockchainUtil.BLOCKCHAIN_DONATE2);
+    		    row.put("address", BlockchainUtil.BLOCKCHAIN_DONATE);
+    	        row.put("labelOrAddress", BlockchainUtil.BLOCKCHAIN_DONATE2);
 
     			magicData.add(row);
-	         	filteredDisplayList.add(row);
- 		    }
+             	filteredDisplayList.add(row);
+            }
+    	}
 
-        }
-        else {
-		    HashMap<String,String> row = new HashMap<String,String>();
-		    row.put("label", BlockchainUtil.BLOCKCHAIN_DONATE2);
-		    row.put("address", BlockchainUtil.BLOCKCHAIN_DONATE);
-	        row.put("labelOrAddress", BlockchainUtil.BLOCKCHAIN_DONATE2);
-
-			magicData.add(row);
-         	filteredDisplayList.add(row);
-        }
-        
      }
 
     private void displayMagicList() {
@@ -2064,13 +1980,6 @@ public class SendFragment extends Fragment   {
 
         adapter = new MagicAdapter();
         magicList.setAdapter(adapter);
-
-//        LinearLayout container = ((LinearLayout)rootView.findViewById(R.id.send_container));
-//        sendViewToBack(container);
-        
-//	    parent.bringToFront();
-//	    parent.requestLayout();
-//	    parent.invalidate();
     }
 
     private void removeMagicList() {

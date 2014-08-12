@@ -13,6 +13,7 @@ import piuk.blockchain.android.WalletApplication;
 import piuk.blockchain.android.SuccessCallback;
 import piuk.blockchain.android.R;
 import piuk.blockchain.android.ui.dialogs.RequestForgotPasswordDialog;
+import piuk.blockchain.android.util.ConnectivityStatus;
 import piuk.blockchain.android.util.WalletUtils;
 import info.blockchain.api.ExchangeRates;
 
@@ -21,6 +22,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.app.Activity;
 import android.support.v4.app.FragmentActivity;
 import android.app.AlertDialog;
@@ -627,9 +629,32 @@ public class PinEntryActivity extends FragmentActivity {
 			}
 		});
 
-		ExchangeRates fxRates = new ExchangeRates();
-		DownloadFXRatesTask task = new DownloadFXRatesTask(context, fxRates);
-		task.execute(new String[] { fxRates.getUrl() });
+		if(ConnectivityStatus.hasConnectivity(this)) {
+			ExchangeRates fxRates = new ExchangeRates();
+			DownloadFXRatesTask task = new DownloadFXRatesTask(context, fxRates);
+			task.execute(new String[] { fxRates.getUrl() });
+		}
+		else {
+
+	    	final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+	        
+	        final String message = getString(R.string.check_connectivity_exit);
+	 
+	        builder.setMessage(message)
+	        	.setCancelable(false)
+	            .setPositiveButton(R.string.dialog_continue,
+	                new DialogInterface.OnClickListener() {
+	                    public void onClick(DialogInterface d, int id) {
+	                        d.dismiss();
+							Intent intent = new Intent(PinEntryActivity.this, PinEntryActivity.class);
+							intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+							startActivity(intent);
+	                    }
+	            });
+
+	        builder.create().show();
+
+		}
 
 		final WalletApplication application = (WalletApplication)PinEntryActivity.this.getApplication();
 		if (application.getGUID() == null && !creating) {
@@ -725,7 +750,6 @@ public class PinEntryActivity extends FragmentActivity {
 				String encrypted_password = PreferenceManager.getDefaultSharedPreferences(application).getString("encrypted_password", null);
 
 				try {
-					//					final JSONObject response = piuk.blockchain.android.ui.PinEntryActivity.apiGetValue(pin_lookup_key, PIN);
 					final JSONObject response = apiGetValue(pin_lookup_key, PIN);
 
 					String decryptionKey = (String) response.get("success");
@@ -734,7 +758,6 @@ public class PinEntryActivity extends FragmentActivity {
 						application.didEncounterFatalPINServerError = false;
 
 						String password = MyWallet.decrypt(encrypted_password, decryptionKey, piuk.blockchain.android.ui.PinEntryActivity.PBKDF2Iterations);
-						//						Toast.makeText(PinEntryActivity.this, password, Toast.LENGTH_SHORT).show();	
 
 						application.checkIfWalletHasUpdatedAndFetchTransactions(password, new SuccessCallback() {
 							@Override
@@ -750,9 +773,11 @@ public class PinEntryActivity extends FragmentActivity {
 
 										ProgressUtil.getInstance(PinEntryActivity.this).close();
 
+										/*
 								    	if(!WalletUtil.getInstance(PinEntryActivity.this).remoteWalletIsLoaded()) {
 											Toast.makeText(PinEntryActivity.this, "Remote wallet not loaded", Toast.LENGTH_SHORT).show();	
 								    	}
+								    	*/
 
 										Intent intent = new Intent(PinEntryActivity.this, MainActivity.class);
 										String navigateTo = getIntent().getStringExtra("navigateTo");

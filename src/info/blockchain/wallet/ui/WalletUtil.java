@@ -1,16 +1,15 @@
 package info.blockchain.wallet.ui;
 
-import android.content.Context;
+import android.os.Handler;
 import android.app.Activity;
+import android.util.Log;
 
 import piuk.blockchain.android.MyRemoteWallet;
 import piuk.blockchain.android.WalletApplication;
-import piuk.blockchain.android.util.WalletUtils;
 
 public class WalletUtil {
 
     private static WalletUtil instance = null;
-    private static Context context = null;
     private static Activity activity = null;
 	private static WalletApplication application = null;
 	private static MyRemoteWallet remoteWallet = null;
@@ -20,18 +19,28 @@ public class WalletUtil {
 	public static WalletUtil getInstance(Activity act) {
 		
 		if(instance == null) {
-			activity = act;
 			
-			application = (WalletApplication)activity.getApplication();
-			remoteWallet = application.getRemoteWallet();
-			/*
-			if(remoteWallet == null) {
-				application = (WalletApplication)activity.getApplication();
-				remoteWallet = application.getRemoteWallet();
-			}
-			*/
+			Log.d("WalletUtil", "1 instance == null");
 
 			instance = new WalletUtil();
+
+			activity = act;
+
+			application = (WalletApplication)activity.getApplication();
+			// has remoteWallet been assigned during PIN/password validation ?
+			if(remoteWallet == null) {
+				Log.d("WalletUtil", "Fetching remoteWallet");
+				remoteWallet = application.getRemoteWallet();
+			}
+			else	{
+				Log.d("WalletUtil", "Returning stored remoteWallet");
+			}
+
+			if(remoteWallet == null) {
+				Log.d("WalletUtil", "Refetching remoteWallet");
+				fetch();
+			}
+
 		}
 		
 		return instance;
@@ -43,19 +52,16 @@ public class WalletUtil {
 			return getInstance(act);
 		}
 
+		instance = new WalletUtil();
+
 		activity = act;
 		
 		application = (WalletApplication)activity.getApplication();
 		remoteWallet = application.getRemoteWallet();
-		/*
 		if(remoteWallet == null) {
-			application = (WalletApplication)activity.getApplication();
-			remoteWallet = application.getRemoteWallet();
+			fetch();
 		}
-		*/
 
-		instance = new WalletUtil();
-		
 		return instance;
 	}
 
@@ -69,6 +75,28 @@ public class WalletUtil {
 
 	public boolean remoteWalletIsLoaded() {
 		return (remoteWallet != null);
+	}
+
+	public static void putRemoteWallet(MyRemoteWallet wallet) {
+		remoteWallet = wallet;
+	}
+
+	private static void fetch() {
+		
+		final Handler handler = new Handler();
+		
+		handler.post(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					application = (WalletApplication)activity.getApplication();
+					remoteWallet = application.getRemoteWallet();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+
 	}
 
 }

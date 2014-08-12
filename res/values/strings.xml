@@ -535,5 +535,7 @@
 
     <string name="create_pin">Please create your 4-digit pin</string>
     <string name="confirm_pin">Please confirm your 4-digit pin</string>
+
+    <string name="check_connectivity_exit">Blockchain Wallet cannot obtain an Internet connection. Please check the connectivity on your device and try again.</string>
     
 </resources>

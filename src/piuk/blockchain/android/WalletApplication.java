@@ -868,12 +868,15 @@ public class WalletApplication extends Application {
 					walletPayloadObj = MyRemoteWallet.getWalletPayload(guid, sharedKey);
 				}
 				catch(Exception e) {
+					/*
 					handler.post(new Runnable() {
 						public void run() {
 							if (callbackFinal != null)
 								callbackFinal.onFail();
 						};
 					});
+					*/
+					;
 				}
 
 				/*
@@ -896,7 +899,6 @@ public class WalletApplication extends Application {
 				//
 				//
 				//
-//				walletPayloadObj = null;							// remove forced null
 				if(walletPayloadObj == null) {
 					System.out.println("walletPayloadObj == null, going local");
 					String localWallet = readLocalWallet();
@@ -949,12 +951,26 @@ public class WalletApplication extends Application {
 					decryptionErrors = 0;
 					
 					if (callback != null)  {
-						handler.post(new Runnable() {
-							public void run() {
-								if (callbackFinal != null)
-									callbackFinal.onSuccess();
-							};
-						});
+						
+						if(blockchainWallet == null)  {
+							handler.post(new Runnable() {
+								public void run() {
+									if (callbackFinal != null)
+										callbackFinal.onFail();
+								};
+							});
+						}
+						else  {
+							// assign blockchainWallet as the remoteWallet to be returned
+							WalletUtil.putRemoteWallet(blockchainWallet);
+
+							handler.post(new Runnable() {
+								public void run() {
+									if (callbackFinal != null)
+										callbackFinal.onSuccess();
+								};
+							});
+						}
 						callback = null;
 					}
 

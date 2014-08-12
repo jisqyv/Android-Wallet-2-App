@@ -432,9 +432,9 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 //					finish();
 
 					final Intent relaunch = new Intent(MainActivity.this, Exit.class)
-					.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK // CLEAR_TASK requires this
-							| Intent.FLAG_ACTIVITY_CLEAR_TASK // finish everything else in the task
-							| Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS); // hide (remove, in this case) task from recents
+							.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+							| Intent.FLAG_ACTIVITY_CLEAR_TASK
+							| Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
 					startActivity(relaunch);
 					
 					dialog.dismiss();

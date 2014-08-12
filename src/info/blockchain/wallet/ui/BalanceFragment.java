@@ -25,6 +25,7 @@ import piuk.blockchain.android.MyTransactionInput;
 import piuk.blockchain.android.R;
 import piuk.blockchain.android.WalletApplication;
 import piuk.blockchain.android.SuccessCallback;
+import piuk.blockchain.android.util.ConnectivityStatus;
 import piuk.blockchain.android.util.WalletUtils;
 
 import com.google.bitcoin.core.Address;
@@ -232,7 +233,8 @@ public class BalanceFragment extends Fragment   {
         strCurrentFiatCode = prefs.getString("ccurrency", "USD");
         strCurrentFiatSymbol = prefs.getString(strCurrentFiatCode + "-SYM", "$");
 
-		application = WalletUtil.getRefreshedInstance(getActivity()).getWalletApplication();
+//		application = WalletUtil.getRefreshedInstance(getActivity()).getWalletApplication();
+		application = WalletUtil.getInstance(getActivity()).getWalletApplication();
 
 		if (application == null) {
 			return;
@@ -1014,14 +1016,21 @@ public class BalanceFragment extends Fragment   {
     }
     
     public boolean refreshPayload() {
-		Toast.makeText(getActivity(), R.string.refreshing, Toast.LENGTH_LONG).show();
+    	
+    	if(ConnectivityStatus.hasConnectivity(getActivity())) {
+    		Toast.makeText(getActivity(), R.string.refreshing, Toast.LENGTH_LONG).show();
 
-		try {
-    		WalletUtil.getRefreshedInstance(getActivity()).getWalletApplication().doMultiAddr(false, null);
-		}
-		catch(Exception e) {
-    		Toast.makeText(getActivity(), e.toString(), Toast.LENGTH_SHORT).show();
-		}
+    		try {
+        		WalletUtil.getRefreshedInstance(getActivity()).getWalletApplication().doMultiAddr(false, null);
+    		}
+    		catch(Exception e) {
+        		Toast.makeText(getActivity(), e.toString(), Toast.LENGTH_SHORT).show();
+    		}
+    	}
+    	else {
+    		Toast.makeText(getActivity(), R.string.network_error_description, Toast.LENGTH_LONG).show();
+    	}
+    	
 
 		return false;
     }

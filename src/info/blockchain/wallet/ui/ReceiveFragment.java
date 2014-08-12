@@ -415,25 +415,6 @@ public class ReceiveFragment extends Fragment   {
         	public void onTextChanged(CharSequence s, int start, int before, int count)	{ ; }
         });
 
-        /*
-        edAmount1.setOnFocusChangeListener(new OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(hasFocus) {
-                    if(edAmount1.getText().toString() != null && edAmount1.getText().toString().length() > 0) {
-            			edAmount1.setText("");
-                    	if(isBTC) {
-                			edAmount1.setHint("0.0000");
-                    	}
-                    	else {
-                			edAmount1.setHint("0.00");
-                    	}
-                    }
-                }
-            }
-        });
-        */
-
         edAddress = ((EditText)rootView.findViewById(R.id.address));
         edAddress.setHint(R.string.request_payment_hint);
         edAddress.setOnClickListener(new Button.OnClickListener() {
@@ -807,53 +788,57 @@ public class ReceiveFragment extends Fragment   {
 //		final WalletApplication application = (WalletApplication)getActivity().getApplication();
 //		MyRemoteWallet wallet = application.getRemoteWallet();
  		MyRemoteWallet wallet = WalletUtil.getInstance(getActivity()).getRemoteWallet();
-		activeAddresses = Arrays.asList(wallet.getActiveAddresses());
-		labels = wallet.getLabelMap();
-        AddressManager addressManager = new AddressManager(wallet, WalletUtil.getInstance(getActivity()).getWalletApplication(), getActivity());        
-        
-        magicData =  new ArrayList<HashMap<String,String>>();
-        
-        filteredDisplayList = new ArrayList<HashMap<String,String>>();
+ 		
+ 		if(wallet != null) {
+ 			activeAddresses = Arrays.asList(wallet.getActiveAddresses());
+ 			labels = wallet.getLabelMap();
+ 	        AddressManager addressManager = new AddressManager(wallet, WalletUtil.getInstance(getActivity()).getWalletApplication(), getActivity());        
+ 	        
+ 	        magicData =  new ArrayList<HashMap<String,String>>();
+ 	        
+ 	        filteredDisplayList = new ArrayList<HashMap<String,String>>();
 
-		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-		defaultAddress = prefs.getString(Constants.PREFS_KEY_SELECTED_ADDRESS, null);
+ 			final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+ 			defaultAddress = prefs.getString(Constants.PREFS_KEY_SELECTED_ADDRESS, null);
 
-        for(int i = 0; i < activeAddresses.size(); i++) {
-        	
-        	if(defaultAddress == null && !addressManager.isWatchOnly(activeAddresses.get(i))) {
-                defaultAddress = activeAddresses.get(i);
-        	}
+ 	        for(int i = 0; i < activeAddresses.size(); i++) {
+ 	        	
+ 	        	if(defaultAddress == null && !addressManager.isWatchOnly(activeAddresses.get(i))) {
+ 	                defaultAddress = activeAddresses.get(i);
+ 	        	}
 
-        	String address = activeAddresses.get(i);
-        	String amount = "0.000";
-		    BigInteger finalBalance = wallet.getBalance(address);	
-		    if (finalBalance != null)
-		    	amount = BlockchainUtil.formatBitcoin(finalBalance);
+ 	        	String address = activeAddresses.get(i);
+ 	        	String amount = "0.000";
+ 			    BigInteger finalBalance = wallet.getBalance(address);	
+ 			    if (finalBalance != null)
+ 			    	amount = BlockchainUtil.formatBitcoin(finalBalance);
 
-		        HashMap<String,String> row = new HashMap<String,String>();
+ 			        HashMap<String,String> row = new HashMap<String,String>();
 
-		        String label = labels.get(address);
-		        String labelOrAddress;
-		        if (label != null) {
-		            row.put("label", label.toString());	
-		            labelOrAddress = label;
-		        } else {
-		        	labelOrAddress = address;
-		        }
-		        row.put("address", address.toString());
-		        row.put("amount", amount);
-		        row.put("labelOrAddress", labelOrAddress);
+ 			        String label = labels.get(address);
+ 			        String labelOrAddress;
+ 			        if (label != null) {
+ 			            row.put("label", label.toString());	
+ 			            labelOrAddress = label;
+ 			        } else {
+ 			        	labelOrAddress = address;
+ 			        }
+ 			        row.put("address", address.toString());
+ 			        row.put("amount", amount);
+ 			        row.put("labelOrAddress", labelOrAddress);
 
-				magicData.add(row);    
+ 					magicData.add(row);    
 
-	        	filteredDisplayList.add(row);
-        }
+ 		        	filteredDisplayList.add(row);
+ 	        }
 
-        //if the defaultAddress is null then we probably have all watch only addresses
-        //Just use the first one
-        if (defaultAddress == null && activeAddresses.size() > 0) {
-            defaultAddress = activeAddresses.get(0);
-        }
+ 	        //if the defaultAddress is null then we probably have all watch only addresses
+ 	        //Just use the first one
+ 	        if (defaultAddress == null && activeAddresses.size() > 0) {
+ 	            defaultAddress = activeAddresses.get(0);
+ 	        }
+ 		}
+
     }
 
     private void initAddressBookList() {
@@ -863,45 +848,47 @@ public class ReceiveFragment extends Fragment   {
  		MyRemoteWallet wallet = WalletUtil.getInstance(getActivity()).getRemoteWallet();
  		
         magicData =  new ArrayList<HashMap<String,String>>();
+        
+        if(wallet != null) {
+            addressBookMapList = wallet.getAddressBookMap();
+            filteredDisplayList = new ArrayList<HashMap<String,String>>();
 
-        addressBookMapList = wallet.getAddressBookMap();
-        filteredDisplayList = new ArrayList<HashMap<String,String>>();
+            if (addressBookMapList != null && addressBookMapList.size() > 0) {
+      		    for (Iterator<Map<String, Object>> iti = addressBookMapList.iterator(); iti.hasNext();) {
+     		    	Map<String, Object> addressBookMap = iti.next();
+     		    	Object address = addressBookMap.get("addr");
+     		    	Object label = addressBookMap.get("label");
 
-        if (addressBookMapList != null && addressBookMapList.size() > 0) {
-  		    for (Iterator<Map<String, Object>> iti = addressBookMapList.iterator(); iti.hasNext();) {
- 		    	Map<String, Object> addressBookMap = iti.next();
- 		    	Object address = addressBookMap.get("addr");
- 		    	Object label = addressBookMap.get("label");
+     		        HashMap<String,String> row = new HashMap<String,String>();
+     		        if (label != null) {
+     	 		        row.put("label", label.toString()); 		        	
+     			        row.put("labelOrAddress", label.toString());
+     		        } else {
+     	 		        row.put("label", "null"); 		        	
+     			        row.put("labelOrAddress", "null");
+     		        }
+     		        if (address != null) {
+     	 		        row.put("address", address.toString());
+     		        } else {
+     	 		        row.put("address", "null");
+     		        }
 
- 		        HashMap<String,String> row = new HashMap<String,String>();
- 		        if (label != null) {
- 	 		        row.put("label", label.toString()); 		        	
- 			        row.put("labelOrAddress", label.toString());
- 		        } else {
- 	 		        row.put("label", "null"); 		        	
- 			        row.put("labelOrAddress", "null");
- 		        }
- 		        if (address != null) {
- 	 		        row.put("address", address.toString());
- 		        } else {
- 	 		        row.put("address", "null");
- 		        }
+        			magicData.add(row);
+    	         	filteredDisplayList.add(row);
+     		    }
+
+            }
+            else {
+    		    HashMap<String,String> row = new HashMap<String,String>();
+    		    row.put("label", BlockchainUtil.BLOCKCHAIN_DONATE2);
+    		    row.put("address", BlockchainUtil.BLOCKCHAIN_DONATE);
+    	        row.put("labelOrAddress", BlockchainUtil.BLOCKCHAIN_DONATE2);
 
     			magicData.add(row);
-	         	filteredDisplayList.add(row);
- 		    }
-
+             	filteredDisplayList.add(row);
+            }
         }
-        else {
-		    HashMap<String,String> row = new HashMap<String,String>();
-		    row.put("label", BlockchainUtil.BLOCKCHAIN_DONATE2);
-		    row.put("address", BlockchainUtil.BLOCKCHAIN_DONATE);
-	        row.put("labelOrAddress", BlockchainUtil.BLOCKCHAIN_DONATE2);
 
-			magicData.add(row);
-         	filteredDisplayList.add(row);
-        }
-        
      }
 
     private void displayMagicList() {
@@ -1070,13 +1057,6 @@ public class ReceiveFragment extends Fragment   {
 
         adapter = new MagicAdapter();
         magicList.setAdapter(adapter);
-
-//        LinearLayout container = ((LinearLayout)rootView.findViewById(R.id.qr_container));
-//        sendViewToBack(container);
-        
-//	    parent.bringToFront();
-	    parent.requestLayout();
-	    parent.invalidate();
     }
 
     private void removeMagicList() {
