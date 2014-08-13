@@ -78,10 +78,10 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		
 	    setContentView(R.layout.activity_main);
 	    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-
+	    
     	Locale locale = new Locale("en", "US");
         Locale.setDefault(locale);
 
@@ -240,7 +240,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         
         viewPager.setCurrentItem(1);
         
-        BlockchainUtil.getInstance(this);
+//        BlockchainUtil.getInstance(this);
 
 /*	
 		application.sharedCoinGetInfo(new SuccessCallback() {

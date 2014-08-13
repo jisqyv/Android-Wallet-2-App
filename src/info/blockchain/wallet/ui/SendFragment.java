@@ -277,7 +277,9 @@ public class SendFragment extends Fragment   {
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiver, filter);
 
 		final MainActivity activity = (MainActivity) getActivity();
-		application = (WalletApplication) activity.getApplication();
+//		application = (WalletApplication) activity.getApplication();
+		application = WalletUtil.getInstance(getActivity()).getWalletApplication();
+
 		//activity.bindService(new Intent(activity, BlockchainServiceImpl.class), serviceConnection, Context.BIND_AUTO_CREATE);
     	sendViaEmail = false;
     	sentViaSMS = false;
@@ -2831,7 +2833,7 @@ public class SendFragment extends Fragment   {
         	tvAddress.setText(edAddress.getText().toString());
     	}
 
-         if(currentSelectedAddress != null) {
+        if(currentSelectedAddress != null) {
          	tvAddressBis.setText(currentSelectedAddress.substring(0, 20) + "...");
          }
          else {

@@ -17,6 +17,7 @@
 
 package piuk.blockchain.android.service;
 
+import info.blockchain.wallet.ui.TimeOutUtil;
 import info.blockchain.wallet.ui.TxNotifUtil;
 
 import java.math.BigInteger;
@@ -171,7 +172,13 @@ public class WebsocketService extends android.app.Service
 		text.insert(0, "To ");
 
 		final Notification notification = new Notification(R.drawable.stat_notify_received, tickerMsg, System.currentTimeMillis());
-		Intent notificationIntent = new Intent(WebsocketService.this, info.blockchain.wallet.ui.PinEntryActivity.class);
+		Intent notificationIntent = null;
+		if(TimeOutUtil.getInstance().isTimedOut()){
+			notificationIntent = new Intent(WebsocketService.this, info.blockchain.wallet.ui.PinEntryActivity.class);
+		}
+		else{
+			notificationIntent = new Intent(WebsocketService.this, info.blockchain.wallet.ui.MainActivity.class);
+		}
 		notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 		PendingIntent intent = PendingIntent.getActivity(WebsocketService.this, 0, notificationIntent, 0);
 		notification.setLatestEventInfo(WebsocketService.this, msg, text, intent);
@@ -239,7 +246,13 @@ public class WebsocketService extends android.app.Service
 		text.insert(0, "From ");
 
 		final Notification notification = new Notification(R.drawable.stat_notify_received, tickerMsg, System.currentTimeMillis());
-		Intent notificationIntent = new Intent(WebsocketService.this, info.blockchain.wallet.ui.PinEntryActivity.class);
+		Intent notificationIntent = null;
+		if(TimeOutUtil.getInstance().isTimedOut()){
+			notificationIntent = new Intent(WebsocketService.this, info.blockchain.wallet.ui.PinEntryActivity.class);
+		}
+		else{
+			notificationIntent = new Intent(WebsocketService.this, info.blockchain.wallet.ui.MainActivity.class);
+		}
 		notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 		PendingIntent intent = PendingIntent.getActivity(WebsocketService.this, 0, notificationIntent, 0);
 		notification.setLatestEventInfo(WebsocketService.this, msg, text, intent);

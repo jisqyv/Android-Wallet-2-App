@@ -253,11 +253,14 @@ public class BalanceFragment extends Fragment   {
 	    activeAddresses = Arrays.asList(addressLabels);
 		addressAmounts = new String[addressLabels.length];
 		isWatchOnlys = new boolean[addressLabels.length];
-		
+
+		/*
+        Toast.makeText(BalanceFragment.this.getActivity(), TxNotifUtil.getInstance().getTx() == null ? "null" : "not null", Toast.LENGTH_SHORT).show();
 		if(TxNotifUtil.getInstance().getTx() != null) {
 			showTx = TxNotifUtil.getInstance().getTx();
 			TxNotifUtil.getInstance().clear();
 		}
+		*/
 
    		if(!isNoRefreshOnReturn) {
    			
@@ -531,6 +534,12 @@ public class BalanceFragment extends Fragment   {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
             strCurrentFiatCode = prefs.getString("ccurrency", "USD");
             strCurrentFiatSymbol = prefs.getString(strCurrentFiatCode + "-SYM", "$");
+            
+    		if(TxNotifUtil.getInstance().getTx() != null) {
+    			showTx = TxNotifUtil.getInstance().getTx();
+    			TxNotifUtil.getInstance().clear();
+//    			setAdapterContent();
+    		}
 
 //            BlockchainUtil.getInstance(getActivity());
 
@@ -550,6 +559,12 @@ public class BalanceFragment extends Fragment   {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         strCurrentFiatCode = prefs.getString("ccurrency", "USD");
         strCurrentFiatSymbol = prefs.getString(strCurrentFiatCode + "-SYM", "$");
+        
+		if(TxNotifUtil.getInstance().getTx() != null) {
+			showTx = TxNotifUtil.getInstance().getTx();
+			TxNotifUtil.getInstance().clear();
+//			setAdapterContent();
+		}
 
         BlockchainUtil.getInstance(getActivity());
 

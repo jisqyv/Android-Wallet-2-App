@@ -779,6 +779,8 @@ public class PinEntryActivity extends FragmentActivity {
 								    	}
 								    	*/
 
+										BlockchainUtil.getInstance(PinEntryActivity.this);
+
 										Intent intent = new Intent(PinEntryActivity.this, MainActivity.class);
 										String navigateTo = getIntent().getStringExtra("navigateTo");
 										intent.putExtra("navigateTo", navigateTo);   
@@ -800,7 +802,7 @@ public class PinEntryActivity extends FragmentActivity {
 
 										Toast.makeText(PinEntryActivity.this, piuk.blockchain.android.R.string.toast_wallet_decryption_failed, Toast.LENGTH_LONG).show();
 										
-										ProgressUtil.getInstance(PinEntryActivity.this).show();
+										ProgressUtil.getInstance(PinEntryActivity.this).close();
 
 									}
 								});
@@ -811,7 +813,7 @@ public class PinEntryActivity extends FragmentActivity {
 
 						application.didEncounterFatalPINServerError = false;
 
-						ProgressUtil.getInstance(PinEntryActivity.this).show();
+						ProgressUtil.getInstance(PinEntryActivity.this).close();
 
 						//"code" == 2 means the PIN is incorrect
 						if (!response.containsKey("code") || ((Number)response.get("code")).intValue() != 2) {
@@ -833,14 +835,14 @@ public class PinEntryActivity extends FragmentActivity {
 						}
 					} else {
 						
-						ProgressUtil.getInstance(PinEntryActivity.this).show();
+						ProgressUtil.getInstance(PinEntryActivity.this).close();
 
 						throw new Exception("Unknown Error");
 					}
 				} catch (final Exception e) {
 					e.printStackTrace();
 
-					ProgressUtil.getInstance(PinEntryActivity.this).show();
+					ProgressUtil.getInstance(PinEntryActivity.this).close();
 
 					application.didEncounterFatalPINServerError = true;
 
