@@ -2,7 +2,6 @@ package piuk.blockchain.android;
 
 import java.math.BigInteger;
 
-import com.google.bitcoin.core.NetworkParameters;
 import com.google.bitcoin.core.ProtocolException;
 import com.google.bitcoin.core.Sha256Hash;
 import com.google.bitcoin.core.TransactionOutPoint;

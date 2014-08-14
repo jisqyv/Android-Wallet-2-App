@@ -1,21 +1,12 @@
 package info.blockchain.wallet.ui;
  
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.math.BigInteger;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 //import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
 
 import net.sourceforge.zbar.Symbol;
 
@@ -41,10 +32,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Looper;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.ContextMenu;
@@ -56,7 +44,6 @@ import android.view.View.OnTouchListener;
 import android.view.View.OnCreateContextMenuListener;
 import android.view.MenuInflater;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
@@ -66,7 +53,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.Toast;
-import android.support.v4.content.LocalBroadcastManager;
 //import android.util.Log;
  
 public class AddressBookActivity extends Activity {
@@ -688,7 +674,7 @@ public class AddressBookActivity extends Activity {
 	            view = convertView;
 	        }
 	        
-	        String type = allAddresses.get(position).substring(0, 1);
+	        //String type = allAddresses.get(position).substring(0, 1);
 	        final String addr = allAddresses.get(position).substring(1);
 	        
     	    String label = labelMap.get(addr);

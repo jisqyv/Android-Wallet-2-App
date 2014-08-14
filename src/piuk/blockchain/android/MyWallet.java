@@ -543,6 +543,9 @@ public class MyWallet {
 	}
 
 	public static class WalletOverride extends Wallet {
+
+		private static final long serialVersionUID = 6225448341755137534L;
+
 		public WalletOverride(NetworkParameters params) {
 			super(params);
 		}

@@ -8,10 +8,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.Button;
-import android.widget.TextView;
 //import android.widget.RadioButton;
 import android.widget.Spinner;
 
@@ -242,7 +240,7 @@ public class InternationalPrefixActivity extends Activity {
 		"648;zw;263;null;yes;Zimbabwe;",
 	};
 
-    private TextView tvPrompt = null;
+    //private TextView tvPrompt = null;
 
     private Spinner spnHomeSIM;
     private int spnSelection;
@@ -278,7 +276,7 @@ public class InternationalPrefixActivity extends Activity {
         spnHomeSIM = (Spinner) findViewById(R.id.homeSIM);
         spnSelection = 0;
         allcountries = new ArrayList<String>();
-        String strPlain =  null;
+        //String strPlain =  null;
         for(int i = 0; i < mCountries.length; i++) {
        		s1 = mCountries[i].split(";");
         	if(strSIMCountry != null && s1[0].compareTo(strSIMCountry) == 0)	{

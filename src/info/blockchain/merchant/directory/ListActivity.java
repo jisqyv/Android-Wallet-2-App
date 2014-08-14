@@ -10,7 +10,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,8 +20,6 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.util.Log;
 
 import piuk.blockchain.android.R;
 
@@ -35,10 +32,10 @@ public class ListActivity extends Activity {
 	private static final int HEADING_ATM = 5;
 
 	private ArrayList<BTCBusiness> businesses = null;
-    private int curSelection = -1;
+    //private int curSelection = -1;
     private BTCBusinessAdapter adapter = null;
     
-    private Handler mHandler = new Handler();
+    //private Handler mHandler = new Handler();
     
     private String strULat = null;
     private String strULon = null;

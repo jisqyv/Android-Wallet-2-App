@@ -1,14 +1,8 @@
 package piuk.blockchain.android.util;
 
-import piuk.blockchain.android.R;
-import piuk.blockchain.android.WalletApplication;
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Handler;
 
 public class ConnectivityStatus {
 	

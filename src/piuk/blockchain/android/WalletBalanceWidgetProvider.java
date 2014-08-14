@@ -33,10 +33,8 @@ import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.widget.RemoteViews;
 import piuk.blockchain.android.R;
-import piuk.blockchain.android.ui.WalletActivity;
 
 /**
  * @author Andreas Schildbach

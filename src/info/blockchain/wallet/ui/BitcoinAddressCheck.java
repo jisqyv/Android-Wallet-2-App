@@ -1,16 +1,11 @@
 package info.blockchain.wallet.ui;
 
-import piuk.blockchain.android.R;
-
 import com.google.bitcoin.params.MainNetParams;
 import com.google.bitcoin.uri.BitcoinURI;
 import com.google.bitcoin.uri.BitcoinURIParseException;
 import com.google.bitcoin.core.Address;
 import com.google.bitcoin.core.AddressFormatException;
-import com.google.bitcoin.core.NetworkParameters;
 import com.google.bitcoin.core.WrongNetworkException;
-
-import android.util.Log;
 
 public class BitcoinAddressCheck {
 	

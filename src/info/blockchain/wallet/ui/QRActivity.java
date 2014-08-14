@@ -1,10 +1,8 @@
 package info.blockchain.wallet.ui;
 
-import java.util.Arrays;
 import java.util.Map;
 
 import piuk.blockchain.android.MyRemoteWallet;
-import piuk.blockchain.android.WalletApplication;
 import piuk.blockchain.android.R;
 
 import com.google.zxing.BarcodeFormat;
@@ -17,7 +15,6 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.ImageView;
 //import android.util.Log;

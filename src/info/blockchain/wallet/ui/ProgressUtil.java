@@ -3,7 +3,6 @@ package info.blockchain.wallet.ui;
 import piuk.blockchain.android.R;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.widget.Toast;
 
 public class ProgressUtil {
 

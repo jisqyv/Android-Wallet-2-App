@@ -3,21 +3,14 @@ package info.blockchain.wallet.ui;
 import java.math.BigInteger;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 //import android.util.Log;
-import android.util.Pair;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.bitcoin.core.Address;
 import com.google.bitcoin.core.ECKey;
-import com.google.bitcoin.core.NetworkParameters;
 import com.google.bitcoin.params.MainNetParams;
 import com.google.bitcoin.uri.BitcoinURI;
 
@@ -28,7 +21,6 @@ import piuk.blockchain.android.R;
 import piuk.blockchain.android.WalletApplication;
 import piuk.blockchain.android.WalletApplication.AddAddressCallback;
 import piuk.blockchain.android.SuccessCallback;
-import piuk.blockchain.android.util.WalletUtils;
 
 public class AddressManager {
 	private MyRemoteWallet blockchainWallet = null;

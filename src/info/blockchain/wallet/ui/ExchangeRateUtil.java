@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import java.net.URL;
 import java.net.MalformedURLException;
 import java.io.IOException;
 

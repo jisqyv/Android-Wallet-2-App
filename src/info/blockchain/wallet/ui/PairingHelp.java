@@ -1,11 +1,9 @@
 package info.blockchain.wallet.ui;
 
-import java.security.SecureRandom;
 import java.util.regex.Pattern;
 
 import net.sourceforge.zbar.Symbol;
 
-import org.json.simple.JSONObject;
 import org.spongycastle.util.encoders.Hex;
 
 import com.dm.zbar.android.scanner.ZBarConstants;
@@ -16,32 +14,19 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
-import android.provider.Browser;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.ActivityInfo;
-import android.support.v4.content.LocalBroadcastManager;
-import android.text.InputType;
 //import android.util.Log;
-import android.util.Patterns;
-import android.view.KeyEvent;
-import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
 import android.view.View.OnTouchListener;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.ToggleButton;
-import android.view.View.OnClickListener;
-import android.graphics.Rect;
 import android.widget.Toast;
 
 import piuk.blockchain.android.Constants;
@@ -66,7 +51,7 @@ public class PairingHelp extends Activity {
 	
 	private int level = 0;
 
-	private static int MANUAL_PAIRING = 1;
+	//private static int MANUAL_PAIRING = 1;
 	private static int ZBAR_SCANNER_REQUEST = 2;
 
 	@Override

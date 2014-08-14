@@ -6,7 +6,6 @@ import java.text.DecimalFormat;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.content.SharedPreferences;
 import com.google.bitcoin.core.Utils;
 
 import piuk.blockchain.android.util.WalletUtils;

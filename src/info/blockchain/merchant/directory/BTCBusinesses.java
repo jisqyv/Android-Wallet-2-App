@@ -1,7 +1,5 @@
 package info.blockchain.merchant.directory;
 
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 
 import android.util.Log;

@@ -23,13 +23,11 @@ import android.text.Editable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.TypefaceSpan;
-import android.util.Pair;
 
 import com.google.bitcoin.core.Address;
 import com.google.bitcoin.core.Base58;
 import com.google.bitcoin.core.DumpedPrivateKey;
 import com.google.bitcoin.core.ECKey;
-import com.google.bitcoin.core.NetworkParameters;
 import com.google.bitcoin.core.Utils;
 import com.google.bitcoin.params.MainNetParams;
 import com.google.zxing.BarcodeFormat;

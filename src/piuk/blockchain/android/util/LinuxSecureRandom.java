@@ -12,11 +12,16 @@ import java.security.Security;
  * non-seed bytes, they are all from the same source.
  */
 public class LinuxSecureRandom extends SecureRandomSpi {
-    private static FileInputStream urandom;
+
+	private static final long serialVersionUID = -4036138817074327485L;
+	private static FileInputStream urandom;
     public byte[] seed;
 
     private static class LinuxSecureRandomProvider extends Provider {
-        public LinuxSecureRandomProvider() {
+
+		private static final long serialVersionUID = 9118528845103002455L;
+
+		public LinuxSecureRandomProvider() {
             super("LinuxSecureRandom", 1.0, "A Linux specific random number provider that uses /dev/urandom");
             put("SecureRandom.LinuxSecureRandom", LinuxSecureRandom.class.getName());
         }

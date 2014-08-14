@@ -20,7 +20,6 @@ package piuk.blockchain.android.ui;
 import java.math.BigInteger;
 import java.util.Locale;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.AlertDialog.Builder;
@@ -34,7 +33,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.text.ClipboardManager;
-import android.util.Pair;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
@@ -51,12 +49,10 @@ import piuk.blockchain.android.ui.dialogs.RequestPasswordDialog;
 //import piuk.blockchain.android.util.ActionBarFragment;
 import piuk.blockchain.android.util.WalletUtils;
 
-import com.dm.zbar.android.scanner.ZBarConstants;
 import com.dm.zbar.android.scanner.ZBarScannerActivity;
 import com.google.android.gcm.GCMRegistrar;
 import com.google.bitcoin.core.Address;
 import com.google.bitcoin.core.ECKey;
-import com.google.bitcoin.core.NetworkParameters;
 import com.google.bitcoin.core.Transaction;
 import com.google.bitcoin.params.MainNetParams;
 import com.google.bitcoin.uri.BitcoinURI;

@@ -13,8 +13,6 @@ import java.util.List;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
-import java.text.NumberFormat;
-import java.text.ParseException;
 
 import org.json.simple.JSONObject;
 
@@ -33,7 +31,6 @@ import com.google.bitcoin.core.ScriptException;
 import com.google.bitcoin.core.Transaction;
 import com.google.bitcoin.core.TransactionInput;
 import com.google.bitcoin.core.TransactionOutput;
-import com.google.bitcoin.core.Wallet;
 import com.google.bitcoin.script.Script;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
@@ -367,7 +364,7 @@ public class BalanceFragment extends Fragment   {
         IntentFilter filter = new IntentFilter(ACTION_INTENT);
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiver, filter);
 
-		final Activity activity = getActivity();
+		//final Activity activity = getActivity();
 //		application = (WalletApplication) activity.getApplication();
 
         rootView = inflater.inflate(R.layout.fragment_balance, container, false);
@@ -553,7 +550,7 @@ public class BalanceFragment extends Fragment   {
     public void onResume() {
     	super.onResume();
 
-        IntentFilter filter = new IntentFilter(ACTION_INTENT);
+        //IntentFilter filter = new IntentFilter(ACTION_INTENT);
 //        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiver, filter);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());

@@ -10,10 +10,7 @@ import java.util.HashMap;
 
 import android.app.ActionBar;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
@@ -37,7 +34,6 @@ import android.widget.Toast;
 import android.text.util.Linkify;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
-import android.net.Uri;
 import android.util.Log;
 
 import piuk.blockchain.android.R;
@@ -61,8 +57,8 @@ public class MapActivity extends Activity implements LocationListener	{
 
 	private GoogleMap map = null;
 	private LocationManager locationManager = null;
-	private String provider = null;
-    private Location location = null;
+	//private String provider = null;
+    //private Location location = null;
     private Location currLocation = null;
 	private static final long MIN_TIME = 400;
 	private static final float MIN_DISTANCE = 1000;
@@ -70,7 +66,7 @@ public class MapActivity extends Activity implements LocationListener	{
 	
 	private static float Z00M_LEVEL_DEFAULT = 13.0f;
 	private static float Z00M_LEVEL_CLOSE = 18.0f;
-	private static float Z00M_LEVEL_FAR = 10.0f;
+	//private static float Z00M_LEVEL_FAR = 10.0f;
 	private float saveZ00mLevel = Z00M_LEVEL_DEFAULT;
 	private boolean changeZoom = false;
 	
@@ -112,10 +108,10 @@ public class MapActivity extends Activity implements LocationListener	{
     private boolean spendSelected = true;
     private boolean atmSelected = true;
 
-	private ProgressDialog progress = null;
+	//private ProgressDialog progress = null;
 	
 	private HashMap<String,BTCBusiness> markerValues = null;
-    private LatLngBounds bounds = null;
+   // private LatLngBounds bounds = null;
 	
 	private String strJSONData = null;
 	public static ArrayList<BTCBusiness> btcb = null;
@@ -186,7 +182,7 @@ public class MapActivity extends Activity implements LocationListener	{
                 ((LinearLayout)findViewById(R.id.row_call)).setVisibility(View.VISIBLE);
                 ((LinearLayout)findViewById(R.id.row_web)).setVisibility(View.VISIBLE);
 
-                LatLng latLng = marker.getPosition();
+                //LatLng latLng = marker.getPosition();
                                 
                 BTCBusiness b = markerValues.get(marker.getId());
 

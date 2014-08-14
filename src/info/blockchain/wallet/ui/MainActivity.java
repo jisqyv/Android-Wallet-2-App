@@ -1,7 +1,6 @@
 package info.blockchain.wallet.ui;
 
 import java.util.Locale;
-import java.math.BigInteger;
 
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
@@ -69,7 +68,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
 	private WalletApplication application;
 	
-	private boolean returningFromActivity = false;
+	//private boolean returningFromActivity = false;
 	
 	public static final String INTENT_EXTRA_ADDRESS = "address";
 

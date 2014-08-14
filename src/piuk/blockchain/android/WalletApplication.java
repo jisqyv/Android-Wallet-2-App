@@ -40,7 +40,6 @@ import com.google.bitcoin.core.*;
 import com.google.bitcoin.params.MainNetParams;
 //import com.google.bitcoin.core.Wallet.AutosaveEventListener;
 //import com.google.bitcoin.store.WalletExtensionSerializer;
-import com.google.bitcoin.store.WalletProtobufSerializer;
 
 import org.apache.commons.io.IOUtils;
 import org.json.simple.JSONObject;
@@ -50,7 +49,6 @@ import org.spongycastle.util.encoders.Hex;
 
 import piuk.blockchain.android.EventListeners;
 import piuk.blockchain.android.MyRemoteWallet;
-import piuk.blockchain.android.MyRemoteWallet.NotModfiedException;
 import piuk.blockchain.android.MyWallet;
 import piuk.blockchain.android.R;
 //import piuk.blockchain.android.service.BlockchainServiceImpl;

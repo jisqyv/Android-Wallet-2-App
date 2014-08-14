@@ -5,7 +5,6 @@ import java.util.HashMap;
 import android.content.Context;
 import android.preference.PreferenceManager;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 import info.blockchain.api.ExchangeRates;
 

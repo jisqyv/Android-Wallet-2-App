@@ -2,7 +2,6 @@ package info.blockchain.wallet.ui;
 
 import java.security.SecureRandom;
 
-import org.apache.commons.lang.RandomStringUtils;
 import org.json.simple.JSONObject;
 import org.spongycastle.util.encoders.Hex;
 

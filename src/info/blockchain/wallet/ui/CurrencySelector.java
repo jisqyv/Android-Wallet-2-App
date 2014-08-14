@@ -10,7 +10,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ArrayAdapter;
-import android.widget.Toast;
 //import android.util.Log;
 
 import piuk.blockchain.android.R;

@@ -21,7 +21,6 @@ import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.Toast;
-import android.util.Log;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
