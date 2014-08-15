@@ -21,9 +21,8 @@ public class TheMoneyConverterXML extends DefaultHandler {
     private StringBuilder builder = null;
     private static HashMap<String,Double> prices = null;
     private static HashMap<String,String> names = null;
-    private List<String> currencies = null;
 
-    public TheMoneyConverterXML(ArrayList<String> currencies)	{
+    public TheMoneyConverterXML()	{
     	strText = null;
     	strPrice = null;
     	strSymbol = null;
@@ -32,7 +31,6 @@ public class TheMoneyConverterXML extends DefaultHandler {
         builder = new StringBuilder(32);
 	    prices = new HashMap<String,Double>();
 	    names = new HashMap<String,String>();
-	    this.currencies = currencies;
     }
 
     public HashMap<String,Double> getExchangeRates() {
@@ -81,20 +79,18 @@ public class TheMoneyConverterXML extends DefaultHandler {
         }
         else if (localName.equals("description") && isItem && isTitle && isRate) {
 
-        	if(!currencies.contains(strSymbol)) {
-        		int idx = strText.indexOf("1 United States Dollar = ");
-            	if(strText != null && idx != -1) {
-            		String tmp = strText.substring(idx + 25);
-            		int idx1 = tmp.indexOf(" ");
-                	if(idx1 != -1) {
-                    	Locale locale = new Locale("en", "US");
-                        Locale.setDefault(locale);
-                        strPrice = tmp.substring(0, idx1).replaceAll(",", "");
-                		prices.put(strSymbol, Double.valueOf(strPrice));
-                        String strName = tmp.substring(idx1 + 1).trim();
-                		names.put(strSymbol, strName);
-//                		Log.d("XML", strSymbol + "," + strName + "=" + strPrice);
-                	}
+    		int idx = strText.indexOf("1 United States Dollar = ");
+        	if(strText != null && idx != -1) {
+        		String tmp = strText.substring(idx + 25);
+        		int idx1 = tmp.indexOf(" ");
+            	if(idx1 != -1) {
+                	Locale locale = new Locale("en", "US");
+                    Locale.setDefault(locale);
+                    strPrice = tmp.substring(0, idx1).replaceAll(",", "");
+            		prices.put(strSymbol, Double.valueOf(strPrice));
+                    String strName = tmp.substring(idx1 + 1).trim();
+            		names.put(strSymbol, strName);
+//            		Log.d("XML", strSymbol + "," + strName + "=" + strPrice);
             	}
         	}
 

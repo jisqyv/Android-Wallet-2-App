@@ -53,7 +53,6 @@ public class CurrencyExchange	{
     		return prices.get(currency);
     	}
     	else	{
-//    		return 0.0;
     		return OtherCurrencyExchange.getInstance(context).getCurrencyPrice(currency);
     	}
 

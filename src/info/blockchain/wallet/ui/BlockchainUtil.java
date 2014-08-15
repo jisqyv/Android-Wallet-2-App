@@ -2,6 +2,7 @@ package info.blockchain.wallet.ui;
 
 import java.math.BigInteger;
 import java.text.DecimalFormat;
+import java.util.Locale;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -44,16 +45,11 @@ public class BlockchainUtil {
 		
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         strFiatCode = prefs.getString("ccurrency", "USD");
-		if(strFiatCode.equals("ZZZ")) {
-	        strFiatCode = prefs.getString("ocurrency", "USD");
-        	strFiatSymbol = strFiatCode.substring(strFiatCode.length() - 1, strFiatCode.length());
-		}
-		else {
-			if(CurrencyExchange.getInstance(context).getCurrencySymbol(strFiatCode) != null) {
-	        	strFiatSymbol = CurrencyExchange.getInstance(context).getCurrencySymbol(strFiatCode).substring(0, 1);
-			}
-			else {
-	        	strFiatSymbol = "$";
+		strFiatSymbol = java.util.Currency.getInstance(strFiatCode).getSymbol(Locale.US);
+		if(strFiatSymbol == null || strFiatSymbol.length() != 1) {
+			strFiatSymbol = CurrencyExchange.getInstance(context).getCurrencySymbol(strFiatCode);
+			if(strFiatSymbol == null || strFiatSymbol.length() != 1) {
+	        	strFiatSymbol = strFiatCode.substring(strFiatCode.length() - 1, strFiatCode.length());
 			}
 		}
 

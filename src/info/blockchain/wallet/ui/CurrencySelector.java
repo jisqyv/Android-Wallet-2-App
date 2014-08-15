@@ -21,75 +21,130 @@ import piuk.blockchain.android.R;
 public class CurrencySelector extends Activity	{
 
 	private SelectedSpinner spCurrencies = null;
-	private String[] currencies = null;
 	private Button bOK = null;
 	private Button bCancel = null;
     private ArrayAdapter<CharSequence> spAdapter = null;
 	
 	private SharedPreferences prefs = null;
     private SharedPreferences.Editor editor = null;
+    
+	private static String[] currencies = {
+	    "United States Dollar - USD",
+	    "Euro - EUR",
+	    "British Pound Sterling - GBP",
+	    "Indian Rupee - INR",
+	    "Australian Dollar - AUD",
+	    "Canadian Dollar - CAD",
+	    "Arab Emirates Dirham - AED",
+	    "Argentine Peso - ARS",
+	    "Aruban Florin - AWG",
+	    "Convertible Mark - BAM",
+	    "Barbadian Dollar - BBD",
+	    "Bangladeshi Taka - BDT",
+	    "Bulgarian Lev - BGN",
+	    "Bahraini Dinar - BHD",
+	    "Bermudian Dollar - BMD",
+	    "Bolivian Boliviano - BOB",
+	    "Brazilian Real - BRL",
+	    "Bahamian Dollar - BSD",
+	    "Swiss Franc - CHF",
+	    "Chilean Peso - CLP",
+	    "Chinese Yuan - CNY",
+	    "Colombian Peso - COP",
+	    "Czech Koruna - CZK",
+	    "Danish Krone - DKK",
+	    "Dominican Peso - DOP",
+	    "Egyptian Pound - EGP",
+	    "Fijian Dollar - FJD",
+	    "Ghana Cedi - GHS",
+	    "Gambian Dalasi - GMD",
+	    "Guatemalan Quetzal - GTQ",
+	    "Hong Kong Dollar - HKD",
+	    "Croatian Kuna - HRK",
+	    "Hungarian Forint - HUF",
+	    "Indonesian Rupiah - IDR",
+	    "Israeli Sheqel - ILS",
+	    "Icelandic Krona - ISK",
+	    "Jamaican Dollar - JMD",
+	    "Jordanian Dinar - JOD",
+	    "Japanese Yen - JPY",
+	    "Kenyan Shilling - KES",
+	    "Cambodian Riel - KHR",
+	    "South Korean Won - KRW",
+	    "Kuwaiti Dinar - KWD",
+	    "Lao Kip - LAK",
+	    "Lebanese Pound - LBP",
+	    "Sri Lankan Rupee - LKR",
+	    "Lithuanian Litas - LTL",
+	    "Moroccan Dirham - MAD",
+	    "Moldovan Leu - MDL",
+	    "Malagasy Ariary - MGA",
+	    "Macedonian Denar - MKD",
+	    "Mauritian Rupee - MUR",
+	    "Maldivian Rufiyaa - MVR",
+	    "Mexican Peso - MXN",
+	    "Malaysian Ringgit - MYR",
+	    "Namibian Dollar - NAD",
+	    "Nigerian Naira - NGN",
+	    "Norwegian Krone - NOK",
+	    "Nepalese Rupee - NPR",
+	    "New Zealand Dollar - NZD",
+	    "Omani Rial - OMR",
+	    "Panamanian Balboa - PAB",
+	    "Peruvian Sol - PEN",
+	    "Philippine Peso - PHP",
+	    "Pakistani Rupee - PKR",
+	    "Polish Zloty - PLN",
+	    "Paraguayan Guaraní - PYG",
+	    "Qatari Riyal - QAR",
+	    "Romanian Leu - RON",
+	    "Serbian Dinar - RSD",
+	    "Russian Rouble - RUB",
+	    "Saudi Riyal - SAR",
+	    "Seychellois Rupee - SCR",
+	    "Swedish Krona - SEK",
+	    "Singapore Dollar - SGD",
+	    "Syrian Pound - SYP",
+	    "Thai Baht - THB",
+	    "Tunisian Dinar - TND",
+	    "Turkish Lira - TRY",
+	    "Taiwanese Dollar - TWD",
+	    "Ukraine Hryvnia - UAH",
+	    "Ugandan Shilling - UGX",
+	    "Uruguayan Peso - UYU",
+	    "Venezuelan Bolívar - VEF",
+	    "Vietnamese Dong - VND",
+	    "Central African Franc - XAF",
+	    "East Caribbean Dollar - XCD",
+	    "West African Franc - XOF",
+	    "CFP Franc - XPF",
+	    "South African Rand - ZAR"
+		};
 
-    private static boolean displayOthers = false;
-	private String strOtherCurrency = null;
-
-	private static int OTHER_CURRENCY_ACTIVITY = 1;
-
-    @Override
+	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 	    setContentView(R.layout.activity_currency);
 	    
-        Bundle extras = getIntent().getExtras();
-        if(extras != null)	{
-        	strOtherCurrency = extras.getString("ocurrency");
-        }
-
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
         editor = prefs.edit();
 
         OtherCurrencyExchange.getInstance(this);
 
         spCurrencies = (SelectedSpinner)findViewById(R.id.receive_coins_default_currency);
-        spAdapter = ArrayAdapter.createFromResource(this, R.array.currencies, android.R.layout.simple_spinner_item);
-    	spAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); 
+        spAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, currencies);
     	spCurrencies.setAdapter(spAdapter);
-
-    	spCurrencies.setOnItemSelectedListener(new OnItemSelectedListener()	{
-	    	public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3)	{
-	    		if(!displayOthers && arg2 == spAdapter.getCount() - 1)	{
-	    			displayOthers = true;
-	        		Intent intent = new Intent(CurrencySelector.this, OtherCurrencyActivity.class);
-	        		intent.putExtra("ocurrency", strOtherCurrency);
-	        		startActivityForResult(intent, OTHER_CURRENCY_ACTIVITY);
-	    		}
-	    	}
-	        public void onNothingSelected(AdapterView<?> arg0) {
-	        	;
-	        }
-    	});
 
         bOK = (Button)findViewById(R.id.confirm);
         bOK.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
-            	
             	int currency = spCurrencies.getSelectedItemPosition();
-	        	currencies = getResources().getStringArray(R.array.currencies);
-
-	            if(currency == currencies.length - 1) {
-		            editor.putString("ccurrency", "ZZZ");
-	            }
-	            else {
-		            editor.putString("ccurrency", currencies[currency].substring(currencies[currency].length() - 3));
-		            editor.remove("ocurrency");
-		            strOtherCurrency = null;
-	            }
-
+	            editor.putString("ccurrency", currencies[currency].substring(currencies[currency].length() - 3));
 	            editor.commit();
             	finish();
 
             }
         });
-
 
         bCancel = (Button)findViewById(R.id.cancel);
         bCancel.setOnClickListener(new Button.OnClickListener() {
@@ -101,33 +156,6 @@ public class CurrencySelector extends Activity	{
         initValues();
 
     }
-
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		
-		if(resultCode == Activity.RESULT_OK && requestCode == OTHER_CURRENCY_ACTIVITY) {
-			if(data != null && data.getAction() != null && data.getAction().length() > 0) {
-				String ocurrencyMsg = OtherCurrencyExchange.getInstance(this).getCurrencyNames().get(data.getAction()) + " - " + data.getAction();
-	            Toast.makeText(this, ocurrencyMsg, Toast.LENGTH_LONG).show();
-		        prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		        editor = prefs.edit();
-	            editor.putString("ocurrency", data.getAction());
-	            editor.commit();
-	            strOtherCurrency = data.getAction();
-			}
-			else {
-				;
-			}
-			displayOthers = false;
-        }
-		else if(resultCode == Activity.RESULT_CANCELED && requestCode == OTHER_CURRENCY_ACTIVITY) {
-			displayOthers = false;
-		}
-        else {
-        	;
-        }
-
-	}
 
 	@Override
     public boolean onKeyDown(int keyCode, KeyEvent event) { 
@@ -142,7 +170,6 @@ public class CurrencySelector extends Activity	{
     }
 
     private void initValues() {
-    	currencies = getResources().getStringArray(R.array.currencies);
     	String strCurrency = prefs.getString("ccurrency", "USD");
     	int sel = -1;
     	for(int i = 0; i < currencies.length; i++) {
@@ -153,7 +180,7 @@ public class CurrencySelector extends Activity	{
     		}
     	}
     	if(sel == -1) {
-	        spCurrencies.setSelection(currencies.length - 1);
+	        spCurrencies.setSelection(0);
     	}
 
     }

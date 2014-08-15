@@ -10,9 +10,7 @@ import piuk.blockchain.android.util.WalletUtils;
 import android.content.Context;
 import android.os.Handler;
 import android.util.Xml;
-import android.util.Log;
-
-import piuk.blockchain.android.R;
+//import android.util.Log;
 
 public class OtherCurrencyExchange	{
 
@@ -89,14 +87,7 @@ public class OtherCurrencyExchange	{
 						@Override
 						public void run() {
 							try {
-
-					        	currencies = context.getResources().getStringArray(R.array.currencies);
-					        	ArrayList<String> currencyCodes = new ArrayList<String>();
-					        	for(int i = 0; i < (currencies.length - 1); i++) {
-					        		currencyCodes.add(currencies[i].substring(currencies[i].length() - 3));
-					        	}
-					        	
-				        		TheMoneyConverterXML mcx = new TheMoneyConverterXML(currencyCodes);
+				        		TheMoneyConverterXML mcx = new TheMoneyConverterXML();
 				            	try {
 				            		Xml.parse(response, mcx);
 				            		if(mcx.getExchangeRates() != null && mcx.getCurrencyNames() != null) {
