@@ -26,18 +26,38 @@ public class BlockchainUtil {
     public static String BLOCKCHAIN_DONATE2 = "Address Book Empty";
 
     private static double BTC_RATE = 635.0;
+    
+    private static String strFiatCode = null;
+    private static String strFiatSymbol = null;
+    
+    private static Context context = null;
 
 	private BlockchainUtil() { ; }
 
 	public static BlockchainUtil getInstance(Context ctx) {
 		
+		context = ctx;
+		
 		if(instance == null) {
 			instance = new BlockchainUtil();
 		}
 		
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-        String strCurrencyCode = prefs.getString("ccurrency", "USD");
-		BTC_RATE = CurrencyExchange.getInstance(ctx).getCurrencyPrice(strCurrencyCode);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        strFiatCode = prefs.getString("ccurrency", "USD");
+		if(strFiatCode.equals("ZZZ")) {
+	        strFiatCode = prefs.getString("ocurrency", "USD");
+        	strFiatSymbol = strFiatCode.substring(strFiatCode.length() - 1, strFiatCode.length());
+		}
+		else {
+			if(CurrencyExchange.getInstance(context).getCurrencySymbol(strFiatCode) != null) {
+	        	strFiatSymbol = CurrencyExchange.getInstance(context).getCurrencySymbol(strFiatCode).substring(0, 1);
+			}
+			else {
+	        	strFiatSymbol = "$";
+			}
+		}
+
+		BTC_RATE = CurrencyExchange.getInstance(ctx).getCurrencyPrice(strFiatCode);
 
 		return instance;
 	}
@@ -114,4 +134,13 @@ public class BlockchainUtil {
 
 		return false;
 	}
+
+	public String getFiatCode() {
+		return strFiatCode;
+	}
+	
+	public String getFiatSymbol() {
+		return strFiatSymbol;
+	}
+
 }

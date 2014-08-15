@@ -286,9 +286,13 @@ public class SendFragment extends Fragment   {
     	
         rootView = inflater.inflate(R.layout.fragment_send, container, false);
 
+        /*
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         strCurrentFiatCode = prefs.getString("ccurrency", "USD");
         strCurrentFiatSymbol = prefs.getString(strCurrentFiatCode + "-SYM", "$");
+        */
+        strCurrentFiatCode = BlockchainUtil.getInstance(getActivity()).getFiatCode();
+        strCurrentFiatSymbol = BlockchainUtil.getInstance(getActivity()).getFiatSymbol();
 
     	simple_spend = (LinearLayout)rootView.findViewById(R.id.send_container);
     	custom_spend = (LinearLayout)rootView.findViewById(R.id.custom_spend);
@@ -1289,10 +1293,14 @@ public class SendFragment extends Fragment   {
 //        Log.d("BlockchainWallet", "setUserVisible");
 
         if(isVisibleToUser) {
-        	
+
+        	/*
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
             strCurrentFiatCode = prefs.getString("ccurrency", "USD");
             strCurrentFiatSymbol = prefs.getString(strCurrentFiatCode + "-SYM", "$");
+            */
+            strCurrentFiatCode = BlockchainUtil.getInstance(getActivity()).getFiatCode();
+            strCurrentFiatSymbol = BlockchainUtil.getInstance(getActivity()).getFiatSymbol();
 
             if(isBTC) {
         		tvAmount2.setText(tvAmount2.getText().toString().substring(0, tvAmount2.getText().toString().length() - 4) + " " + strCurrentFiatCode);
@@ -1787,10 +1795,14 @@ public class SendFragment extends Fragment   {
      }
 
     private void displayMagicList() {
-    	
+
+    	/*
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         strCurrentFiatCode = prefs.getString("ccurrency", "USD");
         strCurrentFiatSymbol = prefs.getString(strCurrentFiatCode + "-SYM", "$");
+        */
+        strCurrentFiatCode = BlockchainUtil.getInstance(getActivity()).getFiatCode();
+        strCurrentFiatSymbol = BlockchainUtil.getInstance(getActivity()).getFiatSymbol();
 
     	LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 

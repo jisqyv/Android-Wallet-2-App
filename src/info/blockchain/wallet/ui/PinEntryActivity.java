@@ -633,6 +633,8 @@ public class PinEntryActivity extends FragmentActivity {
 			ExchangeRates fxRates = new ExchangeRates();
 			DownloadFXRatesTask task = new DownloadFXRatesTask(context, fxRates);
 			task.execute(new String[] { fxRates.getUrl() });
+			
+			OtherCurrencyExchange.getInstance(PinEntryActivity.this);
 		}
 		else {
 

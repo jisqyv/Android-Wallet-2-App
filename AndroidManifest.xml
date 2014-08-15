@@ -220,8 +220,14 @@
 			<intent-filter /> 
         </activity>
 
+        <activity android:name="info.blockchain.wallet.ui.OtherCurrencyActivity"
+			android:label="@string/app_name"
+            android:theme="@android:style/Theme.Dialog" >
+			<intent-filter /> 
+        </activity>
+
         <activity android:name="info.blockchain.wallet.ui.Exit" android:theme="@android:style/Theme.NoDisplay"/>
-        
+
         <receiver
             android:name="piuk.blockchain.android.WalletBalanceWidgetProvider"
 			android:label="@string/app_name" >

@@ -66,7 +66,11 @@ public class SettingsActivity extends PreferenceActivity {
         	Preference fiatPref = (Preference) findPreference("fiat");
         	fiatPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
         		public boolean onPreferenceClick(Preference preference) {
+        			
+            		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SettingsActivity.this);
+                    String strOtherCurrency = prefs.getString("ocurrency", "");
         	    	Intent intent = new Intent(SettingsActivity.this, CurrencySelector.class);
+            		intent.putExtra("ocurrency", strOtherCurrency);
         			startActivity(intent);
         			return true;
         		}

@@ -537,5 +537,8 @@
     <string name="confirm_pin">Please confirm your 4-digit pin</string>
 
     <string name="check_connectivity_exit">Blockchain Wallet cannot obtain an Internet connection. Please check the connectivity on your device and try again.</string>
+
+    <string name="receive_coins_fragment_default_currency_hint">Default currency</string>
+    <string name="options_other_currencies">Other currencies</string>
     
 </resources>

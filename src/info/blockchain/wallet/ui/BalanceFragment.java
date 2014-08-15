@@ -228,10 +228,14 @@ public class BalanceFragment extends Fragment   {
 	public void setAdapterContent() {
 		if (getActivity() == null)
 			return;
-		
+
+		/*
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         strCurrentFiatCode = prefs.getString("ccurrency", "USD");
         strCurrentFiatSymbol = prefs.getString(strCurrentFiatCode + "-SYM", "$");
+        */
+        strCurrentFiatCode = BlockchainUtil.getInstance(getActivity()).getFiatCode();
+        strCurrentFiatSymbol = BlockchainUtil.getInstance(getActivity()).getFiatSymbol();
 
 //		application = WalletUtil.getRefreshedInstance(getActivity()).getWalletApplication();
 		application = WalletUtil.getInstance(getActivity()).getWalletApplication();
@@ -372,9 +376,13 @@ public class BalanceFragment extends Fragment   {
 
         rootView = inflater.inflate(R.layout.fragment_balance, container, false);
 
+        /*
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         strCurrentFiatCode = prefs.getString("ccurrency", "USD");
         strCurrentFiatSymbol = prefs.getString(strCurrentFiatCode + "-SYM", "$");
+        */
+        strCurrentFiatCode = BlockchainUtil.getInstance(getActivity()).getFiatCode();
+        strCurrentFiatSymbol = BlockchainUtil.getInstance(getActivity()).getFiatSymbol();
 
         slideUp = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.slide_up);
         slideDown = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.slide_down);
@@ -531,9 +539,13 @@ public class BalanceFragment extends Fragment   {
         if(isVisibleToUser) {
         	System.gc();
 
+        	/*
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
             strCurrentFiatCode = prefs.getString("ccurrency", "USD");
             strCurrentFiatSymbol = prefs.getString(strCurrentFiatCode + "-SYM", "$");
+            */
+            strCurrentFiatCode = BlockchainUtil.getInstance(getActivity()).getFiatCode();
+            strCurrentFiatSymbol = BlockchainUtil.getInstance(getActivity()).getFiatSymbol();
             
     		if(TxNotifUtil.getInstance().getTx() != null) {
     			showTx = TxNotifUtil.getInstance().getTx();
@@ -556,9 +568,13 @@ public class BalanceFragment extends Fragment   {
         IntentFilter filter = new IntentFilter(ACTION_INTENT);
 //        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiver, filter);
 
+        /*
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         strCurrentFiatCode = prefs.getString("ccurrency", "USD");
         strCurrentFiatSymbol = prefs.getString(strCurrentFiatCode + "-SYM", "$");
+        */
+        strCurrentFiatCode = BlockchainUtil.getInstance(getActivity()).getFiatCode();
+        strCurrentFiatSymbol = BlockchainUtil.getInstance(getActivity()).getFiatSymbol();
         
 		if(TxNotifUtil.getInstance().getTx() != null) {
 			showTx = TxNotifUtil.getInstance().getTx();
@@ -723,8 +739,12 @@ public class BalanceFragment extends Fragment   {
     }
 
     public void doDisplaySubList(final View view, int position) {
+    	/*
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         strCurrentFiatCode = prefs.getString("ccurrency", "USD");
+        */
+        strCurrentFiatCode = BlockchainUtil.getInstance(getActivity()).getFiatCode();
+//        strCurrentFiatSymbol = BlockchainUtil.getInstance(getActivity()).getFiatSymbol();
 
     	final LinearLayout balance_extLayout = (LinearLayout)view.findViewById(R.id.balance_ext);
     	final LinearLayout balance_extHiddenLayout = (LinearLayout)view.findViewById(R.id.balance_ext_hidden);
