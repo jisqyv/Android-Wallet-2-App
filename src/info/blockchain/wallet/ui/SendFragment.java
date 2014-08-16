@@ -92,6 +92,7 @@ import com.google.bitcoin.core.Address;
 import com.google.bitcoin.core.ECKey;
 import com.google.bitcoin.core.Transaction;
 import com.google.bitcoin.core.TransactionOutput;
+import com.google.bitcoin.core.Utils;
 import com.google.bitcoin.params.MainNetParams;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
@@ -690,7 +691,9 @@ public class SendFragment extends Fragment   {
 						Address receivingAddress = new Address(Constants.NETWORK_PARAMETERS, addressString);
 
 						if (sendType != null && sendType == SendTypeQuickSend) {
-							quickSend(receivingAddress, fee, feePolicy);
+//							quickSend(receivingAddress, fee, feePolicy);
+//							Toast.makeText(SendFragment.this.getActivity(), "Quick send", Toast.LENGTH_LONG).show();
+							quickSend(receivingAddress, Utils.toNanoCoins("0.0001"), MyRemoteWallet.FeePolicy.FeeForce);
 						} else if (sendType != null && sendType == SendTypeCustomSend) {
 							if (isCustomSendInputsCorrect()) {
 								customSend(receivingAddress, fee, feePolicy);

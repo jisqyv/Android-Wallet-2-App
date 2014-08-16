@@ -42,7 +42,20 @@ public class CurrencyExchange	{
 		}
 
     	if(System.currentTimeMillis() - ts > (15 * 60 * 1000)) {
+
     		getExchangeRates();
+    		
+			String[] currencies = fxRates.getCurrencies();
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            SharedPreferences.Editor editor = prefs.edit();
+	    	for(int i = 0; i < currencies.length; i++)	 {
+		    	if(fxRates.getLastPrice(currencies[i]) > 0.0)	{
+                    editor.putLong(currencies[i], Double.doubleToRawLongBits(fxRates.getLastPrice(currencies[i])));
+                    editor.putString(currencies[i] + "-SYM", fxRates.getSymbol(currencies[i]));
+		    	}
+	    	}
+            editor.commit();
+
     	}
 
 		return instance;
@@ -66,6 +79,10 @@ public class CurrencyExchange	{
     		return null;
     	}
 
+    }
+
+    public String[] getBlockchainCurrencies()	{
+		return fxRates.getCurrencies();
     }
 
 	private static void getExchangeRates() {

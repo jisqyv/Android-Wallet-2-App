@@ -1,6 +1,7 @@
 package info.blockchain.wallet.ui;
 
-import java.util.ArrayList;
+import java.util.List;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import org.xml.sax.SAXException;
@@ -8,7 +9,9 @@ import org.xml.sax.SAXException;
 import piuk.blockchain.android.util.WalletUtils;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.util.Xml;
 //import android.util.Log;
 
@@ -24,20 +27,48 @@ public class OtherCurrencyExchange	{
 
     private static Context context = null;
     
+    private static Double USD_RATE = 0.0;
+    
     private OtherCurrencyExchange()	{ ; }
 
 	public static OtherCurrencyExchange getInstance(Context ctx) {
 		
 		context = ctx;
+		USD_RATE = CurrencyExchange.getInstance(context).getCurrencyPrice("USD");
 
-		if (instance == null) {
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+
+		if(instance == null) {
 		    prices = new HashMap<String,Double>();
 		    names = new HashMap<String,String>();
+
+			String strFiatCode = BlockchainUtil.getInstance(context).getFiatCode();
+			String[] currencies = CurrencyExchange.getInstance(context).getBlockchainCurrencies();
+			List<String> currencyList = Arrays.asList(currencies);
+			if(strFiatCode != null && currencyList != null && !currencyList.contains(strFiatCode)) {
+		    	prices.put(strFiatCode, Double.longBitsToDouble(prefs.getLong(strFiatCode, Double.doubleToLongBits(0.0))));
+			}
+
 	    	instance = new OtherCurrencyExchange();
 		}
 
     	if(System.currentTimeMillis() - ts > (120 * 60 * 1000)) {
     		getExchangeRates();
+
+            SharedPreferences.Editor editor = prefs.edit();
+
+    		if(prices != null) {
+    			String[] currencies = CurrencyExchange.getInstance(context).getBlockchainCurrencies();
+    			List<String> currencyList = Arrays.asList(currencies);
+    			
+    			for (String key : prices.keySet()) {
+    		    	if(currencyList != null && !currencyList.contains(key) && prices.get(key) > 0.0)	{
+                        editor.putLong(key, Double.doubleToRawLongBits(prices.get(key)));
+    		    	}
+    			}
+                editor.commit();
+    		}
+
     	}
 
 		return instance;
@@ -45,8 +76,8 @@ public class OtherCurrencyExchange	{
 	
     public Double getCurrencyPrice(String currency)	{
     	
-    	if(prices.containsKey(currency) && prices.get(currency) != 0.0)	{
-    		return 1.0 / ((1.0 / prices.get(currency)) * (1.0 / CurrencyExchange.getInstance(context).getCurrencyPrice("USD")));
+    	if(prices != null && prices.containsKey(currency) && prices.get(currency) != 0.0)	{
+    		return 1.0 / ((1.0 / prices.get(currency)) * (1.0 / USD_RATE));
     	}
     	else	{
     		return 0.0;
@@ -56,7 +87,7 @@ public class OtherCurrencyExchange	{
 
     public String getCurrencyName(String currency)	{
     	
-    	if(names.containsKey(currency) && names.get(currency) != null)	{
+    	if(names != null && names.containsKey(currency) && names.get(currency) != null)	{
     		return names.get(currency);
     	}
     	else	{
