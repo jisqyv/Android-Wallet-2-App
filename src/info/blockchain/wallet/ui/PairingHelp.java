@@ -1,11 +1,9 @@
 package info.blockchain.wallet.ui;
 
-import java.security.SecureRandom;
 import java.util.regex.Pattern;
 
 import net.sourceforge.zbar.Symbol;
 
-import org.json.simple.JSONObject;
 import org.spongycastle.util.encoders.Hex;
 
 import com.dm.zbar.android.scanner.ZBarConstants;
@@ -16,33 +14,25 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
-import android.provider.Browser;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.ActivityInfo;
-import android.support.v4.content.LocalBroadcastManager;
-import android.text.InputType;
-//import android.util.Log;
-import android.util.Patterns;
-import android.view.KeyEvent;
-import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
+import android.view.Display;
 import android.view.View.OnTouchListener;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.ToggleButton;
-import android.view.View.OnClickListener;
-import android.graphics.Rect;
+import android.graphics.Point;
+import android.graphics.BitmapFactory;
+import android.graphics.Bitmap;
 import android.widget.Toast;
+//import android.util.Log;
 
 import piuk.blockchain.android.Constants;
 import piuk.blockchain.android.MyRemoteWallet;
@@ -66,7 +56,6 @@ public class PairingHelp extends Activity {
 	
 	private int level = 0;
 
-	private static int MANUAL_PAIRING = 1;
 	private static int ZBAR_SCANNER_REQUEST = 2;
 
 	@Override
@@ -84,44 +73,6 @@ public class PairingHelp extends Activity {
         	level = extras.getInt("level");
         }
 
-//		prefs = PreferenceManager.getDefaultSharedPreferences(this);
-
-		ivImage = (ImageView)findViewById(R.id.img);
-        if(level == 2)	{
-        	ivImage.setImageResource(R.drawable.pairing3);
-        }
-        else if(level == 1)	{
-        	ivImage.setImageResource(R.drawable.pairing2);
-        }
-        else	{
-        	ivImage.setImageResource(R.drawable.pairing1);
-        }
-
-		tvHeader = (TextView)findViewById(R.id.header);
-		tvHeader.setTypeface(TypefaceUtil.getInstance(this).getGravityLightTypeface());
-		tvHeader.setText(R.string.connect_existing_wallet);
-
-		tvFooter1 = (TextView)findViewById(R.id.footer1);
-		tvFooter1.setText(R.string.SCAN_CODE);
-		tvFooter2 = (TextView)findViewById(R.id.footer2);
-		tvFooter2.setText(R.string.MANUAL_PAIR);
-		
-		tvWarning1 = (TextView)findViewById(R.id.warning1);
-		tvWarning2 = (TextView)findViewById(R.id.warning2);
-		tvWarning2.setTextColor(0xFF039BD3);
-        if(level == 2)	{
-    		tvWarning1.setText(R.string.step_3);
-    		tvWarning2.setText(R.string.step_3_text);
-        }
-        else if(level == 1)	{
-    		tvWarning1.setText(R.string.step_2);
-    		tvWarning2.setText(R.string.step_2_text);
-        }
-        else	{
-    		tvWarning1.setText(R.string.step_1);
-    		tvWarning2.setText(R.string.step_1_text);
-        }
-        
 		layoutScan = (LinearLayout)findViewById(R.id.scan);
 		layoutScan.setOnTouchListener(new OnTouchListener() {
             @Override
@@ -144,39 +95,35 @@ public class PairingHelp extends Activity {
             }
         });
 
-		if(level == 0) {
-			;
-		}
-		else {
-			tvBack = (TextView)findViewById(R.id.back);
-			tvBack.setText("<");
-			tvBack.setOnTouchListener(new OnTouchListener() {
-	            @Override
-	            public boolean onTouch(View arg0, MotionEvent arg1) {
-            	 	Intent intent = new Intent(PairingHelp.this, PairingHelp.class);
-            	 	intent.putExtra("level", --level);
-            	 	startActivity(intent);            	
-	                return false;
-	            }
-	        });
-		}
+		tvBack = (TextView)findViewById(R.id.back);
+		tvBack = (TextView)findViewById(R.id.back);
+		tvBack.setText("<");
+		tvBack.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View arg0, MotionEvent arg1) {
+            	level--;
+            	if(level < 0) {
+            		level = 0;
+            	}
+        		updateDisplay();
+        		return false;
+            }
+        });
 
-		if(level == 2) {
-			;
-		}
-		else {
-			tvNext = (TextView)findViewById(R.id.next);
-			tvNext.setText(">");
-			tvNext.setOnTouchListener(new OnTouchListener() {
-	            @Override
-	            public boolean onTouch(View arg0, MotionEvent arg1) {
-            	 	Intent intent = new Intent(PairingHelp.this, PairingHelp.class);
-            	 	intent.putExtra("level", ++level);
-            	 	startActivity(intent);            	
-	                return false;
-	            }
-	        });
-		}
+		tvNext = (TextView)findViewById(R.id.next);
+		tvNext.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View arg0, MotionEvent arg1) {
+            	level++;
+            	if(level > 2) {
+            		level = 2;
+            	}
+        		updateDisplay();
+        		return false;
+            }
+        });
+
+		updateDisplay();
 	}
 
 	@Override
@@ -188,18 +135,6 @@ public class PairingHelp extends Activity {
 	        	handleQRCode(strResult);
 			}
         }
-		/*
-		else if(resultCode == Activity.RESULT_OK && requestCode == MANUAL_PAIRING) {
-			if(data != null && data.getAction() != null)	{
-				String res = data.getAction();
-				String uuid = res.substring(0, 36);
-				String pw = res.substring(36);
-//				Toast.makeText(this, "Wallet identifier:" + uuid, Toast.LENGTH_SHORT).show();
-//				Toast.makeText(this, "Password:" + pw, Toast.LENGTH_SHORT).show();
-//				pairManually(uuid, pw);
-			}
-        }
-        */
         else {
         	;
         }
@@ -346,97 +281,95 @@ public class PairingHelp extends Activity {
 		}
 		
 	}
-/*
-	public void pairManually(final String guid, final String password) {
+	
+	public void updateDisplay()	{
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+//        int height = size.y;
 
-		final Activity activity = this;
+		ivImage = (ImageView)findViewById(R.id.img);
+	    if(level == 2)	{
+	    	ivImage.setImageBitmap(decodeSampledBitmapFromResource(getResources(), R.drawable.pairing3, width - 50, (int)(width * 0.75)));
+	    }
+	    else if(level == 1)	{
+	    	ivImage.setImageBitmap(decodeSampledBitmapFromResource(getResources(), R.drawable.pairing2, width - 50, (int)(width * 0.75)));
+	    }
+	    else	{
+	    	ivImage.setImageBitmap(decodeSampledBitmapFromResource(getResources(), R.drawable.pairing1, width - 50, (int)(width * 0.75)));
+	    }
+	    
+		if(level == 0) {
+			tvBack.setVisibility(View.INVISIBLE);
+		}
+		else {
+			tvBack.setVisibility(View.VISIBLE);
+			tvBack.setText("<");
+		}
 
-		final WalletApplication application = (WalletApplication) getApplication();
+		if(level == 2) {
+			tvNext.setVisibility(View.INVISIBLE);
+		}
+		else {
+			tvNext.setVisibility(View.VISIBLE);
+			tvNext.setText(">");
+		}
 
-		final Handler handler = new Handler();
+		tvHeader = (TextView)findViewById(R.id.header);
+		tvHeader.setTypeface(TypefaceUtil.getInstance(this).getGravityLightTypeface());
+		tvHeader.setText(R.string.connect_existing_wallet);
 
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					final String payload = MyRemoteWallet.getWalletManualPairing(guid);
-
-					handler.post(new Runnable() {
-
-						@Override
-						public void run() {
-
-							try {
-								final MyRemoteWallet wallet = new MyRemoteWallet(payload, password);
-
-								if (wallet == null)
-									return;
-								
-								String sharedKey = wallet.getSharedKey();
-
-								application.clearWallet();
-
-//								PinEntryActivity.clearPrefValues(application);
-
-								Editor edit = PreferenceManager.getDefaultSharedPreferences(activity).edit();
-
-								edit.putString("guid", guid);
-								edit.putString("sharedKey", sharedKey);
-
-								edit.commit();
-
-								application.checkIfWalletHasUpdated(password, guid, sharedKey, true, new SuccessCallback(){
-									@Override
-									public void onSuccess() {
-//										registerNotifications();
-
-								        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(PairingHelp.this);
-										Editor edit = prefs.edit();
-										edit.putBoolean("validated", true);
-										edit.putBoolean("paired", true);
-										edit.commit();
-
-							        	Intent intent = new Intent(PairingHelp.this, PinEntryActivity.class);
-							        	intent.putExtra("S", "1");
-										intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-							    		startActivity(intent);
-
-										finish();
-									}
-
-									@Override
-									public void onFail() {
-										finish();
-										Toast.makeText(application, R.string.error_pairing_wallet, Toast.LENGTH_LONG).show();
-									}
-								});
-							} catch (final Exception e) {
-//								Toast.makeText(application, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-								Toast.makeText(application, R.string.error_pairing_wallet, Toast.LENGTH_LONG).show();
-
-								application.writeException(e);
-
-								finish();
-							}
-						}
-					});
-				} catch (final Exception e) {
-					e.printStackTrace();
-
-					handler.post(new Runnable() {
-						public void run() {
-
-//							Toast.makeText(application, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-							Toast.makeText(application, R.string.error_pairing_wallet, Toast.LENGTH_LONG).show();
-
-							application.writeException(e);
-
-							finish();
-						}
-					});
-				}
-			}
-		}).start();
+		tvFooter1 = (TextView)findViewById(R.id.footer1);
+		tvFooter1.setText(R.string.SCAN_CODE);
+		tvFooter2 = (TextView)findViewById(R.id.footer2);
+		tvFooter2.setText(R.string.MANUAL_PAIR);
+		
+		tvWarning1 = (TextView)findViewById(R.id.warning1);
+		tvWarning2 = (TextView)findViewById(R.id.warning2);
+		tvWarning2.setTextColor(0xFF039BD3);
+	    if(level == 2)	{
+			tvWarning1.setText(R.string.step_3);
+			tvWarning2.setText(R.string.step_3_text);
+	    }
+	    else if(level == 1)	{
+			tvWarning1.setText(R.string.step_2);
+			tvWarning2.setText(R.string.step_2_text);
+	    }
+	    else	{
+			tvWarning1.setText(R.string.step_1);
+			tvWarning2.setText(R.string.step_1_text);
+	    }
 	}
-*/
+
+	public int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+
+	    final int height = options.outHeight;
+	    final int width = options.outWidth;
+	    int inSampleSize = 1;
+
+	    if (height > reqHeight || width > reqWidth) {
+
+	        final int heightRatio = Math.round((float) height / (float) reqHeight);
+	        final int widthRatio = Math.round((float) width / (float) reqWidth);
+
+	        inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
+	    }
+
+	    return inSampleSize;
+	}
+
+	public Bitmap decodeSampledBitmapFromResource(Resources res, int resId, int reqWidth, int reqHeight) {
+		
+	    final BitmapFactory.Options options = new BitmapFactory.Options();
+	    options.inJustDecodeBounds = true;
+	    BitmapFactory.decodeResource(res, resId, options);
+
+	    options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+	    options.inJustDecodeBounds = false;
+
+	    return BitmapFactory.decodeResource(res, resId, options);
+	} 
+
 }
