@@ -541,4 +541,29 @@
     <string name="receive_coins_fragment_default_currency_hint">Default currency</string>
     <string name="options_other_currencies">Other currencies</string>
     
+    <string name="suggest_merchant">Suggest a merchant</string>
+    <string name="business_name">Business name</string>
+    <string name="select_category">Category</string>
+    <string name="street_address">Street address</string>
+    <string name="description">Description</string>
+    <string name="city">City</string>
+    <string name="zip">Zip code</string>
+    <string name="telephone">Telephone</string>
+    <string name="web">Web</string>
+    <string name="latitude">Latitude:</string>
+    <string name="longitude">Longitude:</string>
+    <string name="get_location">I am here. Use my location.</string>
+    <string name="merchant_cat_hint">Choose a category...</string>
+    <string name="merchant_cat1">Snack</string>
+    <string name="merchant_cat2">Bar</string>
+    <string name="merchant_cat3">Restaurant</string>
+    <string name="merchant_cat4">Spending</string>
+    <string name="merchant_cat5">ATM</string>
+    <string name="missing_merchant_category">Please provide a category for this merchant</string>
+    <string name="missing_merchant_name">Please provide the merchant name</string>
+    <string name="missing_merchant_street_address">Please provide the merchant street address</string>
+    <string name="missing_merchant_city">Please provide a city</string>
+    <string name="missing_merchant_zip">Please provide a zip code</string>
+    <string name="ok_writing_merchant">Thank you for your suggestion.</string>
+    <string name="error_writing_merchant">Error writing to database. Please try again.</string>
 </resources>

@@ -634,7 +634,10 @@ public class PinEntryActivity extends FragmentActivity {
 			DownloadFXRatesTask task = new DownloadFXRatesTask(context, fxRates);
 			task.execute(new String[] { fxRates.getUrl() });
 			
-			OtherCurrencyExchange.getInstance(PinEntryActivity.this);
+	        String[] currencies = CurrencyExchange.getInstance(this).getBlockchainCurrencies();
+	        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(PinEntryActivity.this);
+	        String strFiatCode = prefs.getString("ccurrency", "USD");
+			OtherCurrencyExchange.getInstance(PinEntryActivity.this, currencies, strFiatCode);
 		}
 		else {
 

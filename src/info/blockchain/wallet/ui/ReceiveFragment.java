@@ -142,6 +142,7 @@ public class ReceiveFragment extends Fragment   {
         tvAddressBis = (TextView)rootView.findViewById(R.id.receiving_address_bis);
 //        tvAddressBis.setVisibility(View.INVISIBLE);
 
+	    magicData =  new ArrayList<HashMap<String,String>>();
         initMagicList();
 
         ivReceivingQR = (ImageView)rootView.findViewById(R.id.qr);
@@ -801,8 +802,7 @@ public class ReceiveFragment extends Fragment   {
  			activeAddresses = Arrays.asList(wallet.getActiveAddresses());
  			labels = wallet.getLabelMap();
  	        AddressManager addressManager = new AddressManager(wallet, WalletUtil.getInstance(getActivity()).getWalletApplication(), getActivity());        
- 	        
- 	        magicData =  new ArrayList<HashMap<String,String>>();
+ 	        magicData.clear();
  	        
  	        filteredDisplayList = new ArrayList<HashMap<String,String>>();
 
@@ -855,11 +855,10 @@ public class ReceiveFragment extends Fragment   {
 // 		MyRemoteWallet wallet = application.getRemoteWallet();
  		MyRemoteWallet wallet = WalletUtil.getInstance(getActivity()).getRemoteWallet();
  		
-        magicData =  new ArrayList<HashMap<String,String>>();
-        
         if(wallet != null) {
             addressBookMapList = wallet.getAddressBookMap();
             filteredDisplayList = new ArrayList<HashMap<String,String>>();
+ 	        magicData.clear();
 
             if (addressBookMapList != null && addressBookMapList.size() > 0) {
       		    for (Iterator<Map<String, Object>> iti = addressBookMapList.iterator(); iti.hasNext();) {

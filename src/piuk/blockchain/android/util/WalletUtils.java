@@ -99,15 +99,6 @@ public class WalletUtils {
 		return postURL(request, urlParameters.toString());
 	}
 
-	public static String postURL(String request, Map<Object, Object> params) throws Exception {
-		StringBuffer urlParameters = new StringBuffer();
-		for (Entry<Object, Object> entry : params.entrySet())  {
-			urlParameters.append(entry.getKey() + "=" + URLEncoder.encode(entry.getValue().toString(), "UTF-8") + "=");
-		}
-		
-		return postURL(request, urlParameters.toString());
-	}
-	
 	public static String postURL(String request, String urlParameters) throws Exception {
 		String error = null;
 

@@ -17,6 +17,8 @@ public class CurrencyExchange	{
     private static HashMap<String,String> symbols = null;
     private static ExchangeRates fxRates = null;
 
+    private static String strFiatCode = null;
+
     private static long ts = 0L;
 
     private static Context context = null;
@@ -27,11 +29,13 @@ public class CurrencyExchange	{
 		
 		context = ctx;
 
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        strFiatCode = prefs.getString("ccurrency", "USD");
+
 		if (instance == null) {
 			fxRates = new ExchangeRates();
 		    prices = new HashMap<String,Double>();
 		    symbols = new HashMap<String,String>();
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 			String[] currencies = fxRates.getCurrencies();
 	    	for(int i = 0; i < currencies.length; i++)	 {
 		    	prices.put(currencies[i], Double.longBitsToDouble(prefs.getLong(currencies[i], Double.doubleToLongBits(0.0))));
@@ -46,7 +50,6 @@ public class CurrencyExchange	{
     		getExchangeRates();
     		
 			String[] currencies = fxRates.getCurrencies();
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             SharedPreferences.Editor editor = prefs.edit();
 	    	for(int i = 0; i < currencies.length; i++)	 {
 		    	if(fxRates.getLastPrice(currencies[i]) > 0.0)	{
@@ -66,7 +69,9 @@ public class CurrencyExchange	{
     		return prices.get(currency);
     	}
     	else	{
-    		return OtherCurrencyExchange.getInstance(context).getCurrencyPrice(currency);
+            String[] currencies = getBlockchainCurrencies();
+            return OtherCurrencyExchange.getInstance(context, currencies, strFiatCode).getCurrencyPrice(currency);
+//    		return OtherCurrencyExchange.getInstance(context, getBlockchainCurrencies(), ).getCurrencyPrice(currency);
     	}
 
     }

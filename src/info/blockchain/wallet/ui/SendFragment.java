@@ -387,6 +387,7 @@ public class SendFragment extends Fragment   {
         ((TextView)rootView.findViewById(R.id.currency)).setText(strCurrentFiatSymbol);
         ((TextView)rootView.findViewById(R.id.currency)).setTypeface(TypefaceUtil.getInstance(getActivity()).getGravityBoldTypeface());
 
+        magicData =  new ArrayList<HashMap<String,String>>();
         initAddressBookList();
 
         btSend = ((Button)rootView.findViewById(R.id.send));
@@ -1714,8 +1715,7 @@ public class SendFragment extends Fragment   {
     	if(wallet != null) {
     		activeAddresses = Arrays.asList(wallet.getActiveAddresses());
     		labels = wallet.getLabelMap();
-            
-            magicData =  new ArrayList<HashMap<String,String>>();
+            magicData.clear();
             
             filteredDisplayList = new ArrayList<HashMap<String,String>>();
 
@@ -1753,11 +1753,10 @@ public class SendFragment extends Fragment   {
 // 		MyRemoteWallet wallet = application.getRemoteWallet();
     	MyRemoteWallet wallet = WalletUtil.getInstance(getActivity()).getRemoteWallet();
 
-        magicData =  new ArrayList<HashMap<String,String>>();
-
     	if(wallet != null) {
             addressBookMapList = wallet.getAddressBookMap();
             filteredDisplayList = new ArrayList<HashMap<String,String>>();
+            magicData.clear();
 
             if (addressBookMapList != null && addressBookMapList.size() > 0) {
       		    for (Iterator<Map<String, Object>> iti = addressBookMapList.iterator(); iti.hasNext();) {

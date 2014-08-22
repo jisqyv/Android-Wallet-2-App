@@ -254,7 +254,7 @@ public class SecureWallet extends Activity {
 
 			String pw2 = data.getAction();
 			
-			if(!strPw1.equals(pw2)) {
+			if(strPw1 == null || strPw1.length() < 11 || !strPw1.equals(pw2)) {
 				Toast.makeText(SecureWallet.this, R.string.new_account_password_mismatch_error, Toast.LENGTH_LONG).show();
 		    	tgPassword.setChecked(false);
 			}

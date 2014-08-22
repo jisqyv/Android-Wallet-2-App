@@ -45,8 +45,18 @@ public class BlockchainUtil {
 		
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         strFiatCode = prefs.getString("ccurrency", "USD");
-		strFiatSymbol = java.util.Currency.getInstance(strFiatCode).getSymbol(Locale.US);
-		if(strFiatSymbol == null || strFiatSymbol.length() != 1) {
+        if(strFiatCode.length() != 3) {
+            strFiatCode = "USD";
+        }
+
+        try {
+            strFiatSymbol = java.util.Currency.getInstance(strFiatCode).getSymbol(Locale.US);
+        }
+        catch(IllegalArgumentException iae) {
+        	strFiatSymbol = strFiatCode.substring(strFiatCode.length() - 1, strFiatCode.length());
+        }
+
+        if(strFiatSymbol == null || strFiatSymbol.length() != 1) {
 			strFiatSymbol = CurrencyExchange.getInstance(context).getCurrencySymbol(strFiatCode);
 			if(strFiatSymbol == null || strFiatSymbol.length() != 1) {
 	        	strFiatSymbol = strFiatCode.substring(strFiatCode.length() - 1, strFiatCode.length());

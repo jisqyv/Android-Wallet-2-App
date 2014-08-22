@@ -10,10 +10,8 @@ import java.util.HashMap;
 
 import android.app.ActionBar;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
@@ -37,7 +35,6 @@ import android.widget.Toast;
 import android.text.util.Linkify;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
-import android.net.Uri;
 import android.util.Log;
 
 import piuk.blockchain.android.R;
@@ -427,6 +424,9 @@ public class MapActivity extends Activity implements LocationListener	{
     	case R.id.list_view:
     		doListView();
     		return true;
+    	case R.id.suggest:
+    		doSuggest();
+    		return true;
 	    default:
 	        return super.onOptionsItemSelected(item);
 	    }
@@ -655,6 +655,11 @@ public class MapActivity extends Activity implements LocationListener	{
     	else {
  			Toast.makeText(MapActivity.this, R.string.no_merchants_in_range, Toast.LENGTH_LONG).show();
     	}
+    }
+
+    private void doSuggest() {
+    	Intent intent = new Intent(MapActivity.this, SuggestMerchant.class);
+		startActivity(intent);
     }
 
 }

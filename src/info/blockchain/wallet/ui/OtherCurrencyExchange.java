@@ -19,7 +19,6 @@ public class OtherCurrencyExchange	{
 
     private static OtherCurrencyExchange instance = null;
     
-	private static String[] currencies = null;
     private static HashMap<String,Double> prices = null;
     private static HashMap<String,String> names = null;
 
@@ -27,14 +26,11 @@ public class OtherCurrencyExchange	{
 
     private static Context context = null;
     
-    private static Double USD_RATE = 0.0;
-    
     private OtherCurrencyExchange()	{ ; }
 
-	public static OtherCurrencyExchange getInstance(Context ctx) {
+	public static OtherCurrencyExchange getInstance(Context ctx, String[] currencies, String strFiatCode) {
 		
 		context = ctx;
-		USD_RATE = CurrencyExchange.getInstance(context).getCurrencyPrice("USD");
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
@@ -42,12 +38,12 @@ public class OtherCurrencyExchange	{
 		    prices = new HashMap<String,Double>();
 		    names = new HashMap<String,String>();
 
-			String strFiatCode = BlockchainUtil.getInstance(context).getFiatCode();
-			String[] currencies = CurrencyExchange.getInstance(context).getBlockchainCurrencies();
+		    //
 			List<String> currencyList = Arrays.asList(currencies);
 			if(strFiatCode != null && currencyList != null && !currencyList.contains(strFiatCode)) {
 		    	prices.put(strFiatCode, Double.longBitsToDouble(prefs.getLong(strFiatCode, Double.doubleToLongBits(0.0))));
 			}
+		    //
 
 	    	instance = new OtherCurrencyExchange();
 		}
@@ -55,10 +51,10 @@ public class OtherCurrencyExchange	{
     	if(System.currentTimeMillis() - ts > (120 * 60 * 1000)) {
     		getExchangeRates();
 
+		    //
             SharedPreferences.Editor editor = prefs.edit();
 
     		if(prices != null) {
-    			String[] currencies = CurrencyExchange.getInstance(context).getBlockchainCurrencies();
     			List<String> currencyList = Arrays.asList(currencies);
     			
     			for (String key : prices.keySet()) {
@@ -68,6 +64,7 @@ public class OtherCurrencyExchange	{
     			}
                 editor.commit();
     		}
+		    //
 
     	}
 
@@ -77,7 +74,7 @@ public class OtherCurrencyExchange	{
     public Double getCurrencyPrice(String currency)	{
     	
     	if(prices != null && prices.containsKey(currency) && prices.get(currency) != 0.0)	{
-    		return 1.0 / ((1.0 / prices.get(currency)) * (1.0 / USD_RATE));
+    		return 1.0 / ((1.0 / prices.get(currency)) * (1.0 / CurrencyExchange.getInstance(context).getCurrencyPrice("USD")));
     	}
     	else	{
     		return 0.0;

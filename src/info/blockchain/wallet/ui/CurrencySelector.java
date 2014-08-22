@@ -129,7 +129,9 @@ public class CurrencySelector extends Activity	{
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
         editor = prefs.edit();
 
-        OtherCurrencyExchange.getInstance(this);
+        String[] blockchain_currencies = CurrencyExchange.getInstance(this).getBlockchainCurrencies();
+        String strFiatCode = prefs.getString("ccurrency", "USD");
+        OtherCurrencyExchange.getInstance(this, blockchain_currencies, strFiatCode);
 
         spCurrencies = (SelectedSpinner)findViewById(R.id.receive_coins_default_currency);
         spAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, currencies);
