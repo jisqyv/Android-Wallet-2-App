@@ -392,8 +392,8 @@ public class MapActivity extends Activity implements LocationListener	{
 		map.animateCamera(cameraUpdate);
 		locationManager.removeUpdates(this);
 		
-		drawData(true);
 		setProperZoomLevel(latLng, 7, 1);
+		drawData(true);
 
 	}
 
