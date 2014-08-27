@@ -1,7 +1,6 @@
 package info.blockchain.wallet.ui;
 
 import java.util.Locale;
-import java.math.BigInteger;
 
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
@@ -30,11 +29,17 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Gravity;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.view.View.OnTouchListener;
 import android.widget.ImageView;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.widget.DrawerLayout;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
 //import android.util.Log;
 
 import info.blockchain.wallet.ui.SendFragment;
@@ -57,9 +62,11 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     private static int ADDRESSBOOK_ACTIVITY	= 4;
     private static int MERCHANT_ACTIVITY	= 5;
 
-	private ViewPager viewPager;
-    private TabsPagerAdapter mAdapter;
-    private ActionBar actionBar;
+	private ViewPager viewPager = null;
+    private TabsPagerAdapter mAdapter = null;
+    private ActionBar actionBar = null;
+
+	private boolean isDrawerOpen = false;
 
     private String[] tabs = null;
 
@@ -74,6 +81,18 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 	public static final String INTENT_EXTRA_ADDRESS = "address";
 
 	private String strUri = null;
+	
+	//
+	//
+	//
+	// Within which the entire activity is enclosed
+	private DrawerLayout mDrawerLayout;
+
+	// ListView represents Navigation Drawer
+	private ListView mDrawerList;
+
+	// ActionBarDrawerToggle indicates the presence of Navigation Drawer in the action bar
+	private ActionBarDrawerToggle mDrawerToggle;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -132,7 +151,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
         viewPager = (ViewPager) findViewById(R.id.pager);
         mAdapter = new TabsPagerAdapter(getSupportFragmentManager());
-
         viewPager.setAdapter(mAdapter);
 
         actionBar = getActionBar();
@@ -207,37 +225,107 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         actionBar.setLogo(R.drawable.masthead);
         actionBar.setHomeButtonEnabled(false);
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+//        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#FF1B8AC7")));
 
         actionBar.setCustomView(layout_icons);
         //
         actionBar.show();
-                
+        
+        //
+        //
+        //
+		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+		mDrawerList = (ListView) findViewById(R.id.drawer_list);
+		mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.drawable.ic_drawer, R.string.drawer_open, R.string.drawer_close) {
+			
+			public void onDrawerClosed(View view) {
+				getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+			    invalidateOptionsMenu();
+				isDrawerOpen = false;
+			}
+
+			public void onDrawerOpened(View drawerView) {
+				getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+			    invalidateOptionsMenu();
+				isDrawerOpen = true;
+			    }
+
+			public void onDrawerSlide(View drawerView, float slideOffset) {
+				if(isDrawerOpen) {
+	                if(slideOffset < .99)	{
+	    				getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+	                }
+				}
+				else {
+	                if(slideOffset > .01)	{
+	    				getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+	                }
+				}
+            }
+			
+			};
+
+		// hide settings menu
+//		invalidateOptionsMenu();
+
+		mDrawerLayout.setDrawerListener(mDrawerToggle);
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(getBaseContext(), R.layout.drawer_list_item, getResources().getStringArray(R.array.menus));
+		mDrawerList.setAdapter(adapter);
+		actionBar.setHomeButtonEnabled(true);
+		actionBar.setDisplayHomeAsUpEnabled(true);
+		mDrawerList.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+				if(position == 0) {
+					doMerchantDirectory();
+				}
+				else if(position == 1) {
+					doAddressBook();
+				}
+				else if(position == 2) {
+					doExchangeRates();
+				}
+				else {
+					;
+				}
+
+				// Closing the drawer
+				mDrawerLayout.closeDrawer(mDrawerList);
+
+				getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+			    invalidateOptionsMenu();
+
+			}
+		});
+
         for (String tab : tabs) {
             actionBar.addTab(actionBar.newTab().setText(tab).setTabListener(this));
-
-            viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-     
-                @Override
-                public void onPageSelected(int position) {
-                    actionBar.setSelectedNavigationItem(position);
-                    
-                    if(position == 1) {
-                        refresh_icon.setVisibility(View.VISIBLE);
-                    }
-                    else {
-                        refresh_icon.setVisibility(View.INVISIBLE);
-                    }
-                }
-     
-                @Override
-                public void onPageScrolled(int arg0, float arg1, int arg2) { ; }
-     
-                @Override
-                public void onPageScrollStateChanged(int arg0) { ; }
-            });
         }
-        
+
+        viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+
+            @Override
+            public void onPageSelected(int position) {
+                actionBar.setSelectedNavigationItem(position);
+
+                if(position == 1) {
+                    refresh_icon.setVisibility(View.VISIBLE);
+                }
+                else {
+                    refresh_icon.setVisibility(View.INVISIBLE);
+                }
+            }
+
+            @Override
+            public void onPageScrolled(int arg0, float arg1, int arg2) { ; }
+
+            @Override
+            public void onPageScrollStateChanged(int arg0) { ; }
+        });
+
         viewPager.setCurrentItem(1);
         
 //        BlockchainUtil.getInstance(this);
@@ -285,6 +373,12 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 //*/
 
 	}
+	
+	@Override
+	protected void onPostCreate(Bundle savedInstanceState) {
+		super.onPostCreate(savedInstanceState);
+		mDrawerToggle.syncState();
+	}
 
 	@Override
 	public void onComplete() {
@@ -297,7 +391,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 		    LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
 		    intent = null;
 		    strUri = null;
-//        	viewPager.setCurrentItem(0, true);
 		    new android.os.Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -324,14 +417,13 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
 	@Override
 	protected void onPause() {
-//		Tracking.stopUsage(this);                 
 		super.onPause();
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-//		Tracking.startUsage(this);
+
 		application.setIsPassedPinScreen(true);
 
 		if(TimeOutUtil.getInstance().isTimedOut()) {
@@ -363,28 +455,23 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-	    // Handle item selection
-	    switch (item.getItemId()) {
-    	case R.id.action_settings:
-    		doSettings();
-    		return true;
-    	case R.id.address_book:
-    		doAddressBook();
-    		return true;
-    	case R.id.nearby_merchants:
-    		doMerchantDirectory();
-    		return true;
-    	case R.id.action_about:
-    		doAbout();
-    		return true;
-    	/*
-    	case R.id.action_feedback:
-    		showFeedbackActivity();
-    		return true;
-    	*/
-    	default:
-	        return super.onOptionsItemSelected(item);
-	    }
+
+		if (mDrawerToggle.onOptionsItemSelected(item)) {
+			return true;
+		}
+		else {
+		    switch (item.getItemId()) {
+	    	case R.id.action_settings:
+	    		doSettings();
+	    		return true;
+	    	case R.id.action_about:
+	    		doAbout();
+	    		return true;
+	    	default:
+		        return super.onOptionsItemSelected(item);
+		    }
+		}
+		
 	}
 
 	@Override

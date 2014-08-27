@@ -4,6 +4,7 @@
         android:id="@+id/action_settings"
         android:showAsAction="never"
         android:title="@string/action_settings"/>
+    <!--
     <item
         android:id="@+id/address_book"
         android:showAsAction="never"
@@ -12,12 +13,11 @@
         android:id="@+id/nearby_merchants"
         android:showAsAction="never"
         android:title="@string/nearby_merchants"/>
-<!--
     <item
         android:id="@+id/action_feedback"
         android:showAsAction="never"
         android:title="@string/feedback"/>    
--->
+	-->
     <item
         android:id="@+id/action_about"
         android:showAsAction="never"

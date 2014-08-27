@@ -16,12 +16,10 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
         switch (index) {
         	case 0:
         		return new SendFragment();
-//        		return new SendReceiveFragment();
         	case 1:
         		return new BalanceFragment();
         	case 2:
         		return new ReceiveFragment();
-//        		return new SendReceiveFragment();
         }
  
         return null;
