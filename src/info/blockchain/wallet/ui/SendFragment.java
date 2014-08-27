@@ -2195,8 +2195,17 @@ public class SendFragment extends Fragment   {
         spAddress.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-            	if(layout_froms.getChildCount() == 1 && edAmount1.getText().toString().length() > 0 && edAmount.getText().toString().equals("0.0000")) {
-                	edAmount.setText(BlockchainUtil.formatBitcoin(getBTCEnteredOutputValue(edAmount1.getText().toString())));
+            	
+        		String entered_amount = null;
+        		if(isBTC) {
+        			entered_amount = edAmount1.getText().toString();
+        		}
+        		else {
+        			entered_amount = tvAmount2.getText().toString();
+        		}
+
+            	if(layout_froms.getChildCount() == 1 && entered_amount.length() > 0 && edAmount.getText().toString().equals("0.0000")) {
+                	edAmount.setText(BlockchainUtil.formatBitcoin(getBTCEnteredOutputValue(entered_amount)));
             	}
             	return false;
             }
@@ -2206,9 +2215,18 @@ public class SendFragment extends Fragment   {
 	    	public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3)	{
 
             	if(edAmount.getText().toString().length() > 0) {
+            		
+            		String entered_amount = null;
+            		if(isBTC) {
+            			entered_amount = edAmount1.getText().toString();
+            		}
+            		else {
+            			entered_amount = tvAmount2.getText().toString();
+            		}
+
             		if(getBTCEnteredOutputValue(edAmount.getText().toString()).compareTo(wallet.getBalance(fromAddresses.get(spAddress.getSelectedItemPosition()))) == 1) {
             			edAmount.setText(BlockchainUtil.formatBitcoin(wallet.getBalance(fromAddresses.get(spAddress.getSelectedItemPosition()))));
-            			BigInteger remainder = getBTCEnteredOutputValue(edAmount1.getText().toString()).subtract(wallet.getBalance(fromAddresses.get(spAddress.getSelectedItemPosition())));
+            			BigInteger remainder = getBTCEnteredOutputValue(entered_amount).subtract(wallet.getBalance(fromAddresses.get(spAddress.getSelectedItemPosition())));
             			addSendingAddress(displayFromAddresses, wallet, fromAddresses, BlockchainUtil.formatBitcoin(remainder));
             		}
             	}
@@ -2223,16 +2241,25 @@ public class SendFragment extends Fragment   {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if(hasFocus) {
-                	if(layout_froms.getChildCount() == 1 && edAmount1.getText().toString().length() > 0 && edAmount.getText().toString().equals("0.0000")) {
+                	
+            		String entered_amount = null;
+            		if(isBTC) {
+            			entered_amount = edAmount1.getText().toString();
+            		}
+            		else {
+            			entered_amount = tvAmount2.getText().toString();
+            		}
+
+                	if(layout_froms.getChildCount() == 1 && entered_amount.length() > 0 && edAmount.getText().toString().equals("0.0000")) {
                 		if(spAddress.getSelectedItemPosition() == 0) {
-                        	edAmount.setText(BlockchainUtil.formatBitcoin(getBTCEnteredOutputValue(edAmount1.getText().toString())));
+                        	edAmount.setText(BlockchainUtil.formatBitcoin(getBTCEnteredOutputValue(entered_amount)));
                 		}
                 		else {
-                    		if(getBTCEnteredOutputValue(edAmount1.getText().toString()).compareTo(wallet.getBalance(fromAddresses.get(spAddress.getSelectedItemPosition()))) == 1) {
+                    		if(getBTCEnteredOutputValue(entered_amount).compareTo(wallet.getBalance(fromAddresses.get(spAddress.getSelectedItemPosition()))) == 1) {
                     			edAmount.setText(BlockchainUtil.formatBitcoin(wallet.getBalance(fromAddresses.get(spAddress.getSelectedItemPosition()))));
                     		}
                     		else {
-                    			BigInteger remainder = getBTCEnteredOutputValue(edAmount1.getText().toString()).subtract(wallet.getBalance(fromAddresses.get(spAddress.getSelectedItemPosition())));
+                    			BigInteger remainder = getBTCEnteredOutputValue(entered_amount).subtract(wallet.getBalance(fromAddresses.get(spAddress.getSelectedItemPosition())));
                     			edAmount.setText(BlockchainUtil.formatBitcoin(remainder));
                     		}
                 		}
@@ -2402,6 +2429,7 @@ public class SendFragment extends Fragment   {
         });
 
     }
+
     private boolean isCustomSendInputsCorrect() {
     	//
     	//
@@ -2419,7 +2447,14 @@ public class SendFragment extends Fragment   {
 		//
 		//
 
-		final BigInteger entered_amount = getBTCEnteredOutputValue(edAmount1.getText().toString());
+		BigInteger entered_amount = null;
+		if(isBTC) {
+			entered_amount = getBTCEnteredOutputValue(edAmount1.getText().toString());
+		}
+		else {
+			entered_amount = getBTCEnteredOutputValue(tvAmount2.getText().toString());
+		}
+
 		final WalletApplication application = (WalletApplication) getActivity().getApplication();
 
 		MyRemoteWallet.FeePolicy feePolicy = MyRemoteWallet.FeePolicy.FeeOnlyIfNeeded;
@@ -2674,8 +2709,17 @@ public class SendFragment extends Fragment   {
         spAddress.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-            	if(edAmount1.getText().toString().length() > 0 && edAmount.getText().toString().equals("0.0000")) {
-                	edAmount.setText(BlockchainUtil.formatBitcoin(getBTCEnteredOutputValue(edAmount1.getText().toString()).subtract(getBTCEnteredOutputValue(remainder))));
+            	
+        		String entered_amount = null;
+        		if(isBTC) {
+        			entered_amount = edAmount1.getText().toString();
+        		}
+        		else {
+        			entered_amount = tvAmount2.getText().toString();
+        		}
+
+            	if(entered_amount.length() > 0 && edAmount.getText().toString().equals("0.0000")) {
+                	edAmount.setText(BlockchainUtil.formatBitcoin(getBTCEnteredOutputValue(entered_amount).subtract(getBTCEnteredOutputValue(remainder))));
             	}
             	return false;
             }
@@ -2701,7 +2745,16 @@ public class SendFragment extends Fragment   {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if(hasFocus) {
-                	if(edAmount1.getText().toString().length() > 0 && edAmount.getText().toString().equals("0.0000")) {
+                	
+            		String entered_amount = null;
+            		if(isBTC) {
+            			entered_amount = edAmount1.getText().toString();
+            		}
+            		else {
+            			entered_amount = tvAmount2.getText().toString();
+            		}
+
+                	if(entered_amount.length() > 0 && edAmount.getText().toString().equals("0.0000")) {
                 		if(spAddress.getSelectedItemPosition() == 0) {
                         	edAmount.setText(remainder);
                 		}
