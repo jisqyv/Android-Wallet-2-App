@@ -58,6 +58,7 @@ import android.view.MenuInflater;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Window;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -65,11 +66,14 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Toast;
+import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.content.LocalBroadcastManager;
 //import android.util.Log;
+import android.support.v4.widget.DrawerLayout;
  
-public class AddressBookActivity extends Activity {
+public class AddressBookActivity extends Activity  {
 
 	private ArrayList<String> allAddresses = null;
 	private Map<String, String> labelMap = null;
@@ -95,7 +99,14 @@ public class AddressBookActivity extends Activity {
 	private LinearLayout layoutArchived;
 	private LinearLayout layoutActive;
 	private LinearLayout layoutContacts;
-    
+	
+	//
+	//
+	//
+	private DrawerLayout mDrawerLayout = null;
+	private ListView mDrawerList = null;
+	private ActionBarDrawerToggle mDrawerToggle = null;
+
     private static enum DisplayedAddresses {
 		ContactsAddresses,
 		ActiveAddresses,
@@ -159,10 +170,89 @@ public class AddressBookActivity extends Activity {
         actionBar.hide();
         actionBar.setDisplayOptions(actionBar.getDisplayOptions() ^ ActionBar.DISPLAY_SHOW_TITLE);
         actionBar.setLogo(R.drawable.masthead);
-        actionBar.setHomeButtonEnabled(false);
+//        actionBar.setHomeButtonEnabled(false);
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#FF1B8AC7")));
         actionBar.show();
         
+        //
+        //
+        //
+		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+		mDrawerList = (ListView) findViewById(R.id.drawer_list);
+		mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.drawable.ic_drawer, R.string.drawer_open, R.string.drawer_close) {
+			
+			public void onDrawerClosed(View view) {
+			    invalidateOptionsMenu();
+			}
+
+			public void onDrawerOpened(View view) {
+			    invalidateOptionsMenu();
+			}
+
+		};
+
+		// hide settings menu
+//		invalidateOptionsMenu();
+
+		mDrawerLayout.setDrawerListener(mDrawerToggle);
+		ArrayAdapter<String> hAdapter = new ArrayAdapter<String>(getBaseContext(), R.layout.drawer_list_item, getResources().getStringArray(R.array.menus_addressBook));
+		mDrawerList.setAdapter(hAdapter);
+		actionBar.setHomeButtonEnabled(true);
+		actionBar.setDisplayHomeAsUpEnabled(true);
+		mDrawerList.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				
+			    switch (position) {
+		    	case 0:
+		    		addressManager.newAddress(new AddAddressCallback() {
+		    			public void onSavedAddress(String address) {
+		    	    		Toast.makeText(AddressBookActivity.this, R.string.toast_new_address_generated, Toast.LENGTH_LONG).show();
+		    	    		goToActiveAddresses();
+		    			}
+
+		    			public void onError(String reason) {
+		    				Toast.makeText(AddressBookActivity.this, reason, Toast.LENGTH_LONG).show();
+		    			}
+		    		});
+
+		    		break;
+
+		    	case 1:
+		    	 {
+			    		Intent intent = new Intent(AddressBookActivity.this, ZBarScannerActivity.class);
+			    		intent.putExtra(ZBarConstants.SCAN_MODES, new int[] { Symbol.QRCODE } );
+		        		startActivityForResult(intent, SCAN_WATCH_ONLY);
+		    	 }
+		    		break;
+		    	case 2:
+		    	 {
+			    		Intent intent = new Intent(AddressBookActivity.this, ZBarScannerActivity.class);
+			    		intent.putExtra(ZBarConstants.SCAN_MODES, new int[] { Symbol.QRCODE } );
+		        		startActivityForResult(intent, SCAN_CONTACTS_ADDRESS);	    		
+		    	 }
+		    		break;
+		    	case 3:
+		    	 {
+			    		Intent intent = new Intent(AddressBookActivity.this, ZBarScannerActivity.class);
+			    		intent.putExtra(ZBarConstants.SCAN_MODES, new int[] { Symbol.QRCODE } );
+		        		startActivityForResult(intent, SCAN_PRIVATE_KEY);	    		
+		    	 }
+		    		break;
+		    	default:
+		    		break;
+			    }
+
+				// Closing the drawer
+				mDrawerLayout.closeDrawer(mDrawerList);
+
+			    invalidateOptionsMenu();
+
+			}
+		});
+
         boolean gotoContactsAddresses = false;
         Bundle extras = getIntent().getExtras();
         if(extras != null)	{
@@ -328,16 +418,23 @@ public class AddressBookActivity extends Activity {
 
     	initActiveList();
 	}
-	
+
+	/*
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.addressbook, menu);
 		return true;
 	}
+	*/
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-	    switch (item.getItemId()) {
+		
+		if (mDrawerToggle.onOptionsItemSelected(item)) {
+			return true;
+		}
+		else {
+		    switch (item.getItemId()) {
 	    	case R.id.new_address:
 	    		addressManager.newAddress(new AddAddressCallback() {
 	    			public void onSavedAddress(String address) {
@@ -375,6 +472,8 @@ public class AddressBookActivity extends Activity {
 	    	default:
 	    		return super.onOptionsItemSelected(item);
 	    }
+		}
+
 	}
 
 	public void handleScanPrivateKey(final String data) {
@@ -549,6 +648,12 @@ public class AddressBookActivity extends Activity {
 			;
 		}
 		
+	}
+
+	@Override
+	protected void onPostCreate(Bundle savedInstanceState) {
+		super.onPostCreate(savedInstanceState);
+		mDrawerToggle.syncState();
 	}
 
 	@Override

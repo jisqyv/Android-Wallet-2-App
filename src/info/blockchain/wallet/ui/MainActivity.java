@@ -85,14 +85,9 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 	//
 	//
 	//
-	// Within which the entire activity is enclosed
-	private DrawerLayout mDrawerLayout;
-
-	// ListView represents Navigation Drawer
-	private ListView mDrawerList;
-
-	// ActionBarDrawerToggle indicates the presence of Navigation Drawer in the action bar
-	private ActionBarDrawerToggle mDrawerToggle;
+	private DrawerLayout mDrawerLayout = null;
+	private ListView mDrawerList = null;
+	private ActionBarDrawerToggle mDrawerToggle = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -245,7 +240,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 				isDrawerOpen = false;
 			}
 
-			public void onDrawerOpened(View drawerView) {
+			public void onDrawerOpened(View view) {
 				getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
 			    invalidateOptionsMenu();
 				isDrawerOpen = true;
@@ -445,7 +440,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 		super.onDestroy();
 		application.setIsPassedPinScreen(false);
 	}
-		  
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.

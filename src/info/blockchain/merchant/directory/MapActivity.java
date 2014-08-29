@@ -1,5 +1,6 @@
 package info.blockchain.merchant.directory;
 
+import info.blockchain.wallet.ui.AddressBookActivity;
 import info.blockchain.wallet.ui.OnSwipeTouchListener;
 import info.blockchain.wallet.ui.TypefaceUtil;
 
@@ -7,6 +8,8 @@ import java.text.DecimalFormat;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import net.sourceforge.zbar.Symbol;
 
 import android.app.ActionBar;
 import android.app.Activity;
@@ -28,18 +31,27 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
+import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.widget.DrawerLayout;
 import android.text.util.Linkify;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 
 import piuk.blockchain.android.R;
+import piuk.blockchain.android.WalletApplication.AddAddressCallback;
 import piuk.blockchain.android.util.WalletUtils;
 
+import com.dm.zbar.android.scanner.ZBarConstants;
+import com.dm.zbar.android.scanner.ZBarScannerActivity;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -119,6 +131,13 @@ public class MapActivity extends Activity implements LocationListener	{
 	
 	private LinearLayout infoLayout = null;
 
+	//
+	//
+	//
+	private DrawerLayout mDrawerLayout = null;
+	private ListView mDrawerList = null;
+	private ActionBarDrawerToggle mDrawerToggle = null;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -132,9 +151,58 @@ public class MapActivity extends Activity implements LocationListener	{
         actionBar.setDisplayOptions(actionBar.getDisplayOptions() ^ ActionBar.DISPLAY_SHOW_TITLE);
         actionBar.setLogo(R.drawable.masthead);
         actionBar.setHomeButtonEnabled(false);
-//        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#FF1B8AC7")));
         actionBar.show();
+        
+        //
+        //
+        //
+		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+		mDrawerList = (ListView) findViewById(R.id.drawer_list);
+		mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.drawable.ic_drawer, R.string.drawer_open, R.string.drawer_close) {
+			
+			public void onDrawerClosed(View view) {
+				super.onDrawerClosed(view);
+				}
+
+			public void onDrawerOpened(View view) {
+				super.onDrawerOpened(view);
+			    }
+
+			};
+
+		// hide settings menu
+//		invalidateOptionsMenu();
+
+		mDrawerLayout.setDrawerListener(mDrawerToggle);
+		ArrayAdapter<String> hAdapter = new ArrayAdapter<String>(getBaseContext(), R.layout.drawer_list_item, getResources().getStringArray(R.array.menus_merchantDirectory));
+		mDrawerList.setAdapter(hAdapter);
+		actionBar.setDisplayHomeAsUpEnabled(true);
+		actionBar.setHomeButtonEnabled(true);
+		mDrawerList.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+			    switch (position) {
+		    	case 0:
+		    		doListView();
+		    		break;
+		    	case 1:
+		    		doSuggest();
+		    		break;
+		    	default:
+		    		break;
+			    }
+
+				// Closing the drawer
+				mDrawerLayout.closeDrawer(mDrawerList);
+
+			    invalidateOptionsMenu();
+
+			}
+		});
 
     	markerValues = new HashMap<String,BTCBusiness>();
     	btcb = new ArrayList<BTCBusiness>();
@@ -412,24 +480,39 @@ public class MapActivity extends Activity implements LocationListener	{
 
     }
 
+    /*
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.dir_main, menu);
 		return true;
 	}
+	*/
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-	    switch (item.getItemId()) {
-    	case R.id.list_view:
-    		doListView();
-    		return true;
-    	case R.id.suggest:
-    		doSuggest();
-    		return true;
-	    default:
-	        return super.onOptionsItemSelected(item);
-	    }
+		
+		if (mDrawerToggle.onOptionsItemSelected(item)) {
+			return true;
+		}
+		else {
+		    switch (item.getItemId()) {
+	    	case R.id.list_view:
+	    		doListView();
+	    		return true;
+	    	case R.id.suggest:
+	    		doSuggest();
+	    		return true;
+		    default:
+		        return super.onOptionsItemSelected(item);
+		    }
+		}
+
+	}
+
+	@Override
+	protected void onPostCreate(Bundle savedInstanceState) {
+		super.onPostCreate(savedInstanceState);
+		mDrawerToggle.syncState();
 	}
 
 	@Override

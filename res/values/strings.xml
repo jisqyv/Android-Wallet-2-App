@@ -575,5 +575,17 @@
     
     <string name="drawer_open">Open Drawer</string>
     <string name="drawer_close">Close Drawer</string>
+    
+    <string-array name="menus_addressBook">
+        <item>Generate new address</item>
+        <item>Scan watch only address</item>
+        <item>Scan contacts address</item>
+        <item>Scan private key</item>
+    </string-array>
+    
+    <string-array name="menus_merchantDirectory">
+        <item>List view</item>
+        <item>Suggest a merchant</item>
+    </string-array>
 
 </resources>
