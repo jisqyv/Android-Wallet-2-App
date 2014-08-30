@@ -567,12 +567,19 @@
     <string name="ok_writing_merchant">Thank you for your suggestion.</string>
     <string name="error_writing_merchant">Error writing to database. Please try again.</string>
 
+<!--
     <string-array name="menus">
         <item>Merchant Map</item>
         <item>Address Book</item>
         <item>ZeroBlock</item>
     </string-array>
-    
+
+    <array name="menus_icons">
+        <item>@drawable/Merchant_Icon</item>
+        <item>@drawable/address_book_icon</item>
+        <item>@drawable/ZB_icon</item>
+    </array>
+-->
     <string name="drawer_open">Open Drawer</string>
     <string name="drawer_close">Close Drawer</string>
     

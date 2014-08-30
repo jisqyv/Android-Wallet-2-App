@@ -265,7 +265,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 //		invalidateOptionsMenu();
 
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(getBaseContext(), R.layout.drawer_list_item, getResources().getStringArray(R.array.menus));
+//		ArrayAdapter<String> adapter = new ArrayAdapter<String>(getBaseContext(), R.layout.drawer_list_item, getResources().getStringArray(R.array.menus));
+		NavDrawerListAdapter adapter = new NavDrawerListAdapter(getBaseContext());
 		mDrawerList.setAdapter(adapter);
 		actionBar.setHomeButtonEnabled(true);
 		actionBar.setDisplayHomeAsUpEnabled(true);
@@ -274,24 +275,29 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-				if(position == 0) {
+				if(position == 2) {
 					doMerchantDirectory();
 				}
-				else if(position == 1) {
+				else if(position == 3) {
 					doAddressBook();
 				}
-				else if(position == 2) {
+				else if(position == 4) {
 					doExchangeRates();
+				}
+				else if(position == 5) {
+					doSettings();
 				}
 				else {
 					;
 				}
+				
+				if(position > 1) {
+					// Closing the drawer
+					mDrawerLayout.closeDrawer(mDrawerList);
 
-				// Closing the drawer
-				mDrawerLayout.closeDrawer(mDrawerList);
-
-				getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-			    invalidateOptionsMenu();
+					getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+				    invalidateOptionsMenu();
+				}
 
 			}
 		});
@@ -456,9 +462,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 		}
 		else {
 		    switch (item.getItemId()) {
-	    	case R.id.action_settings:
-	    		doSettings();
-	    		return true;
 	    	case R.id.action_about:
 	    		doAbout();
 	    		return true;

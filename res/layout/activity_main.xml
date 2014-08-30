@@ -19,12 +19,12 @@
     <!-- The navigation drawer -->
     <ListView
         android:id="@+id/drawer_list"
-        android:layout_width="240dp"
+        android:layout_width="320dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:background="#ffFFFFFF"
         android:choiceMode="singleChoice"
-        android:divider="@android:color/black"
+        android:divider="#FF808080"
         android:dividerHeight="1dp" />
 
 </android.support.v4.widget.DrawerLayout>
