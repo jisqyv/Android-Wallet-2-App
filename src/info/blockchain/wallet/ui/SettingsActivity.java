@@ -126,6 +126,15 @@ public class SettingsActivity extends PreferenceActivity {
         		}
         	});
 
+        	Preference aboutPref = (Preference) findPreference("about");
+        	aboutPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+        		public boolean onPreferenceClick(Preference preference) {
+        	    	Intent intent = new Intent(SettingsActivity.this, AboutActivity.class);
+        			startActivity(intent);
+        			return true;
+        		}
+        	});
+
         	/*
         	Preference pinPref = (Preference) findPreference("pin");
         	pinPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {

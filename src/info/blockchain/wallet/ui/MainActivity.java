@@ -160,14 +160,14 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         LinearLayout layout_icons = new LinearLayout(actionBar.getThemedContext());
         ActionBar.LayoutParams layoutParams = new ActionBar.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.WRAP_CONTENT, Gravity.RIGHT | Gravity.CENTER_VERTICAL);
         layoutParams.height = 72;
-        layoutParams.width = (72 * 2) + 5 + 60;
+        layoutParams.width = (72 * 2) + 10 + 60;
         layout_icons.setLayoutParams(layoutParams);
         layout_icons.setOrientation(LinearLayout.HORIZONTAL);
 
         ActionBar.LayoutParams imgParams = new ActionBar.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.WRAP_CONTENT, Gravity.CENTER_VERTICAL);
         imgParams.height = 72;
         imgParams.width = 72;
-        imgParams.rightMargin = 5;
+        imgParams.rightMargin = 10;
 
         final ImageView qr_icon = new ImageView(actionBar.getThemedContext());
         qr_icon.setImageResource(R.drawable.top_camera_icon);
@@ -446,20 +446,21 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 		super.onDestroy();
 		application.setIsPassedPinScreen(false);
 	}
-
+/*
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
-
+*/
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 
 		if (mDrawerToggle.onOptionsItemSelected(item)) {
 			return true;
 		}
+		/*
 		else {
 		    switch (item.getItemId()) {
 	    	case R.id.action_about:
@@ -469,7 +470,10 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 		        return super.onOptionsItemSelected(item);
 		    }
 		}
+		*/
 		
+        return super.onOptionsItemSelected(item);
+
 	}
 
 	@Override
@@ -583,13 +587,13 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     		startActivityForResult(intent, MERCHANT_ACTIVITY);
     	}
     }
-
+/*
     private void doAbout()	{
 		TimeOutUtil.getInstance().updatePin();
     	Intent intent = new Intent(MainActivity.this, AboutActivity.class);
 		startActivityForResult(intent, ABOUT_ACTIVITY);
     }
-
+*/
     private void doSettings()	{
 		TimeOutUtil.getInstance().updatePin();
     	Intent intent = new Intent(MainActivity.this, info.blockchain.wallet.ui.SettingsActivity.class);

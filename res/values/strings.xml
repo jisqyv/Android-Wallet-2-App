@@ -349,7 +349,7 @@
     <string name="support">Support</string>
     <string name="rate_us">Rate us</string>
     <string name="email_chooser">Send e-mail...</string>
-    <string name="about_us">About Blockchain Wallet</string>
+    <string name="about_us">About Blockchain Bitcoin Wallet for Android</string>
     <string name="about">Blockchain Wallet %1$s\n©%2$s Blockchain.info</string>
     <string name="merchant_download">Free Merchant app</string>
     <string name="feedback">Send Feedback</string>
@@ -544,6 +544,7 @@
     <string name="suggest_merchant">Suggest a merchant</string>
     <string name="business_name">Business name</string>
     <string name="select_category">Category</string>
+    <string name="business_category">Category</string>
     <string name="street_address">Street address</string>
     <string name="description">Description</string>
     <string name="city">City</string>
@@ -554,10 +555,10 @@
     <string name="longitude">Longitude:</string>
     <string name="get_location">I am here. Use my location.</string>
     <string name="merchant_cat_hint">Choose a category...</string>
-    <string name="merchant_cat1">Snack</string>
-    <string name="merchant_cat2">Bar</string>
-    <string name="merchant_cat3">Restaurant</string>
-    <string name="merchant_cat4">Spending</string>
+    <string name="merchant_cat1">Café</string>
+    <string name="merchant_cat2">Bars/Drinking</string>
+    <string name="merchant_cat3">Food and Dining</string>
+    <string name="merchant_cat4">Shopping/Spending</string>
     <string name="merchant_cat5">ATM</string>
     <string name="missing_merchant_category">Please provide a category for this merchant</string>
     <string name="missing_merchant_name">Please provide the merchant name</string>

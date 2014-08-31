@@ -50,4 +50,9 @@
             	    android:summary="@string/options_unpair2"
                 	android:key="unpair"
                 	/>	        
+		        <Preference
+        	        android:title="@string/preferences_about_title"
+            	    android:summary="@string/about_us"
+                	android:key="about"
+                	/>	        
 </PreferenceScreen>
