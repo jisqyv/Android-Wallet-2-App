@@ -591,7 +591,6 @@
     </string-array>
     
     <string-array name="menus_merchantDirectory">
-        <item>List view</item>
         <item>Suggest a merchant</item>
     </string-array>
 

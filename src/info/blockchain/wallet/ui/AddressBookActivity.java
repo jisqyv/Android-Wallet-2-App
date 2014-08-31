@@ -245,9 +245,7 @@ public class AddressBookActivity extends Activity  {
 		    		break;
 			    }
 
-				// Closing the drawer
 				mDrawerLayout.closeDrawer(mDrawerList);
-
 			    invalidateOptionsMenu();
 
 			}

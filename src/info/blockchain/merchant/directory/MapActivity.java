@@ -1,6 +1,7 @@
 package info.blockchain.merchant.directory;
 
 import info.blockchain.wallet.ui.AddressBookActivity;
+import info.blockchain.wallet.ui.MainActivity;
 import info.blockchain.wallet.ui.OnSwipeTouchListener;
 import info.blockchain.wallet.ui.TypefaceUtil;
 
@@ -25,6 +26,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -147,14 +149,42 @@ public class MapActivity extends Activity implements LocationListener	{
 
         ActionBar actionBar = getActionBar();
         actionBar.hide();
-//        actionBar.setDisplayOptions(actionBar.getDisplayOptions() | ActionBar.DISPLAY_SHOW_CUSTOM);
+        actionBar.setDisplayOptions(actionBar.getDisplayOptions() | ActionBar.DISPLAY_SHOW_CUSTOM);
+        
+        LinearLayout layout_icons = new LinearLayout(actionBar.getThemedContext());
+        ActionBar.LayoutParams layoutParams = new ActionBar.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.WRAP_CONTENT, Gravity.RIGHT | Gravity.CENTER_VERTICAL);
+        layoutParams.height = 72;
+        layoutParams.width = 72 + 50;
+        layout_icons.setLayoutParams(layoutParams);
+        layout_icons.setOrientation(LinearLayout.HORIZONTAL);
+
+        ActionBar.LayoutParams imgParams = new ActionBar.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.WRAP_CONTENT, Gravity.CENTER_VERTICAL);
+        imgParams.height = 72;
+        imgParams.width = 72;
+        imgParams.rightMargin = 5;
+        
+        final ImageView listview_icon = new ImageView(actionBar.getThemedContext());
+        listview_icon.setImageResource(R.drawable.listview_icon);
+        listview_icon.setScaleType(ImageView.ScaleType.FIT_XY);
+        listview_icon.setLayoutParams(imgParams);
+        listview_icon.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+            	
+            	doListView();
+            	
+        		return false;
+            }
+        });
+
+        layout_icons.addView(listview_icon);
+
         actionBar.setDisplayOptions(actionBar.getDisplayOptions() ^ ActionBar.DISPLAY_SHOW_TITLE);
         actionBar.setLogo(R.drawable.masthead);
         actionBar.setHomeButtonEnabled(false);
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#FF1B8AC7")));
-        actionBar.show();
-        
+
         //
         //
         //
@@ -187,9 +217,6 @@ public class MapActivity extends Activity implements LocationListener	{
 
 			    switch (position) {
 		    	case 0:
-		    		doListView();
-		    		break;
-		    	case 1:
 		    		doSuggest();
 		    		break;
 		    	default:
@@ -198,11 +225,13 @@ public class MapActivity extends Activity implements LocationListener	{
 
 				// Closing the drawer
 				mDrawerLayout.closeDrawer(mDrawerList);
-
 			    invalidateOptionsMenu();
 
 			}
 		});
+
+        actionBar.setCustomView(layout_icons);
+        actionBar.show();
 
     	markerValues = new HashMap<String,BTCBusiness>();
     	btcb = new ArrayList<BTCBusiness>();
