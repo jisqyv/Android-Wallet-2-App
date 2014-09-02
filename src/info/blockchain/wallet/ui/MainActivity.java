@@ -176,7 +176,10 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         qr_icon.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-            	
+
+				mDrawerLayout.closeDrawer(mDrawerList);
+				actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+
         		Intent intent = new Intent(MainActivity.this, ZBarScannerActivity.class);
         		intent.putExtra(ZBarConstants.SCAN_MODES, new int[] { Symbol.QRCODE } );
         		startActivityForResult(intent, ZBAR_SCANNER_REQUEST);
@@ -310,6 +313,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
             @Override
             public void onPageSelected(int position) {
+//				mDrawerLayout.closeDrawer(mDrawerList);
+				actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
                 actionBar.setSelectedNavigationItem(position);
 
                 if(position == 1) {
