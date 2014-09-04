@@ -1,5 +1,7 @@
 package info.blockchain.wallet.ui;
 
+import info.blockchain.api.ExchangeRates;
+
 import java.util.regex.Pattern;
 
 import net.sourceforge.zbar.Symbol;
@@ -40,6 +42,7 @@ import piuk.blockchain.android.MyWallet;
 import piuk.blockchain.android.R;
 import piuk.blockchain.android.SuccessCallback;
 import piuk.blockchain.android.WalletApplication;
+import piuk.blockchain.android.util.ConnectivityStatus;
 
 public class PairingHelp extends Activity {
 	
@@ -124,6 +127,14 @@ public class PairingHelp extends Activity {
         });
 
 		updateDisplay();
+		
+		if(ConnectivityStatus.hasConnectivity(this)) {
+			CurrencyExchange.getInstance(this).localUpdate();
+			ExchangeRates fxRates = new ExchangeRates();
+			DownloadFXRatesTask task = new DownloadFXRatesTask(this, fxRates);
+			task.execute(new String[] { fxRates.getUrl() });
+		}
+
 	}
 
 	@Override

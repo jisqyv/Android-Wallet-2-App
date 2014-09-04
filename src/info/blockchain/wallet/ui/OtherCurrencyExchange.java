@@ -71,10 +71,10 @@ public class OtherCurrencyExchange	{
 		return instance;
 	}
 	
-    public Double getCurrencyPrice(String currency)	{
+    public Double getCurrencyPrice(String currency, double usd)	{
     	
     	if(prices != null && prices.containsKey(currency) && prices.get(currency) != 0.0)	{
-    		return 1.0 / ((1.0 / prices.get(currency)) * (1.0 / CurrencyExchange.getInstance(context).getCurrencyPrice("USD")));
+    		return 1.0 / ((1.0 / prices.get(currency)) * (1.0 / usd));
     	}
     	else	{
     		return 0.0;

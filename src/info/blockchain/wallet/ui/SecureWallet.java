@@ -223,6 +223,8 @@ public class SecureWallet extends Activity {
                  }
             }
         });
+        
+		CurrencyExchange.getInstance(this).localUpdate();
 
 	}
 

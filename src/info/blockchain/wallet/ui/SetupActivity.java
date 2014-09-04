@@ -1,5 +1,6 @@
 package info.blockchain.wallet.ui;
 
+import info.blockchain.api.ExchangeRates;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,6 +15,7 @@ import android.content.SharedPreferences.Editor;
 //import android.util.Log;
 
 import piuk.blockchain.android.R;
+import piuk.blockchain.android.util.ConnectivityStatus;
 
 public class SetupActivity extends Activity		{
 
@@ -52,6 +54,12 @@ public class SetupActivity extends Activity		{
     			startActivity(intent);
             }
         });
+        
+		if(ConnectivityStatus.hasConnectivity(this)) {
+			ExchangeRates fxRates = new ExchangeRates();
+			DownloadFXRatesTask task = new DownloadFXRatesTask(this, fxRates);
+			task.execute(new String[] { fxRates.getUrl() });
+		}
 
     }
 

@@ -39,6 +39,7 @@ public class CurrencyExchange	{
 			String[] currencies = fxRates.getCurrencies();
 	    	for(int i = 0; i < currencies.length; i++)	 {
 		    	prices.put(currencies[i], Double.longBitsToDouble(prefs.getLong(currencies[i], Double.doubleToLongBits(0.0))));
+		    	Log.d("Init", currencies[i] + " " + 0.0);
 		    	symbols.put(currencies[i], prefs.getString(currencies[i] + "-SYM", null));
 	    	}
 
@@ -54,6 +55,7 @@ public class CurrencyExchange	{
 	    	for(int i = 0; i < currencies.length; i++)	 {
 		    	if(fxRates.getLastPrice(currencies[i]) > 0.0)	{
                     editor.putLong(currencies[i], Double.doubleToRawLongBits(fxRates.getLastPrice(currencies[i])));
+    		    	Log.d("Init2", currencies[i] + " " + Double.doubleToRawLongBits(fxRates.getLastPrice(currencies[i])));
                     editor.putString(currencies[i] + "-SYM", fxRates.getSymbol(currencies[i]));
 		    	}
 	    	}
@@ -70,7 +72,7 @@ public class CurrencyExchange	{
     	}
     	else	{
             String[] currencies = getBlockchainCurrencies();
-            return OtherCurrencyExchange.getInstance(context, currencies, strFiatCode).getCurrencyPrice(currency);
+            return OtherCurrencyExchange.getInstance(context, currencies, strFiatCode).getCurrencyPrice(currency, prices.get("USD"));
 //    		return OtherCurrencyExchange.getInstance(context, getBlockchainCurrencies(), ).getCurrencyPrice(currency);
     	}
 
@@ -88,6 +90,16 @@ public class CurrencyExchange	{
 
     public String[] getBlockchainCurrencies()	{
 		return fxRates.getCurrencies();
+    }
+
+    public void localUpdate()	{
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+		String[] currencies = fxRates.getCurrencies();
+    	for(int i = 0; i < currencies.length; i++)	 {
+	    	prices.put(currencies[i], Double.longBitsToDouble(prefs.getLong(currencies[i], Double.doubleToLongBits(0.0))));
+	    	Log.d("Init", currencies[i] + " " + 0.0);
+	    	symbols.put(currencies[i], prefs.getString(currencies[i] + "-SYM", null));
+    	}
     }
 
 	private static void getExchangeRates() {
