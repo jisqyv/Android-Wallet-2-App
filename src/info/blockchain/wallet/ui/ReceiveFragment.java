@@ -818,26 +818,33 @@ public class ReceiveFragment extends Fragment   {
  	        	String address = activeAddresses.get(i);
  	        	String amount = "0.000";
  			    BigInteger finalBalance = wallet.getBalance(address);	
- 			    if (finalBalance != null)
- 			    	amount = BlockchainUtil.formatBitcoin(finalBalance);
+ 			    if (finalBalance != null) {
+ 			    	try {
+ 	 			    	amount = BlockchainUtil.formatBitcoin(finalBalance);
+ 			    	}
+ 			    	catch(NumberFormatException nfe) {
+ 			    		amount = "0.000";
+ 			    	}
+ 			    }
 
- 			        HashMap<String,String> row = new HashMap<String,String>();
+ 			    HashMap<String,String> row = new HashMap<String,String>();
 
- 			        String label = labels.get(address);
- 			        String labelOrAddress;
- 			        if (label != null) {
- 			            row.put("label", label.toString());	
- 			            labelOrAddress = label;
- 			        } else {
- 			        	labelOrAddress = address;
- 			        }
- 			        row.put("address", address.toString());
- 			        row.put("amount", amount);
- 			        row.put("labelOrAddress", labelOrAddress);
+		        String label = labels.get(address);
+		        String labelOrAddress;
+		        if (label != null) {
+		            row.put("label", label.toString());	
+		            labelOrAddress = label;
+		        } else {
+		        	labelOrAddress = address;
+		        }
+		        row.put("address", address.toString());
+		        row.put("amount", amount);
+		        row.put("labelOrAddress", labelOrAddress);
 
- 					magicData.add(row);    
+				magicData.add(row);    
 
- 		        	filteredDisplayList.add(row);
+	        	filteredDisplayList.add(row);
+
  	        }
 
  	        //if the defaultAddress is null then we probably have all watch only addresses
