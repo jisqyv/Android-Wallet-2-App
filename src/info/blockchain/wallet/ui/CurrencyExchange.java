@@ -5,7 +5,7 @@ import java.util.HashMap;
 import android.content.Context;
 import android.preference.PreferenceManager;
 import android.content.SharedPreferences;
-import android.util.Log;
+//import android.util.Log;
 
 import info.blockchain.api.ExchangeRates;
 
@@ -39,7 +39,6 @@ public class CurrencyExchange	{
 			String[] currencies = fxRates.getCurrencies();
 	    	for(int i = 0; i < currencies.length; i++)	 {
 		    	prices.put(currencies[i], Double.longBitsToDouble(prefs.getLong(currencies[i], Double.doubleToLongBits(0.0))));
-		    	Log.d("Init", currencies[i] + " " + 0.0);
 		    	symbols.put(currencies[i], prefs.getString(currencies[i] + "-SYM", null));
 	    	}
 
@@ -55,7 +54,6 @@ public class CurrencyExchange	{
 	    	for(int i = 0; i < currencies.length; i++)	 {
 		    	if(fxRates.getLastPrice(currencies[i]) > 0.0)	{
                     editor.putLong(currencies[i], Double.doubleToRawLongBits(fxRates.getLastPrice(currencies[i])));
-    		    	Log.d("Init2", currencies[i] + " " + Double.doubleToRawLongBits(fxRates.getLastPrice(currencies[i])));
                     editor.putString(currencies[i] + "-SYM", fxRates.getSymbol(currencies[i]));
 		    	}
 	    	}
@@ -97,7 +95,6 @@ public class CurrencyExchange	{
 		String[] currencies = fxRates.getCurrencies();
     	for(int i = 0; i < currencies.length; i++)	 {
 	    	prices.put(currencies[i], Double.longBitsToDouble(prefs.getLong(currencies[i], Double.doubleToLongBits(0.0))));
-	    	Log.d("Init", currencies[i] + " " + 0.0);
 	    	symbols.put(currencies[i], prefs.getString(currencies[i] + "-SYM", null));
     	}
     }
