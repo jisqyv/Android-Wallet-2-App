@@ -695,6 +695,10 @@ public class MapActivity extends Activity implements LocationListener	{
 
 	void setProperZoomLevel(LatLng loc, int radius, int nbPoi) {
 
+        if(btcb == null || btcb.size() < 1) {
+        	return;
+        }
+
         float currentZoomLevel = 21;
         int currentFoundPoi = 0;
         LatLngBounds bounds = null;
@@ -750,11 +754,13 @@ public class MapActivity extends Activity implements LocationListener	{
     private void doListView() {
 
 		boolean doList = false;
-
-    	for(int i = 0; i < btcb.size(); i++) {
-			if(Double.parseDouble(btcb.get(i).distance) < 15.0) {
-				doList = true;
-				break;
+		
+		if(btcb != null && btcb.size() > 0) {
+	    	for(int i = 0; i < btcb.size(); i++) {
+				if(Double.parseDouble(btcb.get(i).distance) < 15.0) {
+					doList = true;
+					break;
+				}
 			}
 		}
 
