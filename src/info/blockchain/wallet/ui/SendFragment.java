@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import net.sourceforge.zbar.Symbol;
 import piuk.blockchain.android.EventListeners;
@@ -50,6 +51,7 @@ import android.text.SpannableStringBuilder;
 import android.text.TextWatcher;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.SuperscriptSpan;
+import android.util.Patterns;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -194,7 +196,7 @@ public class SendFragment extends Fragment   {
 	private List<Map<String, Object>> addressBookMapList;
 	private String emailOrNumber;
 	private boolean sendViaEmail;
-	private boolean sentViaSMS;
+	private boolean sendViaSMS;
 
 	private CustomSend cs = null;
 	private SendProgress csProgress = null;
@@ -202,10 +204,14 @@ public class SendFragment extends Fragment   {
 	public static final String ACTION_INTENT = "info.blockchain.wallet.ui.SendFragment.BTC_ADDRESS_SCAN";
 
 	private ProgressDialog sendingProgressDialog = null;
+	
+	private BigInteger biBaseFee = Utils.toNanoCoins("0.0001");
 
 	private static final Map<String, ECKey> temporaryPrivateKeys = new HashMap<String, ECKey>();
 	private static String scanPrivateKeyAddress = null;
 	
+	private Pattern emailPattern = Patterns.EMAIL_ADDRESS;
+
     protected BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -283,15 +289,10 @@ public class SendFragment extends Fragment   {
 
 		//activity.bindService(new Intent(activity, BlockchainServiceImpl.class), serviceConnection, Context.BIND_AUTO_CREATE);
     	sendViaEmail = false;
-    	sentViaSMS = false;
+    	sendViaSMS = false;
     	
         rootView = inflater.inflate(R.layout.fragment_send, container, false);
 
-        /*
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        strCurrentFiatCode = prefs.getString("ccurrency", "USD");
-        strCurrentFiatSymbol = prefs.getString(strCurrentFiatCode + "-SYM", "$");
-        */
         strCurrentFiatCode = BlockchainUtil.getInstance(getActivity()).getFiatCode();
         strCurrentFiatSymbol = BlockchainUtil.getInstance(getActivity()).getFiatSymbol();
 
@@ -578,6 +579,15 @@ public class SendFragment extends Fragment   {
         	
 			final SendProgress progressEmailSMS = new SendProgress() {
 				public void onSend(final Transaction tx, final String message) {
+					
+					/*
+					 * 
+					 * 
+						add addresses to AddressBook here
+					 * 
+					 * 
+					 */
+
 					handler.post(new Runnable() {
 						public void run() {
 							application.getRemoteWallet().setState(MyRemoteWallet.State.SENT);
@@ -684,6 +694,15 @@ public class SendFragment extends Fragment   {
 					}
 
 					if (sendType != null && sendType.equals(SendTypeSharedCoin)) {
+						
+						/*
+						 * 
+						 * 
+						 * 
+						 * 
+						 * 
+						 * 
+						 */
 
 					} else {
 
@@ -694,7 +713,7 @@ public class SendFragment extends Fragment   {
 						if (sendType != null && sendType == SendTypeQuickSend) {
 //							quickSend(receivingAddress, fee, feePolicy);
 //							Toast.makeText(SendFragment.this.getActivity(), "Quick send", Toast.LENGTH_LONG).show();
-							quickSend(receivingAddress, Utils.toNanoCoins("0.0001"), MyRemoteWallet.FeePolicy.FeeForce);
+							quickSend(receivingAddress, biBaseFee, MyRemoteWallet.FeePolicy.FeeForce);
 						} else if (sendType != null && sendType == SendTypeCustomSend) {
 							if (isCustomSendInputsCorrect()) {
 								customSend(receivingAddress, fee, feePolicy);
@@ -712,69 +731,16 @@ public class SendFragment extends Fragment   {
 
 				final BigInteger amount = getBTCEnteredOutputValue(edAmount1.getText().toString());
 				final WalletApplication application = (WalletApplication) getActivity().getApplication();
+				/*
 				if (application.isInP2PFallbackMode()) {
 					throw new Exception("P2PFallbackMode disabled");
-					/*
-					final long blockchainLag = System.currentTimeMillis() - service.blockChain.getChainHead().getHeader().getTime().getTime();
-
-					final boolean blockchainUptodate = blockchainLag < Constants.BLOCKCHAIN_UPTODATE_THRESHOLD_MS;
-
-					if (!blockchainUptodate) {
-						activity.longToast(R.string.blockchain_not_upto_date);
-						return;
-					}
-
-					// create spend
-					final SendRequest sendRequest = SendRequest.to(receivingAddress, getBTCEnteredOutputValue(edAmount1.getText().toString()));
-					sendRequest.fee = fee;
-
-					new Thread(new Runnable()
-					{
-						public void run()
-						{
-							final Transaction transaction = application.bitcoinjWallet.sendCoinsOffline(sendRequest);
-
-							handler.post(new Runnable()
-							{
-								public void run()
-								{
-									if (transaction != null)
-									{
-										application.getRemoteWallet().setState(MyRemoteWallet.State.SENDING);
-
-										updateView();
-
-										service.broadcastTransaction(transaction);
-
-										application.getRemoteWallet().setState(MyRemoteWallet.State.SENT);
-
-										activity.longToast(R.string.wallet_transactions_fragment_tab_sent);
-
-										Intent intent = activity.getIntent();
-										intent.putExtra("tx", transaction.getHash());
-										activity.setResult(Activity.RESULT_OK, intent);
-
-										updateView();
-
-										EventListeners.invokeOnTransactionsChanged();
-										
-									}
-									else
-									{
-										application.getRemoteWallet().setState(MyRemoteWallet.State.INPUT);
-
-										updateView();
-
-										activity.longToast(R.string.send_coins_error_msg);
-									}
-								}
-							});
-						}
-					}).start();
-					*/
 				} else {
 					application.getRemoteWallet().simpleSendCoinsAsync(receivingAddress.toString(), amount, feePolicy, fee, progress);
 				}
+				*/
+				Toast.makeText(getActivity(), "Simple send:" + receivingAddress + "," + amount.toString(), Toast.LENGTH_SHORT).show();	// ###
+				application.getRemoteWallet().simpleSendCoinsAsync(receivingAddress.toString(), amount, feePolicy, fee, progress);
+
 			}
 
 			public void customSend(Address receivingAddress, BigInteger fee, MyRemoteWallet.FeePolicy feePolicy) {
@@ -791,7 +757,6 @@ public class SendFragment extends Fragment   {
 				customSendCoinsAsync(cs.getSendingAddresses(), receivingAddress.toString(), amount, feePolicy, fee, progress);
 			}
 
-			
 		    private void customSendCoinsAsync(final HashMap<String, BigInteger> sendingAddresses, final String toAddress, final BigInteger amount, final FeePolicy feePolicy, final BigInteger fee, final SendProgress progress) {
 				String changeAddress = cs.getChangeAddress();
 //				Log.d("MyRemoteWallet", "MyRemoteWallet customSendCoinsAsync changeAddress: " + changeAddress);
@@ -845,17 +810,17 @@ public class SendFragment extends Fragment   {
 
 				            	try {
 									remoteWallet.sendCoinsEmail(emailOrNumber, getBTCEnteredOutputValue(edAmount1.getText().toString()),
-											feePolicy, baseFee, progressEmailSMS);
+											MyRemoteWallet.FeePolicy.FeeForce, biBaseFee, progressEmailSMS);
 								} catch (Exception e) {
 									e.printStackTrace();
 								}
-							} else if (sentViaSMS && emailOrNumber != null) {								
+							} else if (sendViaSMS && emailOrNumber != null) {								
 								try {
 									String numberFormated = emailOrNumber.replaceAll("\\D+","");	
 									numberFormated = "+"+numberFormated;
 //									Log.d("sendCoinsSMS", "numberFormated: "+ numberFormated);
 									remoteWallet.sendCoinsSMS(numberFormated, getBTCEnteredOutputValue(edAmount1.getText().toString()),
-											feePolicy, baseFee, progressEmailSMS);										
+											MyRemoteWallet.FeePolicy.FeeForce, biBaseFee, progressEmailSMS);										
 								} catch (Exception e) {
 									e.printStackTrace();
 								}								
@@ -869,23 +834,33 @@ public class SendFragment extends Fragment   {
 						}
 					}, RequestPasswordDialog.PasswordTypeSecond);
 				} else {
+
 					if(sendViaEmail && emailOrNumber != null && emailOrNumber.contains("@")) {	
+
 						try {
+							Toast.makeText(getActivity(), "Email send:" + emailOrNumber + "," + getBTCEnteredOutputValue(edAmount1.getText().toString()), Toast.LENGTH_SHORT).show();	// ###
+
 							remoteWallet.sendCoinsEmail(emailOrNumber, getBTCEnteredOutputValue(edAmount1.getText().toString()),
-									feePolicy, baseFee, progressEmailSMS);
+									MyRemoteWallet.FeePolicy.FeeForce, biBaseFee, progressEmailSMS);
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
-					} else if (sentViaSMS && emailOrNumber != null) {								
+
+					} else if (sendViaSMS && emailOrNumber != null) {								
+					
 						try {
-							String numberFormated = emailOrNumber.replaceAll("\\D+","");	
-							numberFormated = "+"+numberFormated;
+							Toast.makeText(getActivity(), "SMS send:" + emailOrNumber + "," + getBTCEnteredOutputValue(edAmount1.getText().toString()), Toast.LENGTH_SHORT).show();	// ###
+
+							String numberFormated = emailOrNumber.replaceAll("\\D+", "");	
+							numberFormated = "+" + numberFormated;
 //							Log.d("sendCoinsSMS", "numberFormated: "+ numberFormated);
+//		    				Toast.makeText(getActivity(), "numberFormated: "+ numberFormated, Toast.LENGTH_LONG).show();
 							remoteWallet.sendCoinsSMS(numberFormated, getBTCEnteredOutputValue(edAmount1.getText().toString()),
-									feePolicy, baseFee, progressEmailSMS);										
+									MyRemoteWallet.FeePolicy.FeeForce, biBaseFee, progressEmailSMS);										
 						} catch (Exception e) {
 							e.printStackTrace();
 						}								
+
 					} else {
 						makeTransaction(feePolicy);
 					}
@@ -938,6 +913,15 @@ public class SendFragment extends Fragment   {
         			}
 
         			ivClearInput.setVisibility(View.VISIBLE);
+        			
+        			if(isValidContent(edAddress.getText().toString(), edAmount1.getText().toString())) {
+        				btSend.setBackgroundColor(0xff1b8ac7);
+        				btSend.setClickable(true);
+        			}
+        			else {
+        				btSend.setBackgroundColor(0xff808080);
+        				btSend.setClickable(false);
+        			}
         		}
         		else {
         			ivClearInput.setVisibility(View.INVISIBLE);
@@ -983,7 +967,16 @@ public class SendFragment extends Fragment   {
         edAddress.addTextChangedListener(new TextWatcher()	{
 
         	public void afterTextChanged(Editable s) {
-        		;
+        		if((edAddress.getText().toString() != null && edAddress.getText().toString().length() > 0) || (edAmount1.getText().toString() != null && edAmount1.getText().toString().length() > 0)) {
+        			if(isValidContent(edAddress.getText().toString(), edAmount1.getText().toString())) {
+        				btSend.setBackgroundColor(0xff1b8ac7);
+        				btSend.setClickable(true);
+        			}
+        			else {
+        				btSend.setBackgroundColor(0xff808080);
+        				btSend.setClickable(false);
+        			}
+        		}
         	}
 
         	public void beforeTextChanged(CharSequence s, int start, int count, int after)	{ ; }
@@ -1012,7 +1005,7 @@ public class SendFragment extends Fragment   {
         		    }
         		}
 
-        		if (BitcoinAddressCheck.isValidAddress(inputAddress)) {
+        		if (isValidContent(edAddress.getText().toString(), edAmount1.getText().toString())) {
             		currentSelectedAddress = inputAddress;                        			
         		} else {
             		currentSelectedAddress = null;                        			
@@ -1023,9 +1016,11 @@ public class SendFragment extends Fragment   {
                 }
                 
                 //clear emailOrNumber if made change to name in edit text
+                /*
                 emailOrNumber = "";
             	sendViaEmail = false;
-            	sentViaSMS = false;
+            	sendViaSMS = false;
+            	*/
             }
         });
 
@@ -1038,7 +1033,7 @@ public class SendFragment extends Fragment   {
 	                	labels = application.getRemoteWallet().getLabelMap();
 	                
 		        	if(labels.get(edAddress.getText().toString()) == null) {
-	 		            if(!BitcoinAddressCheck.isValidAddress(edAddress.getText().toString())) {
+	 		            if(!isValidContent(edAddress.getText().toString(), edAmount1.getText().toString())) {
 							Toast.makeText(getActivity(), edAddress.getText().toString() + " " + getActivity().getResources().getString(R.string.is_not_valid_BTC_address), Toast.LENGTH_LONG).show();
 	 		            	return false;
 	 		            }
@@ -1366,7 +1361,7 @@ public class SendFragment extends Fragment   {
 	{
 		super.onDestroy();
 
-		if (application.getRemoteWallet() == null)
+		if (application == null || application.getRemoteWallet() == null)
 			return;
 
 		//Clear the second password
@@ -1475,7 +1470,7 @@ public class SendFragment extends Fragment   {
 				                    		edAddress.setText(name);
 				                    		emailOrNumber = em;
 				                        	sendViaEmail = true;
-				                        	sentViaSMS = false;
+				                        	sendViaSMS = false;
 
 				                    		// go out via email here
 				                    		Toast.makeText(getActivity(), em, Toast.LENGTH_SHORT).show();
@@ -1487,7 +1482,7 @@ public class SendFragment extends Fragment   {
 
 				                    		edAddress.setText(name);
 				                        	sendViaEmail = false;
-				                        	sentViaSMS = true;
+				                        	sendViaSMS = true;
 
 				                    		emailOrNumber = sms;	
 				                        	if (sms.substring(0, 2).equals("00") || sms.charAt(0) == '+') {
@@ -1512,8 +1507,7 @@ public class SendFragment extends Fragment   {
 		                    		edAddress.setText(strName);
 		                    		emailOrNumber = strEmail;
 		                        	sendViaEmail = true;
-		                        	sentViaSMS = false;
-		                    		// go out via email here
+		                        	sendViaSMS = false;
 			                    }
 		                    	else if(strNumber != null)	{
 		                    		//
@@ -1529,13 +1523,10 @@ public class SendFragment extends Fragment   {
 		                    			doSelectInternationalPrefix();				                        		
 		                        	}
 		                        	sendViaEmail = false;
-		                        	sentViaSMS = true;
-		                    		//go out via sms here
-
+		                        	sendViaSMS = true;
 			                    }
 		                    	else
 		                    	{
-		                    		// this will be replaced by proper model dialog by Bill w/ official text
 		                    		Toast.makeText(getActivity(), R.string.to_use_send2friend, Toast.LENGTH_SHORT).show();
 		                    	}
 
@@ -2045,8 +2036,10 @@ public class SendFragment extends Fragment   {
     	}
     	*/
 
-		final WalletApplication application = (WalletApplication)getActivity().getApplication();
-		final MyRemoteWallet wallet = application.getRemoteWallet();
+//		final WalletApplication application = (WalletApplication)getActivity().getApplication();
+//		final MyRemoteWallet wallet = application.getRemoteWallet();
+//		final WalletApplication application = WalletUtil.getInstance(getActivity()).getWalletApplication();
+		final MyRemoteWallet wallet = WalletUtil.getInstance(getActivity()).getRemoteWallet();
 
 		Map<String,String> labels = wallet.getLabelMap();
 
@@ -2805,10 +2798,6 @@ public class SendFragment extends Fragment   {
             edAmount1.requestFocus();
             edAmount1.setText(Double.toString(Double.parseDouble(btc_amount) / 100000000.0));
             edAmount1.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-//            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-
-//            InputMethodManager inputMethodManager = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-//            inputMethodManager.showSoftInput(edAmount1, InputMethodManager.SHOW_IMPLICIT);
 
             isBTC = true;
     	    tvCurrency.setTypeface(TypefaceUtil.getInstance(getActivity()).getBTCTypeface());
@@ -2854,7 +2843,7 @@ public class SendFragment extends Fragment   {
          	tvAddressBis.setVisibility(View.GONE);
          }
 
-         if(BitcoinAddressCheck.isValidAddress(edAddress.getText().toString())) {
+         if(isValidContent(edAddress.getText().toString(), edAmount1.getText().toString())) {
          	tvAddressBis.setVisibility(View.GONE);
          }
 
@@ -2895,6 +2884,11 @@ public class SendFragment extends Fragment   {
     }
 
     private void clearSend()	{
+    	
+		sendViaEmail = false;
+		sendViaSMS = false;
+		emailOrNumber = null;
+
     	edAddress.setText("");
         edAddress.setHint(R.string.send_payment_hint);
       	edAmount1.setText("");
@@ -3032,4 +3026,72 @@ public class SendFragment extends Fragment   {
 			throw new Exception("scanPrivateKeyAddress not set");
 		}
 	}
+	
+	public boolean isValidContent(final String btcaddress, final String amount) {
+		
+		boolean ret = false;
+
+		Pattern emailPattern = Patterns.EMAIL_ADDRESS;
+		Pattern phonePattern = Pattern.compile("(\\+[1-9]{1,3}|00[1-9]{1,3})[\\(\\)\\.\\-\\s\\d]+");
+		
+		double dAmount = 0.0;
+		
+		try {
+			dAmount = Double.parseDouble(amount.trim());
+		}
+		catch(Exception e) {
+			dAmount = 0.0;
+		}
+
+		if(emailOrNumber == null) {
+	    	// is e-mail address ?
+			if(btcaddress.trim().length() > 0 && emailPattern.matcher(btcaddress.trim()).matches()) {
+	    		emailOrNumber = btcaddress.trim();
+	    		sendViaEmail = true;
+	    		sendViaSMS = false;
+	    	}
+			else {
+	    		sendViaEmail = false;
+			}
+			
+			if(btcaddress.trim().length() > 0 && phonePattern.matcher(btcaddress.trim()).matches()) {
+	    		emailOrNumber = btcaddress.trim();
+	    		sendViaEmail = false;
+	    		sendViaSMS = true;
+			}
+			else {
+	    		sendViaSMS = false;
+			}
+		}
+		
+		if(!sendViaEmail && !sendViaSMS) {
+    		emailOrNumber = null;
+		}
+
+        if (addressBookMapList != null && addressBookMapList.size() > 0) {
+  		    for (Iterator<Map<String, Object>> iti = addressBookMapList.iterator(); iti.hasNext();) {
+ 		    	Map<String, Object> addressBookMap = iti.next();
+ 		    	Object address = addressBookMap.get("addr");
+ 		    	Object label = addressBookMap.get("label");
+
+ 		        if (((label != null && label.equals(btcaddress.trim())) || (address != null && address.equals(btcaddress.trim()))) && dAmount > 0.0) {
+ 		        	return true;
+ 		        }
+ 		    }
+ 		}
+
+		return (
+				(
+				BitcoinAddressCheck.isValidAddress(btcaddress.trim())
+				|| emailPattern.matcher(btcaddress.trim()).matches()
+				|| phonePattern.matcher(btcaddress.trim()).matches()
+				|| (labels != null && labels.containsValue(btcaddress.trim()))
+				|| sendViaEmail			// phonebook contact has been selected (email)
+				|| sendViaSMS			// phonebook contact has been selected (sms)
+				)
+				&& dAmount > 0.0
+				);
+
+	}
+
 }
