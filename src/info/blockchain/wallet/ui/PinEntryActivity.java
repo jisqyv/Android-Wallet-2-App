@@ -211,10 +211,26 @@ public class PinEntryActivity extends FragmentActivity {
 					if(userEntered.length() == PIN_LENGTH)	{
 
 						if(validating)	{
+							
+							if(userEntered.equals("0000"))	{
+								Toast.makeText(PinEntryActivity.this, R.string.zero_pin, Toast.LENGTH_SHORT).show();	
+								return;
+							}
+
 							validatePIN(userEntered);
 						}
 						else	{
 							if(userInput != null)	{
+								
+								if(userInput.equals("0000"))	{
+									Toast.makeText(PinEntryActivity.this, R.string.zero_pin, Toast.LENGTH_SHORT).show();	
+									Intent intent = new Intent(PinEntryActivity.this, PinEntryActivity.class);
+									intent.putExtra("N", "1");
+									intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+									startActivity(intent);
+									return;
+								}
+
 								if(userInput.equals(userEntered))	{
 
 									new Thread(new Runnable(){
@@ -293,7 +309,7 @@ public class PinEntryActivity extends FragmentActivity {
 									}
 									else	{
 										Intent intent = new Intent(PinEntryActivity.this, PinEntryActivity.class);
-										intent.putExtra("S", userEntered);
+										intent.putExtra("S", "1");
 										intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
 										startActivity(intent);
 									}
@@ -333,6 +349,11 @@ public class PinEntryActivity extends FragmentActivity {
 
 					//Update pin boxes
 					pinBoxArray[userEntered.length() - 1].setText("8");
+
+					if(userEntered.equals("0000"))	{
+						Toast.makeText(PinEntryActivity.this, R.string.zero_pin, Toast.LENGTH_SHORT).show();	
+						return;
+					}
 
 					validatePIN(userEntered);
 

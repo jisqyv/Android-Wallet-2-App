@@ -663,6 +663,25 @@ public class PinCreateActivity extends Activity {
           			final String p1 = pin1.getText().toString() +  pin2.getText().toString() +  pin3.getText().toString() +  pin4.getText().toString();
           			final String p2 = pin1_2.getText().toString() +  pin2_2.getText().toString() +  pin3_2.getText().toString() +  pin4_2.getText().toString();
           			
+          			if(p1.equals("0000") || p2.equals("0000")) {
+          				
+          				pin1.setText("");
+          				pin2.setText("");
+          				pin3.setText("");
+          				pin4.setText("");
+          				pin1_2.setText("");
+          				pin2_2.setText("");
+          				pin3_2.setText("");
+          				pin4_2.setText("");
+          				cbAccept.setChecked(false);
+          		    	tosLayout.setVisibility(View.INVISIBLE);
+          		    	tosPinConfirm.setVisibility(View.INVISIBLE);
+                		tvWarning2.setText(R.string.set_your_pin2);
+
+						Toast.makeText(PinCreateActivity.this.getApplication(), R.string.zero_pin, Toast.LENGTH_SHORT).show();
+						return;
+          			}
+          			
           			if(p1 != null && p2 != null && p1.length() == 4 && p2.length() == 4 && p1.equals(p2)) {
 
         				final ProgressDialog progressDialog = ProgressDialog.show(PinCreateActivity.this, "", getString(R.string.creating_account), true);

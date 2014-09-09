@@ -567,7 +567,8 @@
     <string name="missing_merchant_zip">Please provide a zip code</string>
     <string name="ok_writing_merchant">Thank you for your suggestion.</string>
     <string name="error_writing_merchant">Error writing to database. Please try again.</string>
-
+    <string name="zero_pin">0000 is an invalid PIN code. Please try again.</string>
+    
 <!--
     <string-array name="menus">
         <item>Merchant Map</item>
