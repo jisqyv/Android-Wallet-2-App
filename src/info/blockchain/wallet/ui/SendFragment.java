@@ -159,6 +159,7 @@ public class SendFragment extends Fragment   {
     private ListView magicList = null;
     
     private Switch sendMode = null;
+    private Switch sendMode2 = null;
 
     private LinearLayout layoutAddresses = null;
     private LinearLayout layoutContacts = null;
@@ -738,7 +739,7 @@ public class SendFragment extends Fragment   {
 					application.getRemoteWallet().simpleSendCoinsAsync(receivingAddress.toString(), amount, feePolicy, fee, progress);
 				}
 				*/
-				Toast.makeText(getActivity(), "Simple send:" + receivingAddress + "," + amount.toString(), Toast.LENGTH_SHORT).show();	// ###
+//				Toast.makeText(getActivity(), "Simple send:" + receivingAddress + "," + amount.toString(), Toast.LENGTH_SHORT).show();	// ###
 				application.getRemoteWallet().simpleSendCoinsAsync(receivingAddress.toString(), amount, feePolicy, fee, progress);
 
 			}
@@ -838,7 +839,7 @@ public class SendFragment extends Fragment   {
 					if(sendViaEmail && emailOrNumber != null && emailOrNumber.contains("@")) {	
 
 						try {
-							Toast.makeText(getActivity(), "Email send:" + emailOrNumber + "," + getBTCEnteredOutputValue(edAmount1.getText().toString()), Toast.LENGTH_SHORT).show();	// ###
+//							Toast.makeText(getActivity(), "Email send:" + emailOrNumber + "," + getBTCEnteredOutputValue(edAmount1.getText().toString()), Toast.LENGTH_SHORT).show();	// ###
 
 							remoteWallet.sendCoinsEmail(emailOrNumber, getBTCEnteredOutputValue(edAmount1.getText().toString()),
 									MyRemoteWallet.FeePolicy.FeeForce, biBaseFee, progressEmailSMS);
@@ -849,7 +850,7 @@ public class SendFragment extends Fragment   {
 					} else if (sendViaSMS && emailOrNumber != null) {								
 					
 						try {
-							Toast.makeText(getActivity(), "SMS send:" + emailOrNumber + "," + getBTCEnteredOutputValue(edAmount1.getText().toString()), Toast.LENGTH_SHORT).show();	// ###
+//							Toast.makeText(getActivity(), "SMS send:" + emailOrNumber + "," + getBTCEnteredOutputValue(edAmount1.getText().toString()), Toast.LENGTH_SHORT).show();	// ###
 
 							String numberFormated = emailOrNumber.replaceAll("\\D+", "");	
 							numberFormated = "+" + numberFormated;
@@ -1033,7 +1034,7 @@ public class SendFragment extends Fragment   {
 	                	labels = application.getRemoteWallet().getLabelMap();
 	                
 		        	if(labels.get(edAddress.getText().toString()) == null) {
-	 		            if(!isValidContent(edAddress.getText().toString(), edAmount1.getText().toString())) {
+	 		            if(!isValidContent(edAddress.getText().toString(), null)) {
 							Toast.makeText(getActivity(), edAddress.getText().toString() + " " + getActivity().getResources().getString(R.string.is_not_valid_BTC_address), Toast.LENGTH_LONG).show();
 	 		            	return false;
 	 		            }
@@ -1143,14 +1144,30 @@ public class SendFragment extends Fragment   {
         
         sendMode = (Switch)rootView.findViewById(R.id.mode);
         sendMode.setChecked(false);
+        sendMode2 = (Switch)rootView.findViewById(R.id.mode2);
+        sendMode2.setChecked(false);
         sendMode.setOnCheckedChangeListener(new OnCheckedChangeListener() {
         	@Override
         	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         		if(isChecked)	{
+        			sendMode2.setVisibility(View.INVISIBLE);
         			doCustomSend();
         		}
         		else	{
+        			sendMode2.setVisibility(View.VISIBLE);
         			doSimpleSend();
+        		}
+        	}
+        });
+        sendMode2.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+        	@Override
+        	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        		if(isChecked)	{
+        			sendMode.setVisibility(View.INVISIBLE);
+        			doSimpleSend();
+        		}
+        		else	{
+        			sendMode.setVisibility(View.VISIBLE);
         		}
         	}
         });
@@ -3028,14 +3045,21 @@ public class SendFragment extends Fragment   {
 	}
 	
 	public boolean isValidContent(final String btcaddress, final String amount) {
-		
+
 		boolean ret = false;
 
 		Pattern emailPattern = Patterns.EMAIL_ADDRESS;
 		Pattern phonePattern = Pattern.compile("(\\+[1-9]{1,3}|00[1-9]{1,3})[\\(\\)\\.\\-\\s\\d]+");
-		
+
+		if(amount == null) {
+			return BitcoinAddressCheck.isValidAddress(btcaddress.trim())
+			|| emailPattern.matcher(btcaddress.trim()).matches()
+			|| phonePattern.matcher(btcaddress.trim()).matches()
+			|| (labels != null && labels.containsValue(btcaddress.trim()));
+		}
+
 		double dAmount = 0.0;
-		
+
 		try {
 			dAmount = Double.parseDouble(amount.trim());
 		}

@@ -519,7 +519,7 @@
     <string name="addresses_contacts">Contacts</string>
 
     <string name="send">Send</string>
-    <string name="advanced_send">Advanced:</string>
+    <string name="advanced_send">Advanced</string>
     <string name="transaction_completed">Transaction completed</string>
 
     <string name="TO">TO</string>
@@ -568,6 +568,7 @@
     <string name="ok_writing_merchant">Thank you for your suggestion.</string>
     <string name="error_writing_merchant">Error writing to database. Please try again.</string>
     <string name="zero_pin">0000 is an invalid PIN code. Please try again.</string>
+    <string name="shared_send">Shared</string>
     
 <!--
     <string-array name="menus">
