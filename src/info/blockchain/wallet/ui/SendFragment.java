@@ -10,12 +10,16 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.json.simple.JSONObject;
+
 import net.sourceforge.zbar.Symbol;
 import piuk.blockchain.android.EventListeners;
 import piuk.blockchain.android.MyRemoteWallet;
 import piuk.blockchain.android.MyRemoteWallet.FeePolicy;
 import piuk.blockchain.android.MyRemoteWallet.SendProgress;
 import piuk.blockchain.android.WalletApplication.AddAddressCallback;
+import piuk.blockchain.android.MyWallet;
+import piuk.blockchain.android.SharedCoin;
 import piuk.blockchain.android.Constants;
 import piuk.blockchain.android.R;
 import piuk.blockchain.android.WalletApplication;
@@ -86,11 +90,12 @@ import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.content.BroadcastReceiver;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.ContextThemeWrapper;
-//import android.util.Log;
+import android.util.Log;
 
 import com.dm.zbar.android.scanner.ZBarConstants;
 import com.dm.zbar.android.scanner.ZBarScannerActivity;
 import com.google.bitcoin.core.Address;
+import com.google.bitcoin.core.DumpedPrivateKey;
 import com.google.bitcoin.core.ECKey;
 import com.google.bitcoin.core.Transaction;
 import com.google.bitcoin.core.TransactionOutput;
@@ -159,7 +164,7 @@ public class SendFragment extends Fragment   {
     private ListView magicList = null;
     
     private Switch sendMode = null;
-    private Switch sendMode2 = null;
+//    private Switch sendMode2 = null;
 
     private LinearLayout layoutAddresses = null;
     private LinearLayout layoutContacts = null;
@@ -695,15 +700,110 @@ public class SendFragment extends Fragment   {
 					}
 
 					if (sendType != null && sendType.equals(SendTypeSharedCoin)) {
+
+						Toast.makeText(SendFragment.this.getActivity(), "Shared Coin", Toast.LENGTH_LONG).show();
 						
+						application.sharedCoinGetInfo(new SuccessCallback() {
+
+							public void onSuccess() {			
+								SharedCoin sharedCoin = application.getSharedCoin();
+				                Log.d("SharedCoin", "SharedCoin getInfo: onSuccess ");
+				                Log.d("SharedCoin", "SharedCoin getInfo isEnabled " + sharedCoin.isEnabled());
+				                Log.d("SharedCoin", "SharedCoin getInfo getFeePercent " + sharedCoin.getFeePercent());
+				                Log.d("SharedCoin", "SharedCoin getInfo getMaximumInputValue " + sharedCoin.getMaximumInputValue());
+				                Log.d("SharedCoin", "SharedCoin getInfo getMaximumOfferNumberOfInputs " + sharedCoin.getMaximumOfferNumberOfInputs());
+				                Log.d("SharedCoin", "SharedCoin getInfo getMaximumOfferNumberOfOutputs " + sharedCoin.getMaximumOfferNumberOfOutputs());
+				                Log.d("SharedCoin", "SharedCoin getInfo getMaximumOutputValue " + sharedCoin.getMaximumOutputValue());
+				                Log.d("SharedCoin", "SharedCoin getInfo getMinSupportedVersion " + sharedCoin.getMinSupportedVersion());
+				                Log.d("SharedCoin", "SharedCoin getInfo getMinimumFee " + sharedCoin.getMinimumFee());
+				                Log.d("SharedCoin", "SharedCoin getInfo getMinimumInputValue " + sharedCoin.getMinimumInputValue());
+				                Log.d("SharedCoin", "SharedCoin getInfo getMinimumOutputValue " + sharedCoin.getMinimumOutputValue());
+				                Log.d("SharedCoin", "SharedCoin getInfo getMinimumOutputValueExcludeFee " + sharedCoin.getMinimumOutputValueExcludeFee());
+				                Log.d("SharedCoin", "SharedCoin getInfo getRecommendedIterations " + sharedCoin.getRecommendedIterations());
+				                Log.d("SharedCoin", "SharedCoin getInfo getRecommendedMaxIterations " + sharedCoin.getRecommendedMaxIterations());
+				                Log.d("SharedCoin", "SharedCoin getInfo getRecommendedMinIterations " + sharedCoin.getRecommendedMinIterations());
+				                Log.d("SharedCoin", "SharedCoin getInfo getToken " + sharedCoin.getToken());
+
+				                if (sharedCoin.isEnabled()) {
+
+				                	Log.d("SharedCoin", "is enabled");
+
+				                	List<String> fromAddresses = new ArrayList<String>();
+				                    fromAddresses.add("12TMozAFnEq3wR9M9hDWcqqxjCupsYLohy");
+//				                    fromAddresses.add("1FF4JobJDzxh8KKcKRVKcPSiYtsx8uJxqg");	// compressed ?
+				                    String toAddress = "1FoNEBtcqSA9k7iXqvoEPZnQi7FvDrmpEp";
+				                    BigInteger amount =  new BigInteger("1000000");
+				                    application.sendSharedCoin(fromAddresses, toAddress, amount);
+
+				                	List<String> shared_coin_seeds = new ArrayList<String>();
+				            		shared_coin_seeds.add("sharedcoin-seed:a43790c285abb25bf80ed0008f1abbe1738f");	
+				            		//application.sharedCoinRecoverSeeds(shared_coin_seeds);
+				                }
+							}
+							
+							public void onFail() {			
+				                Log.d("SharedCoin", "SharedCoin getInfo: onFail ");						
+							}
+						});            	
+
+
 						/*
-						 * 
-						 * 
-						 * 
-						 * 
-						 * 
-						 * 
-						 */
+						android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
+						new Thread(new Runnable() {
+							@Override
+							public void run() {
+								try {							
+
+									application.sharedCoinGetInfo(new SuccessCallback() {
+
+										public void onSuccess() {			
+											SharedCoin sharedCoin = application.getSharedCoin();
+							                Log.d("SharedCoin", "SharedCoin getInfo: onSuccess ");
+							                Log.d("SharedCoin", "SharedCoin getInfo isEnabled " + sharedCoin.isEnabled());
+							                Log.d("SharedCoin", "SharedCoin getInfo getFeePercent " + sharedCoin.getFeePercent());
+							                Log.d("SharedCoin", "SharedCoin getInfo getMaximumInputValue " + sharedCoin.getMaximumInputValue());
+							                Log.d("SharedCoin", "SharedCoin getInfo getMaximumOfferNumberOfInputs " + sharedCoin.getMaximumOfferNumberOfInputs());
+							                Log.d("SharedCoin", "SharedCoin getInfo getMaximumOfferNumberOfOutputs " + sharedCoin.getMaximumOfferNumberOfOutputs());
+							                Log.d("SharedCoin", "SharedCoin getInfo getMaximumOutputValue " + sharedCoin.getMaximumOutputValue());
+							                Log.d("SharedCoin", "SharedCoin getInfo getMinSupportedVersion " + sharedCoin.getMinSupportedVersion());
+							                Log.d("SharedCoin", "SharedCoin getInfo getMinimumFee " + sharedCoin.getMinimumFee());
+							                Log.d("SharedCoin", "SharedCoin getInfo getMinimumInputValue " + sharedCoin.getMinimumInputValue());
+							                Log.d("SharedCoin", "SharedCoin getInfo getMinimumOutputValue " + sharedCoin.getMinimumOutputValue());
+							                Log.d("SharedCoin", "SharedCoin getInfo getMinimumOutputValueExcludeFee " + sharedCoin.getMinimumOutputValueExcludeFee());
+							                Log.d("SharedCoin", "SharedCoin getInfo getRecommendedIterations " + sharedCoin.getRecommendedIterations());
+							                Log.d("SharedCoin", "SharedCoin getInfo getRecommendedMaxIterations " + sharedCoin.getRecommendedMaxIterations());
+							                Log.d("SharedCoin", "SharedCoin getInfo getRecommendedMinIterations " + sharedCoin.getRecommendedMinIterations());
+							                Log.d("SharedCoin", "SharedCoin getInfo getToken " + sharedCoin.getToken());
+
+							                if (sharedCoin.isEnabled()) {
+
+							                	Log.d("SharedCoin", "is enabled");
+
+							                	List<String> fromAddresses = new ArrayList<String>();
+							                    fromAddresses.add("189spN4kfmy8Fg9koiR6F7F6wdmofuMJxm");
+//							                    fromAddresses.add("1NfRMkhm5vjizzqkp2Qb28N7geRQCa4XqC");
+							                    String toAddress = "1FoNEBtcqSA9k7iXqvoEPZnQi7FvDrmpEp";
+							                    BigInteger amount =  new BigInteger("1234567");
+							                    application.sendSharedCoin(fromAddresses, toAddress, amount);
+							            		
+							                	List<String> shared_coin_seeds = new ArrayList<String>();
+							            		shared_coin_seeds.add("sharedcoin-seed:a43790c285abb25bf80ed0008f1abbe1738f");	
+							            		//application.sharedCoinRecoverSeeds(shared_coin_seeds);
+
+							                }
+										}
+										
+										public void onFail() {			
+							                Log.d("SharedCoin", "SharedCoin getInfo: onFail ");						
+										}
+									});            	
+
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+							}
+						}).start();
+						*/
 
 					} else {
 
@@ -712,9 +812,10 @@ public class SendFragment extends Fragment   {
 						Address receivingAddress = new Address(Constants.NETWORK_PARAMETERS, addressString);
 
 						if (sendType != null && sendType == SendTypeQuickSend) {
-//							quickSend(receivingAddress, fee, feePolicy);
-//							Toast.makeText(SendFragment.this.getActivity(), "Quick send", Toast.LENGTH_LONG).show();
+
+							Toast.makeText(SendFragment.this.getActivity(), "Quick send", Toast.LENGTH_LONG).show();
 							quickSend(receivingAddress, biBaseFee, MyRemoteWallet.FeePolicy.FeeForce);
+
 						} else if (sendType != null && sendType == SendTypeCustomSend) {
 							if (isCustomSendInputsCorrect()) {
 								customSend(receivingAddress, fee, feePolicy);
@@ -1144,35 +1245,40 @@ public class SendFragment extends Fragment   {
         
         sendMode = (Switch)rootView.findViewById(R.id.mode);
         sendMode.setChecked(false);
-        sendMode2 = (Switch)rootView.findViewById(R.id.mode2);
-        sendMode2.setChecked(false);
+//        sendMode2 = (Switch)rootView.findViewById(R.id.mode2);
+//        sendMode2.setChecked(false);
         sendMode.setOnCheckedChangeListener(new OnCheckedChangeListener() {
         	@Override
         	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         		if(isChecked)	{
-        			sendMode2.setVisibility(View.INVISIBLE);
+//        			sendMode2.setVisibility(View.INVISIBLE);
         			doCustomSend();
         		}
         		else	{
-        			sendMode2.setVisibility(View.VISIBLE);
+//        			sendMode2.setVisibility(View.VISIBLE);
         			doSimpleSend();
         		}
         	}
         });
+/*
         sendMode2.setOnCheckedChangeListener(new OnCheckedChangeListener() {
         	@Override
         	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         		if(isChecked)	{
+					Toast.makeText(getActivity(), "Shared Coin ON", Toast.LENGTH_SHORT).show();
+        			sendType = SendTypeSharedCoin;
         			sendMode.setVisibility(View.INVISIBLE);
-        			doSimpleSend();
         		}
         		else	{
+        			sendType = SendTypeQuickSend;
         			sendMode.setVisibility(View.VISIBLE);
+        			doSimpleSend();
         		}
         	}
         });
+*/
 
-		final int colorOn = 0xFF808080;
+        final int colorOn = 0xFF808080;
 		final int colorOff = 0xFFffffff;
         icon_row = ((LinearLayout)rootView.findViewById(R.id.icon_row));
         magic = ((LinearLayout)rootView.findViewById(R.id.magic_input));

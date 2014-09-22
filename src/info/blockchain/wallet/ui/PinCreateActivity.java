@@ -65,6 +65,15 @@ public class PinCreateActivity extends Activity {
     private EditText pin2_2 = null;
     private EditText pin3_2 = null;
     private EditText pin4_2 = null;
+    
+    private TextWatcher twPin1 = null;
+    private TextWatcher twPin2 = null;
+    private TextWatcher twPin3 = null;
+    private TextWatcher twPin4 = null;
+    private TextWatcher twPin1_2 = null;
+    private TextWatcher twPin2_2 = null;
+    private TextWatcher twPin3_2 = null;
+    private TextWatcher twPin4_2 = null;
 
     public static final int PBKDF2Iterations = 2000;
 
@@ -114,6 +123,15 @@ public class PinCreateActivity extends Activity {
         pin2_2 = ((EditText)findViewById(R.id.pin2_2));
         pin3_2 = ((EditText)findViewById(R.id.pin3_2));
         pin4_2 = ((EditText)findViewById(R.id.pin4_2));
+        
+        pin2.setVisibility(View.INVISIBLE);
+        pin3.setVisibility(View.INVISIBLE);
+        pin4.setVisibility(View.INVISIBLE);
+
+        pin1_2.setVisibility(View.INVISIBLE);
+        pin2_2.setVisibility(View.INVISIBLE);
+        pin3_2.setVisibility(View.INVISIBLE);
+        pin4_2.setVisibility(View.INVISIBLE);
 
         pin1.postDelayed(new Runnable() {
      	   @Override
@@ -123,6 +141,8 @@ public class PinCreateActivity extends Activity {
      	   }
    	   	}, 50);
         
+        final long DELAY = 500;
+        
         pin1.setOnKeyListener(new OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -130,520 +150,179 @@ public class PinCreateActivity extends Activity {
             }
         });
 
-        pin1.addTextChangedListener(new TextWatcher()	{
+        twPin1 = new TextWatcher()	{
         	public void afterTextChanged(Editable s) {
-                if(pin1.getText().toString().length() == 1)
-                    pin2.requestFocus();
+        		if(pin1.getText().toString().length() == 0)	{
+        			resetPinDisplay();
+        		}
+        		else if(pin1.getText().toString().length() == 1) {
+                    pin2.setVisibility(View.VISIBLE);
+                    pin1.postDelayed(new Runnable() {
+                  	   @Override
+                  	   public void run() {
+                         pin2.requestFocus();
+                  	   }
+                	}, DELAY);
+
+                }
         	}
         	public void beforeTextChanged(CharSequence s, int start, int count, int after)	{
             }
         	public void onTextChanged(CharSequence s, int start, int before, int count)	{ 
             }
-        });
-        
-        pin2.setOnKeyListener(new OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-        		if(pin2.getText().toString().length() == 0)
-        			pin1.requestFocus();
-        		
-                return false;
-            }
-        });
+        };
+        pin1.addTextChangedListener(twPin1);
 
-        pin2.addTextChangedListener(new TextWatcher()	{
+        twPin2 = new TextWatcher()	{
         	public void afterTextChanged(Editable s) {
-        		if(pin2.getText().toString().length() == 0)
-                    pin1.requestFocus();
-                else if(pin2.getText().toString().length() == 1)
-                    pin3.requestFocus();
+        		if(pin2.getText().toString().length() == 0)	{
+        			resetPinDisplay();
+        		}
+                else if(pin2.getText().toString().length() == 1) {
+                    pin3.setVisibility(View.VISIBLE);
+                    pin2.postDelayed(new Runnable() {
+                   	   @Override
+                   	   public void run() {
+                          pin3.requestFocus();
+                   	   }
+                 	}, DELAY);
+                }
         	}
         	public void beforeTextChanged(CharSequence s, int start, int count, int after)	{
             }
         	public void onTextChanged(CharSequence s, int start, int before, int count)	{ 
             }
-        });
+        };
+        pin2.addTextChangedListener(twPin2);
 
-        pin3.setOnKeyListener(new OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-        		if(pin3.getText().toString().length() == 0)
-        			pin2.requestFocus();
-        		
-                return false;
-            }
-        });
-
-        pin3.addTextChangedListener(new TextWatcher()	{
+        twPin3 = new TextWatcher()	{
         	public void afterTextChanged(Editable s) {
-        		if(pin3.getText().toString().length() == 0)
-                    pin2.requestFocus();
-        		else if(pin3.getText().length() == 1)
-                    pin4.requestFocus();
+        		if(pin3.getText().toString().length() == 0)	{
+        			resetPinDisplay();
+        		}
+                else if(pin3.getText().toString().length() == 1) {
+                    pin4.setVisibility(View.VISIBLE);
+                    pin3.postDelayed(new Runnable() {
+                   	   @Override
+                   	   public void run() {
+                          pin4.requestFocus();
+                   	   }
+                 	}, DELAY);
+                }
         	}
         	public void beforeTextChanged(CharSequence s, int start, int count, int after)	{
             }
         	public void onTextChanged(CharSequence s, int start, int before, int count)	{ 
             }
-        });
+        };
+        pin3.addTextChangedListener(twPin3);
 
-        pin4.setOnKeyListener(new OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-        		if(pin4.getText().toString().length() == 0)
-        			pin3.requestFocus();                    
-                return false;
-            }
-        });
-
-        pin4.addTextChangedListener(new TextWatcher()	{
+        twPin4 = new TextWatcher()	{
         	public void afterTextChanged(Editable s) {
-                if(pin4.getText().length() == 1) {
+        		if(pin4.getText().toString().length() == 0)	{
+        			resetPinDisplay();
+        		}
+                else if(pin4.getText().toString().length() == 1) {
+                    pin1_2.setVisibility(View.VISIBLE);
                 	tosLayout.setVisibility(View.VISIBLE);
                 	tosPinConfirm.setVisibility(View.VISIBLE);
             		tvWarning2.setText(R.string.confirm_your_pin);
-                    pin1_2.requestFocus();
-                } else if(pin4.getText().toString().length() == 0)
-                    pin3.requestFocus();
+                    pin4.postDelayed(new Runnable() {
+                   	   @Override
+                   	   public void run() {
+                          pin1_2.requestFocus();
+                   	   }
+                 	}, DELAY);
+                }
         	}
         	public void beforeTextChanged(CharSequence s, int start, int count, int after)	{
             }
         	public void onTextChanged(CharSequence s, int start, int before, int count)	{ 
             }
-        });
+        };
+        pin4.addTextChangedListener(twPin4);
 
-        pin1_2.setOnKeyListener(new OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-            	if(pin1_2.getText().toString().length() == 0) {
-                	tosPinConfirm.setVisibility(View.INVISIBLE);
-                	tosLayout.setVisibility(View.INVISIBLE);
-            		tvWarning2.setText(R.string.set_your_pin2);
-                    pin4.requestFocus();
+        twPin1_2 = new TextWatcher()	{
+        	public void afterTextChanged(Editable s) {
+        		if(pin1_2.getText().toString().length() == 0)	{
+        			resetPinDisplay();
         		}
-                return false;
-            }
-        });
-
-        pin1_2.addTextChangedListener(new TextWatcher()	{
-        	public void afterTextChanged(Editable s) {
-        		if(pin1_2.getText().toString().length() == 0) {
-                	tosPinConfirm.setVisibility(View.INVISIBLE);
-                	tosLayout.setVisibility(View.INVISIBLE);
-            		tvWarning2.setText(R.string.set_your_pin2);
-                    pin4.requestFocus();
-        		} else if(pin1_2.getText().length() == 1)
-                    pin2_2.requestFocus();
+                else if(pin2.getText().toString().length() == 1) {
+                    pin2_2.setVisibility(View.VISIBLE);
+                    pin1_2.postDelayed(new Runnable() {
+                   	   @Override
+                   	   public void run() {
+                          pin2_2.requestFocus();
+                   	   }
+                 	}, DELAY);
+                }
         	}
-        	public void beforeTextChanged(CharSequence s, int start, int count, int after)	{ ; }
-        	public void onTextChanged(CharSequence s, int start, int before, int count)	{ ; }
-        });
-
-        pin2_2.setOnKeyListener(new OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-            	if(pin2_2.getText().toString().length() == 0)
-                    pin1_2.requestFocus();
-                return false;
+        	public void beforeTextChanged(CharSequence s, int start, int count, int after)	{
             }
-        });
+        	public void onTextChanged(CharSequence s, int start, int before, int count)	{ 
+            }
+        };
+        pin1_2.addTextChangedListener(twPin1_2);
 
-        pin2_2.addTextChangedListener(new TextWatcher()	{
+        twPin2_2 = new TextWatcher()	{
         	public void afterTextChanged(Editable s) {
-        		if(pin2_2.getText().toString().length() == 0)
-                    pin1_2.requestFocus();
-        		else if(pin2_2.getText().length() == 1)
-                    pin3_2.requestFocus();
+        		if(pin2_2.getText().toString().length() == 0)	{
+        			resetPinDisplay();
+        		}
+                else if(pin2_2.getText().toString().length() == 1) {
+                    pin3_2.setVisibility(View.VISIBLE);
+                    pin2_2.postDelayed(new Runnable() {
+                   	   @Override
+                   	   public void run() {
+                          pin3_2.requestFocus();
+                   	   }
+                 	}, DELAY);
+                }
         	}
-        	public void beforeTextChanged(CharSequence s, int start, int count, int after)	{ ; }
-        	public void onTextChanged(CharSequence s, int start, int before, int count)	{ ; }
-        });
-
-        pin3_2.setOnKeyListener(new OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-        		if(pin3_2.getText().toString().length() == 0)
-                    pin2_2.requestFocus();
-                return false;
+        	public void beforeTextChanged(CharSequence s, int start, int count, int after)	{
             }
-        });
+        	public void onTextChanged(CharSequence s, int start, int before, int count)	{ 
+            }
+        };
+        pin2_2.addTextChangedListener(twPin2_2);
 
-        pin3_2.addTextChangedListener(new TextWatcher()	{
+        twPin3_2 = new TextWatcher()	{
         	public void afterTextChanged(Editable s) {
-        		if(pin3_2.getText().toString().length() == 0)
-                    pin2_2.requestFocus();
-        		else if(pin3_2.getText().length() == 1)
-                    pin4_2.requestFocus();
+        		if(pin3_2.getText().toString().length() == 0)	{
+        			resetPinDisplay();
+        		}
+                else if(pin3_2.getText().toString().length() == 1) {
+                    pin4_2.setVisibility(View.VISIBLE);
+                    pin3_2.postDelayed(new Runnable() {
+                   	   @Override
+                   	   public void run() {
+                          pin4_2.requestFocus();
+                   	   }
+                 	}, DELAY);
+                }
         	}
-        	public void beforeTextChanged(CharSequence s, int start, int count, int after)	{ ; }
-        	public void onTextChanged(CharSequence s, int start, int before, int count)	{ ; }
-        });
-
-        pin4_2.setOnKeyListener(new OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-            	if(pin4_2.getText().toString().length() == 0) {
-                	tosLayout.setVisibility(View.INVISIBLE);
-                    pin3_2.requestFocus();
-        		} 
-                return false;
+        	public void beforeTextChanged(CharSequence s, int start, int count, int after)	{
             }
-        });
+        	public void onTextChanged(CharSequence s, int start, int before, int count)	{ 
+            }
+        };
+        pin3_2.addTextChangedListener(twPin3_2);
 
-        pin4_2.addTextChangedListener(new TextWatcher()	{
+        twPin4_2 = new TextWatcher()	{
         	public void afterTextChanged(Editable s) {
-        		if(pin4_2.getText().toString().length() == 0) {
-                	tosLayout.setVisibility(View.INVISIBLE);
-                    pin3_2.requestFocus();
-        		} else if(pin4_2.getText().length() == 1)
+        		if(pin4_2.getText().toString().length() == 0)	{
+        			resetPinDisplay();
+        		}
+                else if(pin4_2.getText().toString().length() == 1) {
                 	tosLayout.setVisibility(View.VISIBLE);
+                }
         	}
-        	public void beforeTextChanged(CharSequence s, int start, int count, int after)	{ ; }
-        	public void onTextChanged(CharSequence s, int start, int before, int count)	{ ; }
-        });
-        
-        String manufactures = android.os.Build.MANUFACTURER;
-        if (! manufactures.equals("samsung")) {
-            pin1.setOnKeyListener(new OnKeyListener() {
-                @Override
-                public boolean onKey(View v, int keyCode, KeyEvent event) {
-                    if(pin1.getText().length() == 1)
-                        pin2.requestFocus();
-                    return false;
-                }
-            });
-
-            pin2.setOnKeyListener(new OnKeyListener() {
-                @Override
-                public boolean onKey(View v, int keyCode, KeyEvent event) {
-                    if(pin2.getText().length() == 1)
-                        pin3.requestFocus();
-                    return false;
-                }
-            });
-
-            pin2.addTextChangedListener(new TextWatcher()	{
-            	public void afterTextChanged(Editable s) {
-            		if(pin2.getText().toString().length() == 0) {
-                        pin1.requestFocus();
-            		}
-            	}
-            	public void beforeTextChanged(CharSequence s, int start, int count, int after)	{ ; }
-            	public void onTextChanged(CharSequence s, int start, int before, int count)	{ ; }
-            });
-
-            pin3.setOnKeyListener(new OnKeyListener() {
-                @Override
-                public boolean onKey(View v, int keyCode, KeyEvent event) {
-                    if(pin3.getText().length() == 1)
-                        pin4.requestFocus();
-                    return false;
-                }
-            });
-
-            pin3.addTextChangedListener(new TextWatcher()	{
-            	public void afterTextChanged(Editable s) {
-            		if(pin3.getText().toString().length() == 0) {
-                        pin2.requestFocus();
-            		}
-            	}
-            	public void beforeTextChanged(CharSequence s, int start, int count, int after)	{ ; }
-            	public void onTextChanged(CharSequence s, int start, int before, int count)	{ ; }
-            });
-
-            pin4.setOnKeyListener(new OnKeyListener() {
-                @Override
-                public boolean onKey(View v, int keyCode, KeyEvent event) {
-                    if(pin4.getText().length() == 1)
-                    	tosLayout.setVisibility(View.VISIBLE);
-                    	tosPinConfirm.setVisibility(View.VISIBLE);
-                		tvWarning2.setText(R.string.confirm_your_pin);
-                        pin1_2.requestFocus();
-                    return false;
-                }
-            });
-
-            pin4.addTextChangedListener(new TextWatcher()	{
-            	public void afterTextChanged(Editable s) {
-            		if(pin4.getText().toString().length() == 0) {
-                        pin3.requestFocus();
-            		}
-            	}
-            	public void beforeTextChanged(CharSequence s, int start, int count, int after)	{ ; }
-            	public void onTextChanged(CharSequence s, int start, int before, int count)	{ ; }
-            });
-
-            pin1_2.setOnKeyListener(new OnKeyListener() {
-                @Override
-                public boolean onKey(View v, int keyCode, KeyEvent event) {
-                    if(pin1_2.getText().length() == 1)
-                        pin2_2.requestFocus();
-                    return false;
-                }
-            });
-
-            pin1_2.addTextChangedListener(new TextWatcher()	{
-            	public void afterTextChanged(Editable s) {
-            		if(pin1_2.getText().toString().length() == 0) {
-                    	tosPinConfirm.setVisibility(View.INVISIBLE);
-                    	tosLayout.setVisibility(View.INVISIBLE);
-                		tvWarning2.setText(R.string.set_your_pin2);
-                        pin4.requestFocus();
-            		}
-            	}
-            	public void beforeTextChanged(CharSequence s, int start, int count, int after)	{ ; }
-            	public void onTextChanged(CharSequence s, int start, int before, int count)	{ ; }
-            });
-
-            pin2_2.setOnKeyListener(new OnKeyListener() {
-                @Override
-                public boolean onKey(View v, int keyCode, KeyEvent event) {
-                    if(pin2_2.getText().length() == 1)
-                        pin3_2.requestFocus();
-                    return false;
-                }
-            });
-
-            pin2_2.addTextChangedListener(new TextWatcher()	{
-            	public void afterTextChanged(Editable s) {
-            		if(pin2_2.getText().toString().length() == 0) {
-                        pin1_2.requestFocus();
-            		}
-            	}
-            	public void beforeTextChanged(CharSequence s, int start, int count, int after)	{ ; }
-            	public void onTextChanged(CharSequence s, int start, int before, int count)	{ ; }
-            });
-
-            pin3_2.setOnKeyListener(new OnKeyListener() {
-                @Override
-                public boolean onKey(View v, int keyCode, KeyEvent event) {
-                    if(pin3_2.getText().length() == 1)
-                        pin4_2.requestFocus();
-                    return false;
-                }
-            });
-
-            pin3_2.addTextChangedListener(new TextWatcher()	{
-            	public void afterTextChanged(Editable s) {
-            		if(pin3_2.getText().toString().length() == 0) {
-                        pin2_2.requestFocus();
-            		}
-            	}
-            	public void beforeTextChanged(CharSequence s, int start, int count, int after)	{ ; }
-            	public void onTextChanged(CharSequence s, int start, int before, int count)	{ ; }
-            });
-
-            pin4_2.setOnKeyListener(new OnKeyListener() {
-                @Override
-                public boolean onKey(View v, int keyCode, KeyEvent event) {
-                    if(pin4_2.getText().length() == 1)
-                    	tosLayout.setVisibility(View.VISIBLE);
-                    return false;
-                }
-            });
-
-            pin4_2.addTextChangedListener(new TextWatcher()	{
-            	public void afterTextChanged(Editable s) {
-            		if(pin4_2.getText().toString().length() == 0) {
-                    	tosLayout.setVisibility(View.INVISIBLE);
-                        pin3_2.requestFocus();
-            		}
-            	}
-            	public void beforeTextChanged(CharSequence s, int start, int count, int after)	{ ; }
-            	public void onTextChanged(CharSequence s, int start, int before, int count)	{ ; }
-            });
-            
-            pin4_2.setOnEditorActionListener(new OnEditorActionListener() {
-    		    @Override
-    		    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-    		        if(actionId == EditorInfo.IME_ACTION_DONE) {
-                    	InputMethodManager imm = (InputMethodManager)PinCreateActivity.this.getSystemService(Context.INPUT_METHOD_SERVICE);
-    	                imm.hideSoftInputFromWindow(pin4_2.getWindowToken(), 0);
-    		        }
-    		        return false;
-    		    }
-    		});
-        } else {
-            pin1.setOnKeyListener(new OnKeyListener() {
-                @Override
-                public boolean onKey(View v, int keyCode, KeyEvent event) {
-                    return false;
-                }
-            });
-
-            pin1.addTextChangedListener(new TextWatcher()	{
-            	public void afterTextChanged(Editable s) {
-                    if(pin1.getText().length() == 1)
-                        pin2.requestFocus();
-            	}
-            	public void beforeTextChanged(CharSequence s, int start, int count, int after)	{
-                }
-            	public void onTextChanged(CharSequence s, int start, int before, int count)	{ 
-                }
-            });
-            
-            pin2.setOnKeyListener(new OnKeyListener() {
-                @Override
-                public boolean onKey(View v, int keyCode, KeyEvent event) {
-            		if(pin2.getText().toString().length() == 0)
-            			pin1.requestFocus();
-            		
-                    return false;
-                }
-            });
-
-            pin2.addTextChangedListener(new TextWatcher()	{
-            	public void afterTextChanged(Editable s) {
-            		if(pin2.getText().toString().length() == 0)
-                        pin1.requestFocus();
-                    else if(pin2.getText().length() == 1)
-                        pin3.requestFocus();
-            	}
-            	public void beforeTextChanged(CharSequence s, int start, int count, int after)	{
-                }
-            	public void onTextChanged(CharSequence s, int start, int before, int count)	{ 
-                }
-            });
-
-            pin3.setOnKeyListener(new OnKeyListener() {
-                @Override
-                public boolean onKey(View v, int keyCode, KeyEvent event) {
-            		if(pin3.getText().toString().length() == 0)
-            			pin2.requestFocus();
-            		
-                    return false;
-                }
-            });
-
-            pin3.addTextChangedListener(new TextWatcher()	{
-            	public void afterTextChanged(Editable s) {
-            		if(pin3.getText().toString().length() == 0)
-                        pin2.requestFocus();
-            		else if(pin3.getText().length() == 1)
-                        pin4.requestFocus();
-            	}
-            	public void beforeTextChanged(CharSequence s, int start, int count, int after)	{
-                }
-            	public void onTextChanged(CharSequence s, int start, int before, int count)	{ 
-                }
-            });
-
-            pin4.setOnKeyListener(new OnKeyListener() {
-                @Override
-                public boolean onKey(View v, int keyCode, KeyEvent event) {
-            		if(pin4.getText().toString().length() == 0)
-            			pin3.requestFocus();                    
-                    return false;
-                }
-            });
-
-            pin4.addTextChangedListener(new TextWatcher()	{
-            	public void afterTextChanged(Editable s) {
-                    if(pin4.getText().length() == 1) {
-                    	tosLayout.setVisibility(View.VISIBLE);
-                    	tosPinConfirm.setVisibility(View.VISIBLE);
-                		tvWarning2.setText(R.string.confirm_your_pin);
-                        pin1_2.requestFocus();
-                    } else if(pin4.getText().toString().length() == 0)
-                        pin3.requestFocus();
-            	}
-            	public void beforeTextChanged(CharSequence s, int start, int count, int after)	{
-                }
-            	public void onTextChanged(CharSequence s, int start, int before, int count)	{ 
-                }
-            });
-
-            pin1_2.setOnKeyListener(new OnKeyListener() {
-                @Override
-                public boolean onKey(View v, int keyCode, KeyEvent event) {
-                	if(pin1_2.getText().toString().length() == 0) {
-                    	tosPinConfirm.setVisibility(View.INVISIBLE);
-                    	tosLayout.setVisibility(View.INVISIBLE);
-                		tvWarning2.setText(R.string.set_your_pin2);
-                        pin4.requestFocus();
-            		}
-                    return false;
-                }
-            });
-
-            pin1_2.addTextChangedListener(new TextWatcher()	{
-            	public void afterTextChanged(Editable s) {
-            		if(pin1_2.getText().toString().length() == 0) {
-                    	tosPinConfirm.setVisibility(View.INVISIBLE);
-                    	tosLayout.setVisibility(View.INVISIBLE);
-                		tvWarning2.setText(R.string.set_your_pin2);
-                        pin4.requestFocus();
-            		} else if(pin1_2.getText().length() == 1)
-                        pin2_2.requestFocus();
-            	}
-            	public void beforeTextChanged(CharSequence s, int start, int count, int after)	{ ; }
-            	public void onTextChanged(CharSequence s, int start, int before, int count)	{ ; }
-            });
-
-            pin2_2.setOnKeyListener(new OnKeyListener() {
-                @Override
-                public boolean onKey(View v, int keyCode, KeyEvent event) {
-                	if(pin2_2.getText().toString().length() == 0)
-                        pin1_2.requestFocus();
-                    return false;
-                }
-            });
-
-            pin2_2.addTextChangedListener(new TextWatcher()	{
-            	public void afterTextChanged(Editable s) {
-            		if(pin2_2.getText().toString().length() == 0)
-                        pin1_2.requestFocus();
-            		else if(pin2_2.getText().length() == 1)
-                        pin3_2.requestFocus();
-            	}
-            	public void beforeTextChanged(CharSequence s, int start, int count, int after)	{ ; }
-            	public void onTextChanged(CharSequence s, int start, int before, int count)	{ ; }
-            });
-
-            pin3_2.setOnKeyListener(new OnKeyListener() {
-                @Override
-                public boolean onKey(View v, int keyCode, KeyEvent event) {
-            		if(pin3_2.getText().toString().length() == 0)
-                        pin2_2.requestFocus();
-                    return false;
-                }
-            });
-
-            pin3_2.addTextChangedListener(new TextWatcher()	{
-            	public void afterTextChanged(Editable s) {
-            		if(pin3_2.getText().toString().length() == 0)
-                        pin2_2.requestFocus();
-            		else if(pin3_2.getText().length() == 1)
-                        pin4_2.requestFocus();
-            	}
-            	public void beforeTextChanged(CharSequence s, int start, int count, int after)	{ ; }
-            	public void onTextChanged(CharSequence s, int start, int before, int count)	{ ; }
-            });
-
-            pin4_2.setOnKeyListener(new OnKeyListener() {
-                @Override
-                public boolean onKey(View v, int keyCode, KeyEvent event) {
-                	if(pin4_2.getText().toString().length() == 0) {
-                    	tosLayout.setVisibility(View.INVISIBLE);
-                        pin3_2.requestFocus();
-            		} 
-                    return false;
-                }
-            });
-
-            pin4_2.addTextChangedListener(new TextWatcher()	{
-            	public void afterTextChanged(Editable s) {
-            		if(pin4_2.getText().toString().length() == 0) {
-                    	tosLayout.setVisibility(View.INVISIBLE);
-                        pin3_2.requestFocus();
-            		} else if(pin4_2.getText().length() == 1)
-                    	tosLayout.setVisibility(View.VISIBLE);
-            	}
-            	public void beforeTextChanged(CharSequence s, int start, int count, int after)	{ ; }
-            	public void onTextChanged(CharSequence s, int start, int before, int count)	{ ; }
-            });
-            
-        }
+        	public void beforeTextChanged(CharSequence s, int start, int count, int after)	{
+            }
+        	public void onTextChanged(CharSequence s, int start, int before, int count)	{ 
+            }
+        };
+        pin4_2.addTextChangedListener(twPin4_2);
 
         pin4_2.setOnEditorActionListener(new OnEditorActionListener() {
 		    @Override
@@ -665,18 +344,7 @@ public class PinCreateActivity extends Activity {
           			
           			if(p1.equals("0000") || p2.equals("0000")) {
           				
-          				pin1.setText("");
-          				pin2.setText("");
-          				pin3.setText("");
-          				pin4.setText("");
-          				pin1_2.setText("");
-          				pin2_2.setText("");
-          				pin3_2.setText("");
-          				pin4_2.setText("");
-          				cbAccept.setChecked(false);
-          		    	tosLayout.setVisibility(View.INVISIBLE);
-          		    	tosPinConfirm.setVisibility(View.INVISIBLE);
-                		tvWarning2.setText(R.string.set_your_pin2);
+          				resetPinDisplay();
 
 						Toast.makeText(PinCreateActivity.this.getApplication(), R.string.zero_pin, Toast.LENGTH_SHORT).show();
 						return;
@@ -856,18 +524,7 @@ public class PinCreateActivity extends Activity {
 
           			}
           			else	{
-          				pin1.setText("");
-          				pin2.setText("");
-          				pin3.setText("");
-          				pin4.setText("");
-          				pin1_2.setText("");
-          				pin2_2.setText("");
-          				pin3_2.setText("");
-          				pin4_2.setText("");
-          				cbAccept.setChecked(false);
-          		    	tosLayout.setVisibility(View.INVISIBLE);
-          		    	tosPinConfirm.setVisibility(View.INVISIBLE);
-                		tvWarning2.setText(R.string.set_your_pin2);
+          				resetPinDisplay();
         				Toast.makeText(PinCreateActivity.this, R.string.enter_matching_pins, Toast.LENGTH_LONG).show();
           			}
 
@@ -877,6 +534,50 @@ public class PinCreateActivity extends Activity {
           });
 
 
+	}
+
+	void resetPinDisplay()	{
+		pin1.removeTextChangedListener(twPin1);
+		pin2.removeTextChangedListener(twPin2);
+		pin3.removeTextChangedListener(twPin3);
+		pin4.removeTextChangedListener(twPin4);
+		pin1_2.removeTextChangedListener(twPin1_2);
+		pin2_2.removeTextChangedListener(twPin2_2);
+		pin3_2.removeTextChangedListener(twPin3_2);
+		pin4_2.removeTextChangedListener(twPin4_2);
+		
+		pin1.setText("");
+		pin2.setText("");
+		pin3.setText("");
+		pin4.setText("");
+		pin1_2.setText("");
+		pin2_2.setText("");
+		pin3_2.setText("");
+		pin4_2.setText("");
+		
+		pin1.addTextChangedListener(twPin1);
+		pin2.addTextChangedListener(twPin2);
+		pin3.addTextChangedListener(twPin3);
+		pin4.addTextChangedListener(twPin4);
+		pin1_2.addTextChangedListener(twPin1_2);
+		pin2_2.addTextChangedListener(twPin2_2);
+		pin3_2.addTextChangedListener(twPin3_2);
+		pin4_2.addTextChangedListener(twPin4_2);
+
+        pin2.setVisibility(View.INVISIBLE);
+        pin3.setVisibility(View.INVISIBLE);
+        pin4.setVisibility(View.INVISIBLE);
+        pin1_2.setVisibility(View.INVISIBLE);
+        pin2_2.setVisibility(View.INVISIBLE);
+        pin3_2.setVisibility(View.INVISIBLE);
+        pin4_2.setVisibility(View.INVISIBLE);
+        
+		cbAccept.setChecked(false);
+    	tosLayout.setVisibility(View.INVISIBLE);
+    	tosPinConfirm.setVisibility(View.INVISIBLE);
+    	tvWarning2.setText(R.string.set_your_pin2);
+
+        pin1.requestFocus();
 	}
 
 }

@@ -702,12 +702,16 @@ public class MyRemoteWallet extends MyWallet {
 					final String[] from = getActiveAddresses();					
 					final ECKey key;
 					Pair<ECKey, String> keyAndMiniKey = null;
+					/*
 					if (sendType == "sms") {
 						keyAndMiniKey = generateNewMiniPrivateKey();
 						key = keyAndMiniKey.first;							
 					} else {
 						key = generateECKey();
 					}
+					*/
+					keyAndMiniKey = generateNewMiniPrivateKey();
+					key = keyAndMiniKey.first;							
 
 					//Construct a new transaction
 					progress.onProgress("Getting Unspent Outputs");

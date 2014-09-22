@@ -1,5 +1,11 @@
 package info.blockchain.wallet.ui;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
+
 import piuk.blockchain.android.R;
 
 import com.google.bitcoin.params.MainNetParams;
@@ -11,6 +17,7 @@ import com.google.bitcoin.core.NetworkParameters;
 import com.google.bitcoin.core.WrongNetworkException;
 
 import android.util.Log;
+import android.util.Patterns;
 
 public class BitcoinAddressCheck {
 	

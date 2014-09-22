@@ -24,6 +24,7 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.TypefaceSpan;
 import android.util.Pair;
+//import android.util.Log;
 
 import com.google.bitcoin.core.Address;
 import com.google.bitcoin.core.Base58;
@@ -130,10 +131,14 @@ public class WalletUtils {
 
 				connection.setInstanceFollowRedirects(false);
 
-				if (connection.getResponseCode() == 200)
+				if (connection.getResponseCode() == 200) {
+//					Log.d("postURL", "return code 200");
 					return IOUtils.toString(connection.getInputStream(), "UTF-8");
-				else
+				}
+				else {
 					error = IOUtils.toString(connection.getErrorStream(), "UTF-8");
+//					Log.d("postURL", "return code " + error);
+				}
 				
 				Thread.sleep(5000);
 			} finally {

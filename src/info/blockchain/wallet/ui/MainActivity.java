@@ -24,7 +24,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.view.KeyEvent;
-import android.view.Menu;
+//import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -40,13 +40,13 @@ import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
+import android.os.StrictMode;
 //import android.util.Log;
 
 import info.blockchain.wallet.ui.SendFragment;
 import piuk.blockchain.android.R;
 //import piuk.blockchain.android.SharedCoin;
 import piuk.blockchain.android.WalletApplication;
-//import piuk.blockchain.android.SuccessCallback;
 
 import net.sourceforge.zbar.Symbol;
 
@@ -98,6 +98,9 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 	    
     	Locale locale = new Locale("en", "US");
         Locale.setDefault(locale);
+        
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy); 
 
         boolean isFirst = false;
         boolean isSecured = false;
@@ -335,48 +338,52 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         viewPager.setCurrentItem(1);
         
 //        BlockchainUtil.getInstance(this);
+        
+/*
+        
+							application.sharedCoinGetInfo(new SuccessCallback() {
 
-/*	
-		application.sharedCoinGetInfo(new SuccessCallback() {
+								public void onSuccess() {			
+									SharedCoin sharedCoin = application.getSharedCoin();
+					                Log.d("SharedCoin", "SharedCoin getInfo: onSuccess ");
+					                Log.d("SharedCoin", "SharedCoin getInfo isEnabled " + sharedCoin.isEnabled());
+					                Log.d("SharedCoin", "SharedCoin getInfo getFeePercent " + sharedCoin.getFeePercent());
+					                Log.d("SharedCoin", "SharedCoin getInfo getMaximumInputValue " + sharedCoin.getMaximumInputValue());
+					                Log.d("SharedCoin", "SharedCoin getInfo getMaximumOfferNumberOfInputs " + sharedCoin.getMaximumOfferNumberOfInputs());
+					                Log.d("SharedCoin", "SharedCoin getInfo getMaximumOfferNumberOfOutputs " + sharedCoin.getMaximumOfferNumberOfOutputs());
+					                Log.d("SharedCoin", "SharedCoin getInfo getMaximumOutputValue " + sharedCoin.getMaximumOutputValue());
+					                Log.d("SharedCoin", "SharedCoin getInfo getMinSupportedVersion " + sharedCoin.getMinSupportedVersion());
+					                Log.d("SharedCoin", "SharedCoin getInfo getMinimumFee " + sharedCoin.getMinimumFee());
+					                Log.d("SharedCoin", "SharedCoin getInfo getMinimumInputValue " + sharedCoin.getMinimumInputValue());
+					                Log.d("SharedCoin", "SharedCoin getInfo getMinimumOutputValue " + sharedCoin.getMinimumOutputValue());
+					                Log.d("SharedCoin", "SharedCoin getInfo getMinimumOutputValueExcludeFee " + sharedCoin.getMinimumOutputValueExcludeFee());
+					                Log.d("SharedCoin", "SharedCoin getInfo getRecommendedIterations " + sharedCoin.getRecommendedIterations());
+					                Log.d("SharedCoin", "SharedCoin getInfo getRecommendedMaxIterations " + sharedCoin.getRecommendedMaxIterations());
+					                Log.d("SharedCoin", "SharedCoin getInfo getRecommendedMinIterations " + sharedCoin.getRecommendedMinIterations());
+					                Log.d("SharedCoin", "SharedCoin getInfo getToken " + sharedCoin.getToken());
 
-			public void onSuccess() {			
-				SharedCoin sharedCoin = application.getSharedCoin();
-                Log.d("SharedCoin", "SharedCoin getInfo: onSuccess ");
-                Log.d("SharedCoin", "SharedCoin getInfo isEnabled " + sharedCoin.isEnabled());
-                Log.d("SharedCoin", "SharedCoin getInfo getFeePercent " + sharedCoin.getFeePercent());
-                Log.d("SharedCoin", "SharedCoin getInfo getMaximumInputValue " + sharedCoin.getMaximumInputValue());
-                Log.d("SharedCoin", "SharedCoin getInfo getMaximumOfferNumberOfInputs " + sharedCoin.getMaximumOfferNumberOfInputs());
-                Log.d("SharedCoin", "SharedCoin getInfo getMaximumOfferNumberOfOutputs " + sharedCoin.getMaximumOfferNumberOfOutputs());
-                Log.d("SharedCoin", "SharedCoin getInfo getMaximumOutputValue " + sharedCoin.getMaximumOutputValue());
-                Log.d("SharedCoin", "SharedCoin getInfo getMinSupportedVersion " + sharedCoin.getMinSupportedVersion());
-                Log.d("SharedCoin", "SharedCoin getInfo getMinimumFee " + sharedCoin.getMinimumFee());
-                Log.d("SharedCoin", "SharedCoin getInfo getMinimumInputValue " + sharedCoin.getMinimumInputValue());
-                Log.d("SharedCoin", "SharedCoin getInfo getMinimumOutputValue " + sharedCoin.getMinimumOutputValue());
-                Log.d("SharedCoin", "SharedCoin getInfo getMinimumOutputValueExcludeFee " + sharedCoin.getMinimumOutputValueExcludeFee());
-                Log.d("SharedCoin", "SharedCoin getInfo getRecommendedIterations " + sharedCoin.getRecommendedIterations());
-                Log.d("SharedCoin", "SharedCoin getInfo getRecommendedMaxIterations " + sharedCoin.getRecommendedMaxIterations());
-                Log.d("SharedCoin", "SharedCoin getInfo getRecommendedMinIterations " + sharedCoin.getRecommendedMinIterations());
-                Log.d("SharedCoin", "SharedCoin getInfo getToken " + sharedCoin.getToken());
+					                if (sharedCoin.isEnabled()) {
 
-                if (sharedCoin.isEnabled()) {
-	                	
-                    List<String> fromAddresses = new ArrayList<String>();
-                    fromAddresses.add("1BrFyKUJ2tesPnwJQ2pSnBjxfwKbFhQNrS");
-                    String toAddress = "1NYVmXwijjGq43qxLscMrZq4dYh1YYUDzn";
-                    BigInteger amount =  new BigInteger("10000000");
-                    application.sendSharedCoin(fromAddresses, toAddress, amount);
-            		
-                	List<String> shared_coin_seeds = new ArrayList<String>();
-            		shared_coin_seeds.add("sharedcoin-seed:a43790c285abb25bf80ed0008f1abbe1738f");	
-            		//application.sharedCoinRecoverSeeds(shared_coin_seeds);
-                }
-			}
-			
-			public void onFail() {			
-                Log.d("SharedCoin", "SharedCoin getInfo: onFail ");						
-			}
-		});            	
-//*/
+					                	Log.d("SharedCoin", "is enabled");
+
+					                    List<String> fromAddresses = new ArrayList<String>();
+					                    fromAddresses.add("1NrMxHrinbQsEo5N7MvfMmo3skhEyH5TrK");
+					                    String toAddress = "1FoNEBtcqSA9k7iXqvoEPZnQi7FvDrmpEp";
+					                    BigInteger amount =  new BigInteger("1000000");
+					                    application.sendSharedCoin(fromAddresses, toAddress, amount);
+					            		
+					                	List<String> shared_coin_seeds = new ArrayList<String>();
+					            		shared_coin_seeds.add("sharedcoin-seed:a43790c285abb25bf80ed0008f1abbe1738f");	
+					            		//application.sharedCoinRecoverSeeds(shared_coin_seeds);
+
+					                }
+								}
+								
+								public void onFail() {			
+					                Log.d("SharedCoin", "SharedCoin getInfo: onFail ");						
+								}
+							});            	
+*/        
 
 	}
 	
@@ -592,13 +599,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     		startActivityForResult(intent, MERCHANT_ACTIVITY);
     	}
     }
-/*
-    private void doAbout()	{
-		TimeOutUtil.getInstance().updatePin();
-    	Intent intent = new Intent(MainActivity.this, AboutActivity.class);
-		startActivityForResult(intent, ABOUT_ACTIVITY);
-    }
-*/
+
     private void doSettings()	{
 		TimeOutUtil.getInstance().updatePin();
     	Intent intent = new Intent(MainActivity.this, info.blockchain.wallet.ui.SettingsActivity.class);

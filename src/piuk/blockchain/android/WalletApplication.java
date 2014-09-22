@@ -1756,7 +1756,7 @@ public class WalletApplication extends Application {
 	public void sendSharedCoin(List<String> fromAddresses, String toAddress, BigInteger amount) {
         if (SharedCoin.VERSION > sharedCoin.getMinSupportedVersion()) {
             try {
-				sharedCoin.sendSharedCoin(2, fromAddresses, amount, toAddress, new ObjectSuccessCallback() {
+				sharedCoin.sendSharedCoin(4, fromAddresses, amount, toAddress, new ObjectSuccessCallback() {
 					@Override
 					public void onSuccess(final Object obj) {
 //			            Log.d("SharedCoin", "SharedCoin sendSharedCoin onSuccess");				

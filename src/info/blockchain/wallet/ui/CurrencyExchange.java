@@ -67,7 +67,20 @@ public class CurrencyExchange	{
     public Double getCurrencyPrice(String currency)	{
     	if(prices.containsKey(currency) && prices.get(currency) != 0.0)	{
     		return prices.get(currency);
+		}
+    	/*
+    	if(prices.containsKey(currency))	{
+    		if(prices.get(currency) == -1.0)	{
+    			
+    			
+    			
+    			
+    		}
+    		else	{
+    			return prices.get(currency);
+    		}
     	}
+    	*/
     	else	{
             String[] currencies = getBlockchainCurrencies();
             return OtherCurrencyExchange.getInstance(context, currencies, strFiatCode).getCurrencyPrice(currency, prices.get("USD"));
