@@ -12,6 +12,7 @@
 	    		android:orientation="horizontal"
 	        	android:gravity="right|center_vertical"
 		    	android:layout_gravity="right|center_vertical"
+	    		android:paddingLeft="5dp"
 	    		android:paddingRight="5dp"
 				>
 				    <TextView
@@ -20,7 +21,7 @@
         			android:layout_height="wrap_content"
 	        		android:gravity="right|center_vertical"
 		    		android:layout_gravity="right|center_vertical"
-    				android:textSize="14sp"
+    				android:textSize="12sp"
     				android:textColor="@color/blockchain_green"
     				android:text="@string/FROM"
     				/>
@@ -43,6 +44,7 @@
 	        	android:gravity="left|center_vertical"
 		    	android:layout_gravity="left|center_vertical"
 	    		android:paddingLeft="5dp"
+	    		android:paddingRight="5dp"
 				>
 
     			    <LinearLayout 
@@ -59,7 +61,7 @@
         				android:layout_height="wrap_content"
 	        			android:gravity="left|center_vertical"
 		    			android:layout_gravity="left|center_vertical"
-    					android:textSize="14sp"
+    					android:textSize="12sp"
     					android:textStyle="bold"
     					android:textColor="#FF000000"
     					/>
@@ -70,13 +72,13 @@
         				android:layout_height="wrap_content"
 	        			android:gravity="left|center_vertical"
 		    			android:layout_gravity="left|center_vertical"
-    					android:textSize="14sp"
+    					android:textSize="12sp"
     					android:textColor="#FF000000"
     					/>
     			    			    
     			    </LinearLayout>
 
-
+<!--
     			    <LinearLayout 
     				android:layout_height="match_parent"
     				android:layout_width="fill_parent"
@@ -96,10 +98,9 @@
     				android:background="@drawable/rounded_view_grey"
 		    		android:layout_alignParentRight="true"
     				/>
-    			        
-    			    
+
     			    </LinearLayout>
-    			    			    
+ -->    			    			    
     			</LinearLayout>
     			
     		</LinearLayout>

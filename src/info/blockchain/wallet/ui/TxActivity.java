@@ -598,6 +598,7 @@ public class TxActivity extends Activity	{
 						                ((LinearLayout)findViewById(R.id.div4)).setBackgroundResource(R.color.blockchain_green);
 						            }
 
+						            /*
 						        	if(transaction.getInputValues().size() == 1) {
 						                ((TextView)row.findViewById(R.id.result2)).setVisibility(View.INVISIBLE);
 						        	}
@@ -609,6 +610,7 @@ public class TxActivity extends Activity	{
 						                tvResult2.setVisibility(View.GONE);
 //						                txAmounts.put(tvResult2, strValue);
 						        	}
+						        	*/
 
 							        //
 							        // FROM
@@ -620,13 +622,17 @@ public class TxActivity extends Activity	{
 						        		from = transaction.getInputs().get(i).addr;
 						        		final String address = from;
 						        	}
+						        	/*
 						        	if(from.length() > 15) {
 						        		from = from.substring(0, 15) + "...";
 						        	}
+						        	*/
 						        	String shortAddress = transaction.getInputs().get(i).addr;
+						        	/*
 						        	if(shortAddress.length() > 15) {
 						        		shortAddress = shortAddress.substring(0, 15) + "...";
 						        	}
+						        	*/
 
 						        	if(labels.get(transaction.getInputs().get(i).addr) != null) {
 							        	tvFromAddress.setText(from);
@@ -714,13 +720,17 @@ public class TxActivity extends Activity	{
 						    		final String address = toTxAddress;
 						    		to = toTxAddress;
 						    	}
+						    	/*
 						    	if(to.length() > 15) {
 						    		to = to.substring(0, 15) + "...";
 						    	}
+						    	*/
 						    	String shortAddress = toTxAddress;
+						    	/*
 						    	if(shortAddress.length() > 15) {
 						    		shortAddress = shortAddress.substring(0, 15) + "...";
 						    	}
+						    	*/
 
 						    	if(labels.get(toTxAddress) != null) {
 						        	tvToAddress.setText(to);
