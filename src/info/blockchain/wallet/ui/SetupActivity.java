@@ -25,7 +25,12 @@ public class SetupActivity extends Activity		{
 	    
 	    this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 //	    this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-	    this.setContentView(R.layout.setup);
+	    if(!DeviceUtil.getInstance(this).isSmallScreen()) {
+		    this.setContentView(R.layout.setup);
+	    }
+	    else {
+		    this.setContentView(R.layout.setup_small);
+	    }
 
 	    setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 	    
