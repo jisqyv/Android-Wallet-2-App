@@ -163,14 +163,14 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         LinearLayout layout_icons = new LinearLayout(actionBar.getThemedContext());
         ActionBar.LayoutParams layoutParams = new ActionBar.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.WRAP_CONTENT, Gravity.RIGHT | Gravity.CENTER_VERTICAL);
         layoutParams.height = 72;
-        layoutParams.width = (72 * 2) + 10 + 60;
+        layoutParams.width = (72 * 2) + 30 + 60;
         layout_icons.setLayoutParams(layoutParams);
         layout_icons.setOrientation(LinearLayout.HORIZONTAL);
 
         ActionBar.LayoutParams imgParams = new ActionBar.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.WRAP_CONTENT, Gravity.CENTER_VERTICAL);
         imgParams.height = 72;
         imgParams.width = 72;
-        imgParams.rightMargin = 10;
+        imgParams.rightMargin = 30;
 
         final ImageView qr_icon = new ImageView(actionBar.getThemedContext());
         qr_icon.setImageResource(R.drawable.top_camera_icon);
