@@ -191,8 +191,7 @@
     <string name="pair_wallet_button">Scan QR Code.</string>
     <string name="pair_wallet_manually_button">Pair Manually.</string>
     <string name="pair_wallet_step1">Step 1.</string>
-    <string name="pair_wallet_step1_content">Login to your My Wallet account using your web browser
-	    .</string>
+    <string name="pair_wallet_step1_content">Login to your My Wallet account using your web browser.</string>
     <string name="pair_wallet_step2">Step 2.</string>
     <string name="pair_wallet_step2_content">Click on the [Account Settings] button then choose
 		the [Devices] tab.</string>
