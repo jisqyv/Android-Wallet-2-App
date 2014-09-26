@@ -1,5 +1,7 @@
 package info.blockchain.merchant.directory;
  
+import info.blockchain.wallet.ui.DeviceUtil;
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
@@ -75,14 +77,20 @@ public class ListActivity extends Activity {
         
         LinearLayout layout_icons = new LinearLayout(actionBar.getThemedContext());
         ActionBar.LayoutParams layoutParams = new ActionBar.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.WRAP_CONTENT, Gravity.RIGHT | Gravity.CENTER_VERTICAL);
-        layoutParams.height = 72;
-        layoutParams.width = 72 + 50;
+	    if(!DeviceUtil.getInstance(this).isSmallScreen()) {
+	        layoutParams.height = 72;
+	    }
+	    else {
+	        layoutParams.height = 30;
+	    }
+
+        layoutParams.width = layoutParams.height + 50;
         layout_icons.setLayoutParams(layoutParams);
         layout_icons.setOrientation(LinearLayout.HORIZONTAL);
 
         ActionBar.LayoutParams imgParams = new ActionBar.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.WRAP_CONTENT, Gravity.CENTER_VERTICAL);
-        imgParams.height = 72;
-        imgParams.width = 72;
+        imgParams.height = layoutParams.height;
+        imgParams.width = layoutParams.height;
         imgParams.rightMargin = 5;
         
         final ImageView mapview_icon = new ImageView(actionBar.getThemedContext());

@@ -1,6 +1,7 @@
 package info.blockchain.merchant.directory;
 
 import info.blockchain.wallet.ui.AddressBookActivity;
+import info.blockchain.wallet.ui.DeviceUtil;
 import info.blockchain.wallet.ui.MainActivity;
 import info.blockchain.wallet.ui.OnSwipeTouchListener;
 import info.blockchain.wallet.ui.TypefaceUtil;
@@ -159,8 +160,14 @@ public class MapActivity extends Activity implements LocationListener	{
         layout_icons.setOrientation(LinearLayout.HORIZONTAL);
 
         ActionBar.LayoutParams imgParams = new ActionBar.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.WRAP_CONTENT, Gravity.CENTER_VERTICAL);
-        imgParams.height = 72;
-        imgParams.width = 72;
+	    if(!DeviceUtil.getInstance(this).isSmallScreen()) {
+	        layoutParams.height = 72;
+	    }
+	    else {
+	        layoutParams.height = 30;
+	    }
+        imgParams.height = layoutParams.height;
+        imgParams.width = layoutParams.height;
         imgParams.rightMargin = 5;
         
         final ImageView listview_icon = new ImageView(actionBar.getThemedContext());
