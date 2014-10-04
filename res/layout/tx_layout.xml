@@ -36,11 +36,29 @@
 		android:layout_width="fill_parent"
 		android:layout_height="14dp"
 		android:orientation="horizontal"
-	    android:padding="0dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
 	    android:background="#FFFFFFFF"
 		android:divider="@null"
     	>
 
+            <!-- time/date -->
+	    	<TextView
+        	android:id="@+id/ts"
+        	android:layout_width="0dp"
+        	android:layout_height="14dp"
+		    android:layout_weight="1"
+        	android:textSize="10sp"
+        	android:textColor="@color/blockchain_grey"
+	        android:gravity="left|center_vertical"
+    	    android:layout_gravity="left|center_vertical"
+        	android:textAlignment="gravity"
+        	android:padding="0dp"
+        	android:paddingTop="0dp"
+        	android:layout_marginTop="0dp"
+        	android:layout_marginRight="2dp"
+        	/>
+            
 	    	<!-- blank -->
             <TextView
         	android:text=" "
@@ -63,24 +81,6 @@
         	android:padding="0dp"
         	android:paddingTop="0dp"
         	android:layout_marginTop="0dp"
-        	/>
-
-	    	<!-- time/date -->
-	    	<TextView
-        	android:id="@+id/ts"
-        	android:layout_width="0dp"
-        	android:layout_height="14dp"
-		    android:layout_weight="1"
-        	android:textSize="10sp"
-        	android:textColor="#FFFFFFFF"
-		    android:background="@drawable/layout_date"
-	        android:gravity="center_horizontal|center_vertical"
-    	    android:layout_gravity="center_horizontal|center_vertical"
-        	android:textAlignment="gravity"
-        	android:padding="0dp"
-        	android:paddingTop="0dp"
-        	android:layout_marginTop="0dp"
-        	android:layout_marginRight="2dp"
         	/>
 
 		</LinearLayout>
@@ -145,6 +145,7 @@
     	    android:layout_gravity="right|top"
         	android:textAlignment="gravity"
         	android:paddingTop="4dp"
+        	android:paddingLeft="0dp"
         	android:paddingRight="3dp"
         	/>
 

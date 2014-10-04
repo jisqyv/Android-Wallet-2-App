@@ -16,6 +16,8 @@ import java.util.HashMap;
 import java.text.NumberFormat;
 import java.text.ParseException;
 
+import net.sourceforge.zbar.Symbol;
+
 import org.json.simple.JSONObject;
 
 import piuk.blockchain.android.EventListeners;
@@ -28,6 +30,8 @@ import piuk.blockchain.android.SuccessCallback;
 import piuk.blockchain.android.util.ConnectivityStatus;
 import piuk.blockchain.android.util.WalletUtils;
 
+import com.dm.zbar.android.scanner.ZBarConstants;
+import com.dm.zbar.android.scanner.ZBarScannerActivity;
 import com.google.bitcoin.core.Address;
 import com.google.bitcoin.core.ScriptException;
 import com.google.bitcoin.core.Transaction;
@@ -47,6 +51,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.preference.PreferenceManager;
 import android.os.Bundle;
 import android.graphics.Color;
@@ -69,7 +74,7 @@ import android.widget.Toast;
 import android.view.View.OnTouchListener;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Animation;
-//import android.util.Log;
+import android.util.Log;
 
 @SuppressLint("NewApi")
 public class BalanceFragment extends Fragment   {
@@ -110,6 +115,13 @@ public class BalanceFragment extends Fragment   {
 
 	public static final String ACTION_INTENT = "info.blockchain.wallet.ui.BalanceFragment.REFRESH";
 	
+	private boolean isDefaultListView = true;
+	private ImageView ivBalances = null;
+	private ImageView ivTx = null;
+	private List<MyTransaction> txs = null;
+	private TextView tListViewTitle = null;
+	private Map<String,String> labels;
+
     protected BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -195,9 +207,9 @@ public class BalanceFragment extends Fragment   {
         	try {
         		Script script = transactionOutput.getScriptPubKey();
         		String addr = null;
-        		if (script != null)
+        		if (script != null) {
         			addr = script.getToAddress(MyRemoteWallet.getParams()).toString();
-
+        		}
         		addressesPartOfLastSentTransaction.add(addr);
             } catch (ScriptException e) {
                 e.printStackTrace();
@@ -229,11 +241,6 @@ public class BalanceFragment extends Fragment   {
 		if (getActivity() == null)
 			return;
 
-		/*
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        strCurrentFiatCode = prefs.getString("ccurrency", "USD");
-        strCurrentFiatSymbol = prefs.getString(strCurrentFiatCode + "-SYM", "$");
-        */
         strCurrentFiatCode = BlockchainUtil.getInstance(getActivity()).getFiatCode();
         strCurrentFiatSymbol = BlockchainUtil.getInstance(getActivity()).getFiatSymbol();
 
@@ -248,7 +255,17 @@ public class BalanceFragment extends Fragment   {
 		if (remoteWallet == null) {
 			return;
 		}
+		
+		//
+		// for transaction view
+		//
+        final List<MyTransaction> transactionsList = remoteWallet.getTransactions();
+        txs = transactionsList;
+    	labels = application.getRemoteWallet().getLabelMap();
 
+		//
+		// for balance view
+		//
 		addressLabels = remoteWallet.getActiveAddresses();
 		if (addressLabels == null) {
 			return;
@@ -257,15 +274,7 @@ public class BalanceFragment extends Fragment   {
 	    activeAddresses = Arrays.asList(addressLabels);
 		addressAmounts = new String[addressLabels.length];
 		isWatchOnlys = new boolean[addressLabels.length];
-
-		/*
-        Toast.makeText(BalanceFragment.this.getActivity(), TxNotifUtil.getInstance().getTx() == null ? "null" : "not null", Toast.LENGTH_SHORT).show();
-		if(TxNotifUtil.getInstance().getTx() != null) {
-			showTx = TxNotifUtil.getInstance().getTx();
-			TxNotifUtil.getInstance().clear();
-		}
-		*/
-
+		
    		if(!isNoRefreshOnReturn) {
    			
 			addressLabelTxsDisplayed = new boolean[addressLabels.length];
@@ -319,7 +328,7 @@ public class BalanceFragment extends Fragment   {
 				e.printStackTrace();
 			}	
 	    }
-
+		
 		totalInputsValue = remoteWallet.getTotal_received();
 		totalOutputsValue = remoteWallet.getTotal_sent();
 		
@@ -362,8 +371,9 @@ public class BalanceFragment extends Fragment   {
     		});   
     		
     		application.setSharedPrefsActiveAddresses(Arrays.asList(remoteWallet.getActiveAddresses()));    		
-        }
-    }
+		}
+
+	}
 	
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -376,16 +386,62 @@ public class BalanceFragment extends Fragment   {
 
         rootView = inflater.inflate(R.layout.fragment_balance, container, false);
 
-        /*
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        strCurrentFiatCode = prefs.getString("ccurrency", "USD");
-        strCurrentFiatSymbol = prefs.getString(strCurrentFiatCode + "-SYM", "$");
-        */
+        isDefaultListView = prefs.getBoolean("defaultTxView", true);
+        
         strCurrentFiatCode = BlockchainUtil.getInstance(getActivity()).getFiatCode();
         strCurrentFiatSymbol = BlockchainUtil.getInstance(getActivity()).getFiatSymbol();
 
         slideUp = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.slide_up);
         slideDown = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.slide_down);
+
+        tListViewTitle = (TextView)rootView.findViewById(R.id.listviewTitle);
+        tListViewTitle.setTypeface(TypefaceUtil.getInstance(getActivity()).getRobotoTypeface());
+
+        ivBalances = (ImageView)rootView.findViewById(R.id.balances);
+        ivTx = (ImageView)rootView.findViewById(R.id.tx);
+        if(isDefaultListView) {
+        	ivBalances.setImageResource(R.drawable.balances_icon_active);
+        	ivTx.setImageResource(R.drawable.transactions_icon);
+            tListViewTitle.setText(R.string.balances);
+        }
+        else {
+        	ivBalances.setImageResource(R.drawable.balances_icon);
+        	ivTx.setImageResource(R.drawable.transactions_icon_active);
+            tListViewTitle.setText(R.string.transactions);
+        }
+        
+        ivBalances.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+            	isDefaultListView = true;
+                tListViewTitle.setText(R.string.balances);
+            	ivBalances.setImageResource(R.drawable.balances_icon_active);
+            	ivTx.setImageResource(R.drawable.transactions_icon);
+				Editor edit = PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
+				edit.putBoolean("defaultTxView", true);
+				edit.commit();
+        		setAdapterContent();
+        		adapter.notifyDataSetChanged();
+                return false;
+            }
+        });
+
+        ivTx.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+            	isDefaultListView = false;
+                tListViewTitle.setText(R.string.transactions);
+            	ivBalances.setImageResource(R.drawable.balances_icon);
+            	ivTx.setImageResource(R.drawable.transactions_icon_active);
+				Editor edit = PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
+				edit.putBoolean("defaultTxView", false);
+				edit.commit();
+        		setAdapterContent();
+        		adapter.notifyDataSetChanged();
+                return false;
+            }
+        });
 
         tViewCurrencySymbol = (TextView)rootView.findViewById(R.id.currency_symbol);
         tViewCurrencySymbol.setTypeface(TypefaceUtil.getInstance(getActivity()).getBTCTypeface());
@@ -393,22 +449,7 @@ public class BalanceFragment extends Fragment   {
         tViewCurrencySymbol.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            	if(isBTC) {
-            		tViewCurrencySymbol.setText(strCurrentFiatSymbol);
-            		String tmp = tViewAmount1.getText().toString(); 
-            		tViewAmount1.setText(tViewAmount2.getText().toString().substring(1));
-            		tViewAmount2.setTypeface(TypefaceUtil.getInstance(getActivity()).getBTCTypeface());
-                    tViewAmount2.setText(Character.toString((char)TypefaceUtil.getInstance(getActivity()).getBTCSymbol()) + tmp);
-            	}
-            	else {
-                    tViewCurrencySymbol.setText(Character.toString((char)TypefaceUtil.getInstance(getActivity()).getBTCSymbol()));
-            		String tmp = tViewAmount1.getText().toString(); 
-                    tViewAmount1.setText(tViewAmount2.getText().toString().substring(1));
-                    tViewAmount2.setText(strCurrentFiatSymbol + tmp);
-            	}
-            	isBTC = isBTC ? false : true;
-
-            	adapter.notifyDataSetChanged();
+            	currencyToggle();
             }
         });
 
@@ -432,37 +473,53 @@ public class BalanceFragment extends Fragment   {
         txList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
-    	    	final LinearLayout balance_extLayout = (LinearLayout)view.findViewById(R.id.balance_ext);
-    	    	final LinearLayout balance_extHiddenLayout = (LinearLayout)view.findViewById(R.id.balance_ext_hidden);
+            	if(isDefaultListView) {
+        	    	final LinearLayout balance_extLayout = (LinearLayout)view.findViewById(R.id.balance_ext);
+        	    	final LinearLayout balance_extHiddenLayout = (LinearLayout)view.findViewById(R.id.balance_ext_hidden);
 
-	    		if(balance_extHiddenLayout.getChildCount() > 1) {
-    		        balance_extHiddenLayout.removeViews(1, balance_extHiddenLayout.getChildCount() - 1);
-	    		}
+    	    		if(balance_extHiddenLayout.getChildCount() > 1) {
+        		        balance_extHiddenLayout.removeViews(1, balance_extHiddenLayout.getChildCount() - 1);
+    	    		}
 
-    	    	if(balance_extHiddenLayout.getVisibility() == View.VISIBLE) {
-    	    		addressLabelTxsDisplayed[position] = false;
+        	    	if(balance_extHiddenLayout.getVisibility() == View.VISIBLE) {
+        	    		addressLabelTxsDisplayed[position] = false;
 
-			        if (isWatchOnlys[position])
-				        ((ImageView)view.findViewById(R.id.address_type)).setImageResource(R.drawable.address_watch_inactive);
-			        else
-				        ((ImageView)view.findViewById(R.id.address_type)).setImageResource(R.drawable.address_inactive);
+    			        if (isWatchOnlys[position])
+    				        ((ImageView)view.findViewById(R.id.address_type)).setImageResource(R.drawable.address_watch_inactive);
+    			        else
+    				        ((ImageView)view.findViewById(R.id.address_type)).setImageResource(R.drawable.address_inactive);
 
-//    		        balance_extLayout.startAnimation(slideUp);
-    		        balance_extLayout.setVisibility(View.GONE);
-    		        balance_extHiddenLayout.setVisibility(View.GONE);
-    		    	System.gc();
-    	    	}
-    	    	else {
-    	    		addressLabelTxsDisplayed[position] = true;
-    	    		
-			        if (isWatchOnlys[position])
-				        ((ImageView)view.findViewById(R.id.address_type)).setImageResource(R.drawable.address_watch);
-			        else
-				        ((ImageView)view.findViewById(R.id.address_type)).setImageResource(R.drawable.address_active);
+//        		        balance_extLayout.startAnimation(slideUp);
+        		        balance_extLayout.setVisibility(View.GONE);
+        		        balance_extHiddenLayout.setVisibility(View.GONE);
+        		    	System.gc();
+        	    	}
+        	    	else {
+        	    		addressLabelTxsDisplayed[position] = true;
+        	    		
+    			        if (isWatchOnlys[position])
+    				        ((ImageView)view.findViewById(R.id.address_type)).setImageResource(R.drawable.address_watch);
+    			        else
+    				        ((ImageView)view.findViewById(R.id.address_type)).setImageResource(R.drawable.address_active);
 
-    	        	System.gc();
-    	    		doDisplaySubList(view, position);
-    	    	}
+        	        	System.gc();
+        	    		doDisplaySubList(view, position);
+        	    	}
+            	}
+            	else {
+            		MyTransaction transaction = txs.get(position);
+
+            		TimeOutUtil.getInstance().updatePin();
+                    Intent intent;
+            		intent = new Intent(getActivity(), TxActivity.class);
+            		intent.putExtra("TX", transaction.getHashAsString());
+            		intent.putExtra("TS", transaction.getTime().getTime() / 1000);
+            		intent.putExtra("RESULT", BlockchainUtil.formatBitcoin(transaction.getResult().abs()));
+            		intent.putExtra("SENDING", transaction.getResult().compareTo(BigInteger.ZERO) == 1 ? false : true);
+            		intent.putExtra("CURRENCY", strCurrentFiatCode);
+            		startActivityForResult(intent, TX_ACTIVITY);
+            	}
+
             }
         });
 //	    txList.setDivider(getActivity().getResources().getDrawable(R.drawable.list_divider));
@@ -539,11 +596,6 @@ public class BalanceFragment extends Fragment   {
         if(isVisibleToUser) {
         	System.gc();
 
-        	/*
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            strCurrentFiatCode = prefs.getString("ccurrency", "USD");
-            strCurrentFiatSymbol = prefs.getString(strCurrentFiatCode + "-SYM", "$");
-            */
             strCurrentFiatCode = BlockchainUtil.getInstance(getActivity()).getFiatCode();
             strCurrentFiatSymbol = BlockchainUtil.getInstance(getActivity()).getFiatSymbol();
             
@@ -566,13 +618,7 @@ public class BalanceFragment extends Fragment   {
     	super.onResume();
 
         IntentFilter filter = new IntentFilter(ACTION_INTENT);
-//        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiver, filter);
 
-        /*
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        strCurrentFiatCode = prefs.getString("ccurrency", "USD");
-        strCurrentFiatSymbol = prefs.getString(strCurrentFiatCode + "-SYM", "$");
-        */
         strCurrentFiatCode = BlockchainUtil.getInstance(getActivity()).getFiatCode();
         strCurrentFiatSymbol = BlockchainUtil.getInstance(getActivity()).getFiatSymbol();
         
@@ -636,17 +682,32 @@ public class BalanceFragment extends Fragment   {
 
 		@Override
 		public int getCount() {
-			if(addressLabels != null) {
-				return addressLabels.length;
+			if(isDefaultListView) {
+				if(addressLabels != null) {
+					return addressLabels.length;
+				}
+				else {
+					return 0;
+				}
 			}
 			else {
-				return 0;
+				if(txs != null) {
+					return txs.size();
+				}
+				else {
+					return 0;
+				}
 			}
 		}
 
 		@Override
 		public String getItem(int position) {
-	        return addressLabels[position];
+			if(isDefaultListView) {
+		        return addressLabels[position];
+			}
+			else {
+		        return txs.get(position).getHashAsString();
+			}
 		}
 
 		@Override
@@ -659,78 +720,176 @@ public class BalanceFragment extends Fragment   {
 			
 //			Log.d("List refresh", "" + position);
 
-			View view;
+			View view = null;
 	        
-	        if (convertView == null) {
+	        if(isDefaultListView) {
+
+	        	/*
+		        if (convertView == null) {
+		            view = inflater.inflate(R.layout.txs_layout, parent, false);
+		        } else {
+		            view = convertView;
+		        }
+		        */
+
 	            view = inflater.inflate(R.layout.txs_layout, parent, false);
-	        } else {
-	            view = convertView;
-	        }
-	        
-	    	LinearLayout balance_extLayout = (LinearLayout)view.findViewById(R.id.balance_ext);
-	    	LinearLayout balance_extHiddenLayout = (LinearLayout)view.findViewById(R.id.balance_ext_hidden);
-	        balance_extLayout.setVisibility(View.GONE);
-	        balance_extHiddenLayout.setVisibility(View.GONE);
 
-	        String amount = null;
-	        DecimalFormat df = null;
-	        if(isBTC) {
-	        	df = new DecimalFormat("######0.0000");
-	        	if(addressAmounts != null && addressAmounts[position] != null) {
-		        	try {
-						amount = df.format(NumberFormat.getInstance().parse(addressAmounts[position]).doubleValue());
-					} catch (ParseException e) {
-						e.printStackTrace();
-						
-						amount = "ERROR";
-					}
+		    	LinearLayout balance_extLayout = (LinearLayout)view.findViewById(R.id.balance_ext);
+		    	LinearLayout balance_extHiddenLayout = (LinearLayout)view.findViewById(R.id.balance_ext_hidden);
+		        balance_extLayout.setVisibility(View.GONE);
+		        balance_extHiddenLayout.setVisibility(View.GONE);
+
+		        String amount = null;
+		        DecimalFormat df = null;
+		        if(isBTC) {
+		        	df = new DecimalFormat("######0.0000");
+		        	if(addressAmounts != null && addressAmounts[position] != null) {
+			        	try {
+							amount = df.format(NumberFormat.getInstance().parse(addressAmounts[position]).doubleValue());
+						} catch (ParseException e) {
+							e.printStackTrace();
+							amount = "ERROR";
+						}
+		        	}
+		        	else {
+			        	amount = "0.0000";
+		        	}
+		        }
+		        else {
+		        	if(addressAmounts != null && addressAmounts[position] != null) {
+			        	amount = BlockchainUtil.BTC2Fiat(addressAmounts[position]);
+		        	}
+		        	else {
+			        	amount = "0.00";
+		        	}
+		        }
+
+		        ((TextView)view.findViewById(R.id.address)).setTypeface(TypefaceUtil.getInstance(getActivity()).getGravityBoldTypeface());
+	        	if(addressLabels != null && addressLabels[position] != null) {
+	    	        ((TextView)view.findViewById(R.id.address)).setText(addressLabels[position].length() > 15 ? addressLabels[position].substring(0, 15) + "..." : addressLabels[position]);
 	        	}
 	        	else {
-		        	amount = "0.0000";
+	    	        ((TextView)view.findViewById(R.id.address)).setText("");
 	        	}
+		        ((TextView)view.findViewById(R.id.amount)).setTypeface(TypefaceUtil.getInstance(getActivity()).getRobotoBoldTypeface());
+		        ((TextView)view.findViewById(R.id.amount)).setText(amount);
+		        ((TextView)view.findViewById(R.id.currency_code)).setText(isBTC ? "BTC" : strCurrentFiatCode);
+
+		        if(addressLabelTxsDisplayed != null && position < addressLabelTxsDisplayed.length && addressLabelTxsDisplayed[position]) {
+//					Log.d("List refresh sub", "" + position);
+			    	System.gc();
+			    	
+		    		if(balance_extHiddenLayout.getChildCount() > 1) {
+	    		        balance_extHiddenLayout.removeViews(1, balance_extHiddenLayout.getChildCount() - 1);
+		    		}
+
+			        doDisplaySubList(view, position);
+		        }
+
+		        if(addressLabelTxsDisplayed != null && position < addressLabelTxsDisplayed.length && addressLabelTxsDisplayed[position]) {
+			        if (isWatchOnlys[position])
+				        ((ImageView)view.findViewById(R.id.address_type)).setImageResource(R.drawable.address_watch);
+			        else
+				        ((ImageView)view.findViewById(R.id.address_type)).setImageResource(R.drawable.address_active);
+		        }
+		        else {
+			        if (isWatchOnlys[position])
+				        ((ImageView)view.findViewById(R.id.address_type)).setImageResource(R.drawable.address_watch_inactive);
+			        else
+				        ((ImageView)view.findViewById(R.id.address_type)).setImageResource(R.drawable.address_inactive);
+		        }
 	        }
 	        else {
-	        	if(addressAmounts != null && addressAmounts[position] != null) {
-		        	amount = BlockchainUtil.BTC2Fiat(addressAmounts[position]);
-	        	}
-	        	else {
-		        	amount = "0.00";
-	        	}
-	        }
 
-	        ((TextView)view.findViewById(R.id.address)).setTypeface(TypefaceUtil.getInstance(getActivity()).getGravityBoldTypeface());
-        	if(addressLabels != null && addressLabels[position] != null) {
-    	        ((TextView)view.findViewById(R.id.address)).setText(addressLabels[position].length() > 15 ? addressLabels[position].substring(0, 15) + "..." : addressLabels[position]);
-        	}
-        	else {
-    	        ((TextView)view.findViewById(R.id.address)).setText("");
-        	}
-	        ((TextView)view.findViewById(R.id.amount)).setTypeface(TypefaceUtil.getInstance(getActivity()).getRobotoBoldTypeface());
-	        ((TextView)view.findViewById(R.id.amount)).setText(amount);
-	        ((TextView)view.findViewById(R.id.currency_code)).setText(isBTC ? "BTC" : strCurrentFiatCode);
+	        	/*
+	        	if (convertView == null) {
+		            view = inflater.inflate(R.layout.txs_layout_simple, parent, false);
+		        } else {
+		            view = convertView;
+		        }
+		        */
 
-	        if(addressLabelTxsDisplayed != null && position < addressLabelTxsDisplayed.length && addressLabelTxsDisplayed[position]) {
-//				Log.d("List refresh sub", "" + position);
-		    	System.gc();
+	            view = inflater.inflate(R.layout.txs_layout_simple, parent, false);
+	            
+//	            Log.d("BalanceFragment.java", "txs size:" + txs.size());
+
+				BigInteger result = BigInteger.ZERO;
+				String addr = null;
+
+				MyTransaction transaction = txs.get(position);
+		    	List<TransactionOutput> transactionOutputs = transaction.getOutputs();
+		    	List<TransactionInput> transactionInputs = transaction.getInputs();
 		    	
-	    		if(balance_extHiddenLayout.getChildCount() > 1) {
-    		        balance_extHiddenLayout.removeViews(1, balance_extHiddenLayout.getChildCount() - 1);
-	    		}
+        		int height = transaction.getHeight();
 
-		        doDisplaySubList(view, position);
-	        }
+		        TextView tvTS = ((TextView)view.findViewById(R.id.ts));
+		        tvTS.setTypeface(TypefaceUtil.getInstance(getActivity()).getRobotoTypeface());
+//		        TextView tvDirection = ((TextView)view.findViewById(R.id.direction));
+		        TextView tvAddress = ((TextView)view.findViewById(R.id.address));
+		        tvAddress.setTypeface(TypefaceUtil.getInstance(getActivity()).getRobotoTypeface());
+		        TextView tvResult = ((TextView)view.findViewById(R.id.result));
+		        tvResult.setTypeface(TypefaceUtil.getInstance(getActivity()).getRobotoTypeface());
+		        
+		        tvResult.setOnClickListener(new View.OnClickListener() {
+		            @Override
+		            public void onClick(View v) {
+		            	currencyToggle();
+		            }
+		        });
 
-	        if(addressLabelTxsDisplayed != null && position < addressLabelTxsDisplayed.length && addressLabelTxsDisplayed[position]) {
-		        if (isWatchOnlys[position])
-			        ((ImageView)view.findViewById(R.id.address_type)).setImageResource(R.drawable.address_watch);
-		        else
-			        ((ImageView)view.findViewById(R.id.address_type)).setImageResource(R.drawable.address_active);
-	        }
-	        else {
-		        if (isWatchOnlys[position])
-			        ((ImageView)view.findViewById(R.id.address_type)).setImageResource(R.drawable.address_watch_inactive);
-		        else
-			        ((ImageView)view.findViewById(R.id.address_type)).setImageResource(R.drawable.address_inactive);
+				result = transaction.getResult();
+				boolean isSending = true;
+				if(result.compareTo(BigInteger.ZERO) == 1) {
+					isSending = false;
+		            tvResult.setBackgroundResource(R.drawable.rounded_view_green);
+	        		addr = transactionInputs.get(0).getFromAddress().toString();
+				}
+				else {
+					isSending = true;
+		            tvResult.setBackgroundResource(R.drawable.rounded_view_red);
+		            TransactionOutput txo = transactionOutputs.get(0);
+	        		Script script = txo.getScriptPubKey();
+	        		if (script != null) {
+	        			addr = script.getToAddress(MyRemoteWallet.getParams()).toString();
+	        		}
+				}
+				
+		        if(labels != null && labels.size() > 0 && labels.get(addr) != null) {
+		        	addr = labels.get(addr);
+		        }
+
+		        tvTS.setText(DateUtil.getInstance(getActivity()).formatted(transaction.getTime().getTime() / 1000L));
+//		        tvDirection.setText(isSending ? getActivity().getResources().getString(R.string.SENT) : getActivity().getResources().getString(R.string.RECEIVED) );
+		        tvAddress.setText(addr);
+		        
+		        String amount = null;
+		        DecimalFormat df = null;
+		        if(isBTC) {
+		        	df = new DecimalFormat("######0.00######");
+		        	if(result != null) {
+			        	try {
+							amount = df.format(Double.parseDouble(WalletUtils.formatValue(result.abs())));
+						} catch (Exception e) {
+							e.printStackTrace();
+							amount = "ERROR";
+						}
+		        	}
+		        	else {
+			        	amount = "0.0000";
+		        	}
+		        }
+		        else {
+		        	if(result != null) {
+			        	amount = BlockchainUtil.BTC2Fiat(BlockchainUtil.formatBitcoin(result.abs()));
+		        	}
+		        	else {
+			        	amount = "0.00";
+		        	}
+		        }
+		        amount += " ";
+		        amount += (isBTC) ? "BTC" : strCurrentFiatCode;
+		        tvResult.setText(amount);
+
 	        }
 
 	        return view;
@@ -986,8 +1145,7 @@ public class BalanceFragment extends Fragment   {
         LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		child = inflater.inflate(R.layout.tx_layout, null);
 
-        ((TextView)child.findViewById(R.id.ts)).setTypeface(TypefaceUtil.getInstance(getActivity()).getGravityBoldTypeface());
-        
+        ((TextView)child.findViewById(R.id.ts)).setTypeface(TypefaceUtil.getInstance(getActivity()).getRobotoTypeface());
         ((TextView)child.findViewById(R.id.ts)).setText(DateUtil.getInstance(getActivity()).formatted(transaction.getTime().getTime() / 1000));
 
         if (isSending) {
@@ -1068,6 +1226,25 @@ public class BalanceFragment extends Fragment   {
     	
 
 		return false;
+    }
+
+    private void currencyToggle() {
+    	if(isBTC) {
+    		tViewCurrencySymbol.setText(strCurrentFiatSymbol);
+    		String tmp = tViewAmount1.getText().toString(); 
+    		tViewAmount1.setText(tViewAmount2.getText().toString().substring(1));
+    		tViewAmount2.setTypeface(TypefaceUtil.getInstance(getActivity()).getBTCTypeface());
+            tViewAmount2.setText(Character.toString((char)TypefaceUtil.getInstance(getActivity()).getBTCSymbol()) + tmp);
+    	}
+    	else {
+            tViewCurrencySymbol.setText(Character.toString((char)TypefaceUtil.getInstance(getActivity()).getBTCSymbol()));
+    		String tmp = tViewAmount1.getText().toString(); 
+            tViewAmount1.setText(tViewAmount2.getText().toString().substring(1));
+            tViewAmount2.setText(strCurrentFiatSymbol + tmp);
+    	}
+    	isBTC = isBTC ? false : true;
+
+    	adapter.notifyDataSetChanged();
     }
 
 }

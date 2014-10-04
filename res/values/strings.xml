@@ -191,14 +191,11 @@
     <string name="pair_wallet_button">Scan QR Code.</string>
     <string name="pair_wallet_manually_button">Pair Manually.</string>
     <string name="pair_wallet_step1">Step 1.</string>
-    <string name="pair_wallet_step1_content">Login to your My Wallet account using your web browser
-	    .</string>
+    <string name="pair_wallet_step1_content">Login to your My Wallet account using your web browser.</string>
     <string name="pair_wallet_step2">Step 2.</string>
-    <string name="pair_wallet_step2_content">Click on the [Account Settings] button then choose
-		the [Devices] tab.</string>
+    <string name="pair_wallet_step2_content">Click on the [Account Settings] button then choose the [Devices] tab.</string>
     <string name="pair_wallet_step3">Step 3.</string>
-    <string name="pair_wallet_step3_content">You will see a QR Code, click the button below to
-		scan this QR Code with your camera.</string>
+    <string name="pair_wallet_step3_content">You will see a QR Code, click the button below to scan this QR Code with your camera.</string>
     <string name="welcome_pair_device_button">Pair Device</string>
     <string name="welcome_new_account_button">New Account</string>
     <string name="edit_address_book_entry_dialog_title_add">Add Address Label</string>
@@ -374,7 +371,7 @@
     <string name="enter_your_new_pin">Enter your new PIN:</string>
     <string name="pin_hint">PIN</string>
     <string name="confirm_pin_hint">confirm PIN</string>
-    <string name="invalid_pin_error">PIN must be 4 numberic numbers</string>
+    <string name="invalid_pin_error">PIN must be 4 numbers</string>
     <string name="pin_mismatch_error">PINs do not match</string>
     <string name="change_pin_success">Change pin success</string>
     <string name="incorrect_pin">Incorrect PIN</string>
@@ -426,7 +423,7 @@
     <string name="create_new_wallet">create new wallet</string>
     <string name="accept_tos">By tapping on \'ACCEPT\', you acknowledge that you are accepting Blockchain\'s terms of service: https://blockchain.info</string>
     <string name="set_your_pin">Set your pin code</string>
-    <string name="set_your_pin2">"Enter a 4-digit code that will be easy for you to remember but not easily guessed by anyone else.</string>
+    <string name="set_your_pin2">Enter a 4-digit code that will be easy for you to remember but not easily guessed by anyone else.</string>
     <string name="confirm_your_pin">Confirm your 4-digit pin code.</string>
     <string name="enter_matching_pins">Enter two matching 4-digit pin codes</string>
 
@@ -455,7 +452,8 @@
     <string name="error_decrypt_private_key">Error Decrypting Private Key</string>
     
     <string name="include_valid_BTC_address_receive">Include a Bitcoin receiving address</string>
-
+    <string name="invalid_address_amount">Please provide a valid receiving destination and amount.</string>
+    
     <string name="send2friend">Send Bitcoins to a Friend</string>
     <string name="send2_1">Send Bitcoins to</string>
     <string name="send2_2">via which method?</string>
@@ -570,6 +568,8 @@
     <string name="zero_pin">0000 is an invalid PIN code. Please try again.</string>
     <string name="shared_send">Shared</string>
     <string name="transactions">Transactions</string>
+    <string name="balances">Balances</string>
+    <string name="custom_use_btc">Please enter amounts in Bitcoin when using custom spend.</string>
     
 <!--
     <string-array name="menus">
