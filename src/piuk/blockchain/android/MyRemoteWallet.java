@@ -15,7 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 package piuk.blockchain.android;
 
 import java.math.BigInteger;
@@ -46,8 +45,8 @@ import piuk.blockchain.android.Constants;
 import piuk.blockchain.android.SuccessCallback;
 import piuk.blockchain.android.util.WalletUtils;
 import android.annotation.SuppressLint;
-//import android.util.Log;
 import android.util.Pair;
+//import android.util.Log;
 
 import com.google.bitcoin.core.Address;
 import com.google.bitcoin.core.AddressFormatException;
@@ -809,10 +808,12 @@ public class MyRemoteWallet extends MyWallet {
 
   						Map<Object, Object> params = new HashMap<Object, Object>();
 						params.put("type", sendType);
+//						Log.d("sendCoinsToFriend", "type:" + sendType);
 						String privParameter = (sendType == "sms") ? keyAndMiniKey.second : privateKey;
 						params.put("priv", privParameter);
 						params.put("hash", txHash);
 						params.put("to", emailOrNumber);			
+//						Log.d("sendCoinsToFriend", "to:" + emailOrNumber);
 						params.put("guid", getGUID());						
 						params.put("sharedKey", getSharedKey());
 
