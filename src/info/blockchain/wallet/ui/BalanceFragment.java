@@ -261,7 +261,7 @@ public class BalanceFragment extends Fragment   {
 		//
         final List<MyTransaction> transactionsList = remoteWallet.getTransactions();
         txs = transactionsList;
-    	labels = application.getRemoteWallet().getLabelMap();
+    	labels = remoteWallet.getLabelMap();
 
 		//
 		// for balance view
@@ -842,16 +842,29 @@ public class BalanceFragment extends Fragment   {
 				if(result.compareTo(BigInteger.ZERO) == 1) {
 					isSending = false;
 		            tvResult.setBackgroundResource(R.drawable.rounded_view_green);
-	        		addr = transactionInputs.get(0).getFromAddress().toString();
+		            if(transactionInputs != null && transactionInputs.size() > 0) {
+		        		addr = transactionInputs.get(0).getFromAddress().toString();
+		            }
+		            else {
+		        		addr = "";
+		            }
 				}
 				else {
 					isSending = true;
 		            tvResult.setBackgroundResource(R.drawable.rounded_view_red);
-		            TransactionOutput txo = transactionOutputs.get(0);
-	        		Script script = txo.getScriptPubKey();
-	        		if (script != null) {
-	        			addr = script.getToAddress(MyRemoteWallet.getParams()).toString();
-	        		}
+		            if(transactionOutputs != null && transactionOutputs.size() > 0) {
+			            TransactionOutput txo = transactionOutputs.get(0);
+		        		Script script = txo.getScriptPubKey();
+		        		if (script != null) {
+		        			addr = script.getToAddress(MyRemoteWallet.getParams()).toString();
+		        		}
+			            else {
+			        		addr = "";
+			            }
+		            }
+		            else {
+		        		addr = "";
+		            }
 				}
 				
 		        if(labels != null && labels.size() > 0 && labels.get(addr) != null) {
