@@ -1,21 +1,10 @@
 package info.blockchain.wallet.ui;
  
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.math.BigInteger;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-//import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
 
 import net.sourceforge.zbar.Symbol;
 
@@ -29,8 +18,10 @@ import piuk.blockchain.android.MyRemoteWallet;
 import piuk.blockchain.android.R;
 import piuk.blockchain.android.WalletApplication;
 import piuk.blockchain.android.WalletApplication.AddAddressCallback;
-import piuk.blockchain.android.util.WalletUtils;
 import piuk.blockchain.android.SuccessCallback;
+import piuk.blockchain.android.ui.dialogs.RequestPasswordDialog;
+import piuk.blockchain.android.util.WalletUtils;
+
 import android.app.Activity;
 import android.app.ActionBar;
 import android.app.AlertDialog;
@@ -41,12 +32,8 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Looper;
-import android.os.Handler;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -56,7 +43,6 @@ import android.view.View.OnTouchListener;
 import android.view.View.OnCreateContextMenuListener;
 import android.view.MenuInflater;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
@@ -70,9 +56,12 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Toast;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.content.LocalBroadcastManager;
-//import android.util.Log;
 import android.support.v4.widget.DrawerLayout;
- 
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager; 
+import android.support.v4.app.Fragment;
+//import android.util.Log;
+
 public class AddressBookActivity extends Activity  {
 
 	private ArrayList<String> allAddresses = null;
@@ -106,6 +95,8 @@ public class AddressBookActivity extends Activity  {
 	private DrawerLayout mDrawerLayout = null;
 	private ListView mDrawerList = null;
 	private ActionBarDrawerToggle mDrawerToggle = null;
+	
+	private MyRemoteWallet remoteWallet = null;
 
     private static enum DisplayedAddresses {
 		ContactsAddresses,
@@ -206,17 +197,32 @@ public class AddressBookActivity extends Activity  {
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				
 			    switch (position) {
-		    	case 0:
-		    		addressManager.newAddress(new AddAddressCallback() {
-		    			public void onSavedAddress(String address) {
-		    	    		Toast.makeText(AddressBookActivity.this, R.string.toast_new_address_generated, Toast.LENGTH_LONG).show();
-		    	    		goToActiveAddresses();
-		    			}
 
-		    			public void onError(String reason) {
-		    				Toast.makeText(AddressBookActivity.this, reason, Toast.LENGTH_LONG).show();
-		    			}
-		    		});
+			    case 0:
+		    	 {
+
+		    		if (remoteWallet.isDoubleEncrypted() && remoteWallet.temporySecondPassword == null) {
+
+		    			/*
+						RequestPasswordDialog.show(getFragmentManager(), new SuccessCallback() {
+
+							public void onSuccess() {							
+								doAddAddress();
+							}
+
+							public void onFail() {
+								Toast.makeText(application, R.string.send_no_password_error, Toast.LENGTH_LONG).show();
+							}
+
+						}, RequestPasswordDialog.PasswordTypeSecond);
+						*/
+
+					}
+					else {
+						doAddAddress();
+					}
+
+		    	 }
 
 		    		break;
 
@@ -262,7 +268,7 @@ public class AddressBookActivity extends Activity  {
         //
         //
         //
-		MyRemoteWallet remoteWallet = WalletUtil.getInstance(this).getRemoteWallet();
+		remoteWallet = WalletUtil.getInstance(this).getRemoteWallet();
 		String[] activeAddresses = remoteWallet.getActiveAddresses();
 
 		allAddresses = new ArrayList<String>();
@@ -434,16 +440,27 @@ public class AddressBookActivity extends Activity  {
 		else {
 		    switch (item.getItemId()) {
 	    	case R.id.new_address:
-	    		addressManager.newAddress(new AddAddressCallback() {
-	    			public void onSavedAddress(String address) {
-	    	    		Toast.makeText(AddressBookActivity.this, R.string.toast_new_address_generated, Toast.LENGTH_LONG).show();
-	    	    		goToActiveAddresses();
-	    			}
 
-	    			public void onError(String reason) {
-	    				Toast.makeText(AddressBookActivity.this, reason, Toast.LENGTH_LONG).show();
-	    			}
-	    		});
+				if (remoteWallet.isDoubleEncrypted() && remoteWallet.temporySecondPassword == null) {
+
+					/*
+					RequestPasswordDialog.show(getFragmentManager(), new SuccessCallback() {
+
+						public void onSuccess() {							
+							doAddAddress();
+						}
+
+						public void onFail() {
+							Toast.makeText(application, R.string.send_no_password_error, Toast.LENGTH_LONG).show();
+						}
+
+					}, RequestPasswordDialog.PasswordTypeSecond);
+					*/
+					
+				}
+				else {
+					doAddAddress();
+				}
 
 	    		return true;
 	    	case R.id.scan_watch_only:
@@ -838,6 +855,20 @@ public class AddressBookActivity extends Activity  {
     	intent = new Intent(this, QRActivity.class);
     	intent.putExtra("BTC_ADDRESS", allAddresses.get(curSelection).substring(1));
     	startActivityForResult(intent, QR_GENERATION);
+    }
+
+    
+    private void doAddAddress() {
+		addressManager.newAddress(new AddAddressCallback() {
+			public void onSavedAddress(String address) {
+	    		Toast.makeText(AddressBookActivity.this, R.string.toast_new_address_generated, Toast.LENGTH_LONG).show();
+	    		goToActiveAddresses();
+			}
+
+			public void onError(String reason) {
+				Toast.makeText(AddressBookActivity.this, reason, Toast.LENGTH_LONG).show();
+			}
+		});
     }
 
 }
