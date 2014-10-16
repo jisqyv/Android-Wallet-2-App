@@ -437,6 +437,8 @@ public class PinCreateActivity extends Activity {
         																	}
         																	else {
         																		TimeOutUtil.getInstance().updatePin();
+        																		
+        																		application.setTemporyPIN(pinCode);
 
         															        	Intent intent = new Intent(PinCreateActivity.this, SecureWallet.class);
         																		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);

@@ -799,12 +799,6 @@ public class PinEntryActivity extends FragmentActivity {
 
 										ProgressUtil.getInstance(PinEntryActivity.this).close();
 
-										/*
-								    	if(!WalletUtil.getInstance(PinEntryActivity.this).remoteWalletIsLoaded()) {
-											Toast.makeText(PinEntryActivity.this, "Remote wallet not loaded", Toast.LENGTH_SHORT).show();	
-								    	}
-								    	*/
-
 										BlockchainUtil.getInstance(PinEntryActivity.this);
 
 										Intent intent = new Intent(PinEntryActivity.this, MainActivity.class);
@@ -1026,10 +1020,18 @@ public class PinEntryActivity extends FragmentActivity {
 			public void onSuccess() {
 				Toast.makeText(PinEntryActivity.this, R.string.password_correct, Toast.LENGTH_LONG).show();
 
-				Intent starterIntent = getIntent();
-				starterIntent.putExtra("N", "1");
-				finish();
-				startActivity(starterIntent);
+                new AlertDialog.Builder(PinEntryActivity.this)
+                .setTitle(R.string.app_name)
+                .setMessage(R.string.confirm_new_pin_creation)
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+//                  @Override
+                  public void onClick(DialogInterface dialog, int which) {
+      				Intent starterIntent = getIntent();
+    				starterIntent.putExtra("N", "1");
+    				finish();
+    				startActivity(starterIntent);
+                  }
+               }).show();
 
 			}
 			public void onFail() {	

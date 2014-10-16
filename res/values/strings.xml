@@ -570,6 +570,7 @@
     <string name="transactions">Transactions</string>
     <string name="balances">Balances</string>
     <string name="custom_use_btc">Please enter amounts in Bitcoin when using custom spend.</string>
+    <string name="confirm_new_pin_creation">You are about to create a new PIN code for this wallet. Press OK to continue.</string>
     
 <!--
     <string-array name="menus">

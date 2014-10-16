@@ -1,16 +1,6 @@
 package info.blockchain.wallet.ui;
 
-import java.security.SecureRandom;
 import java.util.regex.Pattern;
-
-import net.sourceforge.zbar.Symbol;
-
-import org.json.simple.JSONObject;
-import org.spongycastle.util.encoders.Hex;
-
-import com.dm.zbar.android.scanner.ZBarConstants;
-import com.dm.zbar.android.scanner.ZBarScannerActivity;
-import com.google.android.gcm.GCMRegistrar;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -270,6 +260,7 @@ public class SecureWallet extends Activity {
 
 				application.getRemoteWallet().setTemporyPassword(strPw1);
 //	    		Log.d("SecureWallet", "SecureWallet setTemporyPassword: " + remoteWallet.getTemporyPassword());
+   				application.localSaveWallet();
 
 				application.saveWallet( new SuccessCallback() {
 					@Override
@@ -278,6 +269,20 @@ public class SecureWallet extends Activity {
 			    		
 			    		edit.putBoolean("PWSecured", true);
 			    		edit.commit();
+			    		
+						String pinCode = application.getTemporyPIN();
+		   				application.apiStoreKey(pinCode, new SuccessCallback() {
+
+							@Override
+							public void onSuccess() {
+//					            Log.d("apiStoreKey", "apiStoreKey apiStoreKey onSuccess");
+							}
+
+							@Override
+							public void onFail() {
+//					            Log.d("apiStoreKey", "apiStoreKey apiStoreKey onFail");				
+							}
+		   				});
 
 						new Thread(new Runnable() {
 							@Override
