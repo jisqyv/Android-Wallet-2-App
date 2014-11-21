@@ -1,5 +1,7 @@
 package info.blockchain.wallet.ui;
 
+import java.security.Security;
+//import java.security.Provider;
 import java.util.Locale;
 
 import android.annotation.SuppressLint;
@@ -228,6 +230,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         layout_icons.addView(qr_icon);
 
         actionBar.setDisplayOptions(actionBar.getDisplayOptions() ^ ActionBar.DISPLAY_SHOW_TITLE);
+        actionBar.setDisplayUseLogoEnabled(true);
         actionBar.setLogo(R.drawable.masthead);
         actionBar.setHomeButtonEnabled(false);
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
@@ -518,9 +521,11 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 //          Toast.makeText(this, R.string.camera_unavailable, Toast.LENGTH_SHORT).show();
 		}
 		else {
-			;
+    		//
+    		// SecurityException fix
+    		//
+			Security.addProvider(new org.spongycastle.jce.provider.BouncyCastleProvider());
 		}
-		
 	}
 
 	@Override
@@ -599,6 +604,17 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     		EnableGeo.displayGPSPrompt(this);
     	}
     	else {
+    		/*
+    		Provider[] providers = Security.getProviders();
+    		for(int i = 0; i < providers.length; i++)	{
+    			System.out.println(providers[i].getName());
+    		}
+    		*/
+    		//
+    		// SecurityException fix
+    		//
+    		Security.removeProvider("SC");
+
     		TimeOutUtil.getInstance().updatePin();
         	Intent intent = new Intent(MainActivity.this, info.blockchain.merchant.directory.MapActivity.class);
     		startActivityForResult(intent, MERCHANT_ACTIVITY);
