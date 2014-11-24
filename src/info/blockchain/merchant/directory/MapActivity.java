@@ -186,7 +186,12 @@ public class MapActivity extends Activity implements LocationListener	{
 
         layout_icons.addView(listview_icon);
 
-        actionBar.setDisplayOptions(actionBar.getDisplayOptions() ^ ActionBar.DISPLAY_SHOW_TITLE);
+        if(android.os.Build.VERSION.SDK_INT >= 21)	{
+        	actionBar.setDisplayOptions(actionBar.getDisplayOptions() | ActionBar.DISPLAY_SHOW_TITLE);
+        }
+        else	{
+        	actionBar.setDisplayOptions(actionBar.getDisplayOptions() ^ ActionBar.DISPLAY_SHOW_TITLE);
+        }
         actionBar.setLogo(R.drawable.masthead);
         actionBar.setHomeButtonEnabled(false);
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);

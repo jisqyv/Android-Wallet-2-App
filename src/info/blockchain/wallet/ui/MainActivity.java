@@ -43,6 +43,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.os.StrictMode;
+import android.os.Build.VERSION;
 //import android.util.Log;
 
 import info.blockchain.wallet.ui.SendFragment;
@@ -229,14 +230,19 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         layout_icons.addView(filler_layout);
         layout_icons.addView(qr_icon);
 
-        actionBar.setDisplayOptions(actionBar.getDisplayOptions() ^ ActionBar.DISPLAY_SHOW_TITLE);
+        if(android.os.Build.VERSION.SDK_INT >= 21)	{
+        	actionBar.setDisplayOptions(actionBar.getDisplayOptions() | ActionBar.DISPLAY_SHOW_TITLE);
+        }
+        else	{
+        	actionBar.setDisplayOptions(actionBar.getDisplayOptions() ^ ActionBar.DISPLAY_SHOW_TITLE);
+        }
         actionBar.setDisplayUseLogoEnabled(true);
         actionBar.setLogo(R.drawable.masthead);
         actionBar.setHomeButtonEnabled(false);
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 //        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#FF1B8AC7")));
-
+        
         actionBar.setCustomView(layout_icons);
         //
         actionBar.show();
