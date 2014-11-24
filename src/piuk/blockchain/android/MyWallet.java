@@ -31,6 +31,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
+import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
@@ -58,6 +59,8 @@ public class MyWallet {
 	public static final int DefaultPBKDF2Iterations = 10;
 	public Map<String, Object> root;
     public JSONObject rootContainer;
+    
+    private JSONArray hdWallet = null;
 
 	public String temporyPassword;
 	public String temporySecondPassword;
@@ -311,7 +314,7 @@ public class MyWallet {
 		if (rootContainer != null && rootContainer.containsKey("pbkdf2_iterations")) {
 			iterations = Integer.valueOf(rootContainer.get("pbkdf2_iterations").toString());
 		}
-		System.out.println("getMainPasswordPbkdf2Iterations() " + iterations);
+//		System.out.println("getMainPasswordPbkdf2Iterations() " + iterations);
 
 
 		return iterations;
@@ -323,7 +326,7 @@ public class MyWallet {
 			version = Double.valueOf(rootContainer.get("version").toString());
 		}
 
-		System.out.println("getEncryptionVersionUsed() " + version);
+//		System.out.println("getEncryptionVersionUsed() " + version);
 
 		return version;
 	}
@@ -557,7 +560,6 @@ public class MyWallet {
 		return keywallet;
 	}
 
-
 	public synchronized boolean removeKey(ECKey key) {
 		final String address = key.toAddress(getParams()).toString();
 
@@ -589,7 +591,6 @@ public class MyWallet {
 
 		return true;
 	}
-
 
 	protected boolean addKey(ECKey key, String address, String label) throws Exception {
 		return addKey(key, address, label, System.getProperty("device_name"), System.getProperty("device_version"));
@@ -665,6 +666,9 @@ public class MyWallet {
             String payload = (String) obj.get("payload");
             int pbkdf2_iterations = Integer.valueOf(obj.get("pbkdf2_iterations").toString());
             double version = Integer.valueOf(obj.get("version").toString());
+            
+            hdWallet = (JSONArray)obj.get("hd_wallets");
+//            System.out.println("hd_wallets:" + hdWallet.toString());
 
             if (version != SupportedEncryptionVersion)
                 throw new Exception("Wallet version " + version + " not supported");
@@ -681,6 +685,8 @@ public class MyWallet {
  
     private String encryptWallet(String text, String password) throws Exception {
         double encryptionVersionUsed = getEncryptionVersionUsed();
+
+//      rootContainer.put("hd_wallets", hdWallet);
 
         if (encryptionVersionUsed == 2.0) {
             rootContainer.put("payload", encrypt(text, password, this.getMainPasswordPbkdf2Iterations()));
@@ -736,18 +742,16 @@ public class MyWallet {
 	}
 
 
-	private static byte[] cipherData(BufferedBlockCipher cipher, byte[] data)
-			throws Exception
-			{
-		int minSize = cipher.getOutputSize(data.length);
-		byte[] outBuf = new byte[minSize];
-		int length1 = cipher.processBytes(data, 0, data.length, outBuf, 0);
-		int length2 = cipher.doFinal(outBuf, length1);
-		int actualLength = length1 + length2;
-		byte[] result = new byte[actualLength];
-		System.arraycopy(outBuf, 0, result, 0, result.length);
-		return result;
-			}
+		private static byte[] cipherData(BufferedBlockCipher cipher, byte[] data) throws Exception	{
+			int minSize = cipher.getOutputSize(data.length);
+			byte[] outBuf = new byte[minSize];
+			int length1 = cipher.processBytes(data, 0, data.length, outBuf, 0);
+			int length2 = cipher.doFinal(outBuf, length1);
+			int actualLength = length1 + length2;
+			byte[] result = new byte[actualLength];
+			System.arraycopy(outBuf, 0, result, 0, result.length);
+			return result;
+		}
 
 	// Encrypt compatible with crypto-js
 	public static String encrypt(String text, String password, final int PBKDF2Iterations) throws Exception {

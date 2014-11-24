@@ -2,7 +2,7 @@ package info.blockchain.wallet.ui;
 
 import android.os.Handler;
 import android.app.Activity;
-import android.util.Log;
+//import android.util.Log;
 
 import piuk.blockchain.android.MyRemoteWallet;
 import piuk.blockchain.android.WalletApplication;
@@ -20,7 +20,7 @@ public class WalletUtil {
 		
 		if(instance == null) {
 			
-			Log.d("WalletUtil", "1 instance == null");
+//			Log.d("WalletUtil", "1 instance == null");
 
 			instance = new WalletUtil();
 
@@ -29,15 +29,15 @@ public class WalletUtil {
 			application = (WalletApplication)activity.getApplication();
 			// has remoteWallet been assigned during PIN/password validation ?
 			if(remoteWallet == null) {
-				Log.d("WalletUtil", "Fetching remoteWallet");
+//				Log.d("WalletUtil", "Fetching remoteWallet");
 				remoteWallet = application.getRemoteWallet();
 			}
 			else	{
-				Log.d("WalletUtil", "Returning stored remoteWallet");
+//				Log.d("WalletUtil", "Returning stored remoteWallet");
 			}
 
 			if(remoteWallet == null) {
-				Log.d("WalletUtil", "Refetching remoteWallet");
+//				Log.d("WalletUtil", "Refetching remoteWallet");
 				fetch();
 			}
 

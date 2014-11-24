@@ -696,7 +696,7 @@ public class WalletApplication extends Application {
 		if (!blockchainWallet.isNew() && !hasRegisteredForNotifications(getGUID())) {
 
 			if (getLastTriedToRegisterForNotifications() > System.currentTimeMillis()-30000) {
-				System.out.println("Registered Recently");
+//				System.out.println("Registered Recently");
 				return;
 			}
 
@@ -716,7 +716,7 @@ public class WalletApplication extends Application {
 
 			}).start();
 		} else {
-			System.out.println("New wallet or already Registered");
+//			System.out.println("New wallet or already Registered");
 		}
 	}
 
@@ -900,16 +900,16 @@ public class WalletApplication extends Application {
 				//
 				//
 				if(walletPayloadObj == null) {
-					System.out.println("walletPayloadObj == null, going local");
+//					System.out.println("walletPayloadObj == null, going local");
 					String localWallet = readLocalWallet();
 
 					if(decryptLocalWallet(localWallet, password)) {
-						System.out.println("local decrypted ok");
+//						System.out.println("local decrypted ok");
 						try {
 							walletPayloadObj = MyRemoteWallet.getWalletPayload(guid, sharedKey);
 						}
 						catch(Exception e) {
-							System.out.println("error fetching payload after local decrypt");
+//							System.out.println("error fetching payload after local decrypt");
 							handler.post(new Runnable() {
 								public void run() {
 									if (callbackFinal != null)
@@ -920,7 +920,7 @@ public class WalletApplication extends Application {
 						}
 					}
 					else {
-						System.out.println("local decrypted ko");
+//						System.out.println("local decrypted ko");
 						handler.post(new Runnable() {
 							public void run() {
 								if (callbackFinal != null)
@@ -938,11 +938,11 @@ public class WalletApplication extends Application {
 				// walletPayloadObj != null
 				try {
 					if (blockchainWallet == null) {
-						System.out.println("blockchainWallet == null, using payload + password");
+//						System.out.println("blockchainWallet == null, using payload + password");
 						blockchainWallet = new MyRemoteWallet(walletPayloadObj, password);
 						doMultiAddr(false, null);
 					} else {						
-						System.out.println("blockchainWallet != null");
+//						System.out.println("blockchainWallet != null");
 						blockchainWallet.setPayload(walletPayloadObj);
 					}
 					
@@ -1619,9 +1619,9 @@ public class WalletApplication extends Application {
 	public boolean deleteLocalWallet() {
 		try {
 			if (deleteFile(Constants.WALLET_FILENAME)) {
-				System.out.println("Removed Local Wallet");
+//				System.out.println("Removed Local Wallet");
 			} else {
-				System.out.println("Error Removing Local Wallet");
+//				System.out.println("Error Removing Local Wallet");
 			}
 		} catch (Exception e) {
 			writeException(e);
