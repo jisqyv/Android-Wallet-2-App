@@ -190,7 +190,7 @@ public class PairingHelp extends Activity {
 						try {
 							String temp_password = MyRemoteWallet.getPairingEncryptionPassword(guid);
 
-							String decrypted = MyWallet.decrypt(encrypted_data, temp_password, MyWallet.DefaultPBKDF2Iterations);
+							String decrypted = MyWallet.decrypt(encrypted_data, temp_password, 10);
 
 							String[] sharedKeyAndPassword = decrypted.split("\\|", Pattern.LITERAL);
 
