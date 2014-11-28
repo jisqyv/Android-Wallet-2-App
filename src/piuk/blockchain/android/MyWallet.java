@@ -56,11 +56,11 @@ import piuk.blockchain.android.util.LinuxSecureRandom;
 
 public class MyWallet {
 	private static final int AESBlockSize = 4;
-	public static final int DefaultPBKDF2Iterations = 10;
+	public static final int DefaultPBKDF2Iterations = 5000;
 	public Map<String, Object> root;
-    public JSONObject rootContainer;
-    
-    private JSONArray hdWallet = null;
+	public JSONObject rootContainer;
+
+	private JSONArray hdWallet = null;
 
 	public String temporyPassword;
 	public String temporySecondPassword;
@@ -251,16 +251,16 @@ public class MyWallet {
 			additional_seeds.add(val);			
 		}
 	}
-	
+
 	//debug code, use to clear seed list so recoverSeeds is shorter, dont actually use in production
 	public synchronized void clearAdditionalSeeds() {
 		Map<String, Object> options = getOptions();
-		
+
 		if (options.containsKey("additional_seeds")) {
 			options.put("additional_seeds", new ArrayList<String>());			
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public List<String> getAdditionalSeeds() {
 		Map<String, Object> options = getOptions();
@@ -272,7 +272,7 @@ public class MyWallet {
 
 		return additional_seeds;
 	}
-	
+
 	public int getFeePolicy() {
 		Map<String, Object> options = getOptions();
 
@@ -314,9 +314,6 @@ public class MyWallet {
 		if (rootContainer != null && rootContainer.containsKey("pbkdf2_iterations")) {
 			iterations = Integer.valueOf(rootContainer.get("pbkdf2_iterations").toString());
 		}
-//		System.out.println("getMainPasswordPbkdf2Iterations() " + iterations);
-
-
 		return iterations;
 	}
 
@@ -326,7 +323,7 @@ public class MyWallet {
 			version = Double.valueOf(rootContainer.get("version").toString());
 		}
 
-//		System.out.println("getEncryptionVersionUsed() " + version);
+		//		System.out.println("getEncryptionVersionUsed() " + version);
 
 		return version;
 	}
@@ -481,7 +478,7 @@ public class MyWallet {
 
 		return base58Priv;
 	}
-	
+
 	public ECKey getECKey(String address) throws Exception {
 		Map<String, Object> key = this.findKey(address);
 
@@ -658,46 +655,38 @@ public class MyWallet {
 		return false;
 	}
 
-    private String decryptWallet(String ciphertext, String password) throws Exception {
-        JSONParser parser = new JSONParser();
-        try {
-            JSONObject obj = (JSONObject)parser.parse(ciphertext);
+	private String decryptWallet(String ciphertext, String password) throws Exception {
+		JSONParser parser = new JSONParser();
+		try {
+			JSONObject obj = (JSONObject)parser.parse(ciphertext);
 
-            String payload = (String) obj.get("payload");
-            int pbkdf2_iterations = Integer.valueOf(obj.get("pbkdf2_iterations").toString());
-            double version = Integer.valueOf(obj.get("version").toString());
-            
-            hdWallet = (JSONArray)obj.get("hd_wallets");
-//            System.out.println("hd_wallets:" + hdWallet.toString());
+			String payload = (String) obj.get("payload");
+			int pbkdf2_iterations = Integer.valueOf(obj.get("pbkdf2_iterations").toString());
+			double version = Integer.valueOf(obj.get("version").toString());
 
-            if (version != SupportedEncryptionVersion)
-                throw new Exception("Wallet version " + version + " not supported");
+			hdWallet = (JSONArray)obj.get("hd_wallets");
+			//            System.out.println("hd_wallets:" + hdWallet.toString());
 
-            String result = decrypt(payload, password, pbkdf2_iterations);
+			if (version != SupportedEncryptionVersion)
+				throw new Exception("Wallet version " + version + " not supported");
 
-            rootContainer = obj;
+			String result = decrypt(payload, password, pbkdf2_iterations);
 
-            return result;
-        } catch (ParseException e) {
-            return decrypt(ciphertext, password, DefaultPBKDF2Iterations);
-        }
-    }
- 
-    private String encryptWallet(String text, String password) throws Exception {
-        double encryptionVersionUsed = getEncryptionVersionUsed();
+			rootContainer = obj;
 
-//      rootContainer.put("hd_wallets", hdWallet);
+			return result;
+		} catch (ParseException e) {
+			return decrypt(ciphertext, password, 10);
+		}
+	}
 
-        if (encryptionVersionUsed == 2.0) {
-            rootContainer.put("payload", encrypt(text, password, this.getMainPasswordPbkdf2Iterations()));
+	private String encryptWallet(String text, String password) throws Exception {
+		rootContainer.put("payload", encrypt(text, password, this.getMainPasswordPbkdf2Iterations()));
+		rootContainer.put("version", 2.0);
+		rootContainer.put("pbkdf2_iterations", this.getMainPasswordPbkdf2Iterations());
 
-            return rootContainer.toJSONString();
-        } else if (encryptionVersionUsed == 0.0)  {
-            return encrypt(text, password, this.getMainPasswordPbkdf2Iterations());
-        } else {
-            throw new Exception("Unknown Encryption Version " + encryptionVersionUsed);
-        }
-    }
+		return rootContainer.toJSONString();
+	}
 
 
 	private static byte[] copyOfRange(byte[] source, int from, int to) {
@@ -742,16 +731,16 @@ public class MyWallet {
 	}
 
 
-		private static byte[] cipherData(BufferedBlockCipher cipher, byte[] data) throws Exception	{
-			int minSize = cipher.getOutputSize(data.length);
-			byte[] outBuf = new byte[minSize];
-			int length1 = cipher.processBytes(data, 0, data.length, outBuf, 0);
-			int length2 = cipher.doFinal(outBuf, length1);
-			int actualLength = length1 + length2;
-			byte[] result = new byte[actualLength];
-			System.arraycopy(outBuf, 0, result, 0, result.length);
-			return result;
-		}
+	private static byte[] cipherData(BufferedBlockCipher cipher, byte[] data) throws Exception	{
+		int minSize = cipher.getOutputSize(data.length);
+		byte[] outBuf = new byte[minSize];
+		int length1 = cipher.processBytes(data, 0, data.length, outBuf, 0);
+		int length2 = cipher.doFinal(outBuf, length1);
+		int actualLength = length1 + length2;
+		byte[] result = new byte[actualLength];
+		System.arraycopy(outBuf, 0, result, 0, result.length);
+		return result;
+	}
 
 	// Encrypt compatible with crypto-js
 	public static String encrypt(String text, String password, final int PBKDF2Iterations) throws Exception {
